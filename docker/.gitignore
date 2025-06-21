@@ -2,4 +2,8 @@
 neo4j/*/
 apollo/*/
 crisalid-bus/*/
+definitions.json
 harvester/*/
+cdb/dags/*
+cdb/logs/*
+cdb/data/*

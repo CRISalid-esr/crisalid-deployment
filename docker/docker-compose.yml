@@ -16,3 +16,6 @@ include:
   - path: ./ikg/ikg.yaml
     env_file: ./ikg/.env
     project_directory: ./ikg
+  - path: ./cdb/cdb.yaml
+    env_file: ./cdb/.env
+    project_directory: ./cdb
