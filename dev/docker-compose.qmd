@@ -39,6 +39,9 @@ docker compose \
   --profile crisalid-bus \
   --profile harvester \
   --profile ikg \
+  --profile cdb \
+  --profile keycloak \
+  --profile sovisuplus \
   up
 ```
 
@@ -102,6 +105,58 @@ Full documentation (in French):
 
 ---
 
+### 4. 🔑 Configure Keycloak
+
+Keycloak is handling authentication within the system. Multiple client applications (such as Sovisu+) can share the same
+authentication realm. To set up Keycloak in this environment, follow these steps:
+
+1. **Global `.env` Configuration**
+
+In the global `.env` file, you will find the shared Keycloak configuration variables, such as the realm name (
+`KEYCLOAK_REALM`) and the client secrets (`SOVISUPLUS_KEYCLOAK_CLIENT_SECRET`). The `KEYCLOAK_REALM` can be customized (
+e.g., `crisalid-my-university`) for readability.
+
+Example:
+
+```env
+KEYCLOAK_REALM=crisalid-inst
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=BFl0E9p9X5FryyffGhI0lqgUNSf5rTWB
+```
+
+2. **Keycloak Configuration Script**
+
+Run the ./configure_keycloak.sh script. This will create the required configuration file from the template (
+docker/keycloak/config/crisalid-inst.json.template).
+
+3. **Customizing Keycloak .env Settings**
+
+The docker/keycloak/.env.sample file provides the environment settings for Keycloak, such as the admin credentials and
+database configurations. Copy the sample file to .env and modify the settings as needed.
+
+```env
+KEYCLOAK_ADMIN=admin
+KEYCLOAK_ADMIN_PASSWORD=admin
+KEYCLOAK_DB_VENDOR=postgres
+KEYCLOAK_DB_HOST=keycloak-db
+KEYCLOAK_DB_PORT=5432
+KEYCLOAK_DB_NAME=keycloak
+KEYCLOAK_DB_USER=keycloak
+KEYCLOAK_DB_PASSWORD=keycloak
+```
+
+### 5. **Define specific URIs in /etc/hosts**
+
+To ensure that Sovisu+ and Keycloak can be accessed correctly, you need to define specific URIs in your `/etc/hosts`
+file.
+This is necessary because Sovisu+ uses OAuth2 with ORCID, which requires a specific hostname even to deliver "sandbox"
+keys.
+
+```bash
+# Add these lines to your /etc/hosts file
+127.0.0.1 sovisuplus.local
+127.0.0.1 keycloak.local
+```
+
 ## 🔌 Communication with Host Machine
 
 If you want to connect external tools (on your host) to the containers, open the necessary ports.
@@ -112,9 +167,10 @@ For example, to expose RabbitMQ's AMQP port, edit `docker/crisalid-bus/crisalid-
 ```yaml
 ports:
   - "${CRISALID_BUS_HTTP_PORT}:15672"
-  # - "${CRISALID_BUS_AMQP_PORT}:5672"
+  - "${CRISALID_BUS_AMQP_PORT}:5672"
 expose:
-  - "${CRISALID_BUS_AMQP_PORT}"
+  - "${CRISALID_BUS_HTTP_PORT}"
+#  - "${CRISALID_BUS_AMQP_PORT}"
 ```
 
 ---
@@ -133,6 +189,16 @@ To also delete images:
 docker compose --profile cdb down --volumes --rmi all
 ```
 
+To ensure volumes are removed, you can also run:
+
+```bash
+docker volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume
+docker volume rm keycloak_postgres_data
+docker volume rm svp-db-volume
+docker volume rm crisalid-bus-volume
+docker volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume
+```
+
 ---
 
 ## 🚀 Starting the Services
@@ -140,7 +206,7 @@ docker compose --profile cdb down --volumes --rmi all
 To start the services, run:
 
 ```bash
-docker compose --profile neo4j --profile apollo --profile crisalid-bus --profile harvester --profile ikg --profile cdb up
+docker compose --profile neo4j --profile apollo --profile crisalid-bus --profile harvester --profile ikg --profile cdb --profile keycloak --profile sovisuplus up
 ```
 
 This command will start the selected components in the background. You can add or remove profiles as needed.
@@ -150,7 +216,7 @@ This command will start the selected components in the background. You can add o
 Once your services are up, follow the component-specific instructions in each section of the documentation. You can now:
 
 * Access the CRISalid Directory Bridge (CDB) UI at
-  [http://localhost:8080](http://localhost:8080) (Airflow) and trigger DAGs to import structures and people
+  [http://localhost:8081](http://localhost:8081) (Airflow) and trigger DAGs to import structures and people
 * Access the Neo4j UI at [http://localhost:7474](http://localhost:7474) and explore the graph database
 * Access the RabbitMQ UI at [http://localhost:15672](http://localhost:15672) with credentials from `docker/.env` and
   monitor messages
@@ -158,6 +224,8 @@ Once your services are up, follow the component-specific instructions in each se
 * Access the Apollo GraphQL UI at [http://localhost:4000/graphql](http://localhost:4000/graphql) to explore the API
   through
   Apollo GUI
+* Access Keycloak at [http://keycloak.local:8080](http://keycloak.local:8080) to manage users and roles
+* Access SoVisu+ at [http://sovisuplus.local:3000](http://sovisuplus.local:3000) to visualize your data
 * Start connecting other CRISalid modules from the host machine
 
 🧭 Back to [Development Index](index.qmd)

@@ -9,7 +9,8 @@ DAGS_DIR="$CDB_DIR/dags"
 ENV_SAMPLE_FILE="$CDB_DIR/.env.sample"
 ENV_FILE="$CDB_DIR/.env"
 REPO_URL="https://github.com/CRISalid-esr/crisalid-directory-bridge"
-REPO_BRANCH="dev-main"
+#REPO_BRANCH="dev-main"
+REPO_BRANCH="fix-docker-compose-connection-issues"
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
 
@@ -46,7 +47,6 @@ if [ -f "$TEMPLATE_ENV" ]; then
   export AMQP_PORT="$CRISALID_BUS_AMQP_PORT"
   export CDB_REDIS_HOST=data-versioning-redis
   export CDB_REDIS_PORT=6379
-  #  as we reuse airflow-redis, we need to use a different database number
   export CDB_REDIS_DB=0
   export RESTART_TRIGGER="$(date +%s)"
 
@@ -58,7 +58,7 @@ if [ -f "$TEMPLATE_ENV" ]; then
   # Optional paths
   export PEOPLE_SPREADSHEET_PATH="/opt/airflow/data/people.csv"
   export STRUCTURE_SPREADSHEET_PATH="/opt/airflow/data/structures.csv"
-  export YAML_EMPLOYEE_TYPE_PATH="/config/employee_types.yaml"
+  export YAML_EMPLOYEE_TYPE_PATH="/opt/airflow/dags/conf/employee_types.yml"
 
   envsubst < "$TEMPLATE_ENV" > "$FINAL_ENV"
   echo "Generated $FINAL_ENV"

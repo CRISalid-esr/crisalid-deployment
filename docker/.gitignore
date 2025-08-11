@@ -7,3 +7,4 @@ harvester/*/
 cdb/dags/*
 cdb/logs/*
 cdb/data/*
+keycloak/config/crisalid-inst.json

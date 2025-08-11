@@ -223,7 +223,7 @@
       "arguments": {
         "x-consumer-timeout": 43200000,
         "x-dead-letter-exchange": "dlx.graph",
-        "x-dead-letter-routing-key": "#"
+        "x-dead-letter-routing-key": "user_actions"
       }
     },
     {

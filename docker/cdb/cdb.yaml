@@ -106,6 +106,8 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    networks:
+      - cdb-network
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -124,6 +126,8 @@ services:
       - cdb
     volumes:
       - redis-db-volume:/data
+    networks:
+      - cdb-network
 
   data-versioning-redis:
     image: redis:7.2-bookworm
@@ -140,12 +144,14 @@ services:
       - cdb
     volumes:
       - data-versioning-redis-volume:/data
+    networks:
+      - cdb-network
 
   airflow-apiserver:
     <<: *airflow-common
     command: api-server
     ports:
-      - "8080:8080"
+      - "8081:8080"
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:8080/api/v2/version" ]
       interval: 30s
@@ -155,6 +161,9 @@ services:
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
+    networks:
+      - cdb-network
+      - crisalid-back
     profiles:
       - cdb
 
@@ -170,6 +179,9 @@ services:
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
+    networks:
+      - cdb-network
+      - crisalid-back
     profiles:
       - cdb
 
@@ -185,6 +197,9 @@ services:
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
+    networks:
+      - cdb-network
+      - crisalid-back
     profiles:
       - cdb
 
@@ -213,7 +228,9 @@ services:
       # CRISalid : add this as our dags are using Redis
       data-versioning-redis:
         condition: service_healthy
-
+    networks:
+      - cdb-network
+      - crisalid-back
     profiles:
       - cdb
 
@@ -229,6 +246,9 @@ services:
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
+    networks:
+      - cdb-network
+      - crisalid-back
     profiles:
       - cdb
 
@@ -323,6 +343,9 @@ services:
       _AIRFLOW_WWW_USER_PASSWORD: ${AIRFLOW_ADMIN_PASSWORD:-airflow}
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
+    networks:
+      - cdb-network
+      - crisalid-back
     profiles:
       - cdb
 
@@ -340,6 +363,9 @@ services:
       - airflow
     depends_on:
       <<: *airflow-common-depends-on
+    networks:
+      - cdb-network
+      - crisalid-back
 
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
@@ -360,8 +386,16 @@ services:
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
+    networks:
+      - cdb-network
+      - crisalid-back
 
 volumes:
   postgres-db-volume:
   redis-db-volume:
   data-versioning-redis-volume:
+networks:
+  cdb-network:
+    driver: bridge
+  crisalid-back:
+    driver: bridge

@@ -243,6 +243,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#env-files" id="toc-env-files" class="nav-link" data-scroll-target="#env-files">1. 🧾 <code>.env</code> Files</a></li>
   <li><a href="#configure-crisalid-bus" id="toc-configure-crisalid-bus" class="nav-link" data-scroll-target="#configure-crisalid-bus">2. 🔧 Configure CRISalid Bus</a></li>
   <li><a href="#configure-crisalid-directory-bridge-cdb" id="toc-configure-crisalid-directory-bridge-cdb" class="nav-link" data-scroll-target="#configure-crisalid-directory-bridge-cdb">3. 🔧 Configure CRISalid Directory Bridge (CDB)</a></li>
+  <li><a href="#configure-keycloak" id="toc-configure-keycloak" class="nav-link" data-scroll-target="#configure-keycloak">4. 🔑 Configure Keycloak</a></li>
   </ul></li>
   <li><a href="#communication-with-host-machine" id="toc-communication-with-host-machine" class="nav-link" data-scroll-target="#communication-with-host-machine">🔌 Communication with Host Machine</a></li>
   <li><a href="#resetting-containers" id="toc-resetting-containers" class="nav-link" data-scroll-target="#resetting-containers">♻️ Resetting Containers</a></li>
@@ -312,7 +313,13 @@ Main docker-compose.yaml
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./ikg</span></span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./cdb/cdb.yaml</span></span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./cdb/.env</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./cdb</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./cdb</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./sovisuplus/sovisuplus.yaml</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./sovisuplus/.env</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./sovisuplus</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./keycloak/keycloak.yaml</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./keycloak/.env</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./keycloak</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <p>For example:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
@@ -321,7 +328,10 @@ Main docker-compose.yaml
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="preparation-steps" class="level2">
@@ -366,30 +376,67 @@ LDAP_BIND_PASSWORD=</code></pre>
 </ul>
 <hr>
 </section>
+<section id="configure-keycloak" class="level3">
+<h3 class="anchored" data-anchor-id="configure-keycloak">4. 🔑 Configure Keycloak</h3>
+<p>Keycloak is handling authentication within the system. Multiple client applications (such as Sovisu+) can share the same authentication realm. To set up Keycloak in this environment, follow these steps:</p>
+<ol type="1">
+<li><strong>Global <code>.env</code> Configuration</strong></li>
+</ol>
+<p>In the global <code>.env</code> file, you will find the shared Keycloak configuration variables, such as the realm name (<code>KEYCLOAK_REALM</code>) and the client secrets (<code>SOVISUPLUS_KEYCLOAK_CLIENT_SECRET</code>). The <code>KEYCLOAK_REALM</code> can be customized (e.g., <code>crisalid-my-university</code>) for readability.</p>
+<p>Example:</p>
+<pre class="env"><code>KEYCLOAK_REALM=crisalid-inst
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=BFl0E9p9X5FryyffGhI0lqgUNSf5rTWB</code></pre>
+<ol start="2" type="1">
+<li><strong>Keycloak Configuration Script</strong></li>
+</ol>
+<p>Run the ./configure_keycloak.sh script. This will create the required configuration file from the template (docker/keycloak/config/crisalid-inst.template.json).</p>
+<ol start="3" type="1">
+<li><strong>Customizing Keycloak .env Settings</strong></li>
+</ol>
+<p>The docker/keycloak/.env.sample file provides the environment settings for Keycloak, such as the admin credentials and database configurations. Copy the sample file to .env and modify the settings as needed.</p>
+<pre class="env"><code>KEYCLOAK_ADMIN=admin
+KEYCLOAK_ADMIN_PASSWORD=admin
+KEYCLOAK_DB_VENDOR=postgres
+KEYCLOAK_DB_HOST=keycloak-db
+KEYCLOAK_DB_PORT=5432
+KEYCLOAK_DB_NAME=keycloak
+KEYCLOAK_DB_USER=keycloak
+KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
+<ol start="4" type="1">
+<li><strong>Start Keycloak with Docker Compose</strong></li>
+</ol>
+<p>Once your configuration is ready, ensure to include the keycloak profile in your Docker Compose command:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>[... other profiles] ...] <span class="dt">\</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
 </section>
 <section id="communication-with-host-machine" class="level2">
 <h2 class="anchored" data-anchor-id="communication-with-host-machine">🔌 Communication with Host Machine</h2>
 <p>If you want to connect external tools (on your host) to the containers, open the necessary ports.</p>
 <p>For example, to expose RabbitMQ’s AMQP port, edit <code>docker/crisalid-bus/crisalid-bus.yaml</code> and uncomment the 2nd <code>ports</code> line:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">  # - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}"</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="resetting-containers" class="level2">
 <h2 class="anchored" data-anchor-id="resetting-containers">♻️ Resetting Containers</h2>
 <p>To stop and delete containers + volumes for one profile:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To also delete images:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="starting-the-services" class="level2">
 <h2 class="anchored" data-anchor-id="starting-the-services">🚀 Starting the Services</h2>
 <p>To start the services, run:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This command will start the selected components in the background. You can add or remove profiles as needed.</p>
 </section>
 <section id="next-steps" class="level2">
@@ -401,6 +448,8 @@ LDAP_BIND_PASSWORD=</code></pre>
 <li>Access the RabbitMQ UI at <a href="http://localhost:15672">http://localhost:15672</a> with credentials from <code>docker/.env</code> and monitor messages</li>
 <li>Access SVP Harvester at <a href="http://localhost:8000">http://localhost:8000</a> to monitor publication harvesting</li>
 <li>Access the Apollo GraphQL UI at <a href="http://localhost:4000/graphql">http://localhost:4000/graphql</a> to explore the API through Apollo GUI</li>
+<li>Access Keycloak at <a href="http://localhost:8081">http://localhost:8081</a> to manage users and roles</li>
+<li>Access SoVisu+ at <a href="http://localhost:3000">http://localhost:3000</a> to visualize your data</li>
 <li>Start connecting other CRISalid modules from the host machine</li>
 </ul>
 <p>🧭 Back to <a href="index.qmd">Development Index</a></p>

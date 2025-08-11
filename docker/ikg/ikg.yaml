@@ -1,6 +1,6 @@
 services:
   crisalid-ikg:
-    image: crisalidesr/crisalid-ikg:v0.18-dev
+    image: crisalidesr/crisalid-ikg:v0.24-dev
     container_name: crisalid-ikg
     ports:
       - 8001:8000
@@ -27,5 +27,13 @@ services:
       neo4j:
         condition: service_healthy
     command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - ikg-network
+      - crisalid-back
     profiles:
       - ikg
+networks:
+  ikg-network:
+    driver: bridge
+  crisalid-back:
+    driver: bridge
