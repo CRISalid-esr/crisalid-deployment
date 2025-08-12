@@ -1,4 +1,19 @@
 services:
+  svp-jel-proxy:
+    image: crisalidesr/svp-jel-proxy:latest
+    container_name: svp-jel-proxy
+    ports:
+      - 3030:3030
+    healthcheck:
+      test: [ "CMD", "nc", "-zv", "localhost", "3030" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+    networks:
+      - svph-network
+    profiles:
+      - harvester
   harvester-redis:
     image: redis:7
     container_name: harvester-redis
@@ -54,12 +69,15 @@ services:
       - SCANR_ES_HOST=${SCANR_ES_HOST}
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
     depends_on:
       harvester-db:
         condition: service_healthy
       harvester-redis:
         condition: service_healthy
       harvester-worker:
+        condition: service_healthy
+      svp-jel-proxy:
         condition: service_healthy
     command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
     networks:
@@ -88,6 +106,7 @@ services:
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
       - INNER_TASK_PARALLELISM_LIMIT=20
       - INNER_TASK_QUEUE_LENGTH=20
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
     healthcheck:
       test: [ "CMD", "pgrep", "-f", "python -m app.amqp_listen" ]
       interval: 10s
@@ -99,6 +118,8 @@ services:
       harvester-db:
         condition: service_healthy
       harvester-redis:
+        condition: service_healthy
+      svp-jel-proxy:
         condition: service_healthy
     command: bash -c "alembic upgrade head && python -m app.amqp_listen"
     networks:
