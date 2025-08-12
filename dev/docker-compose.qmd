@@ -161,16 +161,15 @@ keys.
 
 If you want to connect external tools (on your host) to the containers, open the necessary ports.
 
-For example, to expose RabbitMQ's AMQP port, edit `docker/crisalid-bus/crisalid-bus.yaml` and uncomment the
+For example, to expose RabbitMQ's AMQP port on the host machine, edit `docker/crisalid-bus/crisalid-bus.yaml` and uncomment the
 2nd `ports` line:
 
 ```yaml
 ports:
   - "${CRISALID_BUS_HTTP_PORT}:15672"
-  - "${CRISALID_BUS_AMQP_PORT}:5672"
+#  - "${CRISALID_BUS_AMQP_PORT}:5672"
 expose:
-  - "${CRISALID_BUS_HTTP_PORT}"
-#  - "${CRISALID_BUS_AMQP_PORT}"
+  - "${CRISALID_BUS_AMQP_PORT}"
 ```
 
 ---
