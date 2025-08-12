@@ -34,34 +34,38 @@ services:
       - svph-network
     profiles:
       - harvester
-  #  harvester-ui:
-  #    image: crisalidesr/svp-harvester:latest
-  #    container_name: harvester-ui
-  #    ports:
-  #      - 8000:8000
-  #    environment:
-  #      - APP_ENV=DEV
-  #      - API_HOST=http://localhost:8000
-  #      - API_PREFIX=/api
-  #      - API_VERSION=v1
-  #      - DB_HOST=harvester-db
-  #      - DB_PORT=5432
-  #      - DB_NAME=${HARVESTER_DB_NAME}
-  #      - DB_USER=${HARVESTER_DB_USER}
-  #      - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
-  #      - REDIS_URL=${REDIS_URL}
-  #      - AMQP_ENABLED=false
-  #      - SCANR_ES_HOST=${SCANR_ES_HOST}
-  #      - SCANR_ES_USER=${SCANR_ES_USER}
-  #      - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
-  #    depends_on:
-  #      harvester-db:
-  #        condition: service_healthy
-  #      harvester-redis:
-  #        condition: service_healthy
-  #    command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
-  #    profiles:
-  #      - harvester
+  harvester-ui:
+    image: crisalidesr/svp-harvester:latest
+    container_name: harvester-ui
+    ports:
+      - 8000:8000
+    environment:
+      - APP_ENV=DEV
+      - API_HOST=http://localhost:8000
+      - API_PREFIX=/api
+      - API_VERSION=v1
+      - DB_HOST=harvester-db
+      - DB_PORT=5432
+      - DB_NAME=${HARVESTER_DB_NAME}
+      - DB_USER=${HARVESTER_DB_USER}
+      - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
+      - REDIS_URL=redis://harvester-redis:6379
+      - AMQP_ENABLED=false
+      - SCANR_ES_HOST=${SCANR_ES_HOST}
+      - SCANR_ES_USER=${SCANR_ES_USER}
+      - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
+    depends_on:
+      harvester-db:
+        condition: service_healthy
+      harvester-redis:
+        condition: service_healthy
+      harvester-worker:
+        condition: service_healthy
+    command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - svph-network
+    profiles:
+      - harvester
 
   harvester-worker:
     image: crisalidesr/svp-harvester:latest
@@ -73,7 +77,7 @@ services:
       - DB_NAME=${HARVESTER_DB_NAME}
       - DB_USER=${HARVESTER_DB_USER}
       - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
-      - REDIS_URL=${REDIS_URL}
+      - REDIS_URL=redis://harvester-redis:6379
       - AMQP_ENABLED=true
       - AMQP_HOST=crisalid-bus
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
@@ -84,6 +88,11 @@ services:
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
       - INNER_TASK_PARALLELISM_LIMIT=20
       - INNER_TASK_QUEUE_LENGTH=20
+    healthcheck:
+      test: [ "CMD", "pgrep", "-f", "python -m app.amqp_listen" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
     depends_on:
       crisalid-bus:
         condition: service_healthy
