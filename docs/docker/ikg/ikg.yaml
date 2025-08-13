@@ -1,6 +1,23 @@
 services:
+  crisalid-org-registry:
+    image: crisalidesr/crisalid-org-registry:v0.1
+    container_name: crisalid-org-registry
+    expose:
+      - "3000:3000"
+    environment:
+      - ORG_REGISTRY_URL=http://crisalid-org-registry:3000  # Match the URL used in your environment
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/" ]  # Health check using curl
+      interval: 120s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - ikg-network
+    profiles:
+      - ikg
   crisalid-ikg:
-    image: crisalidesr/crisalid-ikg:v0.18-dev
+    image: crisalidesr/crisalid-ikg:v0.24-dev
     container_name: crisalid-ikg
     ports:
       - 8001:8000
@@ -21,11 +38,22 @@ services:
       - ES_PORT=9200
       - ES_USER=elastic
       - ES_PASSWORD=elastic
+      - ORG_REGISTRY_URL=http://crisalid-org-registry:3000
     depends_on:
       crisalid-bus:
         condition: service_healthy
       neo4j:
         condition: service_healthy
+      crisalid-org-registry:
+        condition: service_healthy
     command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - ikg-network
+      - crisalid-back
     profiles:
       - ikg
+networks:
+  ikg-network:
+    driver: bridge
+  crisalid-back:
+    driver: bridge

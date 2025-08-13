@@ -19,3 +19,9 @@ include:
   - path: ./cdb/cdb.yaml
     env_file: ./cdb/.env
     project_directory: ./cdb
+  - path: ./sovisuplus/sovisuplus.yaml
+    env_file: ./sovisuplus/.env
+    project_directory: ./sovisuplus
+  - path: ./keycloak/keycloak.yaml
+    env_file: ./keycloak/.env
+    project_directory: ./keycloak
