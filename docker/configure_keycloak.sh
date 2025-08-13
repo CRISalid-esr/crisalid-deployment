@@ -51,7 +51,7 @@ if [ -f "$KEYCLOAK_CONFIG_TEMPLATE_FILE" ]; then
   echo "Updating Keycloak client definitions..."
 
   # Substitute environment variables and create the Keycloak configuration
-  envsubst '$KEYCLOAK_REALM $SOVISUPLUS_URL $SOVISUPLUS_KEYCLOAK_CLIENT_SECRET' < "$KEYCLOAK_CONFIG_TEMPLATE_FILE" > "$KEYCLOAK_CONFIG_FILE"
+  envsubst '$KEYCLOAK_REALM $SOVISUPLUS_URL $SOVISUPLUS_KEYCLOAK_CLIENT_SECRET $ORCID_CLIENT_ID $ORCID_CLIENT_SECRET' < "$KEYCLOAK_CONFIG_TEMPLATE_FILE" > "$KEYCLOAK_CONFIG_FILE"
 
   echo "Updated definitions file saved as crisalid-inst-updated.json"
 else
