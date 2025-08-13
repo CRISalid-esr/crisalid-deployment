@@ -29,8 +29,7 @@ echo "Preparing Airflow directories"
 mkdir -p "$CDB_DIR/logs" "$CDB_DIR/plugins" "$CDB_DIR/config" "$CDB_DIR/data"
 rm -rf "$DAGS_DIR"
 git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$DAGS_DIR"
-# delete .github, tests, test_utils
-rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
+rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/.git" "$DAGS_DIR/.gitignore" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
 
 # 3. Generate .env from .env.sample with envsubst
 echo "Generating $ENV_FILE from $ENV_SAMPLE_FILE"
