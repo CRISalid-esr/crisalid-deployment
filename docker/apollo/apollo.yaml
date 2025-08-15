@@ -10,5 +10,13 @@ services:
       - APP_ENV=DEV
       - NEO4J_URI=bolt://neo4j:${NEO4J_BOLT_PORT}
       - ENABLE_API_KEYS=${APOLLO_ENABLE_API_KEYS}
+    networks:
+      - ikg-network
+      - crisalid-front
     profiles:
       - apollo
+networks:
+  ikg-network:
+    driver: bridge
+  crisalid-front:
+    driver: bridge

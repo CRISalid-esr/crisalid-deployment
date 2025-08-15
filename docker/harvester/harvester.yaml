@@ -1,4 +1,19 @@
 services:
+  svp-jel-proxy:
+    image: crisalidesr/svp-jel-proxy:latest
+    container_name: svp-jel-proxy
+    ports:
+      - 3030:3030
+    healthcheck:
+      test: [ "CMD", "nc", "-zv", "localhost", "3030" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 5s
+    networks:
+      - svph-network
+    profiles:
+      - harvester
   harvester-redis:
     image: redis:7
     container_name: harvester-redis
@@ -9,6 +24,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - svph-network
     profiles:
       - harvester
   harvester-db:
@@ -28,11 +45,13 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+    networks:
+      - svph-network
     profiles:
       - harvester
-  harvester:
-    image: crisalidesr/svp-harvester:v0.21-dev
-    container_name: harvester
+  harvester-ui:
+    image: crisalidesr/svp-harvester:latest
+    container_name: harvester-ui
     ports:
       - 8000:8000
     environment:
@@ -45,7 +64,38 @@ services:
       - DB_NAME=${HARVESTER_DB_NAME}
       - DB_USER=${HARVESTER_DB_USER}
       - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
-      - REDIS_URL=${REDIS_URL}
+      - REDIS_URL=redis://harvester-redis:6379
+      - AMQP_ENABLED=false
+      - SCANR_ES_HOST=${SCANR_ES_HOST}
+      - SCANR_ES_USER=${SCANR_ES_USER}
+      - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+    depends_on:
+      harvester-db:
+        condition: service_healthy
+      harvester-redis:
+        condition: service_healthy
+      harvester-worker:
+        condition: service_healthy
+      svp-jel-proxy:
+        condition: service_healthy
+    command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    networks:
+      - svph-network
+    profiles:
+      - harvester
+
+  harvester-worker:
+    image: crisalidesr/svp-harvester:latest
+    container_name: harvester-worker
+    environment:
+      - APP_ENV=DEV
+      - DB_HOST=harvester-db
+      - DB_PORT=5432
+      - DB_NAME=${HARVESTER_DB_NAME}
+      - DB_USER=${HARVESTER_DB_USER}
+      - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
+      - REDIS_URL=redis://harvester-redis:6379
       - AMQP_ENABLED=true
       - AMQP_HOST=crisalid-bus
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
@@ -54,6 +104,14 @@ services:
       - SCANR_ES_HOST=${SCANR_ES_HOST}
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
+      - INNER_TASK_PARALLELISM_LIMIT=20
+      - INNER_TASK_QUEUE_LENGTH=20
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+    healthcheck:
+      test: [ "CMD", "pgrep", "-f", "python -m app.amqp_listen" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
     depends_on:
       crisalid-bus:
         condition: service_healthy
@@ -61,6 +119,17 @@ services:
         condition: service_healthy
       harvester-redis:
         condition: service_healthy
-    command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+      svp-jel-proxy:
+        condition: service_healthy
+    command: bash -c "alembic upgrade head && python -m app.amqp_listen"
+    networks:
+      - svph-network
+      - crisalid-back
     profiles:
       - harvester
+
+networks:
+  svph-network:
+    driver: bridge
+  crisalid-back:
+    driver: bridge

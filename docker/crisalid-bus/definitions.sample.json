@@ -79,6 +79,46 @@
       "routing_key": "task.entity.references.retrieval",
       "source": "publications",
       "vhost": "/"
+    },
+    {
+      "source": "dlx.graph",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-user-actions",
+      "destination_type": "queue",
+      "routing_key": "#",
+      "arguments": {}
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus",
+      "destination_type": "queue",
+      "routing_key": "event.harvestings.*.*"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "crisalid-ikg-user-actions",
+      "destination_type": "queue",
+      "routing_key": "task.documents.document.*"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "crisalid-ikg-user-actions",
+      "destination_type": "queue",
+      "routing_key": "task.person.documents.fetch"
+    },
+    {
+      "arguments": {},
+      "source": "publications",
+      "vhost": "/",
+      "destination": "crisalid-ikg-harvesting-events",
+      "destination_type": "queue",
+      "routing_key": "event.references.*.*"
     }
   ],
   "exchanges": [
@@ -89,6 +129,14 @@
       "name": "graph",
       "type": "topic",
       "vhost": "/"
+    },
+    {
+      "name": "dlx.graph",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
     },
     {
       "arguments": {},
@@ -165,6 +213,38 @@
       "name": "crisalid-ikg-publications",
       "type": "classic",
       "vhost": "/"
+    },
+    {
+      "name": "crisalid-ikg-user-actions",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.graph",
+        "x-dead-letter-routing-key": "user_actions"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-user-actions",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "crisalid-ikg-harvesting-events",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
     }
   ],
   "vhosts": [
@@ -182,7 +262,9 @@
       "name": "${CRISALID_BUS_USER}",
       "password_hash": "${CRISALID_BUS_PASSWORD_HASH}",
       "hashing_algorithm": "rabbit_password_hashing_sha256",
-      "tags": ["administrator"]
+      "tags": [
+        "administrator"
+      ]
     }
   ],
   "permissions": [

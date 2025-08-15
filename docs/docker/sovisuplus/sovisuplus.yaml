@@ -1,0 +1,67 @@
+services:
+  svp-db:
+    image: postgres:16
+    container_name: svp-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${SVP_DB_USER}
+      POSTGRES_PASSWORD: ${SVP_DB_PASSWORD}
+      POSTGRES_DB: ${SVP_DB_NAME}
+    expose:
+      - 5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - svp-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${SVP_DB_NAME} -U ${SVP_DB_USER}']
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    command: ["postgres","-c","max_connections=200","-c","superuser_reserved_connections=3"]
+    profiles:
+      - sovisuplus
+
+  sovisuplus:
+    image: crisalidesr/sovisuplus:latest
+    container_name: sovisuplus
+    ports:
+      - 3000:3000
+      - 3001:3001
+    environment:
+      - DB_NAME=${SVP_DB_NAME}
+      - DB_USER=${SVP_DB_USER}
+      - DB_PASSWORD=${SVP_DB_PASSWORD}
+      - DB_HOST=svp-db
+      - DB_PORT=5432
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - AMQP_HOST=crisalid-bus
+      - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
+      - AMQP_USER=${CRISALID_BUS_USER}
+      - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}
+      - AMQP_QUEUE_NAME=${SVP_AMQP_QUEUE_NAME}
+      - AMQP_EXCHANGE_NAME=${SVP_AMQP_EXCHANGE_NAME}
+      - GRAPHQL_ENDPOINT_ENABLED=${GRAPHQL_ENDPOINT_ENABLED}
+      - GRAPHQL_ENDPOINT_URL=http://apollo:${APOLLO_API_PORT}/graphql
+      - GRAPHQL_API_KEY_ENABLED=${GRAPHQL_API_KEY_ENABLED}
+      - KEYCLOAK_CLIENT_ID=sovisuplus
+      - KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - APP_URL=${SOVISUPLUS_SCHEME}://${SOVISUPLUS_HOST}:${SOVISUPLUS_PORT}
+    depends_on:
+      svp-db:
+        condition: service_healthy
+      crisalid-bus:
+        condition: service_healthy
+    networks:
+      - svp-network
+      - crisalid-front
+    profiles:
+      - sovisuplus
+
+networks:
+  svp-network:
+    driver: bridge
+  crisalid-front:
+    driver: bridge

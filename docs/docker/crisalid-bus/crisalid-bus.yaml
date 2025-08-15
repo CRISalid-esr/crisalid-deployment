@@ -8,7 +8,7 @@ services:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit load_definitions "${CRISALID_BUS_DEFINITIONS_FILE}"
     ports:
       - "${CRISALID_BUS_HTTP_PORT}:15672"
-#      - "${CRISALID_BUS_AMQP_PORT}:5672"
+    #      - "${CRISALID_BUS_AMQP_PORT}:5672"
     expose:
       - "${CRISALID_BUS_AMQP_PORT}"
     volumes:
@@ -20,5 +20,13 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
+    networks:
+      - crisalid-front
+      - crisalid-back
     profiles:
       - crisalid-bus
+networks:
+  crisalid-front:
+    driver: bridge
+  crisalid-back:
+    driver: bridge

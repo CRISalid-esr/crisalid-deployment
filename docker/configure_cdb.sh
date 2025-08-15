@@ -28,8 +28,7 @@ echo "Preparing Airflow directories"
 mkdir -p "$CDB_DIR/logs" "$CDB_DIR/plugins" "$CDB_DIR/config" "$CDB_DIR/data"
 rm -rf "$DAGS_DIR"
 git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$DAGS_DIR"
-# delete .github, tests, test_utils
-rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
+rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/.git" "$DAGS_DIR/.gitignore" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
 
 # 3. Generate .env from .env.sample with envsubst
 echo "Generating $ENV_FILE from $ENV_SAMPLE_FILE"
@@ -46,7 +45,6 @@ if [ -f "$TEMPLATE_ENV" ]; then
   export AMQP_PORT="$CRISALID_BUS_AMQP_PORT"
   export CDB_REDIS_HOST=data-versioning-redis
   export CDB_REDIS_PORT=6379
-  #  as we reuse airflow-redis, we need to use a different database number
   export CDB_REDIS_DB=0
   export RESTART_TRIGGER="$(date +%s)"
 
@@ -58,7 +56,7 @@ if [ -f "$TEMPLATE_ENV" ]; then
   # Optional paths
   export PEOPLE_SPREADSHEET_PATH="/opt/airflow/data/people.csv"
   export STRUCTURE_SPREADSHEET_PATH="/opt/airflow/data/structures.csv"
-  export YAML_EMPLOYEE_TYPE_PATH="/config/employee_types.yaml"
+  export YAML_EMPLOYEE_TYPE_PATH="/opt/airflow/dags/conf/employee_types.yml"
 
   envsubst < "$TEMPLATE_ENV" > "$FINAL_ENV"
   echo "Generated $FINAL_ENV"
