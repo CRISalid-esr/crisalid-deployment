@@ -30,7 +30,9 @@ website:
           - href: dev/index.qmd
             text: Introduction
           - href: dev/docker-compose.qmd
-            text: Docker Compose for Dev/Test
+            text: Docker Compose deployment
+          - href: dev/dev-backend.qmd
+            text: Docker Compose for local development
           - href: dev/manual_installation.qmd
             text: Manual Installation
       - text: 🚀 Production

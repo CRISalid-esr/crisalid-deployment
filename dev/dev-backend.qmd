@@ -1,0 +1,194 @@
+---
+title: "Using Docker Compose as Backend for Local Development"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+# Part 1 — SoVisu+ development
+
+> This section explains how to use the Docker Compose stack strictly as a **backend** while running **SoVisu+ locally
+** (Next.js dev server) for frontend development.
+
+---
+
+## 🎯 Goal
+
+Run all shared services (Neo4j, message bus, Keycloak, APIs, databases) in Docker, but run **SoVisu+** on your host
+machine. To make this work, you must:
+
+1. Map the necessary service **ports** from containers to the host.
+2. Use a dedicated profile (e.g. `sovisuplus-db`) to start only SoVisu+ backend services.
+3. Point your local SoVisu+ to these services via env vars and `/etc/hosts`.
+
+---
+
+## 🧱 Required Hostnames
+
+Add these entries to your `/etc/hosts` (if not already done in the main guide):
+
+```bash
+127.0.0.1 sovisuplus.local
+127.0.0.1 keycloak.local
+```
+
+> SoVisu+ uses ORCID OAuth, which requires valid hostnames even for sandbox keys.
+
+---
+
+## 🔓 Open the Right Ports in Compose
+
+You’ll run SoVisu+ locally, so your host needs to reach the containers. Make sure the following port mappings are
+enabled.
+
+### 1) SoVisu+ database (`docker/sovisuplus/sovisuplus.yaml`)
+
+Uncomment the `ports` section so Postgres is reachable from your host:
+
+<details><summary>sovisuplus.yaml</summary>
+```yaml
+{{< include "../docker/sovisuplus/sovisuplus.yaml" >}}
+```
+</details>
+
+```yaml
+services:
+  svp-db:
+    image: postgres:16
+    container_name: svp-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${SVP_DB_USER}
+      POSTGRES_PASSWORD: ${SVP_DB_PASSWORD}
+      POSTGRES_DB: ${SVP_DB_NAME}
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+```
+
+### 2) Apollo API (`docker/apollo/apollo.yaml`)
+
+Ensure the public mapping is present (it typically is already because Apollo graphql GUI is one of the main user
+interfaces):
+
+<details><summary>apollo.yaml</summary>
+```yaml
+{{< include "../docker/apollo/apollo.yaml" >}}
+```
+</details>
+
+```yaml
+services:
+  apollo:
+    image: crisalidesr/crisalid-apollo:latest
+    ports:
+      - ${APOLLO_API_PORT}:4000
+```
+
+> Your local SoVisu+ will call `http://localhost:${APOLLO_API_PORT}` (GraphQL endpoint `/graphql`).
+
+### 3) CRISalid Bus / RabbitMQ (`docker/crisalid-bus/crisalid-bus.yaml`)
+
+Only the **management UI** port is exposed by default, but you can uncomment the **AMQP** port to allow
+external tools to connect:
+
+<details><summary>crisalid-bus.yaml</summary>
+```yaml
+{{< include "../docker/crisalid-bus/crisalid-bus.yaml" >}}
+```
+</details>
+
+```yaml
+services:
+  crisalid-bus:
+    image: rabbitmq:3-management
+    container_name: 'crisalid-bus'
+    environment:
+      - RABBITMQ_DEFAULT_USER=${CRISALID_BUS_USER}
+      - RABBITMQ_DEFAULT_PASS=${CRISALID_BUS_PASSWORD}
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit load_definitions "${CRISALID_BUS_DEFINITIONS_FILE}"
+    ports:
+      - "${CRISALID_BUS_HTTP_PORT}:15672"
+      - "${CRISALID_BUS_AMQP_PORT}:5672"
+    expose:
+      - "${CRISALID_BUS_AMQP_PORT}"
+```
+
+---
+
+## 🧩 Use the Backend-Only Profile
+
+Replace the `sovisuplus` profile with `sovisuplus-db`, which starts the DB and
+related services but not the SoVisu+ container itself.
+
+Example command:
+
+```bash
+docker compose \
+  --profile cdb \
+  --profile neo4j \
+  --profile apollo \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile ikg \
+  --profile keycloak \
+  --profile sovisuplus-db \
+  up --remove-orphans
+```
+
+---
+
+## ▶️ Run SoVisu+ Locally
+
+Start your Next.js app on the host as usual (e.g., in the SoVisu+ repo):
+
+```bash
+npm run dev # for the main web gui
+npm run dev:listener # for the backend listener
+```
+
+Make sure your local env points to the Docker services. Typical variables (names vary by project):
+
+```bash
+
+NEXT_PUBLIC_SUPPORTED_LOCALES="fr,en"
+
+DATABASE_URL="postgresql://sovisuplus:sovisuplus_password@localhost:5432/sovisuplus?schema=public"
+
+KEYCLOAK_CLIENT_ID="sovisuplus"
+KEYCLOAK_CLIENT_SECRET="use-the-same-secret-as-in-docker-compose"
+KEYCLOAK_ISSUER="http://keycloak.local:8080/realms/crisalid-inst"
+NEXTAUTH_URL="http://sovisuplus.local:3000/api/auth"
+NEXTAUTH_SECRET="use-a-secure-random-secret"
+
+AMQP_USER="crisalid_bus_user"
+AMQP_PASSWORD="use-the-same-password-as-in-docker-compose"
+AMQP_HOST="localhost"
+AMQP_PORT="5672"
+AMQP_QUEUE_NAME="sovisuplus"
+AMQP_EXCHANGE_NAME="graph"
+
+GRAPHQL_ENDPOINT_ENABLED="true"
+GRAPHQL_ENDPOINT_URL="http://localhost:4000/graphql"
+GRAPHQL_API_KEY_ENABLED="false"
+GRAPHQL_API_KEY="not-needed-in-dev"
+
+PERSPECTIVES_ROLES_FILTER="author"
+PUBLICATION_LIST_ROLES_FILTER="author"
+
+ORCID_URL="https://sandbox.orcid.org"
+SOVISUPLUS_HOST="http://sovisuplus.local:3000"
+ORCID_SCOPES="/person/update"
+ORCID_CLIENT_ID="use-the-same-client-id--provided-by-orcid-as-in-docker-compose"
+ORCID_CLIENT_SECRET="use-the-same-client-secret-provided-by-orcid-as-in-docker-compose"
+```
+
+Visit SoVisu+ at:
+
+```
+http://sovisuplus.local:3000
+```
+
+

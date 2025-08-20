@@ -1,5 +1,5 @@
 ---
-title: "Docker Compose for Dev/Test"
+title: "Docker Compose deployment"
 format:
   html:
     toc: true
