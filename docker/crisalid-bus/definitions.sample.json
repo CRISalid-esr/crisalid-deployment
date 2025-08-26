@@ -110,7 +110,15 @@
       "vhost": "/",
       "destination": "crisalid-ikg-user-actions",
       "destination_type": "queue",
-      "routing_key": "task.person.documents.fetch"
+      "routing_key": "task.people.person.*"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "crisalid-ikg-user-actions",
+      "destination_type": "queue",
+      "routing_key": "task.people.documents.fetch"
     },
     {
       "arguments": {},
