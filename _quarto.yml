@@ -33,6 +33,8 @@ website:
             text: Docker Compose deployment
           - href: dev/dev-backend.qmd
             text: Docker Compose for local development
+          - href: dev/backup-restore-dc.qmd
+            text: Backup and Restore with Docker Compose
           - href: dev/manual_installation.qmd
             text: Manual Installation
       - text: 🚀 Production

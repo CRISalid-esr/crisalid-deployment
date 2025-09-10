@@ -110,5 +110,33 @@
     "title": "Docker Compose deployment",
     "section": "✅ Next Steps",
     "text": "✅ Next Steps\nOnce your services are up, follow the component-specific instructions in each section of the documentation. You can now:\n\nAccess the CRISalid Directory Bridge (CDB) UI at http://localhost:8081 (Airflow) and trigger DAGs to import structures and people\nAccess the Neo4j UI at http://localhost:7474 and explore the graph database\nAccess the RabbitMQ UI at http://localhost:15672 with credentials from docker/.env and monitor messages\nAccess SVP Harvester at http://localhost:8000 to monitor publication harvesting\nAccess the Apollo GraphQL UI at http://localhost:4000/graphql to explore the API through Apollo GUI\nAccess Keycloak at http://keycloak.local:8080 to manage users and roles\nAccess SoVisu+ at http://sovisuplus.local:3000 to visualize your data\nStart connecting other CRISalid modules from the host machine\n\n🧭 Back to Development Index"
+  },
+  {
+    "objectID": "dev/backup-restore-with-dc.html",
+    "href": "dev/backup-restore-with-dc.html",
+    "title": "Data backup and restoration with Docker Compose",
+    "section": "",
+    "text": "Quick recipes to backup and restore services in the CRISalid Docker Compose stack."
+  },
+  {
+    "objectID": "dev/backup-restore-with-dc.html#full-backup-hot-or-after-stopping-the-service",
+    "href": "dev/backup-restore-with-dc.html#full-backup-hot-or-after-stopping-the-service",
+    "title": "Data backup and restoration with Docker Compose",
+    "section": "📦 Full backup (hot or after stopping the service)",
+    "text": "📦 Full backup (hot or after stopping the service)\n\nRecommended: stop Neo4j before a backup to ensure a clean snapshot.\n\nCreate a compressed archive of the key data directories (preserve numeric ownership for container UID/GID 7474):\nsudo tar --numeric-owner -czvf neo4j-full-$(date +%F).tar.gz \\\n  data import backups plugins\nOptionally restart Neo4j when done:\ndocker compose --profile neo4j up -d neo4j"
+  },
+  {
+    "objectID": "dev/backup-restore-with-dc.html#restore-from-a-backup-archive",
+    "href": "dev/backup-restore-with-dc.html#restore-from-a-backup-archive",
+    "title": "Data backup and restoration with Docker Compose",
+    "section": "♻️ Restore from a backup archive",
+    "text": "♻️ Restore from a backup archive\n\nImportant: Stop Neo4j before restoring files.\n\n\nExtract the archive to the Neo4j docker directory:\n\ntar -xzvf neo4j-data-20250908.tar.gz \\\n  -C ~/.../crisalid-deployment/docker/neo4j\n\nEnsure directory ownership matches the container user (UID/GID 7474):\n\ncd ~/code/crisalid-deployment/docker/neo4j\nsudo chown -R 7474:7474 data import backups plugins\n\nStart Neo4j again (alone or with other services):\n\ndocker compose --profile neo4j up -d neo4j\n\n(Optional) Check logs:\n\ndocker compose logs -f neo4j"
+  },
+  {
+    "objectID": "dev/backup-restore-with-dc.html#full-backup",
+    "href": "dev/backup-restore-with-dc.html#full-backup",
+    "title": "Data backup and restoration with Docker Compose",
+    "section": "📦 Full backup",
+    "text": "📦 Full backup\n\nRecommended: stop Neo4j before a backup to ensure a clean snapshot.\n\nCreate a compressed archive of the key data directories (preserve numeric ownership for container UID/GID 7474):\nsudo tar --numeric-owner -czvf neo4j-full-$(date +%F).tar.gz \\\n  data import backups plugins"
   }
 ]

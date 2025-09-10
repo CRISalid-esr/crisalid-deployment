@@ -1,0 +1,68 @@
+---
+title: "Data backup and restoration with Docker Compose"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+> Quick recipes to backup and restore services in the CRISalid Docker Compose stack.
+
+
+
+# Neo4j
+
+All commands are to be run **from `docker/neo4j/`** in your `crisalid-deployment` checkout.
+
+## 📦 Full backup 
+
+> Recommended: stop Neo4j before a backup to ensure a clean snapshot.
+
+Create a compressed archive of the key data directories (preserve numeric ownership for container UID/GID 7474):
+
+```bash
+sudo tar --numeric-owner -czvf neo4j-full-$(date +%F).tar.gz \
+  data import backups plugins
+```
+
+## ♻️ Restore from a backup archive
+
+> **Important:** Stop Neo4j before restoring files.
+
+1. Extract the archive to the Neo4j docker directory:
+
+```bash
+tar -xzvf neo4j-data-20250908.tar.gz \
+  -C ~/.../crisalid-deployment/docker/neo4j
+```
+
+2. Ensure directory ownership matches the container user (UID/GID **7474**):
+
+```bash
+cd ~/code/crisalid-deployment/docker/neo4j
+sudo chown -R 7474:7474 data import backups plugins
+```
+
+3. Start Neo4j again (alone or with other services):
+
+```bash
+docker compose --profile neo4j up -d neo4j
+```
+
+4. (Optional) Check logs:
+
+```bash
+docker compose logs -f neo4j
+```
+
+---
+
+# SoVisuplus database (PostgreSQL)
+
+*Coming soon*
+
+---
+
+# SVP Harvester database (PostgreSQL)
+
+*Coming soon*
