@@ -250,8 +250,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#full-backup" id="toc-full-backup" class="nav-link" data-scroll-target="#full-backup">📦 Full backup</a></li>
   <li><a href="#restore-from-a-backup-archive" id="toc-restore-from-a-backup-archive" class="nav-link" data-scroll-target="#restore-from-a-backup-archive">♻️ Restore from a backup archive</a></li>
   </ul></li>
-  <li><a href="#sovisuplus-database-postgresql" id="toc-sovisuplus-database-postgresql" class="nav-link" data-scroll-target="#sovisuplus-database-postgresql">SoVisuplus database (PostgreSQL)</a></li>
-  <li><a href="#svp-harvester-database-postgresql" id="toc-svp-harvester-database-postgresql" class="nav-link" data-scroll-target="#svp-harvester-database-postgresql">SVP Harvester database (PostgreSQL)</a></li>
+  <li><a href="#sovisuplus-postgresql-container-svp-db-host-port-5432" id="toc-sovisuplus-postgresql-container-svp-db-host-port-5432" class="nav-link" data-scroll-target="#sovisuplus-postgresql-container-svp-db-host-port-5432">SoVisuplus Postgresql (container: svp-db, host port 5432)</a>
+  <ul class="collapse">
+  <li><a href="#make-a-sql-dump" id="toc-make-a-sql-dump" class="nav-link" data-scroll-target="#make-a-sql-dump">Make a SQL dump</a></li>
+  <li><a href="#restore-into-docker-same-svp-db" id="toc-restore-into-docker-same-svp-db" class="nav-link" data-scroll-target="#restore-into-docker-same-svp-db">Restore into Docker (same svp-db)</a></li>
+  <li><a href="#restore-into-local-postgres-on-your-machine" id="toc-restore-into-local-postgres-on-your-machine" class="nav-link" data-scroll-target="#restore-into-local-postgres-on-your-machine">Restore into local Postgres (on your machine)</a></li>
+  </ul></li>
+  <li><a href="#svp-harvester-postgresql-container-harvester-db-host-port-5433" id="toc-svp-harvester-postgresql-container-harvester-db-host-port-5433" class="nav-link" data-scroll-target="#svp-harvester-postgresql-container-harvester-db-host-port-5433">SVP Harvester Postgresql (container: harvester-db, host port 5433)</a>
+  <ul class="collapse">
+  <li><a href="#make-a-sql-dump-1" id="toc-make-a-sql-dump-1" class="nav-link" data-scroll-target="#make-a-sql-dump-1">Make a SQL dump</a></li>
+  <li><a href="#restore-into-docker-harvester-db" id="toc-restore-into-docker-harvester-db" class="nav-link" data-scroll-target="#restore-into-docker-harvester-db">Restore into Docker (harvester-db)</a></li>
+  <li><a href="#restore-into-local-postgres" id="toc-restore-into-local-postgres" class="nav-link" data-scroll-target="#restore-into-local-postgres">Restore into local Postgres</a></li>
+  </ul></li>
   </ul>
 </nav>
 </nav>
@@ -322,16 +332,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <hr>
 </section>
 </section>
-<section id="sovisuplus-database-postgresql" class="level1">
-<h1>SoVisuplus database (PostgreSQL)</h1>
-<p><em>Coming soon</em></p>
-<hr>
+<section id="sovisuplus-postgresql-container-svp-db-host-port-5432" class="level1">
+<h1>SoVisuplus Postgresql (container: svp-db, host port 5432)</h1>
+<section id="make-a-sql-dump" class="level2">
+<h2 class="anchored" data-anchor-id="make-a-sql-dump">Make a SQL dump</h2>
+<p>With a running Docker Compose stack (svp-db container):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># optional: export env if not already loaded</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">SVP_DB_NAME</span><span class="op">=</span><span class="va">${SVP_DB_NAME}</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">SVP_DB_USER</span><span class="op">=</span><span class="va">${SVP_DB_USER}</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec <span class="at">-T</span> svp-db <span class="dt">\</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  pg_dump <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">--format</span><span class="op">=</span>plain <span class="dt">\</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">--no-owner</span> <span class="at">--no-privileges</span> <span class="dt">\</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="dt">\</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> <span class="st">"sovisuplus-</span><span class="va">$(</span><span class="fu">date</span> +%F<span class="va">)</span><span class="st">.sql"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="svp-harvester-database-postgresql" class="level1">
-<h1>SVP Harvester database (PostgreSQL)</h1>
-<p><em>Coming soon</em></p>
+<section id="restore-into-docker-same-svp-db" class="level2">
+<h2 class="anchored" data-anchor-id="restore-into-docker-same-svp-db">Restore into Docker (same svp-db)</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> sovisuplus-YYYY-MM-DD.sql <span class="kw">|</span> <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">docker</span> compose exec <span class="at">-T</span> svp-db psql <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="restore-into-local-postgres-on-your-machine" class="level2">
+<h2 class="anchored" data-anchor-id="restore-into-local-postgres-on-your-machine">Restore into local Postgres (on your machine)</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">$SVP_DB_PASSWORD</span><span class="st">"</span> <span class="ex">psql</span> <span class="dt">\</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-h</span> localhost <span class="at">-p</span> 5432 <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> sovisuplus-YYYY-MM-DD.sql</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="svp-harvester-postgresql-container-harvester-db-host-port-5433" class="level1">
+<h1>SVP Harvester Postgresql (container: harvester-db, host port 5433)</h1>
+<p>With a running Docker Compose stack (harvester-db container):</p>
+<section id="make-a-sql-dump-1" class="level2">
+<h2 class="anchored" data-anchor-id="make-a-sql-dump-1">Make a SQL dump</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HARVESTER_DB_NAME</span><span class="op">=</span><span class="va">${HARVESTER_DB_NAME}</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HARVESTER_DB_USER</span><span class="op">=</span><span class="va">${HARVESTER_DB_USER}</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec <span class="at">-T</span> harvester-db <span class="dt">\</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  pg_dump <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">--format</span><span class="op">=</span>plain <span class="dt">\</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">--no-owner</span> <span class="at">--no-privileges</span> <span class="dt">\</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="dt">\</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> <span class="st">"harvester-</span><span class="va">$(</span><span class="fu">date</span> +%F<span class="va">)</span><span class="st">.sql"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="restore-into-docker-harvester-db" class="level2">
+<h2 class="anchored" data-anchor-id="restore-into-docker-harvester-db">Restore into Docker (harvester-db)</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> harvester-YYYY-MM-DD.sql <span class="kw">|</span> <span class="dt">\</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">docker</span> compose exec <span class="at">-T</span> harvester-db psql <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="restore-into-local-postgres" class="level2">
+<h2 class="anchored" data-anchor-id="restore-into-local-postgres">Restore into local Postgres</h2>
+<p>Create target DB/user on your host if needed, then:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">$HARVESTER_DB_PASSWORD</span><span class="st">"</span> <span class="ex">psql</span> <span class="dt">\</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-h</span> localhost <span class="at">-p</span> 5432 <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> harvester-YYYY-MM-DD.sql</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -21,6 +21,9 @@ services:
     container_name: crisalid-ikg
     ports:
       - 8001:8000
+    # or expose internally instead of publishing to host
+    #    expose:
+    #      - "8000"
     environment:
       - APP_ENV=DEV
       - API_PREFIX=/api
@@ -31,8 +34,10 @@ services:
       - AMQP_USER=${CRISALID_BUS_USER}
       - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}
       - NEO4J_URI=bolt://neo4j:${NEO4J_BOLT_PORT}
-      - NEO4J_USER=
-      - NEO4J_PASSWORD=
+      #      - NEO4J_USER= #keep empty if NEO4J_AUTH=none
+      #      - NEO4J_PASSWORD= #keep empty if NEO4J_AUTH=none
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       - ES_ENABLED=false
       - ES_HOST=http://localhost
       - ES_PORT=9200

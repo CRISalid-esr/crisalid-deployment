@@ -32,7 +32,6 @@ fi
 : "${KEYCLOAK_ADMIN:?Missing KEYCLOAK_ADMIN in keycloak .env}"
 : "${KEYCLOAK_ADMIN_PASSWORD:?Missing KEYCLOAK_ADMIN_PASSWORD in keycloak .env}"
 : "${KEYCLOAK_DB_VENDOR:?Missing KEYCLOAK_DB_VENDOR in keycloak .env}"
-: "${KEYCLOAK_DB_HOST:?Missing KEYCLOAK_DB_HOST in keycloak .env}"
 : "${KEYCLOAK_DB_PORT:?Missing KEYCLOAK_DB_PORT in keycloak .env}"
 : "${KEYCLOAK_DB_NAME:?Missing KEYCLOAK_DB_NAME in keycloak .env}"
 : "${KEYCLOAK_DB_USER:?Missing KEYCLOAK_DB_USER in keycloak .env}"
