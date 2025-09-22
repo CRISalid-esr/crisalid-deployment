@@ -71,3 +71,6 @@ docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" down --volumes --remove-orph
 
 echo "Running airflow-init..."
 docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+
+echo "Cleaning up old containers..."
+docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" down
