@@ -179,7 +179,7 @@ PERSPECTIVES_ROLES_FILTER="author"
 PUBLICATION_LIST_ROLES_FILTER="author"
 
 ORCID_URL="https://sandbox.orcid.org"
-SOVISUPLUS_HOST="http://sovisuplus.local:3000"
+APP_URL="http://sovisuplus.local:3000"
 ORCID_SCOPES="/person/update"
 ORCID_CLIENT_ID="use-the-same-client-id--provided-by-orcid-as-in-docker-compose"
 ORCID_CLIENT_SECRET="use-the-same-client-secret-provided-by-orcid-as-in-docker-compose"
