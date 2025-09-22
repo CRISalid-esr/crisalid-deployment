@@ -57,12 +57,71 @@ docker compose logs -f neo4j
 
 ---
 
-# SoVisuplus database (PostgreSQL)
+# SoVisuplus Postgresql (container: svp-db, host port 5432)
 
-*Coming soon*
+## Make a SQL dump
 
----
+With a running Docker Compose stack (svp-db container):
 
-# SVP Harvester database (PostgreSQL)
+```bash
+# optional: export env if not already loaded
+export SVP_DB_NAME=${SVP_DB_NAME}
+export SVP_DB_USER=${SVP_DB_USER}
 
-*Coming soon*
+docker compose exec -T svp-db \
+  pg_dump -U "$SVP_DB_USER" -d "$SVP_DB_NAME" \
+    --format=plain \
+    --no-owner --no-privileges \
+    --clean --if-exists \
+  > "sovisuplus-$(date +%F).sql"
+```
+
+## Restore into Docker (same svp-db)
+
+```bash
+cat sovisuplus-YYYY-MM-DD.sql | \
+  docker compose exec -T svp-db psql -U "$SVP_DB_USER" -d "$SVP_DB_NAME"
+```
+
+## Restore into local Postgres (on your machine)
+
+```bash
+PGPASSWORD="$SVP_DB_PASSWORD" psql \
+  -h localhost -p 5432 -U "$SVP_DB_USER" -d "$SVP_DB_NAME" \
+  -f sovisuplus-YYYY-MM-DD.sql
+```
+
+# SVP Harvester Postgresql (container: harvester-db, host port 5433)
+
+With a running Docker Compose stack (harvester-db container):
+
+## Make a SQL dump
+
+```bash
+export HARVESTER_DB_NAME=${HARVESTER_DB_NAME}
+export HARVESTER_DB_USER=${HARVESTER_DB_USER}
+
+docker compose exec -T harvester-db \
+  pg_dump -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME" \
+    --format=plain \
+    --no-owner --no-privileges \
+    --clean --if-exists \
+  > "harvester-$(date +%F).sql"
+```
+
+## Restore into Docker (harvester-db)
+
+```bash
+cat harvester-YYYY-MM-DD.sql | \
+  docker compose exec -T harvester-db psql -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME"
+```
+
+##  Restore into local Postgres
+
+Create target DB/user on your host if needed, then:
+
+```bash
+PGPASSWORD="$HARVESTER_DB_PASSWORD" psql \
+  -h localhost -p 5432 -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME" \
+  -f harvester-YYYY-MM-DD.sql
+```
