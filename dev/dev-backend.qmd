@@ -57,7 +57,7 @@ services:
   svp-db:
     image: postgres:16
     container_name: svp-db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${SVP_DB_USER}
       POSTGRES_PASSWORD: ${SVP_DB_PASSWORD}

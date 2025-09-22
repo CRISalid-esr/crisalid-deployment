@@ -2,7 +2,7 @@ services:
   keycloak-db:
     image: postgres:16
     container_name: keycloak-db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${KEYCLOAK_DB_NAME}
       POSTGRES_USER: ${KEYCLOAK_DB_USER}
