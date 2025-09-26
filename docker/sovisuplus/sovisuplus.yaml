@@ -37,6 +37,10 @@ services:
       - DB_PASSWORD=${SVP_DB_PASSWORD}
       - DB_HOST=svp-db
       - DB_PORT=5432
+      - WS_SCHEME=${SVP_WS_SCHEME}
+      - WS_HOST=${SVP_WS_HOST}
+      - WS_PORT=${SVP_WS_PORT}
+      - WS_PATH=${SVP_WS_PATH}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - AMQP_HOST=crisalid-bus
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
