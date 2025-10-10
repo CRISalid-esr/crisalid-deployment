@@ -157,11 +157,25 @@ keys.
 127.0.0.1 keycloak.local
 ```
 
+### **6. SoVisu+ RBAC Roles File**
+
+SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
+
+```bash
+cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
+```
+
+* Edit `sovisuplus/config/rbac.roles.yaml` to define your roles by grouping permissions (but dont create new
+  permissions, i.e new actions/subjects/fields as they are used in the code).
+* After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions
+  in database.
+
 ## 🔌 Communication with Host Machine
 
 If you want to connect external tools (on your host) to the containers, open the necessary ports.
 
-For example, to expose RabbitMQ's AMQP port on the host machine, edit `docker/crisalid-bus/crisalid-bus.yaml` and uncomment the
+For example, to expose RabbitMQ's AMQP port on the host machine, edit `docker/crisalid-bus/crisalid-bus.yaml` and
+uncomment the
 2nd `ports` line:
 
 ```yaml

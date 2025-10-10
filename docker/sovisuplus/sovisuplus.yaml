@@ -32,6 +32,8 @@ services:
       - 3000:3000
       - 3001:3001
     environment:
+      - INIT_ROLES_ON_START=true
+      - RBAC_ROLES_FILE=/config/rbac.roles.yaml
       - DB_NAME=${SVP_DB_NAME}
       - DB_USER=${SVP_DB_USER}
       - DB_PASSWORD=${SVP_DB_PASSWORD}
@@ -68,6 +70,8 @@ services:
         condition: service_healthy
       crisalid-bus:
         condition: service_healthy
+    volumes:
+      - ./config:/config:ro
     networks:
       - svp-network
       - crisalid-front
