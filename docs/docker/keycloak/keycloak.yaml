@@ -25,22 +25,27 @@ services:
     image: quay.io/keycloak/keycloak:26.3.2
     container_name: keycloak
     command: start-dev --import-realm
+    expose:
+      - 8080
     ports:
       - "8080:8080"
     environment:
+      KC_PROXY: edge
       KC_DB: postgres
-      KC_DB_URL_HOST: ${KEYCLOAK_DB_HOST}
+      KC_DB_URL_HOST: keycloak-db
       KC_DB_URL_PORT: ${KEYCLOAK_DB_PORT}
       KC_DB_URL_DATABASE: ${KEYCLOAK_DB_NAME}
       KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
       KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_HOSTNAME: ${KEYCLOAK_HOST}
+      KC_HOSTNAME: ${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
       KC_HOSTNAME_PORT: ${KEYCLOAK_PORT}
-      KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
-      KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HOSTNAME_STRICT: "true"
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HOSTNAME_DEBUG: "true"
+      KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
+      KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
     hostname: ${KEYCLOAK_HOST}
     volumes:
       - ./config:/opt/keycloak/data/import
@@ -57,4 +62,3 @@ networks:
     driver: bridge
   crisalid-front:
     driver: bridge
-

@@ -253,6 +253,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#configure-crisalid-directory-bridge-cdb" id="toc-configure-crisalid-directory-bridge-cdb" class="nav-link" data-scroll-target="#configure-crisalid-directory-bridge-cdb">3. 🔧 Configure CRISalid Directory Bridge (CDB)</a></li>
   <li><a href="#configure-keycloak" id="toc-configure-keycloak" class="nav-link" data-scroll-target="#configure-keycloak">4. 🔑 Configure Keycloak</a></li>
   <li><a href="#define-specific-uris-in-etchosts" id="toc-define-specific-uris-in-etchosts" class="nav-link" data-scroll-target="#define-specific-uris-in-etchosts">5. <strong>Define specific URIs in /etc/hosts</strong></a></li>
+  <li><a href="#sovisu-rbac-roles-file" id="toc-sovisu-rbac-roles-file" class="nav-link" data-scroll-target="#sovisu-rbac-roles-file"><strong>6. SoVisu+ RBAC Roles File</strong></a></li>
   </ul></li>
   <li><a href="#communication-with-host-machine" id="toc-communication-with-host-machine" class="nav-link" data-scroll-target="#communication-with-host-machine">🔌 Communication with Host Machine</a></li>
   <li><a href="#resetting-containers" id="toc-resetting-containers" class="nav-link" data-scroll-target="#resetting-containers">♻️ Resetting Containers</a></li>
@@ -419,36 +420,45 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> sovisuplus.local</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> keycloak.local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
+<section id="sovisu-rbac-roles-file" class="level3">
+<h3 class="anchored" data-anchor-id="sovisu-rbac-roles-file"><strong>6. SoVisu+ RBAC Roles File</strong></h3>
+<p>SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Edit <code>sovisuplus/config/rbac.roles.yaml</code> to define your roles by grouping permissions (but dont create new permissions, i.e new actions/subjects/fields as they are used in the code).</li>
+<li>After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions in database.</li>
+</ul>
+</section>
 </section>
 <section id="communication-with-host-machine" class="level2">
 <h2 class="anchored" data-anchor-id="communication-with-host-machine">🔌 Communication with Host Machine</h2>
 <p>If you want to connect external tools (on your host) to the containers, open the necessary ports.</p>
 <p>For example, to expose RabbitMQ’s AMQP port on the host machine, edit <code>docker/crisalid-bus/crisalid-bus.yaml</code> and uncomment the 2nd <code>ports</code> line:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="resetting-containers" class="level2">
 <h2 class="anchored" data-anchor-id="resetting-containers">♻️ Resetting Containers</h2>
 <p>To stop and delete containers + volumes for one profile:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To also delete images:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To ensure volumes are removed, you can also run:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm keycloak_postgres_data</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm svp-db-volume</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm crisalid-bus-volume</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm keycloak_postgres_data</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm svp-db-volume</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm crisalid-bus-volume</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="starting-the-services" class="level2">
 <h2 class="anchored" data-anchor-id="starting-the-services">🚀 Starting the Services</h2>
 <p>To start the services, run:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This command will start the selected components in the background. You can add or remove profiles as needed.</p>
 </section>
 <section id="next-steps" class="level2">

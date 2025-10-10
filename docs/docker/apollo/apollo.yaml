@@ -9,7 +9,10 @@ services:
     environment:
       - APP_ENV=DEV
       - NEO4J_URI=bolt://neo4j:${NEO4J_BOLT_PORT}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       - ENABLE_API_KEYS=${APOLLO_ENABLE_API_KEYS}
+      - API_KEYS=${SOVISUPLUS_GRAPHQL_API_KEY}
     networks:
       - ikg-network
       - crisalid-front

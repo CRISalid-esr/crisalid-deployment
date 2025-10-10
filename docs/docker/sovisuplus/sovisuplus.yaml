@@ -20,7 +20,7 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
-    command: ["postgres","-c","max_connections=200","-c","superuser_reserved_connections=3"]
+    command: ["postgres","-c","max_connections=400","-c","superuser_reserved_connections=3"]
     profiles:
       - sovisuplus
       - sovisuplus-db
@@ -32,11 +32,18 @@ services:
       - 3000:3000
       - 3001:3001
     environment:
+      - INIT_ROLES_ON_START=true
+      - RBAC_ROLES_FILE=/config/rbac.roles.yaml
       - DB_NAME=${SVP_DB_NAME}
       - DB_USER=${SVP_DB_USER}
       - DB_PASSWORD=${SVP_DB_PASSWORD}
       - DB_HOST=svp-db
       - DB_PORT=5432
+      - WS_SCHEME=${SVP_WS_SCHEME}
+      - WS_HOST=${SVP_WS_HOST}
+      - WS_PORT=${SVP_WS_PORT}
+      - WS_PATH=${SVP_WS_PATH}
+      - WS_INTERNAL_PORT=${SVP_WS_INTERNAL_PORT}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - AMQP_HOST=crisalid-bus
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
@@ -46,22 +53,25 @@ services:
       - AMQP_EXCHANGE_NAME=${SVP_AMQP_EXCHANGE_NAME}
       - GRAPHQL_ENDPOINT_ENABLED=${GRAPHQL_ENDPOINT_ENABLED}
       - GRAPHQL_ENDPOINT_URL=http://apollo:${APOLLO_API_PORT}/graphql
-      - GRAPHQL_API_KEY_ENABLED=${GRAPHQL_API_KEY_ENABLED}
+      - GRAPHQL_API_KEY_ENABLED=${APOLLO_ENABLE_API_KEYS}
+      - GRAPHQL_API_KEY=${SOVISUPLUS_GRAPHQL_API_KEY}
       - KEYCLOAK_CLIENT_ID=sovisuplus
       - KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}
-      - KEYCLOAK_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
+      - KEYCLOAK_PUBLIC_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
+      - KEYCLOAK_INTERNAL_ADDR=http://keycloak:8080
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - APP_URL=${SOVISUPLUS_SCHEME}://${SOVISUPLUS_HOST}:${SOVISUPLUS_PORT}
       - ORCID_URL=${ORCID_URL}
       - ORCID_SCOPES=${ORCID_SCOPES}
       - ORCID_CLIENT_ID=${ORCID_CLIENT_ID}
       - ORCID_CLIENT_SECRET=${ORCID_CLIENT_SECRET}
-      - SOVISUPLUS_HOST=${SOVISUPLUS_SCHEME}://${SOVISUPLUS_HOST}:${SOVISUPLUS_PORT}
     depends_on:
       svp-db:
         condition: service_healthy
       crisalid-bus:
         condition: service_healthy
+    volumes:
+      - ./config:/config:ro
     networks:
       - svp-network
       - crisalid-front
