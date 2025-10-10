@@ -1,13 +1,13 @@
 services:
   neo4j:
     image: neo4j:5-community
+    # comment the "ports" section if you don't want users to access neo4j UI
     ports:
       - "${NEO4J_HTTP_PORT}:7474" # HTTP port
       - "${NEO4J_BOLT_PORT}:7687" # BOLT port
-    # instead, you can choose to use 'expose' to make the ports available inside the Docker network only
-    #    expose:
-    #        - "${NEO4J_BOLT_PORT}"
-    #        - "${NEO4J_HTTP_PORT}"
+    expose:
+      - "${NEO4J_BOLT_PORT}"
+      - "${NEO4J_HTTP_PORT}"
     volumes:
       - ./data:/data
       - ./logs:/logs
