@@ -144,7 +144,7 @@ KEYCLOAK_DB_USER=keycloak
 KEYCLOAK_DB_PASSWORD=keycloak
 ```
 
-### 5. **Define specific URIs in /etc/hosts**
+### 4. **Define specific URIs in /etc/hosts**
 
 To ensure that Sovisu+ and Keycloak can be accessed correctly, you need to define specific URIs in your `/etc/hosts`
 file.
@@ -156,6 +156,17 @@ keys.
 127.0.0.1 sovisuplus.local
 127.0.0.1 keycloak.local
 ```
+
+### 5. **SoVisu+ custom themes**
+
+SoVisu+ allows you to customize its appearance using themes. You can create your own theme by following these steps:
+1. **Copy the sample theme directory**:
+
+```bash
+cp -r sovisuplus/theme-sample sovisuplus/theme
+```
+
+2. **Edit the theme files** in `sovisuplus/theme` to customize text and images according to your institution's branding.
 
 ### **6. SoVisu+ RBAC Roles File**
 
