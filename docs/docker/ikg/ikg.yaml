@@ -3,7 +3,7 @@ services:
     image: crisalidesr/crisalid-org-registry:v0.1
     container_name: crisalid-org-registry
     expose:
-      - "3000:3000"
+      - 3000
     environment:
       - ORG_REGISTRY_URL=http://crisalid-org-registry:3000  # Match the URL used in your environment
     healthcheck:
