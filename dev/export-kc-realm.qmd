@@ -1,0 +1,59 @@
+---
+title: "Export Keycloak Realm"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+# 💾 Export Keycloak Realm Configuration
+
+> To update the Keycloak configuration template in this repository, you need to export the current realm from your running Keycloak instance. This guide walks you through exporting the `crisalid-inst` realm.
+
+---
+
+## 1. Prerequisites
+
+* The Keycloak service must be running and accessible via Docker Compose.
+* The realm you wish to export must be named **`crisalid-inst`**.
+
+---
+
+## 2. Export Procedure
+
+Follow these steps to extract the realm configuration (clients, roles, and settings) from the running container and save it to your local configuration folder (`docker/keycloak/config`).
+
+### A. Access the Keycloak Container
+
+Connect to your running Keycloak service container via the terminal:
+
+```bash
+docker exec -it keycloak /bin/bash
+````
+
+### B. Run the Export Command
+
+Inside the container, use `kc.sh export` to create the realm file. We specify `--users skip` to ensure the export only includes configuration metadata, not specific user data.
+
+```bash
+/opt/keycloak/bin/kc.sh export \
+  --dir /opt/keycloak/data/export \
+  --realm crisalid-inst \
+  --users skip
+```
+
+A file named `crisalid-inst-realm.json` is created in the container's export folder.
+
+### C. Copy the File to the Host
+
+Exit the container, and run the following command on your host machine to copy the file into your local configuration directory:
+
+From docker/keycloak directory, run:
+
+```bash
+mkdir -p realm-export # or whatever folder you want to use
+docker cp keycloak:/opt/keycloak/data/export/crisalid-inst-realm.json ./realm-export/
+```
+
+> **Result:**
+You now have the exported realm file at `docker/keycloak/realm-export/crisalid-inst-realm.json`. You can use this file to update your configuration template located at `docker/keycloak/config/crisalid-inst.json.template`.
