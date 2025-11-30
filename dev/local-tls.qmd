@@ -1,0 +1,176 @@
+---
+title: "Migrate Your Local Dev Instance to TLS/HTTPS"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+# Part 2 — Migrate your Local Dev to HTTPS (TLS)
+
+> This section guides you through configuring your local development setup to use HTTPS (TLS) for both **SoVisu+** and **Keycloak**. This is required to enable Saml2 authentication.
+
+---
+
+## 🎯 Goal
+
+Run **SoVisu+** on `https://sovisuplus.local:3000` and **Keycloak** on `https://keycloak.local:8443`, ensuring your local machine and applications trust the self-signed certificates.
+
+---
+
+## 🔒 Step 1: Install Certificate Authority (mkcert)
+
+We use `mkcert` to create locally trusted certificates, avoiding browser warnings. On Ubuntu, `libnss3-tools` is required for browser trust.
+
+1.  **Install Prerequisites and mkcert:**
+
+```bash
+sudo apt update
+sudo apt install libnss3-tools
+curl -JLO "[https://dl.filippo.io/mkcert/latest?for=linux/amd64](https://dl.filippo.io/mkcert/latest?for=linux/amd64)"
+chmod +x mkcert-v*-linux-amd64
+sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+```
+
+2.  **Initialize Local Certificate Authority:**
+
+```bash
+mkcert -install
+```
+
+3.  **Generate Certificates:** Create a directory to store the files and generate a certificate that covers both domains:
+
+The name and location of "local-certs" matters because it will be referenced later.
+
+```bash
+mkdir -p ~/local-certs
+cd ~/local-certs
+mkcert sovisuplus.local keycloak.local localhost 127.0.0.1 ::1
+```
+
+4.  **Fix Key Permissions for Docker:** 
+
+The Keycloak container needs read access to the private key.
+
+```bash
+sudo chmod a+r ~/local-certs/sovisuplus.local+4-key.pem
+```
+---
+
+## 🔑 Step 2: Configure Environment Variables
+
+You need to update several environment variables in your Next.js application's `.env` file and the Keycloak Docker configuration.
+
+### A. SoVisu+ (`sovisuplus/.env`)
+
+Update the URLs to reflect the new `https` scheme and the Keycloak HTTPS port (`8443`).
+
+```bash
+# Before (HTTP)
+# KEYCLOAK_ISSUER="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"
+# KEYCLOAK_PUBLIC_URL="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"
+# NEXTAUTH_URL="[http://sovisuplus.local:3000/api/auth](http://sovisuplus.local:3000/api/auth)"
+
+# After (HTTPS)
+KEYCLOAK_ISSUER="[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"
+KEYCLOAK_PUBLIC_URL="[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"
+NEXTAUTH_URL="[https://sovisuplus.local:3000/api/auth](https://sovisuplus.local:3000/api/auth)"
+
+# UNCOMMENT THIS LINE to allow the Next.js server (Node.js) to communicate
+# with Keycloak without complaining about the self-signed certificate.
+NODE_TLS_REJECT_UNAUTHORIZED=0
+````
+
+### B. Docker Config (`crisalid-deployment/docker/.env`)
+
+Update the scheme and port for both Keycloak and SoVisu+ to use HTTPS.
+
+```bash
+# Before
+# KEYCLOAK_SCHEME=http
+# KEYCLOAK_PORT=8080
+# SOVISUPLUS_SCHEME=http
+
+# After
+KEYCLOAK_SCHEME=https
+KEYCLOAK_PORT=8443
+SOVISUPLUS_SCHEME=https
+```
+
+### C. Docker Keycloak Config (`docker/keycloak/.env`)
+
+Ensure the hostname enforcement variables are set correctly for the TLS setup.
+
+```bash
+# Invert these values from the default/sample:
+KEYCLOAK_HTTP_ENABLED=false
+KEYCLOAK_HOSTNAME_STRICT_HTTPS=true
+```
+
+-----
+
+## 🛠️ Step 3: Run Next.js Dev Server with HTTPS
+
+To run the Next.js development server over HTTPS, we need to use the `--experimental-https` flag along with the certificate files you generated. This is done via a dedicated script in `package.json`.
+
+1.  **package.json contains a 'dev-tls' script:**
+
+```json
+"scripts": {
+  "dev": "next dev -H sovisuplus.local -p 3000",
+  "dev-tls": "next dev --experimental-https --experimental-https-key ~/local-certs/sovisuplus.local+4-key.pem --experimental-https-cert ~/local-certs/sovisuplus.local+4.pem -H sovisuplus.local -p 3000"
+}
+```
+
+2.  **How ro Run the Dev Server with TLS:**
+
+Instead of `npm run dev`, use:
+
+```bash
+npm run dev-tls
+```
+
+> **Reference:** This approach uses built-in Next.js functionality. See [Vercel KB: Access Next.js localhost HTTPS certificate self-signed](https://vercel.com/kb/guide/access-nextjs-localhost-https-certificate-self-signed).
+
+-----
+
+## 🐳 Step 4: Configure and Restart Keycloak (TLS Profile)
+
+You must now modify your docker compose environment to start Keycloak with its HTTPS configuration, which is handled via a dedicated `keycloak-tls` profile.
+
+1.  **Destroy the Old DB:** 
+
+Keycloak will write the old HTTP configuration into its database. It's safest to destroy the database volume to force a clean, HTTPS-based configuration import.
+
+```bash
+# Ensure Docker compose is stopped
+# Remove the persisted DB volume
+sudo rm -rf docker/keycloak/postgres-data
+```
+
+2.  **Renew Configuration Script:** 
+
+Re-run your configuration script to ensure the Keycloak realm file (`crisalid-inst.json`) contains the new `https://` URLs.
+
+Ensure all the environment variables are set correctly before running the script (step 2).
+
+```bash
+./configure_keycloak.sh
+```
+
+3.  **Launch Docker Compose with the TLS Profile:** 
+
+Replace `--profile keycloak` with the dedicated `--profile keycloak-tls` when starting Docker Compose.
+
+```bash
+docker compose \
+  # ... all other profiles ...
+  --profile keycloak-tls \ 
+  --profile sovisuplus-db \
+  up --remove-orphans
+```
+
+### Verification
+
+* **Keycloak:** Should be accessible securely at `https://keycloak.local:844`.
+* **SoVisu+:** Should be accessible securely at `https://sovisuplus.local:3000`.

@@ -14,6 +14,14 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2025-10-10T05:14:16.621Z</lastmod>
+    <lastmod>2025-11-01T01:38:19.677Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
+    <lastmod>2025-11-30T08:54:05.422Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
+    <lastmod>2025-11-30T09:02:12.222Z</lastmod>
   </url>
 </urlset>

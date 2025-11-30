@@ -33,6 +33,10 @@ website:
             text: Docker Compose deployment
           - href: dev/dev-backend.qmd
             text: Docker Compose for local development
+          - href: dev/local-tls.qmd
+            text: Local TLS/HTTPs setup
+          - href: dev/export-kc-realm.qmd
+            text: Export Keycloak Realm
           - href: dev/backup-restore-with-dc.qmd
             text: Backup and Restore with Docker Compose
           - href: dev/manual_installation.qmd
