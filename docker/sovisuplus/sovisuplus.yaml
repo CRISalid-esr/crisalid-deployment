@@ -29,8 +29,8 @@ services:
     image: crisalidesr/sovisuplus:latest
     container_name: sovisuplus
     ports:
-      - 3000:3000
-      - 3001:3001
+      - "${SOVISUPLUS_PORT}:3000"
+      - "${SVP_WS_PORT}:3001"
     environment:
       - INIT_ROLES_ON_START=true
       - RBAC_ROLES_FILE=/config/rbac.roles.yaml

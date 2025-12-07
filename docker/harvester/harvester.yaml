@@ -53,7 +53,7 @@ services:
     image: crisalidesr/svp-harvester:latest
     container_name: harvester-ui
     ports:
-      - 8000:8000
+      - "${HARVESTER_UI_PORT}:8000"
     environment:
       - APP_ENV=DEV
       - API_HOST=http://localhost:8000
