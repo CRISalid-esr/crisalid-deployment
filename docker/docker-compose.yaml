@@ -25,3 +25,6 @@ include:
   - path: ./keycloak/keycloak.yaml
     env_file: ./keycloak/.env
     project_directory: ./keycloak
+  - path: ./ofelia/ofelia.yaml
+    env_file: ./ofelia/.env
+    project_directory: ./ofelia

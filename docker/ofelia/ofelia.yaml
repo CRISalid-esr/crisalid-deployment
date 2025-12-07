@@ -1,0 +1,22 @@
+services:
+  crisalid-ofelia:
+    image: mcuadros/ofelia:0.3
+    container_name: crisalid-ofelia
+
+    command: daemon --config=/etc/ofelia/config.ini
+
+    volumes:
+      - ./${CONFIG_FILE_NAME}:/etc/ofelia/config.ini:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - crisalid-back
+    profiles:
+      - ofelia
+    depends_on:
+      crisalid-ikg:
+        condition: service_healthy
+
+networks:
+  crisalid-back:
+    driver: bridge

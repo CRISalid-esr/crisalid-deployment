@@ -6,7 +6,7 @@ format:
     toc-location: left
 ---
 
-# Part 2 — Migrate your Local Dev to HTTPS (TLS)
+# Migrate your Local Dev to HTTPS (TLS)
 
 > This section guides you through configuring your local development setup to use HTTPS (TLS) for both **SoVisu+** and **Keycloak**. This is required to enable Saml2 authentication.
 

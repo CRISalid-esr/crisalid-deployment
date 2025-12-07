@@ -11,8 +11,7 @@ testing**.
 
 > 🛡️ **Ensure your firewall is enabled** on the machine running this setup (e.g., `ufw` on Linux). Running this
 > deployment without a firewall can lead to **data leaks** or **insecure access** to internal institutional
-> directories (
-> especially if LDAP is enabled).
+> directories (especially if LDAP is enabled).
 
 ---
 
@@ -42,6 +41,7 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile ofelia \
   up
 ```
 
@@ -51,7 +51,7 @@ docker compose \
 
 ### 1. 🧾 `.env` Files
 
-Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`) has its own
+Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
 `.env.sample` file.
 
 * Copy each `.env.sample` to `.env`
@@ -144,7 +144,7 @@ KEYCLOAK_DB_USER=keycloak
 KEYCLOAK_DB_PASSWORD=keycloak
 ```
 
-### 4. **Define specific URIs in /etc/hosts**
+4. **Define specific URIs in /etc/hosts**
 
 To ensure that Sovisu+ and Keycloak can be accessed correctly, you need to define specific URIs in your `/etc/hosts`
 file.
@@ -180,6 +180,91 @@ cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
   permissions, i.e new actions/subjects/fields as they are used in the code).
 * After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions
   in database.
+
+### 7. ⏰ Configure Ofelia (system-wide scheduler)
+
+[Ofelia](https://hub.docker.com/r/mcuadros/ofelia) is the **scheduler of the whole CRISalid stack**.
+It runs as its own container and periodically triggers tasks for other containers (by running a CLI command
+or calling an API endpoint).
+
+Ofelia reads a config file and uses the Docker API to:
+
+* **`job-exec`**: run a command *inside* an existing container (via `docker exec`)
+* **`job-local`**: run a command directly inside the Ofelia container itself (typically, a curl command to call an API)
+* (**and `job-run`**: run a one-shot container if needed)
+
+You can find full documentation here:
+
+* Docker Hub: [https://hub.docker.com/r/mcuadros/ofelia](https://hub.docker.com/r/mcuadros/ofelia)
+* GitHub repository: [https://github.com/mcuadros/ofelia/tree/master](https://github.com/mcuadros/ofelia/tree/master)
+
+In this deployment, Ofelia is included as its own Docker Compose profile (`ofelia`) with:
+
+* a **compose file**: `docker/ofelia/ofelia.yaml`
+* a **scheduler config file template**: `docker/ofelia/config.ini`
+* a **configuration template**: `docker/ofelia/.env.sample`
+
+#### 7.1. Create Ofelia `.env` 
+
+In `docker/ofelia/`, copy the sample file:
+
+```bash
+cp docker/ofelia/.env.sample docker/ofelia/.env
+```
+
+The sample content is:
+
+```env
+CONFIG_FILE_NAME=config.ini
+```
+
+This variable is used only by **Docker Compose** to choose which config file to mount inside Ofelia.
+You can later duplicate `config.ini` under another name (for example `config.dev.ini`, `config.prod.ini`, etc.) and
+switch by changing `CONFIG_FILE_NAME` in `.env` without editing the Compose file:
+
+```env
+CONFIG_FILE_NAME=config.dev.ini
+# or:
+# CONFIG_FILE_NAME=config.prod.ini
+```
+
+#### 7.2. Define the scheduled jobs in `config.ini`
+
+The default scheduler configuration file is:
+
+```text
+docker/ofelia/config.ini
+```
+
+Example content:
+
+```ini
+; file: docker/ofelia/config.ini
+
+[job-exec "ikg-fetch-pubs"]
+schedule = @every 2m
+container = crisalid-ikg
+command = python -m app.cli people fetch-publication-random
+```
+
+This declares a job named `ikg-fetch-pubs` that:
+
+* runs **every 2 minutes** (`@every 2m`)
+* uses **`job-exec`**: it executes the command **inside** the running `crisalid-ikg` container
+* calls the internal CLI: `python -m app.cli people fetch-publication-random`
+
+#### 7.3. Run Ofelia with Docker Compose
+
+To start the scheduler along with the rest of the stack, include the `ofelia` profile, for example:
+
+```bash
+docker compose \
+...
+  --profile ofelia \
+  up -d
+```
+
+
 
 ## 🔌 Communication with Host Machine
 
@@ -230,7 +315,7 @@ docker volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-p
 To start the services, run:
 
 ```bash
-docker compose --profile neo4j --profile apollo --profile crisalid-bus --profile harvester --profile ikg --profile cdb --profile keycloak --profile sovisuplus up
+docker compose --profile neo4j --profile apollo --profile crisalid-bus --profile harvester --profile ikg --profile cdb --profile keycloak --profile sovisuplus --profile ofelia up -d
 ```
 
 This command will start the selected components in the background. You can add or remove profiles as needed.

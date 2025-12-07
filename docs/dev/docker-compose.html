@@ -165,6 +165,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Local TLS/HTTPs setup</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../dev/export-kc-realm.html">
+ <span class="dropdown-text">Export Keycloak Realm</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../dev/backup-restore-with-dc.html">
  <span class="dropdown-text">Backup and Restore with Docker Compose</span></a>
   </li>  
@@ -256,9 +260,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#configure-crisalid-bus" id="toc-configure-crisalid-bus" class="nav-link" data-scroll-target="#configure-crisalid-bus">2. 🔧 Configure CRISalid Bus</a></li>
   <li><a href="#configure-crisalid-directory-bridge-cdb" id="toc-configure-crisalid-directory-bridge-cdb" class="nav-link" data-scroll-target="#configure-crisalid-directory-bridge-cdb">3. 🔧 Configure CRISalid Directory Bridge (CDB)</a></li>
   <li><a href="#configure-keycloak" id="toc-configure-keycloak" class="nav-link" data-scroll-target="#configure-keycloak">4. 🔑 Configure Keycloak</a></li>
-  <li><a href="#define-specific-uris-in-etchosts" id="toc-define-specific-uris-in-etchosts" class="nav-link" data-scroll-target="#define-specific-uris-in-etchosts">4. <strong>Define specific URIs in /etc/hosts</strong></a></li>
   <li><a href="#sovisu-custom-themes" id="toc-sovisu-custom-themes" class="nav-link" data-scroll-target="#sovisu-custom-themes">5. <strong>SoVisu+ custom themes</strong></a></li>
   <li><a href="#sovisu-rbac-roles-file" id="toc-sovisu-rbac-roles-file" class="nav-link" data-scroll-target="#sovisu-rbac-roles-file"><strong>6. SoVisu+ RBAC Roles File</strong></a></li>
+  <li><a href="#configure-ofelia-system-wide-scheduler" id="toc-configure-ofelia-system-wide-scheduler" class="nav-link" data-scroll-target="#configure-ofelia-system-wide-scheduler">7. ⏰ Configure Ofelia (system-wide scheduler)</a></li>
   </ul></li>
   <li><a href="#communication-with-host-machine" id="toc-communication-with-host-machine" class="nav-link" data-scroll-target="#communication-with-host-machine">🔌 Communication with Host Machine</a></li>
   <li><a href="#resetting-containers" id="toc-resetting-containers" class="nav-link" data-scroll-target="#resetting-containers">♻️ Resetting Containers</a></li>
@@ -297,7 +301,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>⚠️ <strong>Warning</strong>: Do not deploy this setup to production. This configuration is meant solely for <strong>local development and testing</strong>.</p>
 </blockquote>
 <blockquote class="blockquote">
-<p>🛡️ <strong>Ensure your firewall is enabled</strong> on the machine running this setup (e.g., <code>ufw</code> on Linux). Running this deployment without a firewall can lead to <strong>data leaks</strong> or <strong>insecure access</strong> to internal institutional directories ( especially if LDAP is enabled).</p>
+<p>🛡️ <strong>Ensure your firewall is enabled</strong> on the machine running this setup (e.g., <code>ufw</code> on Linux). Running this deployment without a firewall can lead to <strong>data leaks</strong> or <strong>insecure access</strong> to internal institutional directories (especially if LDAP is enabled).</p>
 </blockquote>
 <hr>
 <section id="choosing-the-components" class="level2">
@@ -334,7 +338,10 @@ Main docker-compose.yaml
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./sovisuplus</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./keycloak/keycloak.yaml</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./keycloak/.env</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./keycloak</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./keycloak</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./ofelia/ofelia.yaml</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./ofelia/.env</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./ofelia</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <p>For example:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
@@ -346,14 +353,15 @@ Main docker-compose.yaml
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ofelia <span class="dt">\</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="preparation-steps" class="level2">
 <h2 class="anchored" data-anchor-id="preparation-steps">🧰 Preparation Steps</h2>
 <section id="env-files" class="level3">
 <h3 class="anchored" data-anchor-id="env-files">1. 🧾 <code>.env</code> Files</h3>
-<p>Each directory under <code>docker/</code> (e.g.&nbsp;<code>apollo</code>, <code>crisalid-bus</code>, <code>ikg</code>, <code>neo4j</code>, <code>cdb</code>, <code>harvester</code>) has its own <code>.env.sample</code> file.</p>
+<p>Each directory under <code>docker/</code> (e.g.&nbsp;<code>apollo</code>, <code>crisalid-bus</code>, <code>ikg</code>, <code>neo4j</code>, <code>cdb</code>, <code>harvester</code>, …) has its own <code>.env.sample</code> file.</p>
 <ul>
 <li>Copy each <code>.env.sample</code> to <code>.env</code></li>
 <li>Fill in appropriate values (hostnames, ports, secrets, etc.)</li>
@@ -417,9 +425,9 @@ KEYCLOAK_DB_PORT=5432
 KEYCLOAK_DB_NAME=keycloak
 KEYCLOAK_DB_USER=keycloak
 KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
-</section>
-<section id="define-specific-uris-in-etchosts" class="level3">
-<h3 class="anchored" data-anchor-id="define-specific-uris-in-etchosts">4. <strong>Define specific URIs in /etc/hosts</strong></h3>
+<ol start="4" type="1">
+<li><strong>Define specific URIs in /etc/hosts</strong></li>
+</ol>
 <p>To ensure that Sovisu+ and Keycloak can be accessed correctly, you need to define specific URIs in your <code>/etc/hosts</code> file. This is necessary because Sovisu+ uses OAuth2 with ORCID, which requires a specific hostname even to deliver “sandbox” keys.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add these lines to your /etc/hosts file</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> sovisuplus.local</span>
@@ -442,36 +450,94 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <li>After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions in database.</li>
 </ul>
 </section>
+<section id="configure-ofelia-system-wide-scheduler" class="level3">
+<h3 class="anchored" data-anchor-id="configure-ofelia-system-wide-scheduler">7. ⏰ Configure Ofelia (system-wide scheduler)</h3>
+<p><a href="https://hub.docker.com/r/mcuadros/ofelia">Ofelia</a> is the <strong>scheduler of the whole CRISalid stack</strong>. It runs as its own container and periodically triggers tasks for other containers (by running a CLI command or calling an API endpoint).</p>
+<p>Ofelia reads a config file and uses the Docker API to:</p>
+<ul>
+<li><strong><code>job-exec</code></strong>: run a command <em>inside</em> an existing container (via <code>docker exec</code>)</li>
+<li><strong><code>job-local</code></strong>: run a command directly inside the Ofelia container itself (typically, a curl command to call an API)</li>
+<li>(<strong>and <code>job-run</code></strong>: run a one-shot container if needed)</li>
+</ul>
+<p>You can find full documentation here:</p>
+<ul>
+<li>Docker Hub: <a href="https://hub.docker.com/r/mcuadros/ofelia">https://hub.docker.com/r/mcuadros/ofelia</a></li>
+<li>GitHub repository: <a href="https://github.com/mcuadros/ofelia/tree/master">https://github.com/mcuadros/ofelia/tree/master</a></li>
+</ul>
+<p>In this deployment, Ofelia is included as its own Docker Compose profile (<code>ofelia</code>) with:</p>
+<ul>
+<li>a <strong>compose file</strong>: <code>docker/ofelia/ofelia.yaml</code></li>
+<li>a <strong>scheduler config file template</strong>: <code>docker/ofelia/config.ini</code></li>
+<li>a <strong>configuration template</strong>: <code>docker/ofelia/.env.sample</code></li>
+</ul>
+<section id="create-ofelia-.env" class="level4">
+<h4 class="anchored" data-anchor-id="create-ofelia-.env">7.1. Create Ofelia <code>.env</code></h4>
+<p>In <code>docker/ofelia/</code>, copy the sample file:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/ofelia/.env.sample docker/ofelia/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The sample content is:</p>
+<pre class="env"><code>CONFIG_FILE_NAME=config.ini</code></pre>
+<p>This variable is used only by <strong>Docker Compose</strong> to choose which config file to mount inside Ofelia. You can later duplicate <code>config.ini</code> under another name (for example <code>config.dev.ini</code>, <code>config.prod.ini</code>, etc.) and switch by changing <code>CONFIG_FILE_NAME</code> in <code>.env</code> without editing the Compose file:</p>
+<pre class="env"><code>CONFIG_FILE_NAME=config.dev.ini
+# or:
+# CONFIG_FILE_NAME=config.prod.ini</code></pre>
+</section>
+<section id="define-the-scheduled-jobs-in-config.ini" class="level4">
+<h4 class="anchored" data-anchor-id="define-the-scheduled-jobs-in-config.ini">7.2. Define the scheduled jobs in <code>config.ini</code></h4>
+<p>The default scheduler configuration file is:</p>
+<pre class="text"><code>docker/ofelia/config.ini</code></pre>
+<p>Example content:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">; file: docker/ofelia/config.ini</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">[job-exec "ikg-fetch-pubs"]</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="dt">schedule </span><span class="ot">=</span><span class="st"> @every 2m</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="dt">container </span><span class="ot">=</span><span class="st"> crisalid-ikg</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="dt">command </span><span class="ot">=</span><span class="st"> python -m app.cli people fetch-publication-random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This declares a job named <code>ikg-fetch-pubs</code> that:</p>
+<ul>
+<li>runs <strong>every 2 minutes</strong> (<code>@every 2m</code>)</li>
+<li>uses <strong><code>job-exec</code></strong>: it executes the command <strong>inside</strong> the running <code>crisalid-ikg</code> container</li>
+<li>calls the internal CLI: <code>python -m app.cli people fetch-publication-random</code></li>
+</ul>
+</section>
+<section id="run-ofelia-with-docker-compose" class="level4">
+<h4 class="anchored" data-anchor-id="run-ofelia-with-docker-compose">7.3. Run Ofelia with Docker Compose</h4>
+<p>To start the scheduler along with the rest of the stack, include the <code>ofelia</code> profile, for example:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> ofelia <span class="dt">\</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
 </section>
 <section id="communication-with-host-machine" class="level2">
 <h2 class="anchored" data-anchor-id="communication-with-host-machine">🔌 Communication with Host Machine</h2>
 <p>If you want to connect external tools (on your host) to the containers, open the necessary ports.</p>
 <p>For example, to expose RabbitMQ’s AMQP port on the host machine, edit <code>docker/crisalid-bus/crisalid-bus.yaml</code> and uncomment the 2nd <code>ports</code> line:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="resetting-containers" class="level2">
 <h2 class="anchored" data-anchor-id="resetting-containers">♻️ Resetting Containers</h2>
 <p>To stop and delete containers + volumes for one profile:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To also delete images:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To ensure volumes are removed, you can also run:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm keycloak_postgres_data</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm svp-db-volume</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm crisalid-bus-volume</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm keycloak_postgres_data</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm svp-db-volume</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm crisalid-bus-volume</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="starting-the-services" class="level2">
 <h2 class="anchored" data-anchor-id="starting-the-services">🚀 Starting the Services</h2>
 <p>To start the services, run:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus up</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> ofelia up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This command will start the selected components in the background. You can add or remove profiles as needed.</p>
 </section>
 <section id="next-steps" class="level2">
