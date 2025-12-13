@@ -87,6 +87,10 @@ services:
 
   harvester-worker:
     image: crisalidesr/svp-harvester:latest
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     container_name: harvester-worker
     environment:
       - APP_ENV=DEV
