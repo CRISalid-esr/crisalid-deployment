@@ -28,6 +28,7 @@ services:
   sovisuplus:
     image: crisalidesr/sovisuplus:latest
     container_name: sovisuplus
+    restart: unless-stopped
     ports:
       - 3000:3000
       - 3001:3001

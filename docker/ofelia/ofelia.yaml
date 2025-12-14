@@ -2,6 +2,7 @@ services:
   crisalid-ofelia:
     image: mcuadros/ofelia:0.3
     container_name: crisalid-ofelia
+    restart: unless-stopped
 
     command: daemon --config=/etc/ofelia/config.ini
 

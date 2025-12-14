@@ -2,6 +2,7 @@ services:
   svp-jel-proxy:
     image: crisalidesr/svp-jel-proxy:latest
     container_name: svp-jel-proxy
+    restart: unless-stopped
     ports:
       - 3030:3030
     healthcheck:
@@ -17,6 +18,7 @@ services:
   harvester-redis:
     image: redis:7
     container_name: harvester-redis
+    restart: unless-stopped
     expose:
       - 6379
     healthcheck:
@@ -52,6 +54,7 @@ services:
   harvester-ui:
     image: crisalidesr/svp-harvester:latest
     container_name: harvester-ui
+    restart: unless-stopped
     ports:
       - 8000:8000
     environment:
@@ -87,11 +90,12 @@ services:
 
   harvester-worker:
     image: crisalidesr/svp-harvester:latest
+    container_name: harvester-worker
+    restart: unless-stopped
     ulimits:
       nofile:
         soft: 65535
         hard: 65535
-    container_name: harvester-worker
     environment:
       - APP_ENV=DEV
       - DB_HOST=harvester-db

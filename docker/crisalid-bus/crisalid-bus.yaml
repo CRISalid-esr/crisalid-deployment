@@ -2,6 +2,7 @@ services:
   crisalid-bus:
     image: rabbitmq:3-management
     container_name: 'crisalid-bus'
+    restart: unless-stopped
     environment:
       - RABBITMQ_DEFAULT_USER=${CRISALID_BUS_USER}
       - RABBITMQ_DEFAULT_PASS=${CRISALID_BUS_PASSWORD}

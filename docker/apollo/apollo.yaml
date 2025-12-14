@@ -1,6 +1,8 @@
 services:
   apollo:
     image: crisalidesr/crisalid-apollo:latest
+    container_name: crisalid-apollo
+    restart: unless-stopped
     ports:
       - ${APOLLO_API_PORT}:4000
     depends_on:
