@@ -2,6 +2,7 @@ services:
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:v0.1
     container_name: crisalid-org-registry
+    restart: unless-stopped
     expose:
       - 3000
     environment:
@@ -19,6 +20,7 @@ services:
   crisalid-ikg:
     image: crisalidesr/crisalid-ikg:v0.25-dev
     container_name: crisalid-ikg
+    restart: unless-stopped
     ports:
       - 8001:8000
     # or expose internally instead of publishing to host
