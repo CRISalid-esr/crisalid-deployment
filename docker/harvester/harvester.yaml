@@ -18,6 +18,7 @@ services:
   harvester-redis:
     image: redis:7
     container_name: harvester-redis
+    restart: unless-stopped
     expose:
       - 6379
     healthcheck:
@@ -89,12 +90,12 @@ services:
 
   harvester-worker:
     image: crisalidesr/svp-harvester:latest
+    container_name: harvester-worker
     restart: unless-stopped
     ulimits:
       nofile:
         soft: 65535
         hard: 65535
-    container_name: harvester-worker
     environment:
       - APP_ENV=DEV
       - DB_HOST=harvester-db
