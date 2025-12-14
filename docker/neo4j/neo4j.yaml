@@ -1,6 +1,7 @@
 services:
   neo4j:
     image: neo4j:5-community
+    restart: unless-stopped
     # comment the "ports" section if you don't want users to access neo4j UI
     ports:
       - "${NEO4J_HTTP_PORT}:7474" # HTTP port
