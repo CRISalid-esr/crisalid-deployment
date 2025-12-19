@@ -67,11 +67,13 @@ Update the URLs to reflect the new `https` scheme and the Keycloak HTTPS port (`
 
 ```bash
 # Before (HTTP)
+# WS_SCHEME="ws"
 # KEYCLOAK_ISSUER="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"
 # KEYCLOAK_PUBLIC_URL="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"
 # NEXTAUTH_URL="[http://sovisuplus.local:3000/api/auth](http://sovisuplus.local:3000/api/auth)"
 
 # After (HTTPS)
+WS_SCHEME=wss
 KEYCLOAK_ISSUER="[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"
 KEYCLOAK_PUBLIC_URL="[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"
 NEXTAUTH_URL="[https://sovisuplus.local:3000/api/auth](https://sovisuplus.local:3000/api/auth)"
