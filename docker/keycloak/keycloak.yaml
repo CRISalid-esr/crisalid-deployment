@@ -53,6 +53,7 @@ services:
     hostname: ${KEYCLOAK_HOST}
     volumes:
       - ./config:/opt/keycloak/data/import
+      - ./themes:/opt/keycloak/themes
     depends_on:
       keycloak-db:
         condition: service_healthy
