@@ -27,6 +27,8 @@ services:
     container_name: keycloak
     restart: unless-stopped
     command: start-dev --import-realm
+    # for theme development, disable caching :
+    #command: start-dev --import-realm --spi-theme--static-max-age=-1 --spi-theme--cache-themes=false --spi-theme--cache-templates=false
     expose:
       - 8080
     ports:
@@ -62,7 +64,7 @@ services:
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.3.2
     container_name: keycloak
-    command: start-dev --import-realm
+    command: start-dev --import-realm 
     expose:
       - 8080
       - 8443
@@ -93,6 +95,7 @@ services:
     volumes:
       - ./config:/opt/keycloak/data/import
       - ~/local-certs:/etc/x509/https
+      - ./themes:/opt/keycloak/themes
     depends_on:
       keycloak-db:
         condition: service_healthy
