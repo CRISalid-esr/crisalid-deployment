@@ -10,7 +10,7 @@ services:
         condition: service_healthy
     environment:
       - APP_ENV=DEV
-      - NEO4J_URI=bolt://neo4j:${NEO4J_BOLT_PORT}
+      - NEO4J_URI=bolt://${NEO4J_HOST}:${NEO4J_BOLT_PORT}
       - NEO4J_USER=${NEO4J_USER}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       - ENABLE_API_KEYS=${APOLLO_ENABLE_API_KEYS}
