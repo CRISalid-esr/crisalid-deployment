@@ -73,6 +73,8 @@ services:
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
       - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+      - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
+      - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
     depends_on:
       harvester-db:
         condition: service_healthy
@@ -116,6 +118,7 @@ services:
       - INNER_TASK_QUEUE_LENGTH=20
       - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
       - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
+      - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
     healthcheck:
       test: [ "CMD", "pgrep", "-f", "python -m app.amqp_listen" ]
       interval: 10s
