@@ -2,6 +2,7 @@ services:
   svp-jel-proxy:
     image: crisalidesr/svp-jel-proxy:latest
     container_name: svp-jel-proxy
+    restart: unless-stopped
     ports:
       - 3030:3030
     healthcheck:
@@ -17,6 +18,7 @@ services:
   harvester-redis:
     image: redis:7
     container_name: harvester-redis
+    restart: unless-stopped
     expose:
       - 6379
     healthcheck:
@@ -52,6 +54,7 @@ services:
   harvester-ui:
     image: crisalidesr/svp-harvester:latest
     container_name: harvester-ui
+    restart: unless-stopped
     ports:
       - 8000:8000
     environment:
@@ -70,6 +73,8 @@ services:
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
       - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+      - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
+      - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
     depends_on:
       harvester-db:
         condition: service_healthy
@@ -88,6 +93,11 @@ services:
   harvester-worker:
     image: crisalidesr/svp-harvester:latest
     container_name: harvester-worker
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     environment:
       - APP_ENV=DEV
       - DB_HOST=harvester-db
@@ -107,6 +117,8 @@ services:
       - INNER_TASK_PARALLELISM_LIMIT=20
       - INNER_TASK_QUEUE_LENGTH=20
       - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+      - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
+      - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
     healthcheck:
       test: [ "CMD", "pgrep", "-f", "python -m app.amqp_listen" ]
       interval: 10s

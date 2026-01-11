@@ -36,10 +36,19 @@ tar -xzvf neo4j-data-20250908.tar.gz \
   -C ~/.../crisalid-deployment/docker/neo4j
 ```
 
+Alternatively, if you have full access to the server, you can skip the previous steps and restore directly with rsync.
+```bash
+cd /path/to/your/local/crisalid-deployment/docker/neo4j
+
+sudo rsync -av --delete \
+  myuser@myserver.myuniv.fr:/opt/crisalid/crisalid-deployment/docker/neo4j/data/ \
+  ./data/
+```
+
 2. Ensure directory ownership matches the container user (UID/GID **7474**):
 
 ```bash
-cd ~/code/crisalid-deployment/docker/neo4j
+cd /path/to/your/local/crisalid-deployment/docker/neo4j
 sudo chown -R 7474:7474 data import backups plugins
 ```
 
