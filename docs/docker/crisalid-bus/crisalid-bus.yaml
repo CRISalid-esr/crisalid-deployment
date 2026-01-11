@@ -2,13 +2,14 @@ services:
   crisalid-bus:
     image: rabbitmq:3-management
     container_name: 'crisalid-bus'
+    restart: unless-stopped
     environment:
       - RABBITMQ_DEFAULT_USER=${CRISALID_BUS_USER}
       - RABBITMQ_DEFAULT_PASS=${CRISALID_BUS_PASSWORD}
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit load_definitions "${CRISALID_BUS_DEFINITIONS_FILE}"
     ports:
       - "${CRISALID_BUS_HTTP_PORT}:15672"
-      - "${CRISALID_BUS_AMQP_PORT}:5672"
+    #      - "${CRISALID_BUS_AMQP_PORT}:5672"
     expose:
       - "${CRISALID_BUS_AMQP_PORT}"
     volumes:

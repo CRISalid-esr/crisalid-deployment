@@ -2,6 +2,7 @@ services:
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:v0.1
     container_name: crisalid-org-registry
+    restart: unless-stopped
     expose:
       - 3000
     environment:
@@ -17,8 +18,9 @@ services:
     profiles:
       - ikg
   crisalid-ikg:
-    image: crisalidesr/crisalid-ikg:v0.24-dev
+    image: crisalidesr/crisalid-ikg:v0.25-dev
     container_name: crisalid-ikg
+    restart: unless-stopped
     ports:
       - 8001:8000
     # or expose internally instead of publishing to host
@@ -33,7 +35,7 @@ services:
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
       - AMQP_USER=${CRISALID_BUS_USER}
       - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}
-      - NEO4J_URI=bolt://neo4j:${NEO4J_BOLT_PORT}
+      - NEO4J_URI=bolt://${NEO4J_HOST}:${NEO4J_BOLT_PORT}
       #      - NEO4J_USER= #keep empty if NEO4J_AUTH=none
       #      - NEO4J_PASSWORD= #keep empty if NEO4J_AUTH=none
       - NEO4J_USER=${NEO4J_USER}
@@ -44,6 +46,11 @@ services:
       - ES_USER=elastic
       - ES_PASSWORD=elastic
       - ORG_REGISTRY_URL=http://crisalid-org-registry:3000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/api/v1/healthness" ]
+      interval: 10s
+      retries: 5
+      timeout: 5s
     depends_on:
       crisalid-bus:
         condition: service_healthy
