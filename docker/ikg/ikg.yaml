@@ -18,7 +18,7 @@ services:
     profiles:
       - ikg
   crisalid-ikg:
-    image: crisalidesr/crisalid-ikg:v0.25-dev
+    image: crisalidesr/crisalid-ikg:v0.24-dev
     container_name: crisalid-ikg
     restart: unless-stopped
     ports:

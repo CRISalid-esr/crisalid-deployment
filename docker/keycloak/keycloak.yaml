@@ -53,7 +53,6 @@ services:
     hostname: ${KEYCLOAK_HOST}
     volumes:
       - ./config:/opt/keycloak/data/import
-      - ./themes:/opt/keycloak/themes
     depends_on:
       keycloak-db:
         condition: service_healthy
@@ -65,7 +64,7 @@ services:
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.3.2
     container_name: keycloak
-    command: start-dev --import-realm 
+    command: start-dev --import-realm
     expose:
       - 8080
       - 8443
@@ -95,8 +94,7 @@ services:
     hostname: ${KEYCLOAK_HOST}
     volumes:
       - ./config:/opt/keycloak/data/import
-      - ~/local-certs:/etc/x509/https
-      - ./themes:/opt/keycloak/themes
+      - /home/gabrielle-micha/local-certs:/etc/x509/https
     depends_on:
       keycloak-db:
         condition: service_healthy
