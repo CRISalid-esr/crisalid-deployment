@@ -66,7 +66,59 @@ Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `
 > LDAP_BIND_PASSWORD=
 > ```
 
-### 2. 🔧 Configure CRISalid Bus
+### 2. 🔐 Configure Basic Authentication for SVP Harvester**
+
+SVP Harvester supports **HTTP Basic authentication** for both its **web interface** and **REST API**.
+
+Authentication is enabled by default.
+
+#### Enable / disable authentication
+
+In `docker/harvester/.env`:
+
+```env
+ENABLE_BASIC_AUTH=true
+```
+
+* `true` (default): all `/admin/*` and `/api/*` endpoints are protected
+* `false`: authentication is disabled (all endpoints are public)
+
+> ⚠️ This authentication mechanism is intended for **local development and restricted environments**.
+> Always use HTTPS if enabling it in production.
+
+---
+
+#### Create the first user
+
+User credentials are stored in a local file mounted into the container:
+
+```
+app/auth/users.json
+```
+
+Once the `harvester-ui` container is running, create an initial user :
+
+```bash
+docker exec -it harvester-ui python scripts/add_basic_user.py admin
+```
+
+You will be prompted to enter and confirm a password.
+
+The credentials take effect immediately; no container restart is required.
+
+---
+
+#### Remove a user
+
+To remove an existing user:
+
+```bash
+docker exec -it harvester-ui python scripts/remove_basic_user.py admin
+```
+
+---
+
+### 3. 🔧 Configure CRISalid Bus
 
 This script reads the `.env` values and generates the RabbitMQ `definitions.json` file (exchanges, queues, admin user,
 etc.).
@@ -75,7 +127,7 @@ etc.).
 ./docker/configure_crisalid_bus.sh
 ```
 
-### 3. 🔧 Configure CRISalid Directory Bridge (CDB)
+### 4. 🔧 Configure CRISalid Directory Bridge (CDB)
 
 This script clones the DAGs and runs the Airflow initialization:
 
@@ -105,7 +157,7 @@ Full documentation (in French):
 
 ---
 
-### 4. 🔑 Configure Keycloak
+### 5. 🔑 Configure Keycloak
 
 Keycloak is handling authentication within the system. Multiple client applications (such as Sovisu+) can share the same
 authentication realm. To set up Keycloak in this environment, follow these steps:
@@ -157,7 +209,7 @@ keys.
 127.0.0.1 keycloak.local
 ```
 
-### 5. **SoVisu+ custom themes**
+### 6. **SoVisu+ custom themes**
 
 SoVisu+ allows you to customize its appearance using themes. You can create your own theme by following these steps:
 1. **Copy the sample theme directory**:
@@ -168,7 +220,7 @@ cp -r sovisuplus/theme-sample sovisuplus/theme
 
 2. **Edit the theme files** in `sovisuplus/theme` to customize text and images according to your institution's branding.
 
-### **6. SoVisu+ RBAC Roles File**
+### 7. SoVisu+ RBAC Roles File
 
 SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
 
@@ -181,7 +233,7 @@ cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
 * After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions
   in database.
 
-### 7. ⏰ Configure Ofelia (system-wide scheduler)
+### 8. ⏰ Configure Ofelia (system-wide scheduler)
 
 [Ofelia](https://hub.docker.com/r/mcuadros/ofelia) is the **scheduler of the whole CRISalid stack**.
 It runs as its own container and periodically triggers tasks for other containers (by running a CLI command
@@ -204,7 +256,7 @@ In this deployment, Ofelia is included as its own Docker Compose profile (`ofeli
 * a **scheduler config file template**: `docker/ofelia/config.ini`
 * a **configuration template**: `docker/ofelia/.env.sample`
 
-#### 7.1. Create Ofelia `.env` 
+#### Create Ofelia `.env` 
 
 In `docker/ofelia/`, copy the sample file:
 
@@ -228,7 +280,7 @@ CONFIG_FILE_NAME=config.dev.ini
 # CONFIG_FILE_NAME=config.prod.ini
 ```
 
-#### 7.2. Define the scheduled jobs in `config.ini`
+#### Define the scheduled jobs in `config.ini`
 
 The default scheduler configuration file is:
 
@@ -253,7 +305,7 @@ This declares a job named `ikg-fetch-pubs` that:
 * uses **`job-exec`**: it executes the command **inside** the running `crisalid-ikg` container
 * calls the internal CLI: `python -m app.cli people fetch-publication-random`
 
-#### 7.3. Run Ofelia with Docker Compose
+#### Run Ofelia with Docker Compose
 
 To start the scheduler along with the rest of the stack, include the `ofelia` profile, for example:
 
