@@ -396,8 +396,11 @@ LDAP_BIND_PASSWORD=</code></pre>
 <h4 class="anchored" data-anchor-id="create-the-first-user">Create the first user</h4>
 <p>User credentials are stored in a local file mounted into the container:</p>
 <pre><code>app/auth/users.json</code></pre>
+<p>Before starting the container for the first time, ensure that this file exists and is initialized with an empty JSON object:</p>
+<pre><code>mkdir -p harvester/auth
+echo '{}' &gt; harvester/auth/users.json</code></pre>
 <p>Once the <code>harvester-ui</code> container is running, create an initial user :</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="at">-it</span> harvester-ui python scripts/add_basic_user.py admin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="at">-it</span> harvester-ui python scripts/add_basic_user.py admin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You will be prompted to enter and confirm a password.</p>
 <p>The credentials take effect immediately; no container restart is required.</p>
 <hr>
@@ -405,19 +408,19 @@ LDAP_BIND_PASSWORD=</code></pre>
 <section id="remove-a-user" class="level4">
 <h4 class="anchored" data-anchor-id="remove-a-user">Remove a user</h4>
 <p>To remove an existing user:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="at">-it</span> harvester-ui python scripts/remove_basic_user.py admin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="at">-it</span> harvester-ui python scripts/remove_basic_user.py admin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 </section>
 <section id="configure-crisalid-bus" class="level3">
 <h3 class="anchored" data-anchor-id="configure-crisalid-bus">3. 🔧 Configure CRISalid Bus</h3>
 <p>This script reads the <code>.env</code> values and generates the RabbitMQ <code>definitions.json</code> file (exchanges, queues, admin user, etc.).</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./docker/configure_crisalid_bus.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./docker/configure_crisalid_bus.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="configure-crisalid-directory-bridge-cdb" class="level3">
 <h3 class="anchored" data-anchor-id="configure-crisalid-directory-bridge-cdb">4. 🔧 Configure CRISalid Directory Bridge (CDB)</h3>
 <p>This script clones the DAGs and runs the Airflow initialization:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./docker/configure_cdb.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./docker/configure_cdb.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>ℹ️ In dev, Airflow GUI admin credentials are set to <code>admin:admin</code>.</p>
 <p>After running the script, if you intend to use the <strong>CSV mode</strong> for structures and people (instead of LDAP), place your data files in:</p>
 <pre><code>docker/cdb/data/
@@ -464,14 +467,14 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <li><strong>Define specific URIs in /etc/hosts</strong></li>
 </ol>
 <p>To ensure that Sovisu+ and Keycloak can be accessed correctly, you need to define specific URIs in your <code>/etc/hosts</code> file. This is necessary because Sovisu+ uses OAuth2 with ORCID, which requires a specific hostname even to deliver “sandbox” keys.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add these lines to your /etc/hosts file</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> sovisuplus.local</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> keycloak.local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add these lines to your /etc/hosts file</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> sovisuplus.local</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">127.0.0.1</span> keycloak.local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="sovisu-custom-themes" class="level3">
 <h3 class="anchored" data-anchor-id="sovisu-custom-themes">6. <strong>SoVisu+ custom themes</strong></h3>
 <p>SoVisu+ allows you to customize its appearance using themes. You can create your own theme by following these steps: 1. <strong>Copy the sample theme directory</strong>:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> sovisuplus/theme-sample sovisuplus/theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> sovisuplus/theme-sample sovisuplus/theme</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="2" type="1">
 <li><strong>Edit the theme files</strong> in <code>sovisuplus/theme</code> to customize text and images according to your institution’s branding.</li>
 </ol>
@@ -479,7 +482,7 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <section id="sovisu-rbac-roles-file" class="level3">
 <h3 class="anchored" data-anchor-id="sovisu-rbac-roles-file">7. SoVisu+ RBAC Roles File</h3>
 <p>SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>Edit <code>sovisuplus/config/rbac.roles.yaml</code> to define your roles by grouping permissions (but dont create new permissions, i.e new actions/subjects/fields as they are used in the code).</li>
 <li>After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions in database.</li>
@@ -508,7 +511,7 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <section id="create-ofelia-.env" class="level4">
 <h4 class="anchored" data-anchor-id="create-ofelia-.env">Create Ofelia <code>.env</code></h4>
 <p>In <code>docker/ofelia/</code>, copy the sample file:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/ofelia/.env.sample docker/ofelia/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/ofelia/.env.sample docker/ofelia/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The sample content is:</p>
 <pre class="env"><code>CONFIG_FILE_NAME=config.ini</code></pre>
 <p>This variable is used only by <strong>Docker Compose</strong> to choose which config file to mount inside Ofelia. You can later duplicate <code>config.ini</code> under another name (for example <code>config.dev.ini</code>, <code>config.prod.ini</code>, etc.) and switch by changing <code>CONFIG_FILE_NAME</code> in <code>.env</code> without editing the Compose file:</p>
@@ -521,12 +524,12 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <p>The default scheduler configuration file is:</p>
 <pre class="text"><code>docker/ofelia/config.ini</code></pre>
 <p>Example content:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">; file: docker/ofelia/config.ini</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">[job-exec "ikg-fetch-pubs"]</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="dt">schedule </span><span class="ot">=</span><span class="st"> @every 2m</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="dt">container </span><span class="ot">=</span><span class="st"> crisalid-ikg</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="dt">command </span><span class="ot">=</span><span class="st"> python -m app.cli people fetch-publication-random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode ini code-with-copy"><code class="sourceCode ini"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">; file: docker/ofelia/config.ini</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">[job-exec "ikg-fetch-pubs"]</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="dt">schedule </span><span class="ot">=</span><span class="st"> @every 2m</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="dt">container </span><span class="ot">=</span><span class="st"> crisalid-ikg</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="dt">command </span><span class="ot">=</span><span class="st"> python -m app.cli people fetch-publication-random</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This declares a job named <code>ikg-fetch-pubs</code> that:</p>
 <ul>
 <li>runs <strong>every 2 minutes</strong> (<code>@every 2m</code>)</li>
@@ -537,10 +540,10 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <section id="run-ofelia-with-docker-compose" class="level4">
 <h4 class="anchored" data-anchor-id="run-ofelia-with-docker-compose">Run Ofelia with Docker Compose</h4>
 <p>To start the scheduler along with the rest of the stack, include the <code>ofelia</code> profile, for example:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> ofelia <span class="dt">\</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> ofelia <span class="dt">\</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 </section>
@@ -548,31 +551,31 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <h2 class="anchored" data-anchor-id="communication-with-host-machine">🔌 Communication with Host Machine</h2>
 <p>If you want to connect external tools (on your host) to the containers, open the necessary ports.</p>
 <p>For example, to expose RabbitMQ’s AMQP port on the host machine, edit <code>docker/crisalid-bus/crisalid-bus.yaml</code> and uncomment the 2nd <code>ports</code> line:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ports</span><span class="kw">:</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_HTTP_PORT}:15672"</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  - "${CRISALID_BUS_AMQP_PORT}:5672"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expose</span><span class="kw">:</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"${CRISALID_BUS_AMQP_PORT}"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="resetting-containers" class="level2">
 <h2 class="anchored" data-anchor-id="resetting-containers">♻️ Resetting Containers</h2>
 <p>To stop and delete containers + volumes for one profile:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To also delete images:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> cdb down <span class="at">--volumes</span> <span class="at">--rmi</span> all</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To ensure volumes are removed, you can also run:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm keycloak_postgres_data</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm svp-db-volume</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm crisalid-bus-volume</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm keycloak_postgres_data</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm svp-db-volume</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm crisalid-bus-volume</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-plugins-volume neo4j-backups-volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="starting-the-services" class="level2">
 <h2 class="anchored" data-anchor-id="starting-the-services">🚀 Starting the Services</h2>
 <p>To start the services, run:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> ofelia up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j <span class="at">--profile</span> apollo <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> ofelia up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This command will start the selected components in the background. You can add or remove profiles as needed.</p>
 </section>
 <section id="next-steps" class="level2">

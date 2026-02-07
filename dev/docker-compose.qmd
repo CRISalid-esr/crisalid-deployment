@@ -96,6 +96,13 @@ User credentials are stored in a local file mounted into the container:
 app/auth/users.json
 ```
 
+Before starting the container for the first time, ensure that this file exists and is initialized with an empty JSON object:
+
+```
+mkdir -p harvester/auth
+echo '{}' > harvester/auth/users.json
+```
+
 Once the `harvester-ui` container is running, create an initial user :
 
 ```bash
