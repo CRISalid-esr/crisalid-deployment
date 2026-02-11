@@ -46,6 +46,7 @@ services:
       - ES_USER=elastic
       - ES_PASSWORD=elastic
       - ORG_REGISTRY_URL=http://crisalid-org-registry:3000
+      - HARVESTERS=${HARVESTERS:-"idref,scanr,hal,openalex,scopus"}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/api/v1/healthness" ]
       interval: 10s

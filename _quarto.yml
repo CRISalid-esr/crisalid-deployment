@@ -25,6 +25,8 @@ website:
             text: System Overview
           - href: map/components.qmd
             text: Identify Relevant Components
+          - href: map/harvesting.qmd
+            text: Configure publication harvesting
       - text: 🧪 Development
         menu:
           - href: dev/index.qmd

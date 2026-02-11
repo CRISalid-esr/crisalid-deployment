@@ -1,0 +1,163 @@
+---
+title: "Harvesting Configuration"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+This page describes how harvesting is triggered and configured in CRISalid, and how responsibilities are split between
+the **IKG** and the **Harvester** microservices.
+
+---
+
+## 🌐 Overview
+
+Harvesting is triggered by messages published on the RabbitMQ `publications` exchange by the IKG (Institutional
+Knowledge Graph) service.
+The Harvester UI provides **observability only** (although it can be used to trigger harvesting requests manually, but
+only for testing purposes).
+
+The IKG publishes harvesting requests to the RabbitMQ **`publications` exchange**.  
+Each message represents one harvesting job.
+
+Requests can be triggered:
+
+- **Manually**, via IKG CLI tools
+- **Automatically**, via **Ofelia** (Docker Compose) or **Kubernetes Jobs / CronJobs** (which in turn call IKG CLI
+  tools)
+
+---
+
+## ⚙️ Configuration & Execution
+
+Harvesting is configured at two levels:
+
+- **IKG**: decides *when* harvesting runs and *which harvesters* are requested
+- **Harvester**: defines *which harvesters exist* and *whether they can run*
+
+### IKG — Requested Harvesters
+
+The `HARVESTERS` environment variable defines which harvesters are included in harvesting requests published on the
+`publications` exchange.
+
+- Can be set via:
+    - runtime environment
+    - Docker Compose (e.g. `docker/ikg/ikg.yaml`)
+    - Kubernetes ConfigMaps
+- Overrides the default when defined
+
+Default configuration:
+
+```json
+[
+  "idref",
+  "scanr",
+  "hal",
+  "openalex",
+  "scopus"
+]
+````
+
+> 🔗 Defined in the IKG settings
+> *(link to GitHub settings file)*
+
+---
+
+### Harvester — Available Harvesters
+
+The Harvester service declares available harvesters in:
+
+```
+harvesters.yaml
+```
+
+This file binds harvester identifiers to their implementations.
+
+```yaml
+- name: idref
+  module: app.harvesters.idref.idref_harvester_factory
+  class: IdrefHarvesterFactory
+
+- name: scanr
+  module: app.harvesters.scanr.scanr_harvester_factory
+  class: ScanrHarvesterFactory
+
+- name: hal
+  module: app.harvesters.hal.hal_harvester_factory
+  class: HalHarvesterFactory
+
+- name: openalex
+  module: app.harvesters.open_alex.open_alex_harvester_factory
+  class: OpenAlexHarvesterFactory
+
+- name: scopus
+  module: app.harvesters.scopus.scopus_harvester_factory
+  class: ScopusHarvesterFactory
+```
+
+Only harvesters declared in `harvesters.yaml` can be executed.
+
+---
+
+## 🔁 Execution Rules
+
+1. The IKG publishes a harvesting request on the `publications` exchange
+2. The message contains:
+
+    * the type of entity (currently: `person` only)
+    * a flag indicating whether a reply is expected
+    * a flag for "identifiers safe mode" (if true, the alignment of identifiers is not recorded in the harvesters
+      database)
+    * a list of event types to be reported (e.g. `created`, `updated`, `deleted`, `unchanged`)
+    * a list of requested harvesters (e.g. `idref`, `scanr`, `hal`, `openalex`, `scopus`)
+    * the fields of the entity to be harvested, including a list of identifiers with their types and values :
+        * `name` : displayed in the Harvester UI but not used for harvesting
+        * `identifiers` : used to determine which harvesters can run (e.g. `openalex` requires an ORCID identifier) and
+          to perform the actual harvesting
+
+```json
+{
+  "type": "person",
+  "reply": true,
+  "identifiers_safe_mode": false,
+  "events": [
+    "created",
+    "updated",
+    "deleted",
+    "unchanged"
+  ],
+  "harvesters": [
+    "idref",
+    "scanr",
+    "hal",
+    "openalex",
+    "scopus"
+  ],
+  "fields": {
+    "name": "John Doe",
+    "identifiers": [
+      {
+        "type": "orcid",
+        "value": "0000-0002-1825-0097"
+      },
+      {
+        "type": "idref",
+        "value": "123456789"
+      }
+    ]
+  }
+}
+```
+
+3. For each requested harvester, the Harvester service checks:
+
+    * if the harvester is declared in `harvesters.yaml`
+    * if a compatible identifier is present
+
+A harvester is executed **only if** a suitable identifier is available
+(e.g. `openalex` requires an ORCID and will not run with a HAL identifier).
+
+4. All eligible harvesters are executed **in parallel**
+
+---

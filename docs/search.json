@@ -243,5 +243,47 @@
     "title": "Export Keycloak Realm",
     "section": "",
     "text": "Follow these steps to extract the realm configuration (clients, roles, and settings) from the running container and save it to your local configuration folder (docker/keycloak/config).\n\n\nConnect to your running Keycloak service container via the terminal:\ndocker exec -it keycloak /bin/bash\n\n\n\nInside the container, use kc.sh export to create the realm file. We specify --users skip to ensure the export only includes configuration metadata, not specific user data.\n/opt/keycloak/bin/kc.sh export \\\n  --dir /opt/keycloak/data/export \\\n  --realm crisalid-inst \\\n  --users skip\nA file named crisalid-inst-realm.json is created in the container’s export folder.\n\n\n\nExit the container, and run the following command on your host machine to copy the file into your local configuration directory:\nFrom docker/keycloak directory, run:\nmkdir -p realm-export # or whatever folder you want to use\ndocker cp keycloak:/opt/keycloak/data/export/crisalid-inst-realm.json ./realm-export/\n\nResult: You now have the exported realm file at docker/keycloak/realm-export/crisalid-inst-realm.json. You can use this file to update your configuration template located at docker/keycloak/config/crisalid-inst.json.template."
+  },
+  {
+    "objectID": "map/harvesting.html",
+    "href": "map/harvesting.html",
+    "title": "Harvesting Configuration",
+    "section": "",
+    "text": "This page describes how harvesting is triggered and configured in CRISalid, and how responsibilities are split between the IKG and the Harvester microservices."
+  },
+  {
+    "objectID": "map/harvesting.html#from-request-to-execution",
+    "href": "map/harvesting.html#from-request-to-execution",
+    "title": "Harvesting Configuration",
+    "section": "🔁 From Request to Execution",
+    "text": "🔁 From Request to Execution\n\nThe IKG publishes a harvesting request on the publications exchange\nThe message contains:\n\nthe target entity (for now, only person harvesting is supported)\n\nthe identifiers of the person to harvest (e.g. ORCID, IdRef, etc.)\n\nthe list of requested harvesters (derived from HARVESTERS)\n\n\n{\n  \"name\": \"John Doe\",\n  \"identifiers\": [\n    {\n      \"type\": \"orcid\",\n      \"value\": \"0000-0002-1825-0097\"\n    },\n    {\n      \"type\": \"idref\",\n      \"value\": \"123456789\"\n    }\n  ]\n}\n\nThe Harvester service:\n\nreceives the message\nfilters the requested harvesters against those defined in harvesters.yaml\nexecutes each matching harvester in parallel"
+  },
+  {
+    "objectID": "map/harvesting.html#overview",
+    "href": "map/harvesting.html#overview",
+    "title": "Harvesting Configuration",
+    "section": "🌐 Overview",
+    "text": "🌐 Overview\nHarvesting is triggered by messages published on the RabbitMQ publications exchange by the IKG (Institutional Knowledge Graph) service. The Harvester UI provides observability only (although it can be used to trigger harvesting requests manually, but only for testing purposes).\nThe IKG publishes harvesting requests to the RabbitMQ publications exchange.\nEach message represents one harvesting job.\nRequests can be triggered:\n\nManually, via IKG CLI tools\nAutomatically, via Ofelia (Docker Compose) or Kubernetes Jobs / CronJobs (which in turn call IKG CLI tools)"
+  },
+  {
+    "objectID": "map/harvesting.html#configuration",
+    "href": "map/harvesting.html#configuration",
+    "title": "Harvesting Configuration",
+    "section": "⚙️ Configuration",
+    "text": "⚙️ Configuration\nHarvesting behavior is configured at two distinct levels:\n\nIn the IKG, which decides when harvesting is triggered and which harvesters are requested\nIn the Harvester service, which defines which harvesters exist and if they are executed\n\n\n\nA. IKG Configuration\nAt the IKG level, the list of harvesters to include in each harvesting request is configurable.\n\nHARVESTERS Environment Variable\nThe environment variable HARVESTERS defines the list of harvesters that will be added to harvesting requests published on the publications exchange.\n\nIt can be defined in:\n\nthe IKG runtime environment\nDocker Compose manifests (e.g. docker/ikg/ikg.yaml)\nKubernetes manifests (ConfigMaps)\n\nIt overrides the default configuration when set\n\n\n\nDefault Configuration\nA default list of harvesters is defined in the IKG settings:\n[\n  \"idref\",\n  \"scanr\",\n  \"hal\",\n  \"openalex\",\n  \"scopus\"\n]\nThis default is used when HARVESTERS is not explicitly set.\n\n🔗 See the default configuration in the IKG repository: (link to GitHub settings file)\n\n\n\n\n\nB. Harvester Service Configuration\nAt the Harvester level, configuration focuses on which harvesters exist and the link with their implementation.\n\nharvesters.yaml\nThe list of available harvesters is defined in the configuration file:\nharvesters.yaml\nThis file declares:\n\nThe identifier of each harvester (e.g. hal, scanr, idref)\nThe associated implementation\n\nOnly harvesters declared in harvesters.yaml can be executed.\n  # --HARVESTER PLATFORM IDENTIFIERS--\n  - name: idref\n    module: app.harvesters.idref.idref_harvester_factory\n    class: IdrefHarvesterFactory\n  - name: scanr\n    module: app.harvesters.scanr.scanr_harvester_factory\n    class: ScanrHarvesterFactory\n  - name: hal\n    module: app.harvesters.hal.hal_harvester_factory\n    class: HalHarvesterFactory\n  - name: openalex\n    module: app.harvesters.open_alex.open_alex_harvester_factory\n    class: OpenAlexHarvesterFactory\n  - name: scopus\n    module: app.harvesters.scopus.scopus_harvester_factory\n    class: ScopusHarvesterFactory"
+  },
+  {
+    "objectID": "map/harvesting.html#configuration-execution",
+    "href": "map/harvesting.html#configuration-execution",
+    "title": "Harvesting Configuration",
+    "section": "⚙️ Configuration & Execution",
+    "text": "⚙️ Configuration & Execution\nHarvesting is configured at two levels:\n\nIKG: decides when harvesting runs and which harvesters are requested\nHarvester: defines which harvesters exist and whether they can run\n\n\nIKG — Requested Harvesters\nThe HARVESTERS environment variable defines which harvesters are included in harvesting requests published on the publications exchange.\n\nCan be set via:\n\nruntime environment\nDocker Compose (e.g. docker/ikg/ikg.yaml)\nKubernetes ConfigMaps\n\nOverrides the default when defined\n\nDefault configuration:\n[\n  \"idref\",\n  \"scanr\",\n  \"hal\",\n  \"openalex\",\n  \"scopus\"\n]\n\n🔗 Defined in the IKG settings (link to GitHub settings file)\n\n\n\n\nHarvester — Available Harvesters\nThe Harvester service declares available harvesters in:\nharvesters.yaml\nThis file binds harvester identifiers to their implementations.\n- name: idref\n  module: app.harvesters.idref.idref_harvester_factory\n  class: IdrefHarvesterFactory\n\n- name: scanr\n  module: app.harvesters.scanr.scanr_harvester_factory\n  class: ScanrHarvesterFactory\n\n- name: hal\n  module: app.harvesters.hal.hal_harvester_factory\n  class: HalHarvesterFactory\n\n- name: openalex\n  module: app.harvesters.open_alex.open_alex_harvester_factory\n  class: OpenAlexHarvesterFactory\n\n- name: scopus\n  module: app.harvesters.scopus.scopus_harvester_factory\n  class: ScopusHarvesterFactory\nOnly harvesters declared in harvesters.yaml can be executed."
+  },
+  {
+    "objectID": "map/harvesting.html#execution-rules",
+    "href": "map/harvesting.html#execution-rules",
+    "title": "Harvesting Configuration",
+    "section": "🔁 Execution Rules",
+    "text": "🔁 Execution Rules\n\nThe IKG publishes a harvesting request on the publications exchange\nThe message contains:\n\nthe type of entity (currently: person only)\na flag indicating whether a reply is expected\na flag for “identifiers safe mode” (if true, the alignment of identifiers is not recorded in the harvesters database)\na list of event types to be reported (e.g. created, updated, deleted, unchanged)\na list of requested harvesters (e.g. idref, scanr, hal, openalex, scopus)\nthe fields of the entity to be harvested, including a list of identifiers with their types and values :\n\nname : displayed in the Harvester UI but not used for harvesting\nidentifiers : used to determine which harvesters can run (e.g. openalex requires an ORCID identifier) and to perform the actual harvesting\n\n\n\n{\n  \"type\": \"person\",\n  \"reply\": true,\n  \"identifiers_safe_mode\": false,\n  \"events\": [\n    \"created\",\n    \"updated\",\n    \"deleted\",\n    \"unchanged\"\n  ],\n  \"harvesters\": [\n    \"idref\",\n    \"scanr\",\n    \"hal\",\n    \"openalex\",\n    \"scopus\"\n  ],\n  \"fields\": {\n    \"name\": \"John Doe\",\n    \"identifiers\": [\n      {\n        \"type\": \"orcid\",\n        \"value\": \"0000-0002-1825-0097\"\n      },\n      {\n        \"type\": \"idref\",\n        \"value\": \"123456789\"\n      }\n    ]\n  }\n}\n\nFor each requested harvester, the Harvester service checks:\n\nif the harvester is declared in harvesters.yaml\nif a compatible identifier is present\n\n\nA harvester is executed only if a suitable identifier is available (e.g. openalex requires an ORCID and will not run with a HAL identifier).\n\nAll eligible harvesters are executed in parallel"
   }
 ]
