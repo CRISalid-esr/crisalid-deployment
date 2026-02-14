@@ -70,7 +70,7 @@ Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `
 
 SVP Harvester supports **HTTP Basic authentication** for both its **web interface** and **REST API**.
 
-Authentication is enabled by default.
+Authentication is enabled by default. You control this behavior via the `HARVESTER_ENABLE_BASIC_AUTH` environment variable in the harvester's `.env` file.
 
 #### Enable / disable authentication
 
