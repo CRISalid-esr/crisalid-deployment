@@ -382,7 +382,7 @@ LDAP_BIND_PASSWORD=</code></pre>
 <section id="configure-basic-authentication-for-svp-harvester" class="level3">
 <h3 class="anchored" data-anchor-id="configure-basic-authentication-for-svp-harvester">2. 🔐 Configure Basic Authentication for SVP Harvester**</h3>
 <p>SVP Harvester supports <strong>HTTP Basic authentication</strong> for both its <strong>web interface</strong> and <strong>REST API</strong>.</p>
-<p>Authentication is enabled by default.</p>
+<p>Authentication is enabled by default. You control this behavior via the <code>HARVESTER_ENABLE_BASIC_AUTH</code> environment variable in the harvester’s <code>.env</code> file.</p>
 <section id="enable-disable-authentication" class="level4">
 <h4 class="anchored" data-anchor-id="enable-disable-authentication">Enable / disable authentication</h4>
 <p>In <code>docker/harvester/.env</code>:</p>
