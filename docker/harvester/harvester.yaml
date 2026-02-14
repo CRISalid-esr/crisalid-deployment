@@ -4,7 +4,7 @@ services:
     container_name: svp-jel-proxy
     restart: unless-stopped
     ports:
-      - 3030:3030
+      - ${SVP_JEL_PROXY_PORT:-3030}:3030
     healthcheck:
       test: [ "CMD", "nc", "-zv", "localhost", "3030" ]
       interval: 30s
@@ -56,7 +56,7 @@ services:
     container_name: harvester-ui
     restart: unless-stopped
     ports:
-      - 8000:8000
+      - ${HARVESTER_API_PORT:-8000}:8000
     environment:
       - APP_ENV=DEV
       - API_HOST=${HARVESTER_API_HOST:-http://localhost:8000}
@@ -72,7 +72,7 @@ services:
       - SCANR_ES_HOST=${SCANR_ES_HOST}
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
-      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:${SVP_JEL_PROXY_PORT:-3030}/jel/sparql
       - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
       - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
       - ENABLE_BASIC_AUTH=${HARVESTER_ENABLE_BASIC_AUTH:-true}
