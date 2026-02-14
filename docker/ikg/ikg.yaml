@@ -21,8 +21,9 @@ services:
     image: crisalidesr/crisalid-ikg:v0.25-dev
     container_name: crisalid-ikg
     restart: unless-stopped
-    ports:
-      - 8001:8000
+    # May be useful only for K8S health checks. REST API is not used elsewhere for now
+    #    ports:
+    #      - 8001:8000
     # or expose internally instead of publishing to host
     #    expose:
     #      - "8000"
