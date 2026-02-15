@@ -64,7 +64,7 @@ services:
   sovisuplus:
     image: crisalidesr/sovisuplus:latest
   sovisuplus-maintenance:
-    image: crisalid-esr/crisalid-maintenance:latest
+    image: crisalidesr/crisalid-maintenance:latest
   # Keycloak (identity and access management)
   keycloak-db:
     image: postgres:16
