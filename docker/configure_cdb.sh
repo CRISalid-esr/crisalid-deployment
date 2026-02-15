@@ -1,6 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# ------------------------------------------------------------------------------
+# Environment selection (dev | prod)
+# ------------------------------------------------------------------------------
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 [dev|prod]"
+  exit 1
+fi
+
+ENVIRONMENT="$1"
+
+if [[ "$ENVIRONMENT" != "dev" && "$ENVIRONMENT" != "prod" ]]; then
+  echo "Invalid environment: $ENVIRONMENT"
+  echo "Allowed values: dev | prod"
+  exit 1
+fi
+
+COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.yaml -f $ROOT_DIR/docker-compose.${ENVIRONMENT}.yaml"
+
+
 # Paths
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SHARED_ENV_FILE="$ROOT_DIR/.env"
@@ -67,10 +87,10 @@ fi
 echo "CDB is configured. DAGs are ready in $DAGS_DIR"
 
 echo "Cleaning up old containers and volumes..."
-docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" down --volumes --remove-orphans
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" down --volumes --remove-orphans
 
 echo "Running airflow-init..."
-docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
 
 echo "Cleaning up old containers..."
-docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" down
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" down
