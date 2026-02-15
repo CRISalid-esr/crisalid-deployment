@@ -63,7 +63,7 @@ services:
     environment:
       # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
       # - APP_ENV=DEV
-      - API_HOST=${HARVESTER_API_HOST:-http://localhost}:${HARVESTER_API_PUBLIC_PORT:8000} # keep port value if empty
+      - API_HOST=${HARVESTER_API_PUBLIC_BASE_URL:-http://localhost:8000}
       - API_PREFIX=/api
       - API_VERSION=v1
       - DB_HOST=harvester-db
