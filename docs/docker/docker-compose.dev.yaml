@@ -1,0 +1,72 @@
+services:
+  crisalid-bus:
+    image: rabbitmq:3-management
+  # neo4j (graph database)
+  neo4j:
+    image: neo4j:5-community
+  # IKG (knowledge graph management)
+  crisalid-org-registry:
+    image: crisalidesr/crisalid-org-registry:v0.1
+  crisalid-ikg:
+    image: crisalidesr/crisalid-ikg:latest
+    environment:
+      - APP_ENV=DEV
+  # Ofelia (cron-like task scheduler)
+  crisalid-ofelia:
+    image: mcuadros/ofelia:0.3
+  # crisalid-bus (message broker)
+  # harvester (publication harvester)
+  svp-jel-proxy:
+    image: crisalidesr/svp-jel-proxy:latest
+  harvester-redis:
+    image: redis:7
+  harvester-worker:
+    image: crisalidesr/svp-harvester:latest
+    environment:
+      - APP_ENV=DEV
+  harvester-ui:
+    image: crisalidesr/svp-harvester:latest
+    environment:
+      - APP_ENV=DEV
+  harvester-db:
+    image: postgres:16
+  # apollo (GraphQL API)
+  apollo:
+    image: crisalidesr/crisalid-apollo:latest
+    environment:
+      - APP_ENV=DEV
+  # Crisalid directory bridge (Airflow DAGs)
+  cdb-postgres:
+    image: postgres:13
+  cdb-redis:
+    image: redis:7.2-bookworm
+  cdb-data-versioning-redis:
+    image: redis:7.2-bookworm
+  airflow-apiserver:
+    image: apache/airflow:3.0.2
+  airflow-scheduler:
+    image: apache/airflow:3.0.2
+  airflow-dag-processor:
+    image: apache/airflow:3.0.2
+  airflow-worker:
+    image: apache/airflow:3.0.2
+  airflow-triggerer:
+    image: apache/airflow:3.0.2
+  airflow-init:
+    image: apache/airflow:3.0.2
+  airflow-cli:
+    image: apache/airflow:3.0.2
+  flower:
+    image: apache/airflow:3.0.2
+  # Sovisuplus (scientific output and researcher identifiers)
+  svp-db:
+    image: postgres:16
+  sovisuplus:
+    image: crisalidesr/sovisuplus:latest
+  # Keycloak (identity and access management)
+  keycloak-db:
+    image: postgres:16
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.2
+  keycloak-tls:
+    image: quay.io/keycloak/keycloak:26.3.2

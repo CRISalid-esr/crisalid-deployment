@@ -1,10 +1,11 @@
 services:
   svp-jel-proxy:
-    image: crisalidesr/svp-jel-proxy:latest
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/svp-jel-proxy:latest
     container_name: svp-jel-proxy
     restart: unless-stopped
     ports:
-      - 3030:3030
+      - ${SVP_JEL_PROXY_PORT:-3030}:3030
     healthcheck:
       test: [ "CMD", "nc", "-zv", "localhost", "3030" ]
       interval: 30s
@@ -16,7 +17,7 @@ services:
     profiles:
       - harvester
   harvester-redis:
-    image: redis:7
+    # image: redis:7
     container_name: harvester-redis
     restart: unless-stopped
     expose:
@@ -31,7 +32,8 @@ services:
     profiles:
       - harvester
   harvester-db:
-    image: postgres:16
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: postgres:16
     container_name: harvester-db
     restart: unless-stopped
     environment:
@@ -52,14 +54,16 @@ services:
     profiles:
       - harvester
   harvester-ui:
-    image: crisalidesr/svp-harvester:latest
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/svp-harvester:latest
     container_name: harvester-ui
     restart: unless-stopped
     ports:
-      - 8000:8000
+      - ${HARVESTER_API_PORT:-8000}:8000
     environment:
-      - APP_ENV=DEV
-      - API_HOST=http://localhost:8000
+      # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+      # - APP_ENV=DEV
+      - API_HOST=${HARVESTER_API_HOST:-http://localhost}:${HARVESTER_API_PUBLIC_PORT:8000} # keep port value if empty
       - API_PREFIX=/api
       - API_VERSION=v1
       - DB_HOST=harvester-db
@@ -72,10 +76,10 @@ services:
       - SCANR_ES_HOST=${SCANR_ES_HOST}
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
-      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:${SVP_JEL_PROXY_PORT:-3030}/jel/sparql
       - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
       - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
-      - ENABLE_BASIC_AUTH=true
+      - ENABLE_BASIC_AUTH=${HARVESTER_ENABLE_BASIC_AUTH:-true}
     volumes:
       - ./auth/users.json:/code/app/auth/users.json
     depends_on:
@@ -94,7 +98,8 @@ services:
       - harvester
 
   harvester-worker:
-    image: crisalidesr/svp-harvester:latest
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/svp-harvester:latest
     container_name: harvester-worker
     restart: unless-stopped
     ulimits:
@@ -102,7 +107,8 @@ services:
         soft: 65535
         hard: 65535
     environment:
-      - APP_ENV=DEV
+      # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+      # - APP_ENV=DEV
       - DB_HOST=harvester-db
       - DB_PORT=5432
       - DB_NAME=${HARVESTER_DB_NAME}

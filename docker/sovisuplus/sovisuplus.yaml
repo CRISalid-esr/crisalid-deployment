@@ -1,6 +1,7 @@
 services:
   svp-db:
-    image: postgres:16
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: postgres:16
     container_name: svp-db
     restart: unless-stopped
     environment:
@@ -26,7 +27,8 @@ services:
       - sovisuplus-db
 
   sovisuplus:
-    image: crisalidesr/sovisuplus:latest
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/sovisuplus:latest
     container_name: sovisuplus
     restart: unless-stopped
     ports:

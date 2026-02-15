@@ -1,6 +1,7 @@
 services:
   crisalid-ofelia:
-    image: mcuadros/ofelia:0.3
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: mcuadros/ofelia:0.3
     container_name: crisalid-ofelia
     restart: unless-stopped
 

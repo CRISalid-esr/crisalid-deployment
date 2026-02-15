@@ -1,6 +1,7 @@
 services:
   crisalid-bus:
-    image: rabbitmq:3-management
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: rabbitmq:3-management
     container_name: 'crisalid-bus'
     restart: unless-stopped
     environment:
@@ -9,7 +10,7 @@ services:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit load_definitions "${CRISALID_BUS_DEFINITIONS_FILE}"
     ports:
       - "${CRISALID_BUS_HTTP_PORT}:15672"
-    #      - "${CRISALID_BUS_AMQP_PORT}:5672"
+    # - "${CRISALID_BUS_AMQP_PORT}:5672" # To connect app under development on host machine
     expose:
       - "${CRISALID_BUS_AMQP_PORT}"
     volumes:
