@@ -71,6 +71,15 @@ REPO_BRANCH="dev-main"
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
 
+compose_cdb() {
+  docker compose \
+    --project-directory "$CDB_DIR" \
+    $COMPOSE_ARGS \
+    --profile cdb \
+    -f "$CDB_DIR/cdb.yaml" \
+    "$@"
+}
+
 # ------------------------------------------------------------------------------
 # 1. Load variables from docker/.env
 # ------------------------------------------------------------------------------
@@ -147,10 +156,10 @@ if [[ "$RESET" == "true" ]]; then
 fi
 
 echo "Cleaning up old containers..."
-docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" "${DOWN_ARGS[@]}"
+compose_cdb "${DOWN_ARGS[@]}"
 
 echo "Running airflow-init..."
-docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+compose_cdb run --rm airflow-init
 
 echo "Cleaning up old containers..."
-docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" down --remove-orphans
+compose_cdb down --remove-orphans
