@@ -167,13 +167,49 @@ etc.).
 
 ### 4. 🔧 Configure CRISalid Directory Bridge (CDB)
 
-This script clones the DAGs and runs the Airflow initialization:
+This script clones the DAGs, generates environment files, and runs the Airflow initialization.
+
+You must specify the target environment:
 
 ```bash
-./docker/configure_cdb.sh
+./docker/configure_cdb.sh dev
 ```
 
-ℹ️ In dev, Airflow GUI admin credentials are set to `admin:admin`.
+or
+
+```bash
+./docker/configure_cdb.sh prod
+```
+
+---
+
+#### 🔄 Optional: Full reset of Airflow state
+
+By default, the script **does NOT wipe Airflow state** (DAG history, users, variables, connections, etc.).
+
+If you want to completely reset Airflow (including metadata database and volumes), use:
+
+```bash
+./docker/configure_cdb.sh dev --reset
+```
+
+You will be prompted to type `RESET` to confirm.
+
+⚠️ This removes Docker volumes for the CDB profile and permanently deletes:
+
+* DAG execution history
+* Users and passwords
+* Variables and connections
+* XCom data
+
+Use with caution
+
+---
+
+ℹ️ In `dev`, Airflow GUI admin credentials are initialized from environment variables (default: `admin:admin` unless overridden in `docker/.env`).
+
+---
+
 
 After running the script, if you intend to use the **CSV mode** for structures and people (instead of LDAP), place your
 data files in:
