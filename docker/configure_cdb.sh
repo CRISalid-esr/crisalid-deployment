@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # ------------------------------------------------------------------------------
 # Environment selection (dev | prod)
 # ------------------------------------------------------------------------------
@@ -22,7 +24,6 @@ COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.yaml -f $ROOT_DIR/docker-compose.${ENV
 
 
 # Paths
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SHARED_ENV_FILE="$ROOT_DIR/.env"
 CDB_DIR="$ROOT_DIR/cdb"
 DAGS_DIR="$CDB_DIR/dags"
