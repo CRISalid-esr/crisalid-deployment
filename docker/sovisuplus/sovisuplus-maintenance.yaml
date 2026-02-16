@@ -1,0 +1,19 @@
+services:
+  sovisuplus-maintenance:
+    image: crisalid-esr/crisalid-maintenance:1.0
+    restart: unless-stopped
+    ports:
+      - ${SVP_PORT:-3000}:8080
+    environment:
+      TITLE: "${SVP_MAINTENANCE_TITLE:-Site Maintenance}"
+      HEADLINE: "${SVP_MAINTENANCE_HEADLINE:-We'll be back soon!}"
+      MESSAGE: "${SVP_MAINTENANCE_MESSAGE}"
+      CONTACT_LINK: "${SVP_MAINTENANCE_CONTACT_LINK:-contact us}"
+      MAIL_ADDRESS: "${SVP_MAINTENANCE_MAIL_ADDRESS:-mail@example.com}"
+      TEAM_NAME: "  ${SVP_MAINTENANCE_TEAM_NAME:-The Team}"
+      LINK_COLOR: ${SVP_MAINTENANCE_LINK_COLOR:-#dc8100}
+      THEME: ${SVP_MAINTENANCE_THEME:-Light}
+      RESPONSE_CODE: ${SVP_MAINTENANCE_RESPONSE_CODE:-503 Service Unavailable}
+      PORT: 8080
+    profiles:
+      - sovisuplus-maintenance

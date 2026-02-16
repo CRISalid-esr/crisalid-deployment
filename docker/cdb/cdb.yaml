@@ -51,15 +51,16 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider distributions you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.2}
+  # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+  #  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:3.0.2}
   # build: .
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
-    AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@cdb-postgres/airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@cdb-postgres/airflow
+    AIRFLOW__CELERY__BROKER_URL: redis://:@cdb-redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
@@ -90,20 +91,20 @@ x-airflow-common:
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
-    redis:
+    cdb-redis:
       condition: service_healthy
-    postgres:
+    cdb-postgres:
       condition: service_healthy
 
 services:
-  postgres:
-    image: postgres:13
+  cdb-postgres:
+    # image: postgres:13
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
+      - cdb-postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "airflow" ]
       interval: 10s
@@ -115,10 +116,10 @@ services:
     profiles:
       - cdb
 
-  redis:
+  cdb-redis:
     # Redis is limited to 7.2-bookworm due to licencing change
     # https://redis.io/blog/redis-adopts-dual-source-available-licensing/
-    image: redis:7.2-bookworm
+    # image: redis:7.2-bookworm
     expose:
       - 6379
     healthcheck:
@@ -131,12 +132,12 @@ services:
     profiles:
       - cdb
     volumes:
-      - redis-db-volume:/data
+      - cdb-redis-db-volume:/data
     networks:
       - cdb-network
 
-  data-versioning-redis:
-    image: redis:7.2-bookworm
+  cdb-data-versioning-redis:
+    # image: redis:7.2-bookworm
     expose:
       - 6379
     healthcheck:
@@ -149,7 +150,7 @@ services:
     profiles:
       - cdb
     volumes:
-      - data-versioning-redis-volume:/data
+      - cdb-data-versioning-redis-volume:/data
     networks:
       - cdb-network
 
@@ -232,7 +233,7 @@ services:
       airflow-apiserver:
         condition: service_healthy
       # CRISalid : add this as our dags are using Redis
-      data-versioning-redis:
+      cdb-data-versioning-redis:
         condition: service_healthy
     networks:
       - cdb-network
@@ -397,9 +398,9 @@ services:
       - crisalid-back
 
 volumes:
-  postgres-db-volume:
-  redis-db-volume:
-  data-versioning-redis-volume:
+  cdb-postgres-db-volume:
+  cdb-redis-db-volume:
+  cdb-data-versioning-redis-volume:
 networks:
   cdb-network:
     driver: bridge

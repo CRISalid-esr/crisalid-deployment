@@ -6,12 +6,25 @@ format:
     toc-location: left
 ---
 
-> ⚠️ **Warning**: Do not deploy this setup to production. This configuration is meant solely for **local development and
-testing**.
+## ⚠️ Security note
 
-> 🛡️ **Ensure your firewall is enabled** on the machine running this setup (e.g., `ufw` on Linux). Running this
-> deployment without a firewall can lead to **data leaks** or **insecure access** to internal institutional
-> directories (especially if LDAP is enabled).
+This stack can be deployed in production **only if the host is properly secured** (firewall enabled, restricted
+exposed ports, strong credentials, TLS/reverse proxy when needed). Running it on an open host can lead to **data leaks**
+or **insecure access** to internal institutional directories (especially if LDAP is enabled).
+
+## 🌍 Environment-specific Compose files (DEV / PROD)
+
+The repository ships with additional Compose files to adapt the same modular stack to different environments:
+
+- **DEV overlay** (`docker-compose.dev.yaml`)
+  - Docker image tags for components under active development are **not pinned** (typically `:latest`).
+  - Environment variables that depend on the environment (e.g. `APP_ENV`, when present) are set to **`DEV`**.
+
+- **PROD overlay** (`docker-compose.prod.yaml`)
+  - Docker image tags are **pinned** (explicit versions) to ensure reproducible deployments.
+  - Environment variables that depend on the environment (e.g. `APP_ENV`, when present) are set to **`PROD`**.
+
+Use the overlays by combining files with `-f` (the overlay only overrides what differs from the base file).
 
 ---
 
@@ -29,10 +42,12 @@ directive and **profiles** to enable only selected components.
 ```
 </details>
 
-For example:
+### DEV example
 
 ```bash
 docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.dev.yaml \
   --profile neo4j \
   --profile apollo \
   --profile crisalid-bus \
@@ -42,10 +57,26 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile ofelia \
-  up
+  up -d
 ```
 
----
+### PROD example
+
+```bash
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.prod.yaml \
+  --profile neo4j \
+  --profile apollo \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile ikg \
+  --profile cdb \
+  --profile keycloak \
+  --profile sovisuplus \
+  --profile ofelia \
+  up -d
+```
 
 ## 🧰 Preparation Steps
 
@@ -54,7 +85,7 @@ docker compose \
 Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
 `.env.sample` file.
 
-* Copy each `.env.sample` to `.env`
+* Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh` script).
 * Fill in appropriate values (hostnames, ports, secrets, etc.)
 * The main `docker/.env.sample` includes values used by multiple components (like RabbitMQ or Neo4j credentials)
 
@@ -66,7 +97,7 @@ Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `
 > LDAP_BIND_PASSWORD=
 > ```
 
-### 2. 🔐 Configure Basic Authentication for SVP Harvester**
+### 2. 🔐 Configure Basic Authentication for SVP Harvester
 
 SVP Harvester supports **HTTP Basic authentication** for both its **web interface** and **REST API**.
 
@@ -136,13 +167,49 @@ etc.).
 
 ### 4. 🔧 Configure CRISalid Directory Bridge (CDB)
 
-This script clones the DAGs and runs the Airflow initialization:
+This script clones the DAGs, generates environment files, and runs the Airflow initialization.
+
+You must specify the target environment:
 
 ```bash
-./docker/configure_cdb.sh
+./docker/configure_cdb.sh dev
 ```
 
-ℹ️ In dev, Airflow GUI admin credentials are set to `admin:admin`.
+or
+
+```bash
+./docker/configure_cdb.sh prod
+```
+
+---
+
+#### 🔄 Optional: Full reset of Airflow state
+
+By default, the script **does NOT wipe Airflow state** (DAG history, users, variables, connections, etc.).
+
+If you want to completely reset Airflow (including metadata database and volumes), use:
+
+```bash
+./docker/configure_cdb.sh dev --reset
+```
+
+You will be prompted to type `RESET` to confirm.
+
+⚠️ This removes Docker volumes for the CDB profile and permanently deletes:
+
+* DAG execution history
+* Users and passwords
+* Variables and connections
+* XCom data
+
+Use with caution
+
+---
+
+ℹ️ In `dev`, Airflow GUI admin credentials are initialized from environment variables (default: `admin:admin` unless overridden in `docker/.env`).
+
+---
+
 
 After running the script, if you intend to use the **CSV mode** for structures and people (instead of LDAP), place your
 data files in:
@@ -345,19 +412,44 @@ expose:
 
 ## ♻️ Resetting Containers
 
-To stop and delete containers + volumes for one profile:
+To stop and delete containers + volumes for one profile, use the **same Compose files and profiles**
+that were used during `up`.
+
+### DEV example
 
 ```bash
-docker compose --profile cdb down --volumes
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.dev.yaml \
+  --profile cdb \
+  down --volumes
+````
+
+### PROD example
+
+```bash
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.prod.yaml \
+  --profile cdb \
+  down --volumes
 ```
 
 To also delete images:
 
 ```bash
-docker compose --profile cdb down --volumes --rmi all
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.prod.yaml \
+  --profile cdb \
+  down --volumes --rmi all
 ```
 
-To ensure volumes are removed, you can also run:
+---
+
+### 🔎 Removing named volumes manually (if needed)
+
+If some volumes remain, you can remove them explicitly:
 
 ```bash
 docker volume rm postgres-db-volume redis-db-volume data-versioning-redis-volume
@@ -371,13 +463,59 @@ docker volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-p
 
 ## 🚀 Starting the Services
 
-To start the services, run:
+The stack is modular. Select the profiles you need and combine the base Compose file with the appropriate environment overlay.
+
+### 🔧 DEV
 
 ```bash
-docker compose --profile neo4j --profile apollo --profile crisalid-bus --profile harvester --profile ikg --profile cdb --profile keycloak --profile sovisuplus --profile ofelia up -d
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.dev.yaml \
+  --profile neo4j \
+  --profile apollo \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile ikg \
+  --profile cdb \
+  --profile keycloak \
+  --profile sovisuplus \
+  --profile ofelia \
+  up -d
+````
+
+In DEV:
+
+* Image tags for components under development are not pinned (typically `:latest`)
+* Environment variables such as `APP_ENV` (when defined) are set to `DEV`
+
+---
+
+### 🏭 PROD
+
+```bash
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.prod.yaml \
+  --profile neo4j \
+  --profile apollo \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile ikg \
+  --profile cdb \
+  --profile keycloak \
+  --profile sovisuplus \
+  --profile ofelia \
+  up -d
 ```
 
-This command will start the selected components in the background. You can add or remove profiles as needed.
+In PROD:
+
+* Image tags are pinned to explicit versions
+* Environment variables such as `APP_ENV` (when defined) are set to `PROD`
+
+---
+
+You can add or remove profiles depending on the components required by the institution.
 
 ## ✅ Next Steps
 

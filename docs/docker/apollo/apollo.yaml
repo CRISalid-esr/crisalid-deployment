@@ -1,6 +1,7 @@
 services:
   apollo:
-    image: crisalidesr/crisalid-apollo:latest
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-apollo:latest
     container_name: crisalid-apollo
     restart: unless-stopped
     ports:
@@ -9,7 +10,8 @@ services:
       neo4j:
         condition: service_healthy
     environment:
-      - APP_ENV=DEV
+      # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+      # - APP_ENV=DEV
       - NEO4J_URI=bolt://${NEO4J_HOST}:${NEO4J_BOLT_PORT}
       - NEO4J_USER=${NEO4J_USER}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}

@@ -1,8 +1,66 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Paths
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+usage() {
+  echo "Usage: $0 [dev|prod] [--reset]"
+  echo ""
+  echo "  dev|prod   Select docker-compose.{dev|prod}.yaml"
+  echo "  --reset    Wipe Airflow metadata DB and other volumes (DANGEROUS)"
+}
+
+# ------------------------------------------------------------------------------
+# Args parsing
+# ------------------------------------------------------------------------------
+
+ENVIRONMENT=""
+RESET=false
+
+for arg in "$@"; do
+  case "$arg" in
+    dev|prod)
+      ENVIRONMENT="$arg"
+      ;;
+    --reset)
+      RESET=true
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $arg"
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if [[ -z "${ENVIRONMENT}" ]]; then
+  echo "Missing environment."
+  usage
+  exit 1
+fi
+
+COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.yaml -f $ROOT_DIR/docker-compose.${ENVIRONMENT}.yaml"
+
+confirm_reset() {
+  echo ""
+  echo "⚠️  You are about to RESET Airflow state for environment: ${ENVIRONMENT}"
+  echo "This will remove Docker volumes for the CDB profile (Airflow metadata DB, history, users, etc.)."
+  echo ""
+  read -r -p "Type RESET to confirm: " answer
+  if [[ "$answer" != "RESET" ]]; then
+    echo "Reset aborted."
+    exit 1
+  fi
+}
+
+# ------------------------------------------------------------------------------
+# Paths
+# ------------------------------------------------------------------------------
+
 SHARED_ENV_FILE="$ROOT_DIR/.env"
 CDB_DIR="$ROOT_DIR/cdb"
 DAGS_DIR="$CDB_DIR/dags"
@@ -13,7 +71,10 @@ REPO_BRANCH="dev-main"
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
 
+# ------------------------------------------------------------------------------
 # 1. Load variables from docker/.env
+# ------------------------------------------------------------------------------
+
 if [ -f "$SHARED_ENV_FILE" ]; then
   set -a
   source "$SHARED_ENV_FILE"
@@ -23,19 +84,29 @@ else
   exit 1
 fi
 
+# ------------------------------------------------------------------------------
 # 2. Prepare Airflow directory structure
+# ------------------------------------------------------------------------------
+
 echo "Preparing Airflow directories"
 mkdir -p "$CDB_DIR/logs" "$CDB_DIR/plugins" "$CDB_DIR/config" "$CDB_DIR/data"
 rm -rf "$DAGS_DIR"
 git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$DAGS_DIR"
 rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/.git" "$DAGS_DIR/.gitignore" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
 
+# ------------------------------------------------------------------------------
 # 3. Generate .env from .env.sample with envsubst
+# ------------------------------------------------------------------------------
+
 echo "Generating $ENV_FILE from $ENV_SAMPLE_FILE"
 export AIRFLOW_UID=$(id -u)
+export AIRFLOW_PROJ_DIR="$CDB_DIR"
 envsubst < "$ENV_SAMPLE_FILE" > "$ENV_FILE"
 
+# ------------------------------------------------------------------------------
 # 4. Generate DAGs .env file if template exists
+# ------------------------------------------------------------------------------
+
 if [ -f "$TEMPLATE_ENV" ]; then
   echo "\u2699 Found .env.template in DAGs repo, generating .env"
 
@@ -66,11 +137,21 @@ fi
 
 echo "CDB is configured. DAGs are ready in $DAGS_DIR"
 
-echo "Cleaning up old containers and volumes..."
-docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" down --volumes --remove-orphans
+# ------------------------------------------------------------------------------
+# Compose operations
+# ------------------------------------------------------------------------------
 
-echo "Running airflow-init..."
-docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+DOWN_ARGS=(down --remove-orphans)
+if [[ "$RESET" == "true" ]]; then
+  confirm_reset
+  DOWN_ARGS=(down --volumes --remove-orphans)
+fi
 
 echo "Cleaning up old containers..."
-docker compose --profile cdb -f "$CDB_DIR/cdb.yaml" down
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" "${DOWN_ARGS[@]}"
+
+echo "Running airflow-init..."
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+
+echo "Cleaning up old containers..."
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" down --remove-orphans

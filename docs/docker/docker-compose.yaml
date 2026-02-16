@@ -22,6 +22,9 @@ include:
   - path: ./sovisuplus/sovisuplus.yaml
     env_file: ./sovisuplus/.env
     project_directory: ./sovisuplus
+  - path: ./sovisuplus/sovisuplus-maintenance.yaml
+    env_file: ./sovisuplus/.env
+    project_directory: ./sovisuplus
   - path: ./keycloak/keycloak.yaml
     env_file: ./keycloak/.env
     project_directory: ./keycloak
