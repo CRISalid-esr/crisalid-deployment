@@ -1,0 +1,4 @@
+# all yaml files in satosa dir and subdir except satosa.yaml
+internal_attributes.yaml
+proxy_conf.yaml
+plugins/**/*.yaml
