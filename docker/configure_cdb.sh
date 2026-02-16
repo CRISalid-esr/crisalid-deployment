@@ -100,6 +100,7 @@ rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/.git" "$DAGS_DIR/.gitignore" "$DAGS_DIR/te
 
 echo "Generating $ENV_FILE from $ENV_SAMPLE_FILE"
 export AIRFLOW_UID=$(id -u)
+export AIRFLOW_PROJ_DIR="$CDB_DIR"
 envsubst < "$ENV_SAMPLE_FILE" > "$ENV_FILE"
 
 # ------------------------------------------------------------------------------
@@ -147,10 +148,10 @@ if [[ "$RESET" == "true" ]]; then
 fi
 
 echo "Cleaning up old containers..."
-docker compose $COMPOSE_ARGS --project-directory "$CDB_DIR" --profile cdb -f "$CDB_DIR/cdb.yaml" "${DOWN_ARGS[@]}"
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" "${DOWN_ARGS[@]}"
 
 echo "Running airflow-init..."
-docker compose $COMPOSE_ARGS --project-directory "$CDB_DIR" --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
 
 echo "Cleaning up old containers..."
-docker compose $COMPOSE_ARGS --project-directory "$CDB_DIR" --profile cdb -f "$CDB_DIR/cdb.yaml" down --remove-orphans
+docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" down --remove-orphans
