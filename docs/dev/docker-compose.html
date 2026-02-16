@@ -420,7 +420,7 @@ Main docker-compose.yaml
 <h3 class="anchored" data-anchor-id="env-files">1. 🧾 <code>.env</code> Files</h3>
 <p>Each directory under <code>docker/</code> (e.g.&nbsp;<code>apollo</code>, <code>crisalid-bus</code>, <code>ikg</code>, <code>neo4j</code>, <code>cdb</code>, <code>harvester</code>, …) has its own <code>.env.sample</code> file.</p>
 <ul>
-<li>Copy each <code>.env.sample</code> to <code>.env</code></li>
+<li>Copy each <code>.env.sample</code> to <code>.env</code> for each directory except <code>cdb</code> (which is configured by the <code>configure_cdb.sh</code> script).</li>
 <li>Fill in appropriate values (hostnames, ports, secrets, etc.)</li>
 <li>The main <code>docker/.env.sample</code> includes values used by multiple components (like RabbitMQ or Neo4j credentials)</li>
 </ul>

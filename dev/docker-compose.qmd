@@ -85,7 +85,7 @@ docker compose \
 Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
 `.env.sample` file.
 
-* Copy each `.env.sample` to `.env`
+* Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh` script).
 * Fill in appropriate values (hostnames, ports, secrets, etc.)
 * The main `docker/.env.sample` includes values used by multiple components (like RabbitMQ or Neo4j credentials)
 
