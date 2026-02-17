@@ -38,19 +38,15 @@ fi
 : "${KEYCLOAK_DB_PASSWORD:?Missing KEYCLOAK_DB_PASSWORD in keycloak .env}"
 
 # 4. Check if required variables are present in global .env
-: "${SOVISUPLUS_SCHEME:?Missing SOVISUPLUS_SCHEME in global .env}"
-: "${SOVISUPLUS_HOST:?Missing SOVISUPLUS_HOST in global .env}"
-: "${SOVISUPLUS_PORT:?Missing SOVISUPLUS_PORT in global .env}"
+: "${SOVISUPLUS_URL:?Missing SOVISUPLUS_URL in global .env}"
 : "${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET:?Missing SOVISUPLUS_KEYCLOAK_CLIENT_SECRET in global .env}"
-
-export SOVISUPLUS_URL="${SOVISUPLUS_SCHEME}://${SOVISUPLUS_HOST}:${SOVISUPLUS_PORT}"
 
 # 5. Substitute and update the definitions.json for the Keycloak client
 if [ -f "$KEYCLOAK_CONFIG_TEMPLATE_FILE" ]; then
   echo "Updating Keycloak client definitions..."
 
   # Substitute environment variables and create the Keycloak configuration
-  envsubst '$KEYCLOAK_REALM $SOVISUPLUS_URL $SOVISUPLUS_SCHEME $SOVISUPLUS_KEYCLOAK_CLIENT_SECRET $ORCID_CLIENT_ID $ORCID_CLIENT_SECRET' < "$KEYCLOAK_CONFIG_TEMPLATE_FILE" > "$KEYCLOAK_CONFIG_FILE"
+  envsubst '$KEYCLOAK_REALM $SOVISUPLUS_URL $SOVISUPLUS_KEYCLOAK_CLIENT_SECRET $ORCID_CLIENT_ID $ORCID_CLIENT_SECRET' < "$KEYCLOAK_CONFIG_TEMPLATE_FILE" > "$KEYCLOAK_CONFIG_FILE"
 
   echo "Updated definitions file saved as crisalid-inst-updated.json"
 else

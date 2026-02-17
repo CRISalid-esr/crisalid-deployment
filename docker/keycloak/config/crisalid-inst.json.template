@@ -618,7 +618,7 @@
     "clientAuthenticatorType" : "client-secret",
     "secret" : "${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}",
     "redirectUris" : [ "${SOVISUPLUS_URL}/*" ],
-    "webOrigins" : [ "${SOVISUPLUS_URL}", "${SOVISUPLUS_SCHEME}://localhost:3000", "${SOVISUPLUS_SCHEME}://127.0.0.1:3000" ],
+    "webOrigins" : [ "${SOVISUPLUS_URL}" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
