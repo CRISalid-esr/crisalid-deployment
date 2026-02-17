@@ -160,7 +160,6 @@ DATABASE_URL="postgresql://sovisuplus:sovisuplus_password@localhost:5432/sovisup
 KEYCLOAK_CLIENT_ID="sovisuplus"
 KEYCLOAK_CLIENT_SECRET="use-the-same-secret-as-in-docker-compose"
 KEYCLOAK_ISSUER="http://keycloak.local:8080/realms/crisalid-inst"
-NEXTAUTH_URL="http://sovisuplus.local:3000/api/auth"
 NEXTAUTH_SECRET="use-a-secure-random-secret"
 
 AMQP_USER="crisalid_bus_user"
@@ -175,8 +174,8 @@ GRAPHQL_ENDPOINT_URL="http://localhost:4000/graphql"
 GRAPHQL_API_KEY_ENABLED="false"
 GRAPHQL_API_KEY="not-needed-in-dev"
 
-PERSPECTIVES_ROLES_FILTER="author"
-PUBLICATION_LIST_ROLES_FILTER="author"
+PERSPECTIVES_ROLES_FILTER=["author ","author of introduction, etc. ","author of afterword, colophon, etc. ","author in quotations or text abstracts ","editor ","editor of compilation ","translator" ]
+PUBLICATION_LIST_ROLES_FILTER=["analyst ","annotator ","author ","author in quotations or text abstracts ","author of afterword, colophon, etc. ","author of introduction, etc. ","cartographer ","commentator for written text ","compiler ","composer ","conceptor ","contributor ","curator ","degree committee member ","dissertant ","donor ","editor ","editor of compilation ","film director ","film editor ","former owner ","illustrator ","interviewee ","interviewer ","opponent ","organizer ","other ","photographer ","praeses ","production personnel ","project director ","publisher director ","rapporteur ","scientific advisor ","software developer ","sound designer ","speaker ","stage manager ","thesis advisor ","translator ","writer of accompanying material"]
 
 ORCID_URL="https://sandbox.orcid.org"
 APP_URL="http://sovisuplus.local:3000"
