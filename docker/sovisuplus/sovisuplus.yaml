@@ -33,7 +33,7 @@ services:
     restart: unless-stopped
     ports:
       - ${SVP_PORT:-3000}:3000
-      - ${SVP_WS_PORT:-3001}:3001
+      - ${SVP_WS_INTERNAL_PORT:-3001}:3001
     environment:
       - INIT_ROLES_ON_START=true
       - RBAC_ROLES_FILE=/config/rbac.roles.yaml
@@ -48,7 +48,7 @@ services:
       - NEXT_PUBLIC_WS_HOST=${SVP_WS_HOST}
       - NEXT_PUBLIC_WS_PORT=${SVP_WS_PORT}
       - NEXT_PUBLIC_WS_PATH=${SVP_WS_PATH}
-      - WS_INTERNAL_PORT=${SVP_WS_INTERNAL_PORT}
+      - NEXTAUTH_URL=${SOVISUPLUS_URL}/api/auth
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - AMQP_HOST=crisalid-bus
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
