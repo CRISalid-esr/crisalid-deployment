@@ -8,7 +8,7 @@ services:
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:v0.1
   crisalid-ikg:
-    image: crisalidesr/crisalid-ikg:v0.25-dev
+    image: crisalidesr/crisalid-ikg:1.0
     environment:
       - APP_ENV=PROD
   # Ofelia (cron-like task scheduler)
