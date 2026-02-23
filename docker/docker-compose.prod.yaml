@@ -21,11 +21,11 @@ services:
   harvester-redis:
     image: redis:7
   harvester-worker:
-    image: crisalidesr/svp-harvester:v0.29-dev
+    image: crisalidesr/svp-harvester:1.0
     environment:
       - APP_ENV=PROD
   harvester-ui:
-    image: crisalidesr/svp-harvester:v0.29-dev
+    image: crisalidesr/svp-harvester:1.0
     environment:
       - APP_ENV=PROD
   harvester-db:
