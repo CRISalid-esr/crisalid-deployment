@@ -67,7 +67,24 @@ DAGS_DIR="$CDB_DIR/dags"
 ENV_SAMPLE_FILE="$CDB_DIR/.env.sample"
 ENV_FILE="$CDB_DIR/.env"
 REPO_URL="https://github.com/CRISalid-esr/crisalid-directory-bridge"
-REPO_BRANCH="dev-main"
+
+if [[ "$ENVIRONMENT" == "prod" ]]; then
+  # Load only the value from .env.sample
+  if [[ -f "$SHARED_ENV_FILE" ]]; then
+    set -a
+    source "$SHARED_ENV_FILE"
+    set +a
+  fi
+
+  REPO_REF="${CDB_DAGS_REF:-main}"
+else
+  REPO_REF="dev-main"
+fi
+
+echo "Configuring CDB for environment: $ENVIRONMENT"
+echo "Using DAGs repo ref: $REPO_REF"
+exit(0)
+
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
 
@@ -91,7 +108,7 @@ fi
 echo "Preparing Airflow directories"
 mkdir -p "$CDB_DIR/logs" "$CDB_DIR/plugins" "$CDB_DIR/config" "$CDB_DIR/data"
 rm -rf "$DAGS_DIR"
-git clone --depth 1 --branch "$REPO_BRANCH" "$REPO_URL" "$DAGS_DIR"
+git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$DAGS_DIR"
 rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/.git" "$DAGS_DIR/.gitignore" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
 
 # ------------------------------------------------------------------------------
