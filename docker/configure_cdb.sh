@@ -83,7 +83,6 @@ fi
 
 echo "Configuring CDB for environment: $ENVIRONMENT"
 echo "Using DAGs repo ref: $REPO_REF"
-exit(0)
 
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
