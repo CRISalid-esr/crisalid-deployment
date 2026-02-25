@@ -43,7 +43,7 @@ if [[ -z "${ENVIRONMENT}" ]]; then
   exit 1
 fi
 
-COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.yaml -f $ROOT_DIR/docker-compose.${ENVIRONMENT}.yaml"
+COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.${ENVIRONMENT}.yaml"
 
 confirm_reset() {
   echo ""
@@ -83,7 +83,6 @@ fi
 
 echo "Configuring CDB for environment: $ENVIRONMENT"
 echo "Using DAGs repo ref: $REPO_REF"
-exit(0)
 
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
