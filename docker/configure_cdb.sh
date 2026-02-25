@@ -43,7 +43,7 @@ if [[ -z "${ENVIRONMENT}" ]]; then
   exit 1
 fi
 
-COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.yaml -f $ROOT_DIR/docker-compose.${ENVIRONMENT}.yaml"
+COMPOSE_ARGS="-f $ROOT_DIR/docker-compose.${ENVIRONMENT}.yaml"
 
 confirm_reset() {
   echo ""
