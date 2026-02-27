@@ -6,7 +6,7 @@ services:
     image: neo4j:5-community
   # IKG (knowledge graph management)
   crisalid-org-registry:
-    image: crisalidesr/crisalid-org-registry:v0.1
+    image: crisalidesr/crisalid-org-registry:dev
   crisalid-ikg:
     image: crisalidesr/crisalid-ikg:dev
     environment:
