@@ -8,6 +8,7 @@ services:
       - 3000
     environment:
       - ORG_REGISTRY_URL=http://crisalid-org-registry:3000  # Match the URL used in your environment
+      - REFRESH_ORG_REGISTRY=${REFRESH_ORG_REGISTRY:-"false"}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000/" ]  # Health check using curl
       interval: 120s
@@ -16,6 +17,8 @@ services:
       timeout: 5s
     networks:
       - ikg-network
+    volumes:
+      - org_registry_pgdata:/var/lib/postgresql/data
     profiles:
       - ikg
   crisalid-ikg:
@@ -74,3 +77,5 @@ networks:
     driver: bridge
   crisalid-back:
     driver: bridge
+volumes:
+    org_registry_pgdata:
