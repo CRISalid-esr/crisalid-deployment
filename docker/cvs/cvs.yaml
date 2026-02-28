@@ -42,9 +42,8 @@ services:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:api-1.0
     container_name: cvs-api
-    ports: [ "8000:8000" ]
+    ports: [ "${CVS_API_PORT:-8000}:8000" ]
     environment:
-      VOCAB_OS_JEL_URL: http://os-jel:9200
       API_VERSION: ${API_VERSION:-v1}
     depends_on: [ os-jel , os-acm , os-aat ]
     networks:
