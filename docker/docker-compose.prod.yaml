@@ -72,3 +72,11 @@ services:
     image: quay.io/keycloak/keycloak:26.5.4
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
+  os-jel:
+    image: crisalidesr/crisalid-vocab-search:os-jel-1.0
+  os-acm:
+    image: crisalidesr/crisalid-vocab-search:os-acm-1.0
+  os-aat:
+    image: crisalidesr/crisalid-vocab-search:os-aat-1.0
+  cvs-api:
+    image: crisalidesr/crisalid-vocab-search:api-1.0

@@ -1,0 +1,59 @@
+services:
+  os-jel:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:os-jel-latest
+    container_name: cvs-os-jel
+    expose:
+      - "9200"
+    # only if you want to access from host machine
+    #ports: [ "9200:9200" ]
+    networks:
+      - crisalid-vocab-search-network
+    profiles:
+      - cvs
+
+  os-acm:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:os-acm-latest
+    container_name: cvs-os-acm
+    expose:
+      - "9200"
+    # only if you want to access from host machine
+    #ports: [ "9200:9200" ]
+    networks:
+      - crisalid-vocab-search-network
+    profiles:
+      - cvs
+
+  os-aat:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:os-aat-latest
+    container_name: cvs-os-aat
+    expose:
+      - "9200"
+    # only if you want to access from host machine
+    #ports: [ "9200:9200" ]
+    networks:
+      - crisalid-vocab-search-network
+    profiles:
+      - cvs
+
+  cvs-api:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:api-1.0
+    container_name: cvs-api
+    ports: [ "${CVS_API_PORT:-8000}:8000" ]
+    environment:
+      API_VERSION: ${API_VERSION:-v1}
+    depends_on: [ os-jel , os-acm , os-aat ]
+    networks:
+      - crisalid-vocab-search-network
+      - svp-network
+    profiles:
+      - cvs
+
+networks:
+  crisalid-vocab-search-network:
+    driver: bridge
+  svp-network:
+    driver: bridge
