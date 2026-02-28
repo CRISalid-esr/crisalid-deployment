@@ -141,6 +141,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../map/components.qmd">
  <span class="dropdown-text">Identify Relevant Components</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../map/harvesting.html">
+ <span class="dropdown-text">Configure publication harvesting</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -253,7 +257,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#part-2-migrate-your-local-dev-to-https-tls" id="toc-part-2-migrate-your-local-dev-to-https-tls" class="nav-link active" data-scroll-target="#part-2-migrate-your-local-dev-to-https-tls">Part 2 — Migrate your Local Dev to HTTPS (TLS)</a>
+  <li><a href="#migrate-your-local-dev-to-https-tls" id="toc-migrate-your-local-dev-to-https-tls" class="nav-link active" data-scroll-target="#migrate-your-local-dev-to-https-tls">Migrate your Local Dev to HTTPS (TLS)</a>
   <ul class="collapse">
   <li><a href="#goal" id="toc-goal" class="nav-link" data-scroll-target="#goal">🎯 Goal</a></li>
   <li><a href="#step-1-install-certificate-authority-mkcert" id="toc-step-1-install-certificate-authority-mkcert" class="nav-link" data-scroll-target="#step-1-install-certificate-authority-mkcert">🔒 Step 1: Install Certificate Authority (mkcert)</a></li>
@@ -298,8 +302,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="part-2-migrate-your-local-dev-to-https-tls" class="level1">
-<h1>Part 2 — Migrate your Local Dev to HTTPS (TLS)</h1>
+<section id="migrate-your-local-dev-to-https-tls" class="level1">
+<h1>Migrate your Local Dev to HTTPS (TLS)</h1>
 <blockquote class="blockquote">
 <p>This section guides you through configuring your local development setup to use HTTPS (TLS) for both <strong>SoVisu+</strong> and <strong>Keycloak</strong>. This is required to enable Saml2 authentication.</p>
 </blockquote>
@@ -345,20 +349,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="a.-sovisu-sovisuplus.env">A. SoVisu+ (<code>sovisuplus/.env</code>)</h3>
 <p>Update the URLs to reflect the new <code>https</code> scheme and the Keycloak HTTPS port (<code>8443</code>).</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Before (HTTP)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">WS_SCHEME=ws</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># WS_SCHEME="ws"</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># KEYCLOAK_ISSUER="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># KEYCLOAK_PUBLIC_URL="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># NEXTAUTH_URL="[http://sovisuplus.local:3000/api/auth](http://sovisuplus.local:3000/api/auth)"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># After (HTTPS)</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="va">WS_SCHEME</span><span class="op">=</span><span class="st">wss</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_ISSUER</span><span class="op">=</span><span class="st">"[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_PUBLIC_URL</span><span class="op">=</span><span class="st">"[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="va">NEXTAUTH_URL</span><span class="op">=</span><span class="st">"[https://sovisuplus.local:3000/api/auth](https://sovisuplus.local:3000/api/auth)"</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># UNCOMMENT THIS LINE to allow the Next.js server (Node.js) to communicate</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># with Keycloak without complaining about the self-signed certificate.</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="va">NODE_TLS_REJECT_UNAUTHORIZED</span><span class="op">=</span>0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># After (HTTPS)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="va">WS_SCHEME</span><span class="op">=</span>wss</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_ISSUER</span><span class="op">=</span><span class="st">"[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_PUBLIC_URL</span><span class="op">=</span><span class="st">"[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># UNCOMMENT THIS LINE to allow the Next.js server (Node.js) to communicate</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># with Keycloak without complaining about the self-signed certificate.</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="va">NODE_TLS_REJECT_UNAUTHORIZED</span><span class="op">=</span>0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="b.-docker-config-crisalid-deploymentdocker.env" class="level3">
 <h3 class="anchored" data-anchor-id="b.-docker-config-crisalid-deploymentdocker.env">B. Docker Config (<code>crisalid-deployment/docker/.env</code>)</h3>
@@ -366,12 +368,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Before</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># KEYCLOAK_SCHEME=http</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># KEYCLOAK_PORT=8080</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># SOVISUPLUS_SCHEME=http</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># SOVISUPLUS_URL=http://...</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># After</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_SCHEME</span><span class="op">=</span>https</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_PORT</span><span class="op">=</span>8443</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="va">SOVISUPLUS_SCHEME</span><span class="op">=</span>https</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="va">SOVISUPLUS_URL</span><span class="op">=</span>https://...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="c.-docker-keycloak-config-dockerkeycloak.env" class="level3">
 <h3 class="anchored" data-anchor-id="c.-docker-keycloak-config-dockerkeycloak.env">C. Docker Keycloak Config (<code>docker/keycloak/.env</code>)</h3>

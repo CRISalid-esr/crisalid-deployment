@@ -70,13 +70,11 @@ Update the URLs to reflect the new `https` scheme and the Keycloak HTTPS port (`
 # WS_SCHEME="ws"
 # KEYCLOAK_ISSUER="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"
 # KEYCLOAK_PUBLIC_URL="[http://keycloak.local:8080/realms/crisalid-inst](http://keycloak.local:8080/realms/crisalid-inst)"
-# NEXTAUTH_URL="[http://sovisuplus.local:3000/api/auth](http://sovisuplus.local:3000/api/auth)"
 
 # After (HTTPS)
 WS_SCHEME=wss
 KEYCLOAK_ISSUER="[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"
 KEYCLOAK_PUBLIC_URL="[https://keycloak.local:8443/realms/crisalid-inst](https://keycloak.local:8443/realms/crisalid-inst)"
-NEXTAUTH_URL="[https://sovisuplus.local:3000/api/auth](https://sovisuplus.local:3000/api/auth)"
 
 # UNCOMMENT THIS LINE to allow the Next.js server (Node.js) to communicate
 # with Keycloak without complaining about the self-signed certificate.
@@ -91,12 +89,12 @@ Update the scheme and port for both Keycloak and SoVisu+ to use HTTPS.
 # Before
 # KEYCLOAK_SCHEME=http
 # KEYCLOAK_PORT=8080
-# SOVISUPLUS_SCHEME=http
+# SOVISUPLUS_URL=http://...
 
 # After
 KEYCLOAK_SCHEME=https
 KEYCLOAK_PORT=8443
-SOVISUPLUS_SCHEME=https
+SOVISUPLUS_URL=https://...
 ```
 
 ### C. Docker Keycloak Config (`docker/keycloak/.env`)

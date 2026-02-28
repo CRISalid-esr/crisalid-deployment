@@ -6,9 +6,9 @@ services:
     image: neo4j:5.26.21-community
   # IKG (knowledge graph management)
   crisalid-org-registry:
-    image: crisalidesr/crisalid-org-registry:v0.1
+    image: crisalidesr/crisalid-org-registry:1.0
   crisalid-ikg:
-    image: crisalidesr/crisalid-ikg:v0.25-dev
+    image: crisalidesr/crisalid-ikg:1.0
     environment:
       - APP_ENV=PROD
   # Ofelia (cron-like task scheduler)
@@ -21,54 +21,54 @@ services:
   harvester-redis:
     image: redis:7
   harvester-worker:
-    image: crisalidesr/svp-harvester:v0.29-dev
+    image: crisalidesr/svp-harvester:1.0
     environment:
       - APP_ENV=PROD
   harvester-ui:
-    image: crisalidesr/svp-harvester:v0.29-dev
+    image: crisalidesr/svp-harvester:1.0
     environment:
       - APP_ENV=PROD
   harvester-db:
     image: postgres:16
   # apollo (GraphQL API)
   apollo:
-    image: crisalidesr/crisalid-apollo:v0.3-dev
+    image: crisalidesr/crisalid-apollo:1.0
     environment:
       - APP_ENV=PROD
   # Crisalid directory bridge (Airflow DAGs)
   cdb-postgres:
-    image: postgres:13
+    image: postgres:16
   cdb-redis:
     image: redis:7.2-bookworm
   cdb-data-versioning-redis:
     image: redis:7.2-bookworm
   airflow-apiserver:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   airflow-scheduler:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   airflow-dag-processor:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   airflow-worker:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   airflow-triggerer:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   airflow-init:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   airflow-cli:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   flower:
-    image: apache/airflow:3.0.2
+    image: apache/airflow:3.1.7
   # Sovisuplus (scientific output and researcher identifiers)
   svp-db:
     image: postgres:16
   sovisuplus:
-    image: crisalidesr/sovisuplus:v0.43-dev
+    image: crisalidesr/sovisuplus:1.0
   sovisuplus-maintenance:
     image: crisalidesr/crisalid-maintenance:1.0
   # Keycloak (identity and access management)
   keycloak-db:
     image: postgres:16
   keycloak:
-    image: quay.io/keycloak/keycloak:26.3.2
+    image: quay.io/keycloak/keycloak:26.5.4
   keycloak-tls:
-    image: quay.io/keycloak/keycloak:26.3.2
+    image: quay.io/keycloak/keycloak:26.5.4
