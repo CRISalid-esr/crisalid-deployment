@@ -62,13 +62,13 @@ services:
   svp-db:
     image: postgres:16
   sovisuplus:
-    image: crisalidesr/sovisuplus:latest
+    image: crisalidesr/sovisuplus:dev
   sovisuplus-maintenance:
     image: crisalidesr/crisalid-maintenance:latest
   # Keycloak (identity and access management)
   keycloak-db:
     image: postgres:16
   keycloak:
-    image: quay.io/keycloak/keycloak:26.3.2
+    image: quay.io/keycloak/keycloak:26.5.4
   keycloak-tls:
-    image: quay.io/keycloak/keycloak:26.3.2
+    image: quay.io/keycloak/keycloak:26.5.4
