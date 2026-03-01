@@ -129,6 +129,7 @@ services:
       - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
       - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
       - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
+      - OPENALEX_API_KEY=${OPENALEX_API_KEY}
       - ENABLE_BASIC_AUTH=false
     healthcheck:
       test: [ "CMD", "pgrep", "-f", "python -m app.amqp_listen" ]
