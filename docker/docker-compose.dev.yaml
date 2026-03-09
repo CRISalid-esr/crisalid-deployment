@@ -1,9 +1,9 @@
 services:
   crisalid-bus:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.13.7-management
   # neo4j (graph database)
   neo4j:
-    image: neo4j:5-community
+    image: neo4j:5.26.21-community
   # IKG (knowledge graph management)
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:dev
