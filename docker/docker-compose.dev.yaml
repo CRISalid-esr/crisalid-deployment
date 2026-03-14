@@ -78,5 +78,11 @@ services:
     image: crisalidesr/crisalid-vocab-search:os-acm-latest
   os-aat:
     image: crisalidesr/crisalid-vocab-search:os-aat-latest
+  os-elsst:
+    image: crisalidesr/crisalid-vocab-search:os-elsst-latest
+  os-pactols:
+    image: crisalidesr/crisalid-vocab-search:os-pactols-latest
+  os-euroscivoc:
+    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-latest
   cvs-api:
     image: crisalidesr/crisalid-vocab-search:api-1.0

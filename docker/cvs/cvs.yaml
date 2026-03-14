@@ -38,6 +38,45 @@ services:
     profiles:
       - cvs
 
+  os-elsst:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:os-elsst-latest
+    container_name: cvs-os-elsst
+    expose:
+      - "9200"
+    # only if you want to access from host machine
+    #ports: [ "9200:9200" ]
+    networks:
+      - crisalid-vocab-search-network
+    profiles:
+      - cvs
+
+  os-pactols:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:os-pactols-latest
+    container_name: cvs-os-pactols
+    expose:
+      - "9200"
+    # only if you want to access from host machine
+    #ports: [ "9200:9200" ]
+    networks:
+      - crisalid-vocab-search-network
+    profiles:
+      - cvs
+
+  os-euroscivoc:
+    # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
+    # image: crisalidesr/crisalid-vocab-search:os-euroscivoc-latest
+    container_name: cvs-os-euroscivoc
+    expose:
+      - "9200"
+    # only if you want to access from host machine
+    #ports: [ "9200:9200" ]
+    networks:
+      - crisalid-vocab-search-network
+    profiles:
+      - cvs
+
   cvs-api:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:api-1.0
