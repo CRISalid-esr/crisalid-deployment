@@ -73,16 +73,16 @@ services:
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
   os-jel:
-    image: crisalidesr/crisalid-vocab-search:os-jel-latest
+    image: crisalidesr/crisalid-vocab-search:os-jel-dev
   os-acm:
-    image: crisalidesr/crisalid-vocab-search:os-acm-latest
+    image: crisalidesr/crisalid-vocab-search:os-acm-dev
   os-aat:
-    image: crisalidesr/crisalid-vocab-search:os-aat-latest
+    image: crisalidesr/crisalid-vocab-search:os-aat-dev
   os-elsst:
-    image: crisalidesr/crisalid-vocab-search:os-elsst-latest
+    image: crisalidesr/crisalid-vocab-search:os-elsst-dev
   os-pactols:
-    image: crisalidesr/crisalid-vocab-search:os-pactols-latest
+    image: crisalidesr/crisalid-vocab-search:os-pactols-dev
   os-euroscivoc:
-    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-latest
+    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-dev
   cvs-api:
-    image: crisalidesr/crisalid-vocab-search:api-1.0
+    image: crisalidesr/crisalid-vocab-search:api-dev
