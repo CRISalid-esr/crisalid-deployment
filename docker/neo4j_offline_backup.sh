@@ -133,14 +133,12 @@ log "Stopping Neo4j (graceful timeout: ${NEO4J_STOP_TIMEOUT}s)..."
 
 log "Running offline Neo4j dump for databases: system, neo4j"
 docker run --rm \
-  --user "$(id -u):$(id -g)" \
   --volume "$NEO4J_DATA_DIR:/data" \
   --volume "$RUN_BACKUP_DIR:/backups" \
   "$NEO4J_ADMIN_IMAGE" \
   neo4j-admin database dump system --to-path=/backups
 
 docker run --rm \
-  --user "$(id -u):$(id -g)" \
   --volume "$NEO4J_DATA_DIR:/data" \
   --volume "$RUN_BACKUP_DIR:/backups" \
   "$NEO4J_ADMIN_IMAGE" \
