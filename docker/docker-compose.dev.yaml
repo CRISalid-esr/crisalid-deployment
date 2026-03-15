@@ -3,7 +3,7 @@ services:
     image: rabbitmq:3.13.7-management
   # neo4j (graph database)
   neo4j:
-    image: neo4j:5.26.21-community
+    image: neo4j:${NEO4J_VERSION:-5.26.21}-${NEO4J_EDITION:-community}
   # IKG (knowledge graph management)
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:dev
@@ -73,10 +73,16 @@ services:
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
   os-jel:
-    image: crisalidesr/crisalid-vocab-search:os-jel-latest
+    image: crisalidesr/crisalid-vocab-search:os-jel-dev
   os-acm:
-    image: crisalidesr/crisalid-vocab-search:os-acm-latest
+    image: crisalidesr/crisalid-vocab-search:os-acm-dev
   os-aat:
-    image: crisalidesr/crisalid-vocab-search:os-aat-latest
+    image: crisalidesr/crisalid-vocab-search:os-aat-dev
+  os-elsst:
+    image: crisalidesr/crisalid-vocab-search:os-elsst-dev
+  os-pactols:
+    image: crisalidesr/crisalid-vocab-search:os-pactols-dev
+  os-euroscivoc:
+    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-dev
   cvs-api:
-    image: crisalidesr/crisalid-vocab-search:api-1.0
+    image: crisalidesr/crisalid-vocab-search:api-dev

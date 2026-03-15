@@ -3,7 +3,7 @@ services:
     image: rabbitmq:3.13.7-management
   # neo4j (graph database)
   neo4j:
-    image: neo4j:5.26.21-community
+    image: neo4j:${NEO4J_VERSION:-5.26.21}-${NEO4J_EDITION:-community}
   # IKG (knowledge graph management)
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:1.0
@@ -21,11 +21,11 @@ services:
   harvester-redis:
     image: redis:7
   harvester-worker:
-    image: crisalidesr/svp-harvester:1.0
+    image: crisalidesr/svp-harvester:1.1
     environment:
       - APP_ENV=PROD
   harvester-ui:
-    image: crisalidesr/svp-harvester:1.0
+    image: crisalidesr/svp-harvester:1.1
     environment:
       - APP_ENV=PROD
   harvester-db:
@@ -62,7 +62,7 @@ services:
   svp-db:
     image: postgres:16
   sovisuplus:
-    image: crisalidesr/sovisuplus:1.0
+    image: crisalidesr/sovisuplus:1.2
   sovisuplus-maintenance:
     image: crisalidesr/crisalid-maintenance:1.0
   # Keycloak (identity and access management)
@@ -73,10 +73,16 @@ services:
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
   os-jel:
-    image: crisalidesr/crisalid-vocab-search:os-jel-1.0
+    image: crisalidesr/crisalid-vocab-search:os-jel-1.1
   os-acm:
-    image: crisalidesr/crisalid-vocab-search:os-acm-1.0
+    image: crisalidesr/crisalid-vocab-search:os-acm-1.1
   os-aat:
-    image: crisalidesr/crisalid-vocab-search:os-aat-1.0
+    image: crisalidesr/crisalid-vocab-search:os-aat-1.1
+  os-elsst:
+    image: crisalidesr/crisalid-vocab-search:os-elsst-1.1
+  os-pactols:
+    image: crisalidesr/crisalid-vocab-search:os-pactols-1.1
+  os-euroscivoc:
+    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-1.1
   cvs-api:
-    image: crisalidesr/crisalid-vocab-search:api-1.0
+    image: crisalidesr/crisalid-vocab-search:api-1.1
