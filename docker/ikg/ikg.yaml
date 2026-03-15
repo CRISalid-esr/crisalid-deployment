@@ -38,7 +38,7 @@ services:
       - API_PREFIX=/api
       - API_VERSION=v1
       - AMQP_ENABLED=true
-      - AMQP_HOST=crisalid-bus
+      - AMQP_HOST=${CRISALID_BUS_HOST:-crisalid-bus}
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
       - AMQP_USER=${CRISALID_BUS_USER}
       - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}

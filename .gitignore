@@ -1,2 +1,4 @@
 /.quarto/
 .idea
+postgres-data
+realm-export

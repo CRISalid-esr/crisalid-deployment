@@ -128,7 +128,7 @@ if [ -f "$TEMPLATE_ENV" ]; then
 
   export AMQP_USER="$CRISALID_BUS_USER"
   export AMQP_PASSWORD="$CRISALID_BUS_PASSWORD"
-  export AMQP_HOST="crisalid-bus"
+  export AMQP_HOST="${CRISALID_BUS_HOST:-crisalid-bus}"
   export AMQP_PORT="$CRISALID_BUS_AMQP_PORT"
   export CDB_REDIS_HOST=cdb-data-versioning-redis
   export CDB_REDIS_PORT=6379
