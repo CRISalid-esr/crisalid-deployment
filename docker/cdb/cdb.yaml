@@ -58,8 +58,8 @@ x-airflow-common:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@cdb-postgres/airflow
-    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@cdb-postgres/airflow
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${CDB_POSTGRES_USER}:${CDB_POSTGRES_PASSWORD}@${CDB_POSTGRES_HOST}:${CDB_POSTGRES_PORT}/${CDB_POSTGRES_DB}
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${CDB_POSTGRES_USER}:${CDB_POSTGRES_PASSWORD}@${CDB_POSTGRES_HOST}:${CDB_POSTGRES_PORT}/${CDB_POSTGRES_DB}
     AIRFLOW__CELERY__BROKER_URL: redis://:@cdb-redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
@@ -100,9 +100,9 @@ services:
   cdb-postgres:
     # image: postgres:16
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
+      POSTGRES_USER: ${CDB_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${CDB_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${CDB_POSTGRES_DB}
     volumes:
       - cdb-postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
