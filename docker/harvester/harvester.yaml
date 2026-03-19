@@ -110,7 +110,7 @@ services:
       # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
       # - APP_ENV=DEV
       - INSTITUTION_NAME=${INSTITUTION_NAME}
-      - DB_HOST=harvester-db
+      - DB_HOST=${HARVESTER_DB_HOST:-harvester-db}
       - DB_PORT=5432
       - DB_NAME=${HARVESTER_DB_NAME}
       - DB_USER=${HARVESTER_DB_USER}
