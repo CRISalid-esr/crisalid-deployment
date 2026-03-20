@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://docs.crisalid.org/map/message_catalog.html</loc>
+    <lastmod>2026-03-19T12:38:05.751Z</lastmod>
+  </url>
+  <url>
     <loc>https://docs.crisalid.org/index.html</loc>
     <lastmod>2025-06-11T07:44:56.157Z</lastmod>
   </url>
   <url>
+    <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
+    <lastmod>2025-11-30T09:53:28.539Z</lastmod>
+  </url>
+  <url>
     <loc>https://docs.crisalid.org/dev/dev-backend.html</loc>
-    <lastmod>2026-02-17T06:19:40.632Z</lastmod>
+    <lastmod>2026-02-28T09:08:08.279Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>
-    <lastmod>2025-12-20T07:36:11.812Z</lastmod>
+    <lastmod>2026-01-11T11:24:43.154Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2026-02-16T00:30:13.504Z</lastmod>
+    <lastmod>2026-03-20T10:10:54.125Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
-    <lastmod>2026-02-17T06:02:23.997Z</lastmod>
-  </url>
-  <url>
-    <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
-    <lastmod>2025-11-30T09:02:12.222Z</lastmod>
+    <lastmod>2026-02-28T09:08:08.281Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/harvesting.html</loc>
     <lastmod>2026-02-14T07:47:32.411Z</lastmod>
-  </url>
-  <url>
-    <loc>https://docs.crisalid.org/map/message_catalog.html</loc>
-    <lastmod>2026-03-17T14:27:32.966Z</lastmod>
   </url>
 </urlset>

@@ -17,14 +17,49 @@ or **insecure access** to internal institutional directories (especially if LDAP
 The repository ships with additional Compose files to adapt the same modular stack to different environments:
 
 - **DEV overlay** (`docker-compose.dev.yaml`)
-  - Docker image tags for components under active development are **not pinned** (typically `:latest`).
-  - Environment variables that depend on the environment (e.g. `APP_ENV`, when present) are set to **`DEV`**.
+    - Docker image tags for components under active development are **not pinned** (typically `:latest`).
+    - Environment variables that depend on the environment (e.g. `APP_ENV`, when present) are set to **`DEV`**.
 
 - **PROD overlay** (`docker-compose.prod.yaml`)
-  - Docker image tags are **pinned** (explicit versions) to ensure reproducible deployments.
-  - Environment variables that depend on the environment (e.g. `APP_ENV`, when present) are set to **`PROD`**.
+    - Docker image tags are **pinned** (explicit versions) to ensure reproducible deployments.
+    - Environment variables that depend on the environment (e.g. `APP_ENV`, when present) are set to **`PROD`**.
 
 Use the overlays by combining files with `-f` (the overlay only overrides what differs from the base file).
+
+---
+
+## 🗄️ Local PostgreSQL vs external PostgreSQL
+
+Several CRISalid components can use either:
+
+- a **local PostgreSQL container** managed by Docker Compose
+- or an **external PostgreSQL server** already provided by the institution
+
+This is handled with two mechanisms:
+
+- the base Compose files are now **external-DB compatible by default**
+- the file `docker/docker-compose.local-postgres.yaml` re-adds the `depends_on` relationships required when using local
+  PostgreSQL containers
+
+### Base principle
+
+For each component:
+
+- the application service uses `${..._DB_HOST}` and can therefore point either to a local container or to an external
+  host
+- the local PostgreSQL service is placed in its own dedicated profile
+- local PostgreSQL startup dependencies are added only through `docker/docker-compose.local-postgres.yaml`
+
+### Dedicated database profiles
+
+The following profiles are used for local PostgreSQL containers:
+
+- `harvester-db`
+- `sovisuplus-db`
+- `keycloak-db`
+- `cdb-db`
+
+When these profiles are not enabled, the corresponding application uses the database host configured in its `.env` file.
 
 ---
 
@@ -42,25 +77,53 @@ directive and **profiles** to enable only selected components.
 ```
 </details>
 
-### DEV example
+### DEV example (with docker managed PostgreSQL)
 
 ```bash
 docker compose \
   -f docker/docker-compose.yaml \
   -f docker/docker-compose.dev.yaml \
+  -f docker/docker-compose.local-postgres.yaml \
   --profile neo4j \
   --profile apollo \
   --profile crisalid-bus \
   --profile harvester \
+  --profile harvester-db \
   --profile ikg \
   --profile cdb \
+  --profile cdb-db \
   --profile keycloak \
+  --profile keycloak-db \
   --profile sovisuplus \
+  --profile sovisuplus-db \
   --profile ofelia \
   up -d
 ```
 
-### PROD example
+### PROD example (with docker managed PostgreSQL)
+
+```bash
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.prod.yaml \
+  -f docker/docker-compose.local-postgres.yaml \
+  --profile neo4j \
+  --profile apollo \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile harvester-db \
+  --profile ikg \
+  --profile cdb \
+  --profile cdb-db \
+  --profile keycloak \
+  --profile keycloak-db \
+  --profile sovisuplus \
+  --profile sovisuplus-db \
+  --profile ofelia \    
+  up -d
+```
+
+### PROD example (with external PostgreSQL)
 
 ```bash
 docker compose \
@@ -78,6 +141,21 @@ docker compose \
   up -d
 ```
 
+### Configuration check
+
+If you are unsure which services and profiles are effectively enabled after variable expansion and file overrides, run:
+
+```bash
+docker compose \
+  -f docker/docker-compose.yaml \
+  -f docker/docker-compose.dev.yaml \
+  -f docker/docker-compose.local-postgres.yaml \
+  --profile neo4j \
+  --profile apollo \
+  # add the profiles you want to check \
+    config
+```
+
 ## 🧰 Preparation Steps
 
 ### 1. 🧾 `.env` Files
@@ -85,7 +163,8 @@ docker compose \
 Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
 `.env.sample` file.
 
-* Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh` script).
+* Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh`
+  script).
 * Fill in appropriate values (hostnames, ports, secrets, etc.)
 * The main `docker/.env.sample` includes values used by multiple components (like RabbitMQ or Neo4j credentials)
 
@@ -97,18 +176,46 @@ Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `
 > LDAP_BIND_PASSWORD=
 > ```
 
-### 2. 🔐 Configure Basic Authentication for SVP Harvester
+### 2. 🔧 Configure CRISalid Bus
+
+This script reads the `.env` values and generates the RabbitMQ `definitions.json` file (exchanges, queues, admin user,
+etc.).
+
+```bash
+./docker/configure_crisalid_bus.sh
+```
+
+### 3. 🔧 Configure CRISalid Directory Bridge (CDB)
+
+This script clones the DAGs, generates environment files, and runs the Airflow initialization.
+
+You must specify the target environment:
+
+```bash
+./docker/configure_cdb.sh dev
+```
+
+or
+
+```bash
+./docker/configure_cdb.sh prod
+```
+
+---
+
+### 4. 🔐 Configure Basic Authentication for SVP Harvester
 
 SVP Harvester supports **HTTP Basic authentication** for both its **web interface** and **REST API**.
 
-Authentication is enabled by default. You control this behavior via the `HARVESTER_ENABLE_BASIC_AUTH` environment variable in the harvester's `.env` file.
+Authentication is enabled by default. You control this behavior via the `HARVESTER_ENABLE_BASIC_AUTH` environment
+variable in the harvester's `.env` file.
 
 #### Enable / disable authentication
 
 In `docker/harvester/.env`:
 
 ```env
-ENABLE_BASIC_AUTH=true
+HARVESTER_ENABLE_BASIC_AUTH=true
 ```
 
 * `true` (default): all `/admin/*` and `/api/*` endpoints are protected
@@ -127,7 +234,8 @@ User credentials are stored in a local file mounted into the container:
 app/auth/users.json
 ```
 
-Before starting the container for the first time, ensure that this file exists and is initialized with an empty JSON object:
+Before starting the container for the first time, ensure that this file exists and is initialized with an empty JSON
+object:
 
 ```
 mkdir -p harvester/auth
@@ -156,33 +264,6 @@ docker exec -it harvester-ui python scripts/remove_basic_user.py admin
 
 ---
 
-### 3. 🔧 Configure CRISalid Bus
-
-This script reads the `.env` values and generates the RabbitMQ `definitions.json` file (exchanges, queues, admin user,
-etc.).
-
-```bash
-./docker/configure_crisalid_bus.sh
-```
-
-### 4. 🔧 Configure CRISalid Directory Bridge (CDB)
-
-This script clones the DAGs, generates environment files, and runs the Airflow initialization.
-
-You must specify the target environment:
-
-```bash
-./docker/configure_cdb.sh dev
-```
-
-or
-
-```bash
-./docker/configure_cdb.sh prod
-```
-
----
-
 #### 🔄 Optional: Full reset of Airflow state
 
 By default, the script **does NOT wipe Airflow state** (DAG history, users, variables, connections, etc.).
@@ -206,7 +287,8 @@ Use with caution
 
 ---
 
-ℹ️ In `dev`, Airflow GUI admin credentials are initialized from environment variables (default: `admin:admin` unless overridden in `docker/.env`).
+ℹ️ In `dev`, Airflow GUI admin credentials are initialized from environment variables (default: `admin:admin` unless
+overridden in `docker/.env`).
 
 ---
 
@@ -263,7 +345,8 @@ database configurations. Copy the sample file to .env and modify the settings as
 KEYCLOAK_ADMIN=admin
 KEYCLOAK_ADMIN_PASSWORD=admin
 KEYCLOAK_DB_VENDOR=postgres
-KEYCLOAK_DB_HOST=keycloak-db
+KEYCLOAK_DB_HOST=keycloak-db # Only if you are using the local PostgreSQL container for Keycloak. 
+# If using an external database, set this to the appropriate hostname or IP address.
 KEYCLOAK_DB_PORT=5432
 KEYCLOAK_DB_NAME=keycloak
 KEYCLOAK_DB_USER=keycloak
@@ -286,6 +369,7 @@ keys.
 ### 6. **SoVisu+ custom themes**
 
 SoVisu+ allows you to customize its appearance using themes. You can create your own theme by following these steps:
+
 1. **Copy the sample theme directory**:
 
 ```bash
@@ -330,7 +414,7 @@ In this deployment, Ofelia is included as its own Docker Compose profile (`ofeli
 * a **scheduler config file template**: `docker/ofelia/config.ini`
 * a **configuration template**: `docker/ofelia/.env.sample`
 
-#### Create Ofelia `.env` 
+#### Create Ofelia `.env`
 
 In `docker/ofelia/`, copy the sample file:
 
@@ -389,8 +473,6 @@ docker compose \
   --profile ofelia \
   up -d
 ```
-
-
 
 ## 🔌 Communication with Host Machine
 
@@ -463,7 +545,8 @@ docker volume rm neo4j-data-volume neo4j-logs-volume neo4j-import-volume neo4j-p
 
 ## 🚀 Starting the Services
 
-The stack is modular. Select the profiles you need and combine the base Compose file with the appropriate environment overlay.
+The stack is modular. Select the profiles you need and combine the base Compose file with the appropriate environment
+overlay.
 
 ### 🔧 DEV
 

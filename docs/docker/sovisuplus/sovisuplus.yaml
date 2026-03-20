@@ -23,7 +23,6 @@ services:
       retries: 10
     command: [ "postgres","-c","max_connections=400","-c","superuser_reserved_connections=3" ]
     profiles:
-      - sovisuplus
       - sovisuplus-db
 
   sovisuplus:
@@ -33,38 +32,39 @@ services:
     restart: unless-stopped
     ports:
       - ${SVP_PORT:-3000}:3000
-      - ${SVP_WS_PORT:-3001}:3001
+      - ${SVP_WS_INTERNAL_PORT:-3001}:3001
     environment:
       - INIT_ROLES_ON_START=true
       - RBAC_ROLES_FILE=/config/rbac.roles.yaml
+      - DB_HOST=${SVP_DB_HOST:-svp-db}
       - DB_NAME=${SVP_DB_NAME}
       - DB_USER=${SVP_DB_USER}
       - DB_PASSWORD=${SVP_DB_PASSWORD}
-      - DB_HOST=svp-db
       - DB_PORT=5432
-      - NEXT_PUBLIC_BASE_URL=${SVP_BASE_URL}
-      - WS_SCHEME=${SVP_WS_SCHEME}
-      - WS_HOST=${SVP_WS_HOST}
-      - WS_PORT=${SVP_WS_PORT}
-      - WS_PATH=${SVP_WS_PATH}
-      - WS_INTERNAL_PORT=${SVP_WS_INTERNAL_PORT}
+      - APP_URL=${SOVISUPLUS_URL}
+      - NEXT_PUBLIC_BASE_URL=${SOVISUPLUS_URL}
+      - NEXT_PUBLIC_WS_SCHEME=${SVP_WS_SCHEME}
+      - NEXT_PUBLIC_WS_HOST=${SVP_WS_HOST}
+      - NEXT_PUBLIC_WS_PORT=${SVP_WS_PORT}
+      - NEXT_PUBLIC_WS_PATH=${SVP_WS_PATH}
+      - NEXTAUTH_URL=${SOVISUPLUS_URL}/api/auth
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - AMQP_HOST=crisalid-bus
+      - JWT_TOKEN_EXPIRATION_HOURS=${JWT_TOKEN_EXPIRATION_HOURS:-12}
+      - AMQP_HOST=${CRISALID_BUS_HOST:-crisalid-bus}
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
       - AMQP_USER=${CRISALID_BUS_USER}
       - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}
       - AMQP_QUEUE_NAME=${SVP_AMQP_QUEUE_NAME}
       - AMQP_EXCHANGE_NAME=${SVP_AMQP_EXCHANGE_NAME}
       - GRAPHQL_ENDPOINT_ENABLED=${GRAPHQL_ENDPOINT_ENABLED}
-      - GRAPHQL_ENDPOINT_URL=http://apollo:${APOLLO_API_PORT}/graphql
+      - GRAPHQL_ENDPOINT_URL=http://${APOLLO_HOST:-apollo}:${APOLLO_API_PORT}/graphql
       - GRAPHQL_API_KEY_ENABLED=${APOLLO_ENABLE_API_KEYS}
       - GRAPHQL_API_KEY=${SOVISUPLUS_GRAPHQL_API_KEY}
-      - KEYCLOAK_CLIENT_ID=sovisuplus
+      - KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_PUBLIC_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
       - KEYCLOAK_INTERNAL_ADDR=http://keycloak:8080
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-      - APP_URL=${SOVISUPLUS_SCHEME}://${SOVISUPLUS_HOST}:${SOVISUPLUS_PORT}
       - ORCID_URL=${ORCID_URL}
       - ORCID_SCOPES=${ORCID_SCOPES}
       - ORCID_CLIENT_ID=${ORCID_CLIENT_ID}
@@ -78,8 +78,6 @@ services:
       - FIELD_ENC_PRIMARY_KID=${FIELD_ENC_PRIMARY_KID}
       - FIELD_ENC_KEYS_JSON=${FIELD_ENC_KEYS_JSON}
     depends_on:
-      svp-db:
-        condition: service_healthy
       crisalid-bus:
         condition: service_healthy
     volumes:
