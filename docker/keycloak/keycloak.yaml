@@ -19,8 +19,7 @@ services:
     networks:
       - keycloak-network
     profiles:
-      - keycloak
-      - keycloak-tls
+      - keycloak-db
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.3.2
@@ -54,9 +53,6 @@ services:
     volumes:
       - ./config:/opt/keycloak/data/import
       - ./themes:/opt/keycloak/themes
-    depends_on:
-      keycloak-db:
-        condition: service_healthy
     networks:
       - keycloak-network
       - crisalid-front
@@ -75,7 +71,7 @@ services:
     environment:
       KC_PROXY: edge
       KC_DB: postgres
-      KC_DB_URL_HOST: keycloak-db
+      KC_DB_URL_HOST: ${KEYCLOAK_DB_HOST:-keycloak-db}
       KC_DB_URL_PORT: ${KEYCLOAK_DB_PORT}
       KC_DB_URL_DATABASE: ${KEYCLOAK_DB_NAME}
       KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
@@ -97,9 +93,6 @@ services:
       - ./config:/opt/keycloak/data/import
       - ~/local-certs:/etc/x509/https
       - ./themes:/opt/keycloak/themes
-    depends_on:
-      keycloak-db:
-        condition: service_healthy
     networks:
       - keycloak-network
       - crisalid-front

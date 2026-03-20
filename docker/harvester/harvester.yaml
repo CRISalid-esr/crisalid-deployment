@@ -30,7 +30,7 @@ services:
     networks:
       - svph-network
     profiles:
-      - harvester
+      - harvester-db
   harvester-db:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: postgres:16
@@ -66,7 +66,7 @@ services:
       - API_HOST=${HARVESTER_API_PUBLIC_BASE_URL:-http://localhost:8000}
       - API_PREFIX=/api
       - API_VERSION=v1
-      - DB_HOST=harvester-db
+      - DB_HOST=${HARVESTER_DB_HOST:-harvester-db}
       - DB_PORT=5432
       - DB_NAME=${HARVESTER_DB_NAME}
       - DB_USER=${HARVESTER_DB_USER}
@@ -83,8 +83,6 @@ services:
     volumes:
       - ./auth/users.json:/code/app/auth/users.json
     depends_on:
-      harvester-db:
-        condition: service_healthy
       harvester-redis:
         condition: service_healthy
       harvester-worker:
@@ -138,8 +136,6 @@ services:
       timeout: 5s
     depends_on:
       crisalid-bus:
-        condition: service_healthy
-      harvester-db:
         condition: service_healthy
       harvester-redis:
         condition: service_healthy
