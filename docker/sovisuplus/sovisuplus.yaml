@@ -77,6 +77,7 @@ services:
       - NEXT_PUBLIC_INSTITUTION_NAME=${INSTITUTION_NAME}
       - FIELD_ENC_PRIMARY_KID=${FIELD_ENC_PRIMARY_KID}
       - FIELD_ENC_KEYS_JSON=${FIELD_ENC_KEYS_JSON}
+      - NEXT_PUBLIC_SUPPORT_SERVICE_EMAIL_ADDR=${SVP_MAINTENANCE_MAIL_ADDRESS}
     depends_on:
       crisalid-bus:
         condition: service_healthy
