@@ -67,7 +67,7 @@ services:
       - API_PREFIX=/api
       - API_VERSION=v1
       - DB_HOST=${HARVESTER_DB_HOST:-harvester-db}
-      - DB_PORT=5432
+      - DB_PORT=${HARVESTER_DB_PORT:-5432}
       - DB_NAME=${HARVESTER_DB_NAME}
       - DB_USER=${HARVESTER_DB_USER}
       - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
@@ -109,7 +109,7 @@ services:
       # - APP_ENV=DEV
       - INSTITUTION_NAME=${INSTITUTION_NAME}
       - DB_HOST=${HARVESTER_DB_HOST:-harvester-db}
-      - DB_PORT=5432
+      - DB_PORT=${HARVESTER_DB_PORT:-5432}
       - DB_NAME=${HARVESTER_DB_NAME}
       - DB_USER=${HARVESTER_DB_USER}
       - DB_PASSWORD=${HARVESTER_DB_PASSWORD}
