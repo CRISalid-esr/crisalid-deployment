@@ -52,7 +52,7 @@ services:
     networks:
       - svph-network
     profiles:
-      - harvester
+      - harvester-db
   harvester-ui:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/svp-harvester:latest
