@@ -30,7 +30,7 @@ services:
     networks:
       - svph-network
     profiles:
-      - harvester-db
+      - harvester
   harvester-db:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: postgres:16
