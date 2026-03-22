@@ -2,7 +2,6 @@ services:
   svp-db:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: postgres:16
-    container_name: svp-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${SVP_DB_USER}
@@ -28,7 +27,6 @@ services:
   sovisuplus:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/sovisuplus:latest
-    container_name: sovisuplus
     restart: unless-stopped
     ports:
       - ${SVP_PORT:-3000}:3000

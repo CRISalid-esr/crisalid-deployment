@@ -1,7 +1,6 @@
 services:
   keycloak-db:
     image: postgres:16
-    container_name: keycloak-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${KEYCLOAK_DB_NAME}
@@ -23,7 +22,6 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.3.2
-    container_name: keycloak
     restart: unless-stopped
     command: start-dev --import-realm
     # for theme development, disable caching :
@@ -60,8 +58,7 @@ services:
       - keycloak
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.3.2
-    container_name: keycloak
-    command: start-dev --import-realm 
+    command: start-dev --import-realm
     expose:
       - 8080
       - 8443
