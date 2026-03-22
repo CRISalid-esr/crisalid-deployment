@@ -1,0 +1,109 @@
+services:
+  harvester-ui:
+    depends_on:
+      harvester-db:
+        condition: service_healthy
+      harvester-redis:
+        condition: service_healthy
+      harvester-worker:
+        condition: service_healthy
+      svp-jel-proxy:
+        condition: service_healthy
+
+  harvester-worker:
+    depends_on:
+      crisalid-bus:
+        condition: service_healthy
+      harvester-db:
+        condition: service_healthy
+      harvester-redis:
+        condition: service_healthy
+      svp-jel-proxy:
+        condition: service_healthy
+
+  sovisuplus:
+    depends_on:
+      svp-db:
+        condition: service_healthy
+      crisalid-bus:
+        condition: service_healthy
+
+  keycloak:
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-tls:
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  airflow-init:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+
+  airflow-apiserver:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-dag-processor:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-worker:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+      airflow-apiserver:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+      cdb-data-versioning-redis:
+        condition: service_healthy
+
+  airflow-triggerer:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+
+  airflow-cli:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+
+  flower:
+    depends_on:
+      cdb-redis:
+        condition: service_healthy
+      cdb-postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully

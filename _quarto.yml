@@ -27,6 +27,8 @@ website:
             text: Identify Relevant Components
           - href: map/harvesting.qmd
             text: Configure publication harvesting
+          - href: map/message_catalog.qmd
+            text: CRISalid Bus – Exchange Map & Message Catalog
       - text: 🧪 Development
         menu:
           - href: dev/index.qmd

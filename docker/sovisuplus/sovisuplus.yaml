@@ -2,7 +2,6 @@ services:
   svp-db:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: postgres:16
-    container_name: svp-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${SVP_DB_USER}
@@ -23,13 +22,11 @@ services:
       retries: 10
     command: [ "postgres","-c","max_connections=400","-c","superuser_reserved_connections=3" ]
     profiles:
-      - sovisuplus
       - sovisuplus-db
 
   sovisuplus:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/sovisuplus:latest
-    container_name: sovisuplus
     restart: unless-stopped
     ports:
       - ${SVP_PORT:-3000}:3000
@@ -37,11 +34,11 @@ services:
     environment:
       - INIT_ROLES_ON_START=true
       - RBAC_ROLES_FILE=/config/rbac.roles.yaml
+      - DB_HOST=${SVP_DB_HOST:-svp-db}
       - DB_NAME=${SVP_DB_NAME}
       - DB_USER=${SVP_DB_USER}
       - DB_PASSWORD=${SVP_DB_PASSWORD}
-      - DB_HOST=svp-db
-      - DB_PORT=5432
+      - DB_PORT=${SVP_DB_PORT:-5432}
       - APP_URL=${SOVISUPLUS_URL}
       - NEXT_PUBLIC_BASE_URL=${SOVISUPLUS_URL}
       - NEXT_PUBLIC_WS_SCHEME=${SVP_WS_SCHEME}
@@ -58,7 +55,7 @@ services:
       - AMQP_QUEUE_NAME=${SVP_AMQP_QUEUE_NAME}
       - AMQP_EXCHANGE_NAME=${SVP_AMQP_EXCHANGE_NAME}
       - GRAPHQL_ENDPOINT_ENABLED=${GRAPHQL_ENDPOINT_ENABLED}
-      - GRAPHQL_ENDPOINT_URL=http://apollo:${APOLLO_API_PORT}/graphql
+      - GRAPHQL_ENDPOINT_URL=http://${APOLLO_HOST:-apollo}:${APOLLO_API_PORT}/graphql
       - GRAPHQL_API_KEY_ENABLED=${APOLLO_ENABLE_API_KEYS}
       - GRAPHQL_API_KEY=${SOVISUPLUS_GRAPHQL_API_KEY}
       - KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}
@@ -78,9 +75,8 @@ services:
       - NEXT_PUBLIC_INSTITUTION_NAME=${INSTITUTION_NAME}
       - FIELD_ENC_PRIMARY_KID=${FIELD_ENC_PRIMARY_KID}
       - FIELD_ENC_KEYS_JSON=${FIELD_ENC_KEYS_JSON}
+      - NEXT_PUBLIC_SUPPORT_SERVICE_EMAIL_ADDR=${SVP_MAINTENANCE_MAIL_ADDRESS}
     depends_on:
-      svp-db:
-        condition: service_healthy
       crisalid-bus:
         condition: service_healthy
     volumes:

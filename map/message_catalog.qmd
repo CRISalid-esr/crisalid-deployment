@@ -1,0 +1,315 @@
+---
+title: "CRISalid Bus – Exchange Map & Message Catalog"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+This page documents the **CRISalid message bus**, with a global view of exchanges and queues, followed by detailed
+documentation for each exchange and its messages.
+
+---
+
+## 🌐 Global Map of Exchanges and Queues
+
+CRISalid currently relies on several RabbitMQ exchanges to make its services communicate asynchronously.
+
+In crisalid-bus, all exchanges are of type `topic` and use an "at-least-once" delivery strategy, which means that
+messages may be delivered more than once in case of failure, and consumers must be designed to handle potential
+duplicates and be idempotent. Consumers, in turn, must be able to handle the possibility of missing messages (e.g., by
+carefully processing "unchanged" events or implementing reconciliation mechanisms).
+
+Messages are primarily of two types: **events** and **tasks**.
+
+- **Events** represent occurrences or changes in the system (e.g., "a person was created", "a publication was
+  harvested"). They are typically **not acknowledged** (i.e., they are fire-and-forget).
+- **Tasks** represent work that needs to be done (e.g., "harvest this publication"). They may be **acknowledged** (i.e.,
+  the producer expects a confirmation that the task was received and will be processed).
+
+---
+
+## 🧭 Exchange Overview Table
+
+| Exchange       | Purpose                                      | Type    | Delivery strategy | Documented messages                                |
+|----------------|----------------------------------------------|---------|-------------------|----------------------------------------------------|
+| `directory`    | Institutional directories and reference data | `topic` | at-least-once     | people, structures                                 |
+| `publications` | Publication harvesting workflows             | `topic` | at-least-once     | publication, harvestings                           |
+| `graph`        | Downstream graph-facing integrations         | `topic` | at-least-once     | people, structures, <br/>publications, harvestings |
+
+---
+
+## 🗺️ Existing Queues
+
+> > TODO queues currently bound to each exchange.
+
+### Queue Inventory
+
+| Queue           | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
+|-----------------|----------|--------------|-------------|-------------|-------|
+| To be completed |          |              |             |             |       |
+
+---
+
+## 📚 Documentation by Exchange
+
+---
+
+## Exchange : `directory`
+
+### Purpose
+
+Messages from institutional directories and related structure / people synchronization workflows.
+
+### Exchange Type
+
+```text
+topic
+````
+
+### Delivery Strategy
+
+```text
+at-least-once
+```
+
+### Topic and Routing Key Patterns
+
+There are two main patterns for routing keys in the `directory` exchange:
+
+```text
+event.structures.structure.<action>
+event.people.person.<action>
+```
+
+<details>
+<summary>Full list of actions for each entity type</summary>
+```text
+event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged
+```
+</details>
+
+### Message Catalog for `directory` exchange
+
+---
+
+#### Structure events (`directory` exchange)
+
+##### Routing keys
+
+Pattern:
+
+```text
+event.structures.structure.<action>
+```
+
+<details>
+<summary>Full list of routing keys for structure events</summary>
+```text
+event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+```
+</details>
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+<details>
+<summary>JSON schema for structure events</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created|updated|deleted|unchanged",
+    "data": {
+      "generic_type": "institution|institution_subdivision|unit|unit_subdivision|team",
+      "type": "EPE|UNIV|UMR|UR|UAR|IRL|UFR|FAC|...",
+      "local_types": [
+        {
+          "value": "<string>",
+          "language": "<language code>"
+        }
+      ],
+      "main_mission": "research|scientific_services|administrative_services|teaching",
+      "secondary_missions": [
+        "research|scientific_services|administrative_services|teaching"
+      ],
+      "long_labels": [
+        {
+          "value": "<string>",
+          "language": "<language code>"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "<string>",
+          "language": "<language code>"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "<string>",
+          "language": "<language code>"
+        }
+      ],
+      "hceres_research_areas": [
+        "<string>"
+      ],
+      "erc_research_fields": [
+        "<string>"
+      ],
+      "hal_collection": "<string|null>",
+      "contacts": [
+        {
+          "type": "<string>",
+          "format": "<string>",
+          "value": {}
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local|uai|nns|ror|wikidata|scopus",
+          "value": "<string>"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "member_of",
+          "subtype": "main_supervision|associated_supervision|participating_supervision|null",
+          "target": "<string>",
+          "start_date": "YYYY-MM-DD|null",
+          "end_date": "YYYY-MM-DD|null"
+        },
+        {
+          "type": "is_part_of",
+          "target": "<string>",
+          "start_date": "YYYY-MM-DD|null",
+          "end_date": "YYYY-MM-DD|null"
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+###### Example payloads
+
+<details>
+<summary>Example of a "created" event for a research unit</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "unchanged",
+    "data": {
+      "generic_type": "unit",
+      "type": "UMR",
+      "local_types": [],
+      "main_mission": "research",
+      "secondary_missions": [],
+      "long_labels": [
+        {
+          "value": "Example Research Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité de recherche exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "ERU",
+          "language": "en"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example description in English.",
+          "language": "en"
+        },
+        {
+          "value": "Description d'exemple en français.",
+          "language": "fr"
+        }
+      ],
+      "hceres_research_areas": [
+        "ST6"
+      ],
+      "erc_research_fields": [],
+      "hal_collection": "https://hal.science/EXAMPLE_COLLECTION",
+      "contacts": [
+        {
+          "type": "postal_address",
+          "format": "structured_physical_address",
+          "value": {
+            "country": "France",
+            "zip_code": "00000",
+            "city": "Example City",
+            "street": "1 Example Street"
+          }
+        },
+        {
+          "type": "electronical_address",
+          "format": "website_address",
+          "value": {
+            "uri": "https://www.example.org/"
+          }
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "LOCAL-001"
+        },
+        {
+          "type": "nns",
+          "value": "NNS-EXAMPLE"
+        },
+        {
+          "type": "ror",
+          "value": "ROR-EXAMPLE"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "member_of",
+          "subtype": "main_supervision",
+          "target": "uai-EXAMPLE",
+          "start_date": "2000-01-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+##### Additional considerations
+
+* A research structure must have a generic type **and** at least one type or local type.
+* Relationships of type "member_of" can have a subtype _only_ when characterizing the supervision of a research unit.
+  Inclusion relationships ("is_part_of") do not have subtypes.
+* The targets of relationships must be the tracking ids of structures already created in previous messages, except for
+  external institutions that you do not manage: in this case,
+  simply indicate "uai-1234" or "ror-ABCD" according to the type of identifier you have for the external institution.
+* For details on typologies, see the CRISalid
+  Wiki: https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures+v2

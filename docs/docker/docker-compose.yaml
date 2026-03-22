@@ -31,3 +31,6 @@ include:
   - path: ./ofelia/ofelia.yaml
     env_file: ./ofelia/.env
     project_directory: ./ofelia
+  - path: ./cvs/cvs.yaml
+    env_file: ./cvs/.env
+    project_directory: ./cvs
