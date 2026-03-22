@@ -32,7 +32,7 @@ services:
     image: postgres:16
   # apollo (GraphQL API)
   apollo:
-    image: crisalidesr/crisalid-apollo:1.0
+    image: crisalidesr/crisalid-apollo:1.1
     environment:
       - APP_ENV=PROD
   # Crisalid directory bridge (Airflow DAGs)
