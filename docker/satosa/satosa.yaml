@@ -1,0 +1,41 @@
+# file: docker/satosa/satosa.yaml
+services:
+  satosa:
+    image: satosa:latest
+    container_name: satosa
+    restart: unless-stopped
+
+    expose:
+      - "8000"
+    # Uncomment to publish the port to the host
+    # ports:
+    #   - "8000:8000"
+
+    environment:
+      SATOSA_BASE_URL: "${SATOSA_BASE_URL}"
+      SATOSA_CONFIG: "/etc/satosa/proxy_conf.yaml"
+
+      # SATOSA_ENCRYPTION_KEY: "${SATOSA_ENCRYPTION_KEY}"
+      # SATOSA_OIDC_HASH_SALT: "${SATOSA_OIDC_HASH_SALT}"
+      # SATOSA_OIDC_KEY_FILE: "/etc/satosa/credentials/oidc.key"
+      # SATOSA_SAML_KEY_FILE: "/etc/satosa/credentials/saml.key"
+      # SATOSA_SAML_CERT_FILE: "/etc/satosa/credentials/saml.crt"
+
+    volumes:
+      - ./proxy_conf.yaml:/etc/satosa/proxy_conf.yaml:ro
+      - ./internal_attributes.yaml:/etc/satosa/internal_attributes.yaml:ro
+
+      - ./plugins:/etc/satosa/plugins
+
+      # For key/certs
+      # - ./credentials:/etc/satosa/credentials:ro
+
+    networks:
+      - crisalid-front
+
+    profiles:
+      - satosa
+
+networks:
+  crisalid-front:
+    driver: bridge
