@@ -313,3 +313,372 @@ no
   simply indicate "uai-1234" or "ror-ABCD" according to the type of identifier you have for the external institution.
 * For details on typologies, see the CRISalid
   Wiki: https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures+v2
+
+---
+
+###### Additional example: Institution subdivision with temporal relationships (Faculty)
+
+<details>
+<summary>Example of a "created" event for a faculty with temporal inclusion relationship</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "institution_subdivision",
+      "type": "FAC",
+      "local_types": [],
+      "main_mission": "research",
+      "secondary_missions": ["teaching"],
+      "long_labels": [
+        {
+          "value": "Example Faculty of Sciences",
+          "language": "en"
+        },
+        {
+          "value": "Faculté des Sciences Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Faculty Sciences",
+          "language": "en"
+        },
+        {
+          "value": "Fac Sciences",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example Faculty dedicated to scientific education and research.",
+          "language": "en"
+        },
+        {
+          "value": "Faculté exemple dédiée à l'enseignement et la recherche scientifique.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "FAC-EXAMPLE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "is_part_of",
+          "target": "EXAMPLE-UNIV-001",
+          "start_date": "2010-01-01",
+          "end_date": "2030-12-31"
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example demonstrates `is_part_of` relationship with both `start_date` and `end_date` defined, showing a bounded temporal relationship.
+
+</details>
+
+###### Additional example: Unit subdivision with open-ended temporal relationship (UFR)
+
+<details>
+<summary>Example of a "created" event for a UFR (Unité de Formation et Recherche) with temporal inclusion</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "institution_subdivision",
+      "type": "UFR",
+      "local_types": [],
+      "main_mission": "research",
+      "secondary_missions": ["teaching"],
+      "long_labels": [
+        {
+          "value": "Example School of Medicine",
+          "language": "en"
+        },
+        {
+          "value": "UFR de Médecine Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Medicine School",
+          "language": "en"
+        },
+        {
+          "value": "UFR Médecine",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example School of Medicine providing medical education and research.",
+          "language": "en"
+        },
+        {
+          "value": "Unité de Formation et de Recherche en Médecine Exemple.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "UFR-MEDICINE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "is_part_of",
+          "target": "FAC-EXAMPLE-001",
+          "start_date": "2010-01-01",
+          "end_date": null
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example shows `end_date: null`, indicating an open-ended relationship (still active).
+
+</details>
+
+###### Additional example: Research unit with both member_of and is_part_of relationships
+
+<details>
+<summary>Example of a "created" event for a research unit with multiple relationship types</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "unit",
+      "type": "UMR",
+      "local_types": [],
+      "main_mission": "research",
+      "secondary_missions": [],
+      "long_labels": [
+        {
+          "value": "Example Research Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité de Recherche Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "ERU",
+          "language": "en"
+        },
+        {
+          "value": "URE",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example research unit specializing in biomedical research.",
+          "language": "en"
+        },
+        {
+          "value": "Unité de recherche exemple spécialisée en recherche biomédicale.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "UMR-EXAMPLE-001"
+        },
+        {
+          "type": "nns",
+          "value": "000012345"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "is_part_of",
+          "target": "PLATFORM-EXAMPLE-001"
+        },
+        {
+          "type": "is_part_of",
+          "target": "UFR-MEDICINE-001"
+        },
+        {
+          "type": "member_of",
+          "subtype": "main_supervision",
+          "target": "EXAMPLE-UNIV-001",
+          "start_date": "2000-01-01",
+          "end_date": null
+        },
+        {
+          "type": "member_of",
+          "subtype": "associated_supervision",
+          "target": "RESEARCH-ORG-EXAMPLE",
+          "start_date": "2005-06-15",
+          "end_date": null
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example demonstrates the difference between:
+- **`is_part_of`**: Structural inclusion relationships (without subtypes)
+- **`member_of`**: Supervision relationships (with subtypes like `main_supervision` or `associated_supervision`)
+
+</details>
+
+###### Additional example: Service unit with limited temporal relationship (USM)
+
+<details>
+<summary>Example of a "created" event for a service unit with bounded temporal relationship</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "unit",
+      "type": "USM",
+      "local_types": [],
+      "main_mission": "scientific_services",
+      "secondary_missions": [],
+      "long_labels": [
+        {
+          "value": "Example Service and Technology Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité de Service et Technologie Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Service Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité Service",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example service unit providing technical support and services.",
+          "language": "en"
+        },
+        {
+          "value": "Unité de service exemple fournissant un support technique.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "USM-EXAMPLE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "is_part_of",
+          "target": "FACILITY-EXAMPLE-001",
+          "start_date": "2015-06-01",
+          "end_date": "2025-12-31"
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example shows a service unit with a bounded temporal relationship (limited existence period).
+
+</details>
+
+###### Additional example: Team within a research unit
+
+<details>
+<summary>Example of a "created" event for a research team</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "team",
+      "type": "TEAM",
+      "local_types": [],
+      "main_mission": "research",
+      "secondary_missions": [],
+      "long_labels": [
+        {
+          "value": "Example Research Team",
+          "language": "en"
+        },
+        {
+          "value": "Équipe de Recherche Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Team Example",
+          "language": "en"
+        },
+        {
+          "value": "Équipe Ex",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example research team focused on biomedical research.",
+          "language": "en"
+        },
+        {
+          "value": "Équipe de recherche exemple axée sur la recherche biomédicale.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "TEAM-EXAMPLE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "is_part_of",
+          "target": "UMR-EXAMPLE-001"
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** Teams are typically sub-units within research units and have `is_part_of` relationships without temporal boundaries.
+
+</details>
+
+---
