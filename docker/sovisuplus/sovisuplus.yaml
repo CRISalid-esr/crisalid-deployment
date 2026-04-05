@@ -79,6 +79,7 @@ services:
       - NEXT_PUBLIC_ABOUT_PAGE_URL=${SVP_ABOUT_PAGE_URL}
       - NEXT_PUBLIC_TERMS_PAGE_URL=${SVP_TERMS_PAGE_URL}
       - NEXT_PUBLIC_COMMUNITY_PAGE_URL=${SVP_COMMUNITY_PAGE_URL}
+      - NEXT_PUBLIC_HELP_URL=${SVP_HELP_URL}
     depends_on:
       crisalid-bus:
         condition: service_healthy
