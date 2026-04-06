@@ -2,7 +2,6 @@ services:
   apollo:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-apollo:latest
-    container_name: crisalid-apollo
     restart: unless-stopped
     ports:
       - ${APOLLO_API_PORT}:4000

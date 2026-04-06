@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://docs.crisalid.org/map/message_catalog.html</loc>
-    <lastmod>2026-03-19T12:38:05.751Z</lastmod>
+    <lastmod>2026-04-06T01:43:03.432Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/index.html</loc>
@@ -18,11 +18,11 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>
-    <lastmod>2026-01-11T11:24:43.154Z</lastmod>
+    <lastmod>2026-04-06T02:52:37.407Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2026-03-20T10:10:54.125Z</lastmod>
+    <lastmod>2026-03-22T03:37:11.903Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>

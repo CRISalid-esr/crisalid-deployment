@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Usage:
-#   ./neo4j_offline_backup.sh [dev|prod]
+# Usage from docker/ directory:
+#   ./scripts/neo4j_offline_backup.sh [dev|prod]
 
 ENV_NAME="${1:-dev}"
 
@@ -34,12 +35,17 @@ set +a
 
 : "${NEO4J_ADMIN_IMAGE:?Missing NEO4J_ADMIN_IMAGE in $NEO4J_ENV_FILE}"
 
+if [[ -z "${NEO4J_EDITION:-}" ]]; then
+  NEO4J_EDITION="community"
+fi
+
 COMPOSE_CMD=(
   docker compose
   -f "$BASE_COMPOSE_FILE"
   -f "$ENV_COMPOSE_FILE"
   --profile neo4j
   --profile ikg
+  --profile crisalid-bus
 )
 
 NEO4J_DATA_DIR="$ROOT_DIR/neo4j/data"
@@ -120,6 +126,8 @@ cleanup_on_error() {
 }
 
 trap cleanup_on_error ERR
+
+NEO4J_ADMIN_IMAGE="${NEO4J_ADMIN_IMAGE}-${NEO4J_EDITION}-bullseye"
 
 log "Using environment: $ENV_NAME"
 log "Neo4j admin image: $NEO4J_ADMIN_IMAGE"
