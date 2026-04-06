@@ -6,131 +6,270 @@ format:
     toc-location: left
 ---
 
-> Quick recipes to backup and restore services in the CRISalid Docker Compose stack.
+> Backup and restore data in the CRISalid Docker Compose stack.
 
+> Typically, backups are produced on a **production server** and then transferred (via SFTP) to a **development
+environment** for restoration.
 
+---
+
+# Overview
+
+There are two database types to consider (Redis is not covered here as it is generally used for caching and can be
+safely cleared):
+
+## Neo4j backup strategies
+
+- **Quick backup** → copy the `neo4j/data` directory
+- **Proper backup** → use `neo4j-admin database dump`
+
+## PostgreSQL deployment modes
+
+Only SoVisu+ and Harvester databases are covered here, as Keycloak and Airflow restoration from one environment to
+another are not recommended.
+
+- **Inside Docker Compose** (containers: `svp-db`, `harvester-db`)
+- **Outside Docker** (managed database server, e.g. production)
+
+---
 
 # Neo4j
 
-All commands are to be run **from `docker/neo4j/`** in your `crisalid-deployment` checkout.
-
-## 📦 Full backup 
-
-> Recommended: stop Neo4j before a backup to ensure a clean snapshot.
-
-Create a compressed archive of the key data directories (preserve numeric ownership for container UID/GID 7474):
+All commands are run from:
 
 ```bash
-sudo tar --numeric-owner -czvf neo4j-full-$(date +%F).tar.gz \
-  data import backups plugins
-```
+crisalid-deployment/docker
+````
 
-## ♻️ Restore from a backup archive
+## ⚡ Quick backup (filesystem copy)
 
-> **Important:** Stop Neo4j before restoring files.
+> Fast and simple. Suitable for development or emergency copies.
 
-1. Extract the archive to the Neo4j docker directory:
+> ⚠️ This backup method will include both `neo4j` and `system` databases,
+> so it will overwrite users/passwords on restore.
 
-```bash
-tar -xzvf neo4j-data-20250908.tar.gz \
-  -C ~/.../crisalid-deployment/docker/neo4j
-```
-
-Alternatively, if you have full access to the server, you can skip the previous steps and restore directly with rsync.
-```bash
-cd /path/to/your/local/crisalid-deployment/docker/neo4j
-
-sudo rsync -av --delete \
-  myuser@myserver.myuniv.fr:/opt/crisalid/crisalid-deployment/docker/neo4j/data/ \
-  ./data/
-```
-
-2. Ensure directory ownership matches the container user (UID/GID **7474**):
+### Backup
 
 ```bash
-cd /path/to/your/local/crisalid-deployment/docker/neo4j
-sudo chown -R 7474:7474 data import backups plugins
+cd docker/neo4j
+
+sudo tar --numeric-owner -czvf neo4j-data-$(date +%F).tar.gz data
 ```
 
-3. Start Neo4j again (alone or with other services):
+### Restore
+
+> ⚠️ Neo4j must be stopped before restoring.
+> It is highly recommended to stop all the services hat are directly speaking to Neo4j
+> (e.g. `crisalid-ikg`, `crisalid-apollo`, `ofelia`, etc.) to avoid any connection issues during the restore process.
+
+```bash
+cd docker
+
+docker compose --file docker-compose.yml \
+  --file docker-compose.dev.yml \
+  --profile neo4j \
+  --profile ikg \
+  --profile apollo \
+  --profile ofelia \
+  stop neo4j crisalid-ikg apollo crisalid-ofelia
+```
+
+Then:
+
+```bash
+tar -xzvf neo4j-data-YYYY-MM-DD.tar.gz -C docker/neo4j
+```
+
+Fix ownership:
+
+```bash
+cd docker/neo4j
+sudo chown -R 7474:7474 data
+```
+
+Restart:
 
 ```bash
 docker compose --profile neo4j up -d neo4j
 ```
 
-4. (Optional) Check logs:
+In case you have a direct access to the source server, direct synchronization is possible:
 
 ```bash
-docker compose logs -f neo4j
+cd docker/neo4j
+sudo rsync -avz --delete \
+  user@source-server:/path/to/neo4j/data/ \
+  data/
 ```
 
 ---
 
-# SoVisuplus Postgresql (container: svp-db, host port 5432)
+## 🧱 Proper backup (recommended)
 
-## Make a SQL dump
+> Safe backup using `neo4j-admin`.
 
-With a running Docker Compose stack (svp-db container):
+Before running the backup script, check your NEO4J_ADMIN_IMAGE variable in `.env` to ensure you are using the correct
+Neo4j version for the backup.
+
+### Backup (on source environment)
 
 ```bash
-# optional: export env if not already loaded
-export SVP_DB_NAME=${SVP_DB_NAME}
-export SVP_DB_USER=${SVP_DB_USER}
+./scripts/neo4j_offline_backup.sh dev
+```
 
+This:
+
+* stops Neo4j
+* dumps databases into `neo4j/backups/<timestamp>/`
+* restarts services
+
+---
+
+### Restore (on target environment)
+
+> case 1: restore backup on a local development environment.
+> case 2: restore backup into a staging environment (e.g. `staging`)
+
+1. Transfer backup directory from production to target machine
+   (using SFTP or equivalent)
+
+2. Place it in:
+
+```bash
+docker/neo4j/backups/<timestamp>/
+```
+
+Fix permission issues to allow the restore script to read the dump files:
+
+```bash
+cd docker/neo4j/backups/<timestamp>/
+sudo chown -R 7474:7474 .
+```
+
+3. Run:
+
+```bash
+./scripts/neo4j_offline_restore.sh dev <timestamp>
+```
+
+> ⚠️ Only the `neo4j` database is restored (not `system`), so users/passwords are preserved.
+
+---
+
+# PostgreSQL
+
+Two cases depending on where PostgreSQL runs.
+
+---
+
+## Case 1 — PostgreSQL inside Docker Compose
+
+Containers:
+
+* `svp-db`
+* `harvester-db`
+
+### Backup
+
+Run sovisuplus (at least the database container) in detached mode:
+
+```bash
+docker compose -f docker-compose.yaml \
+                -f docker-compose.dev.yaml \
+                -f docker-compose.local-postgres.yaml \
+                --profile sovisuplus-db  up -d
+```
+
+Then, dump the database into custom format (compressed, non-plain SQL):
+
+```bash
 docker compose exec -T svp-db \
   pg_dump -U "$SVP_DB_USER" -d "$SVP_DB_NAME" \
-    --format=plain \
-    --no-owner --no-privileges \
-    --clean --if-exists \
-  > "sovisuplus-$(date +%F).sql"
+  --format=custom --no-owner --no-privileges \
+  > sovisuplus.dump
 ```
 
-## Restore into Docker (same svp-db)
+Run the same commands for Harvester:
 
 ```bash
-cat sovisuplus-YYYY-MM-DD.sql | \
-  docker compose exec -T svp-db psql -U "$SVP_DB_USER" -d "$SVP_DB_NAME"
+docker compose -f docker-compose.yaml \
+                -f docker-compose.dev.yaml \
+                -f docker-compose.local-postgres.yaml \
+                --profile harvester-db  up -d
 ```
 
-## Restore into local Postgres (on your machine)
-
 ```bash
-PGPASSWORD="$SVP_DB_PASSWORD" psql \
-  -h localhost -p 5432 -U "$SVP_DB_USER" -d "$SVP_DB_NAME" \
-  -f sovisuplus-YYYY-MM-DD.sql
-```
-
-# SVP Harvester Postgresql (container: harvester-db, host port 5433)
-
-With a running Docker Compose stack (harvester-db container):
-
-## Make a SQL dump
-
-```bash
-export HARVESTER_DB_NAME=${HARVESTER_DB_NAME}
-export HARVESTER_DB_USER=${HARVESTER_DB_USER}
-
 docker compose exec -T harvester-db \
   pg_dump -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME" \
-    --format=plain \
-    --no-owner --no-privileges \
+  --format=custom --no-owner --no-privileges \
+  > harvester.dump
+```
+
+---
+
+### Restore
+
+For the restoration commands to works, the databases container should have be started at least once
+and the databases initialized by prisma or alembic migrations.
+
+```bash
+cat sovisuplus.dump | \
+  docker compose exec -T svp-db \
+  pg_restore -U "$SVP_DB_USER" \
+    -d "$SVP_DB_NAME" \
     --clean --if-exists \
-  > "harvester-$(date +%F).sql"
-```
+    --no-owner --no-privileges
 
-## Restore into Docker (harvester-db)
+```
 
 ```bash
-cat harvester-YYYY-MM-DD.sql | \
-  docker compose exec -T harvester-db psql -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME"
+cat harvester.dump | \
+  docker compose exec -T harvester-db \
+  pg_restore -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME" \
+    --clean --if-exists \
+    --no-owner --no-privileges
 ```
 
-##  Restore into local Postgres
+---
 
-Create target DB/user on your host if needed, then:
+## Case 2 — PostgreSQL outside Docker (production / managed DB)
+
+### Backup (on server)
+
+Use the dump_prod_dbs.sh script:
 
 ```bash
-PGPASSWORD="$HARVESTER_DB_PASSWORD" psql \
-  -h localhost -p 5432 -U "$HARVESTER_DB_USER" -d "$HARVESTER_DB_NAME" \
-  -f harvester-YYYY-MM-DD.sql
+./scripts/dump_prod_dbs.sh
 ```
+
+---
+
+### Transfer
+
+Copy dump files from production to development machine using **SFTP**.
+
+---
+
+### Restore (developer environment)
+
+Use the restore script:
+
+```bash
+./scripts/restore_prod_dbs.sh /path/to/sovisuplus.dump /path/to/harvester.dump
+```
+
+examples:
+
+```bash
+./scripts/restore_prod_dbs.sh  /opt/crisalid/backups/sovisuplus_svp_prd_20260402_173929.dump /opt/crisalid/backups/harvester_p1ps_harv_db_20260402_174259.dump
+```
+
+This script:
+
+* validates dump filenames
+* asks for confirmation
+* stops services (`sovisuplus`, `harvester-worker`, etc.)
+* restores databases
+* restarts services
+
+---
