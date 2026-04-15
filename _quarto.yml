@@ -19,8 +19,9 @@ website:
     left:
       - href: index.qmd
         text: 🏠 Home
-      - text: 🗺️ Overview
+      - text: 🔬 Crisalid Core
         menu:
+          - section: "Overview"
           - href: map/index.qmd
             text: System Overview
           - href: map/components.qmd
@@ -29,10 +30,11 @@ website:
             text: Configure publication harvesting
           - href: map/message_catalog.qmd
             text: CRISalid Bus – Exchange Map & Message Catalog
-      - text: 🧪 Development
-        menu:
+          - section: "Docker Compose"
           - href: dev/index.qmd
             text: Introduction
+          - href: dev/step-by-step.qmd
+            text: Step by Step Installation
           - href: dev/docker-compose.qmd
             text: Docker Compose deployment
           - href: dev/dev-backend.qmd
@@ -45,19 +47,30 @@ website:
             text: Backup and Restore with Docker Compose
           - href: dev/manual_installation.qmd
             text: Manual Installation
-      - text: 🚀 Production
-        menu:
+          - section: "Kubernetes"
           - href: prod/index.qmd
             text: Introduction
           - href: prod/helm_charts.qmd
             text: Kubernetes deployment
           - href: prod/manual_installation.qmd
             text: Manual Installation
-      - text: ⚙️ Requirements
-        menu:
+          - section: "Requirements"
           - href: requirements/index.qmd
             text: Required Infrastructure and Dependencies
-          # Security considerations
+      - text: 🤖 Crisalid AI
+        menu:
+          - section: "Overview"
+          - href: ai/index.qmd
+            text: Overview
+          - section: "Docker Compose"
+          - href: ai/docker-compose.qmd
+            text: Docker Compose deployment
+          - section: "Kubernetes"
+          - href: ai/kubernetes.qmd
+            text: Kubernetes deployment
+          - section: "Requirements"
+          - href: ai/requirements.qmd
+            text: Required Infrastructure and Dependencies
       - text: 🔒 Security
         menu:
           - href: security/index.qmd
