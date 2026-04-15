@@ -2,3 +2,8 @@
 .idea
 postgres-data
 realm-export
+/etc/*
+!/etc/.gitkeep
+docs/docker/satosa/
+Agent.md
+Claude.md

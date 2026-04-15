@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Harvesting Configuration – CRISalid Deployment Documentation</title>
+<title>Kubernetes – Introduction – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -64,8 +30,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../map/message_catalog.html" rel="next">
-<link href="../map/components.html" rel="prev">
+<link href="../prod/helm_charts.html" rel="next">
+<link href="../dev/manual_installation.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -279,7 +245,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../map/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../map/harvesting.html">Harvesting Configuration</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../prod/index.html">Kubernetes</a></li><li class="breadcrumb-item"><a href="../prod/index.html">Kubernetes – Introduction</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -314,7 +280,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../map/harvesting.html" class="sidebar-item-text sidebar-link active">
+  <a href="../map/harvesting.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Harvesting Configuration</span></a>
   </div>
 </li>
@@ -396,7 +362,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../prod/index.html" class="sidebar-item-text sidebar-link">
+  <a href="../prod/index.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Kubernetes – Introduction</span></a>
   </div>
 </li>
@@ -433,19 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
     </ul>
     </div>
-    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
-    <h2 id="toc-title">Table of Contents</h2>
-   
-  <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">🌐 Overview</a></li>
-  <li><a href="#configuration-execution" id="toc-configuration-execution" class="nav-link" data-scroll-target="#configuration-execution">⚙️ Configuration &amp; Execution</a>
-  <ul class="collapse">
-  <li><a href="#ikg-requested-harvesters" id="toc-ikg-requested-harvesters" class="nav-link" data-scroll-target="#ikg-requested-harvesters">IKG — Requested Harvesters</a></li>
-  <li><a href="#harvester-available-harvesters" id="toc-harvester-available-harvesters" class="nav-link" data-scroll-target="#harvester-available-harvesters">Harvester — Available Harvesters</a></li>
-  </ul></li>
-  <li><a href="#execution-rules" id="toc-execution-rules" class="nav-link" data-scroll-target="#execution-rules">🔁 Execution Rules</a></li>
-  </ul>
-</nav>
+    
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -454,9 +408,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../map/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../map/harvesting.html">Harvesting Configuration</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../prod/index.html">Kubernetes</a></li><li class="breadcrumb-item"><a href="../prod/index.html">Kubernetes – Introduction</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Harvesting Configuration</h1>
+<h1 class="title">Kubernetes – Introduction</h1>
 </div>
 
 
@@ -473,144 +427,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This page describes how harvesting is triggered and configured in CRISalid, and how responsibilities are split between the <strong>IKG</strong> and the <strong>Harvester</strong> microservices.</p>
-<hr>
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">🌐 Overview</h2>
-<p>Harvesting is triggered by messages published on the RabbitMQ <code>publications</code> exchange by the IKG (Institutional Knowledge Graph) service. The Harvester UI provides <strong>observability only</strong> (although it can be used to trigger harvesting requests manually, but only for testing purposes).</p>
-<p>The IKG publishes harvesting requests to the RabbitMQ <strong><code>publications</code> exchange</strong>.<br>
-Each message represents one harvesting job.</p>
-<p>Requests can be triggered:</p>
-<ul>
-<li><strong>Manually</strong>, via IKG CLI tools</li>
-<li><strong>Automatically</strong>, via <strong>Ofelia</strong> (Docker Compose) or <strong>Kubernetes Jobs / CronJobs</strong> (which in turn call IKG CLI tools)</li>
-</ul>
-<hr>
-</section>
-<section id="configuration-execution" class="level2">
-<h2 class="anchored" data-anchor-id="configuration-execution">⚙️ Configuration &amp; Execution</h2>
-<p>Harvesting is configured at two levels:</p>
-<ul>
-<li><strong>IKG</strong>: decides <em>when</em> harvesting runs and <em>which harvesters</em> are requested</li>
-<li><strong>Harvester</strong>: defines <em>which harvesters exist</em> and <em>whether they can run</em></li>
-</ul>
-<section id="ikg-requested-harvesters" class="level3">
-<h3 class="anchored" data-anchor-id="ikg-requested-harvesters">IKG — Requested Harvesters</h3>
-<p>The <code>HARVESTERS</code> environment variable defines which harvesters are included in harvesting requests published on the <code>publications</code> exchange.</p>
-<ul>
-<li>Can be set via:
-<ul>
-<li>runtime environment</li>
-<li>Docker Compose (e.g.&nbsp;<code>docker/ikg/ikg.yaml</code>)</li>
-<li>Kubernetes ConfigMaps</li>
-</ul></li>
-<li>Overrides the default when defined</li>
-</ul>
-<p>Default configuration:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"idref"</span><span class="ot">,</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"scanr"</span><span class="ot">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"hal"</span><span class="ot">,</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"openalex"</span><span class="ot">,</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"scopus"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<blockquote class="blockquote">
-<p>🔗 Defined in the IKG settings <em>(link to GitHub settings file)</em></p>
-</blockquote>
-<hr>
-</section>
-<section id="harvester-available-harvesters" class="level3">
-<h3 class="anchored" data-anchor-id="harvester-available-harvesters">Harvester — Available Harvesters</h3>
-<p>The Harvester service declares available harvesters in:</p>
-<pre><code>harvesters.yaml</code></pre>
-<p>This file binds harvester identifiers to their implementations.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> idref</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">module</span><span class="kw">:</span><span class="at"> app.harvesters.idref.idref_harvester_factory</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">class</span><span class="kw">:</span><span class="at"> IdrefHarvesterFactory</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> scanr</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">module</span><span class="kw">:</span><span class="at"> app.harvesters.scanr.scanr_harvester_factory</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">class</span><span class="kw">:</span><span class="at"> ScanrHarvesterFactory</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> hal</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">module</span><span class="kw">:</span><span class="at"> app.harvesters.hal.hal_harvester_factory</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">class</span><span class="kw">:</span><span class="at"> HalHarvesterFactory</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> openalex</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">module</span><span class="kw">:</span><span class="at"> app.harvesters.open_alex.open_alex_harvester_factory</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">class</span><span class="kw">:</span><span class="at"> OpenAlexHarvesterFactory</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> scopus</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">module</span><span class="kw">:</span><span class="at"> app.harvesters.scopus.scopus_harvester_factory</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">class</span><span class="kw">:</span><span class="at"> ScopusHarvesterFactory</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Only harvesters declared in <code>harvesters.yaml</code> can be executed.</p>
-<hr>
-</section>
-</section>
-<section id="execution-rules" class="level2">
-<h2 class="anchored" data-anchor-id="execution-rules">🔁 Execution Rules</h2>
-<ol type="1">
-<li><p>The IKG publishes a harvesting request on the <code>publications</code> exchange</p></li>
-<li><p>The message contains:</p>
-<ul>
-<li>the type of entity (currently: <code>person</code> only)</li>
-<li>a flag indicating whether a reply is expected</li>
-<li>a flag for “identifiers safe mode” (if true, the alignment of identifiers is not recorded in the harvesters database)</li>
-<li>a list of event types to be reported (e.g.&nbsp;<code>created</code>, <code>updated</code>, <code>deleted</code>, <code>unchanged</code>)</li>
-<li>a list of requested harvesters (e.g.&nbsp;<code>idref</code>, <code>scanr</code>, <code>hal</code>, <code>openalex</code>, <code>scopus</code>)</li>
-<li>the fields of the entity to be harvested, including a list of identifiers with their types and values :
-<ul>
-<li><code>name</code> : displayed in the Harvester UI but not used for harvesting</li>
-<li><code>identifiers</code> : used to determine which harvesters can run (e.g.&nbsp;<code>openalex</code> requires an ORCID identifier) and to perform the actual harvesting</li>
-</ul></li>
-</ul></li>
-</ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"person"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"reply"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"identifiers_safe_mode"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"events"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"created"</span><span class="ot">,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"updated"</span><span class="ot">,</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"deleted"</span><span class="ot">,</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"unchanged"</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"harvesters"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"idref"</span><span class="ot">,</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scanr"</span><span class="ot">,</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hal"</span><span class="ot">,</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"openalex"</span><span class="ot">,</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"scopus"</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"fields"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"John Doe"</span><span class="fu">,</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"orcid"</span><span class="fu">,</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"0000-0002-1825-0097"</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"idref"</span><span class="fu">,</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"123456789"</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="3" type="1">
-<li><p>For each requested harvester, the Harvester service checks:</p>
-<ul>
-<li>if the harvester is declared in <code>harvesters.yaml</code></li>
-<li>if a compatible identifier is present</li>
-</ul></li>
-</ol>
-<p>A harvester is executed <strong>only if</strong> a suitable identifier is available (e.g.&nbsp;<code>openalex</code> requires an ORCID and will not run with a HAL identifier).</p>
-<ol start="4" type="1">
-<li>All eligible harvesters are executed <strong>in parallel</strong></li>
-</ol>
-<hr>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Work in Progress
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This page is coming soon.</p>
+</div>
+</div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1032,13 +863,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../map/components.html" class="pagination-link" aria-label="Identify Relevant Components">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Identify Relevant Components</span>
+      <a href="../dev/manual_installation.html" class="pagination-link" aria-label="Manual Installation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Manual Installation</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../map/message_catalog.html" class="pagination-link" aria-label="CRISalid Bus – Exchange Map &amp; Message Catalog">
-        <span class="nav-page-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../prod/helm_charts.html" class="pagination-link" aria-label="Kubernetes Deployment">
+        <span class="nav-page-text">Kubernetes Deployment</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

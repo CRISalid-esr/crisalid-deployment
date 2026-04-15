@@ -1,5 +1,5 @@
 ---
-title: "Step by Step Installation"
+title: "Docker Compose - Step by Step"
 ---
 
 ::: {.callout-note appearance="simple"}
