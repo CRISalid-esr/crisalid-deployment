@@ -58,7 +58,161 @@
     "href": "dev/step-by-step.html",
     "title": "Docker Compose - Step by Step",
     "section": "",
-    "text": "Work in Progress\n\n\n\nThis page is coming soon.",
+    "text": "This guide covers a server deployment (test, staging or production environment) using Docker Compose. For local development on your workstation, refer to Docker Compose - Overview.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#prerequisites",
+    "href": "dev/step-by-step.html#prerequisites",
+    "title": "Docker Compose - Step by Step",
+    "section": "1. 🖥️ Prerequisites",
+    "text": "1. 🖥️ Prerequisites\nThis guide assumes Git and Docker (with the Compose plugin) are already installed on the target server.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#create-a-dedicated-application-user",
+    "href": "dev/step-by-step.html#create-a-dedicated-application-user",
+    "title": "Docker Compose - Step by Step",
+    "section": "2. 👤 Create a Dedicated Application User",
+    "text": "2. 👤 Create a Dedicated Application User\nRunning the stack under a dedicated unprivileged user is strongly recommended.\n# Create the user (no login, no password)\nsudo adduser --disabled-password --gecos \"\" crisalid\n\n# Allow it to run Docker commands without sudo\nsudo usermod -aG docker crisalid\nCreate the installation directory and assign ownership:\nsudo mkdir -p /opt/crisalid\nsudo chown -R crisalid:crisalid /opt/crisalid\nSwitch to the application user for all subsequent steps:\nsudo su crisalid\ncd /opt/crisalid",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#clone-the-repository",
+    "href": "dev/step-by-step.html#clone-the-repository",
+    "title": "Docker Compose - Step by Step",
+    "section": "3. 📥 Clone the Repository",
+    "text": "3. 📥 Clone the Repository\nThe repository is public — a simple HTTPS clone is sufficient:\ngit clone https://github.com/CRISalid-esr/crisalid-deployment.git\ncd crisalid-deployment\n\nChoose what to deploy\nDepending on your context:\n\nProduction — deploy from a release tag for a stable, reproducible deployment:\ngit fetch --tags origin\ngit switch -c prod/X.Y.Z vX.Y.Z      # e.g. prod/1.5 v1.5.0\nStaging / test (stable) — a release tag is also a safe choice here.\nStaging / test (latest) — you may prefer to track a branch such as dev-main or a feature branch if you want to follow ongoing development:\ngit checkout dev-main\ngit pull origin dev-main",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#multi-server-deployment-optional",
+    "href": "dev/step-by-step.html#multi-server-deployment-optional",
+    "title": "Docker Compose - Step by Step",
+    "section": "4. 🗺️ Multi-Server Deployment (optional)",
+    "text": "4. 🗺️ Multi-Server Deployment (optional)\nThe stack can be split across two or more servers. A typical split is one server for the data layer and one for the application layer.\n\nService co-location constraints\n\n\n\n\n\n\nKeep Neo4j, IKG, Apollo and Ofelia on the same server\n\n\n\n\nOfelia schedules tasks using job-exec, which executes commands inside running containers via the Docker daemon. It must share the same Docker host as the containers it targets — in particular IKG.\nIKG must be on the same server as Neo4j because offline backups require stopping both services together (see Backup and Restore).\nApollo connects directly to Neo4j and benefits from co-location for latency and simplicity.\n\n\n\n\n\nExposing ports between servers\nBy default, most services only expose ports within the Docker network. When a service on server A needs to reach a service on server B, you must uncomment the relevant ports: section in the corresponding YAML file (e.g. crisalid-bus/crisalid-bus.yaml, neo4j/neo4j.yaml).\n\nMake sure your firewall restricts access to those ports to the other server(s) only.\n\n\n\nPreserving local YAML changes across updates\nIf you have uncommitted changes to compose YAML files (e.g. uncommented ports: sections), use git stash to preserve them when pulling a new version:\ngit stash push\ngit fetch --tags origin\ngit switch -c prod/X.Y.Z vX.Y.Z\ngit stash pop\nResolve any conflicts that arise after the stash pop before restarting the stack.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#create-.env-files",
+    "href": "dev/step-by-step.html#create-.env-files",
+    "title": "Docker Compose - Step by Step",
+    "section": "5. 📄 Create .env Files",
+    "text": "5. 📄 Create .env Files\nAll configuration is done through .env files. Each component directory under docker/ has a .env.sample to start from.\ncd /opt/crisalid/crisalid-deployment/docker/\n\ncp .env.sample .env\ncp crisalid-bus/.env.sample  crisalid-bus/.env\ncp neo4j/.env.sample         neo4j/.env\ncp apollo/.env.sample        apollo/.env\ncp cdb/.env.sample           cdb/.env\ncp harvester/.env.sample     harvester/.env\ncp ikg/.env.sample           ikg/.env\ncp sovisuplus/.env.sample    sovisuplus/.env\ncp keycloak/.env.sample      keycloak/.env\ncp ofelia/.env.sample        ofelia/.env\ncp cvs/.env.sample           cvs/.env\n\n⚠️ All .env files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.\n\nThe root docker/.env holds shared credentials used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.\nAlso copy the RBAC roles sample for SoVisu+:\ncp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml\n\nAll subsequent docker compose commands in this guide assume you are in the docker/ directory.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-crisalid-bus-rabbitmq",
+    "href": "dev/step-by-step.html#start-crisalid-bus-rabbitmq",
+    "title": "Docker Compose - Step by Step",
+    "section": "6. 🐰 Start CRISalid Bus (RabbitMQ)",
+    "text": "6. 🐰 Start CRISalid Bus (RabbitMQ)\nAlmost all services depend on the message bus — start it first.\n\nConfigure RabbitMQ credentials\nEdit the shared .env and set your RabbitMQ username and password:\nvim .env\n\nAll services currently share a single RabbitMQ user. Consider using per-service users in production.\n\n\n\nGenerate the RabbitMQ configuration\nThis script creates the definitions.json file (exchanges, queues, users) embedded into the container at startup:\n./configure_crisalid_bus.sh\n\n\nStart the bus\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  up -d\n\n\nVerify\nOpen an SSH tunnel from your local machine:\nssh -N -L 15672:127.0.0.1:15672 youruser@yourserver\nThen access the RabbitMQ management UI at http://localhost:15672. All exchanges, queues and bindings should be pre-declared.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-svp-harvester",
+    "href": "dev/step-by-step.html#start-svp-harvester",
+    "title": "Docker Compose - Step by Step",
+    "section": "7. 🌾 Start SVP Harvester",
+    "text": "7. 🌾 Start SVP Harvester\n\nConfigure credentials\nEdit the harvester .env to set database credentials and external API keys (e.g. Scanr):\nvim harvester/.env\n\n\nInitialize the authentication file\nIf Basic Auth is enabled (default), create the credentials file before the first start:\nmkdir -p harvester/auth\necho '{}' &gt; harvester/auth/users.json\nchmod a+wr harvester/auth/users.json\n\n\nStart\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  up -d\n\n\nCreate the first user\ndocker exec -it harvester-ui python scripts/add_basic_user.py admin\n\n\nVerify\nssh -N -L 8000:127.0.0.1:8000 youruser@yourserver\n\nUI: http://localhost:8000/admin\nSwagger: http://localhost:8000/docs",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-neo4j",
+    "href": "dev/step-by-step.html#start-neo4j",
+    "title": "Docker Compose - Step by Step",
+    "section": "8. 🗄️ Start Neo4j",
+    "text": "8. 🗄️ Start Neo4j\n\nConfigure credentials and memory\nEdit the root .env to set Neo4j credentials and, if needed, memory allocation parameters:\nvim .env\n\nCheck docker/neo4j/neo4j.yaml for options to enable/disable authentication and to expose (or not) the HTTP (7474) and Bolt (7687) ports on the host. Note that the Neo4j UI needs both ports — exposing only HTTP (7474) without Bolt (7687) will show the interface but prevent any query from running.\n\n\n\nStart\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  up -d\n\n\nVerify\nssh -N -L 7474:127.0.0.1:7474 youruser@yourserver\nssh -N -L 7687:127.0.0.1:7687 youruser@yourserver\nAccess the Neo4j Browser at http://localhost:7474.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-ikg",
+    "href": "dev/step-by-step.html#start-ikg",
+    "title": "Docker Compose - Step by Step",
+    "section": "9. 🔗 Start IKG",
+    "text": "9. 🔗 Start IKG\nIKG is the Python microservice that manages the knowledge graph.\n\nConfigure\nEdit ikg/.env — the two main variables are:\n\nREFRESH_ORG_REGISTRY: if true, the organizational registry is reloaded from the open data source at every startup (slow). Set to false after the first run and re-enable periodically.\nHARVESTERS: the list of harvesters IKG may query. Remove scopus if your institution has no subscription.\n\nYou can also choose to not expose port 8001 on the host (it only serves the Swagger UI and a health-check REST endpoint; actual data flows through RabbitMQ or Apollo/GraphQL).\n\n\nStart\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  up -d\n\n\nVerify\nIf port 8001 is exposed:\nssh -N -L 8001:127.0.0.1:8001 youruser@yourserver\nTest the health route in the Swagger at http://localhost:8001/docs.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-cdb-airflow-crisalid-directory-bridge",
+    "href": "dev/step-by-step.html#start-cdb-airflow-crisalid-directory-bridge",
+    "title": "Docker Compose - Step by Step",
+    "section": "10. 🌬️ Start CDB (Airflow — CRISalid Directory Bridge)",
+    "text": "10. 🌬️ Start CDB (Airflow — CRISalid Directory Bridge)\n\nConfigure\nEdit the root .env to set LDAP parameters (if applicable) and Airflow admin credentials:\nvim .env\n\n\nAdd data files\nPlace your institution’s data files in the CDB data directory:\nmkdir -p /opt/crisalid/crisalid-deployment/docker/cdb/data\n# copy your files, e.g.:\n# cp structures.csv /opt/crisalid/crisalid-deployment/docker/cdb/data/\n# cp people.csv     /opt/crisalid/crisalid-deployment/docker/cdb/data/\nData format documentation (French):\n\nStructures\nResearchers\n\n\n\nGenerate the Airflow configuration\n./configure_cdb.sh prod\n\nThis script overwrites the Airflow .env file. Re-run it whenever the root .env changes.\n\n\n\nStart\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  --profile cdb \\\n  up -d\n\nIf you are using local PostgreSQL containers for CDB, add -f docker-compose.local-postgres.yaml and --profile cdb-db. See Docker Compose - Overview for details.\n\n\n\nVerify\nssh -N -L 8081:127.0.0.1:8081 youruser@yourserver\nAccess the Airflow UI at http://localhost:8081.\n\nEnable the broadcast_entities DAG (toggle the on/off switch).\nThen enable either load_ldap_structures or load_spreadsheet_structures depending on your setup.\n\n\nStart with structures only at this stage — loading people triggers publication harvesting and has cascading effects on downstream services.\n\n\nTroubleshooting: proxy-related pip failures\n\n\n\n\n\n\nCorporate proxy — pip install may fail\n\n\n\nOn servers behind a corporate HTTP proxy, Airflow containers may fail to install their additional Python dependencies at startup with errors such as:\nERROR: Could not find a version that satisfies the requirement pika==1.3.2\nYou may encounter other undocumented proxy-related issues not covered here.\nWorkaround: pre-download the wheels on a machine with direct internet access and serve them as a local directory:\nmkdir vendor\npip download -d vendor --only-binary=:all: pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1\nThen in cdb/.env, switch to offline install:\nADDITIONAL_LIBRARIES=--no-index --find-links /opt/vendor pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1\nAnd in cdb/cdb.yaml, add the vendor directory as a read-only volume:\n- ${AIRFLOW_PROJ_DIR:-.}/vendor:/opt/vendor:ro",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-apollo-graphql-api",
+    "href": "dev/step-by-step.html#start-apollo-graphql-api",
+    "title": "Docker Compose - Step by Step",
+    "section": "11. 🚀 Start Apollo (GraphQL API)",
+    "text": "11. 🚀 Start Apollo (GraphQL API)\n\nConfigure\nSet an API key for SoVisu+ in the root .env:\nvim .env   # set SOVISUPLUS_GRAPHQL_API_KEY\n\n\nStart\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile apollo \\\n  up -d\n\n\nVerify\nssh -N -L 4000:127.0.0.1:4000 youruser@yourserver\nAccess the Apollo Sandbox at http://localhost:4000/graphql.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#start-keycloak-and-sovisu",
+    "href": "dev/step-by-step.html#start-keycloak-and-sovisu",
+    "title": "Docker Compose - Step by Step",
+    "section": "12. 🔐 Start Keycloak and SoVisu+",
+    "text": "12. 🔐 Start Keycloak and SoVisu+\n\nConfigure\nEdit the relevant .env files:\nvim .env             # shared: KEYCLOAK_*, SOVISUPLUS_*, NextAuth secret\nvim sovisuplus/.env  # SoVisu+-specific settings\nvim keycloak/.env    # Keycloak admin credentials and DB config\n\nHTTPS via reverse proxy (recommended)\nIf Keycloak and SoVisu+ are exposed through a reverse proxy handling TLS termination (recommended for production), use these settings in keycloak/.env:\nKEYCLOAK_HTTP_ENABLED=true\nKEYCLOAK_HOSTNAME_STRICT_HTTPS=false\nKEYCLOAK_HOSTNAME_STRICT_BACKCHANNEL=false\n\nWith this setup, server-to-server calls from SoVisu+ to Keycloak (e.g. .well-known discovery) travel over plain HTTP internally, while external traffic is secured by the reverse proxy.\n\nSet the public URLs in the root .env:\nKEYCLOAK_SCHEME=https\nKEYCLOAK_PORT=443\nKEYCLOAK_HOST=your-keycloak-hostname.example.org\nKEYCLOAK_REALM=crisalid-inst\n\nSOVISUPLUS_SCHEME=https\nSOVISUPLUS_HOST=your-sovisuplus-hostname.example.org\nSOVISUPLUS_PORT=443\n\nSOVISUPLUS_KEYCLOAK_CLIENT_SECRET=&lt;your-client-secret&gt;\nTo generate a NextAuth secret:\nopenssl rand -base64 32\n\n\nCustom SoVisu+ theme\nCopy and customise the sample theme:\ncp -r sovisuplus/theme-sample sovisuplus/theme\n# edit theme files to match your institution's branding\n\n\n\nGenerate Keycloak configuration\n./configure_keycloak.sh\n\n\nStart\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile apollo \\\n  --profile keycloak \\\n  --profile sovisuplus \\\n  up -d\n\nIf using local PostgreSQL containers, add -f docker-compose.local-postgres.yaml and the relevant --profile *-db flags.\n\n\n\nVerify\nOnce running, SoVisu+ should be accessible at your configured public URL (via the reverse proxy).",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#configure-ofelia-scheduler",
+    "href": "dev/step-by-step.html#configure-ofelia-scheduler",
+    "title": "Docker Compose - Step by Step",
+    "section": "13. ⏰ Configure Ofelia (Scheduler)",
+    "text": "13. ⏰ Configure Ofelia (Scheduler)\nAdd --profile ofelia to the startup command. See Docker Compose - Overview for full configuration details.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
+    "objectID": "dev/step-by-step.html#updating-to-a-new-version",
+    "href": "dev/step-by-step.html#updating-to-a-new-version",
+    "title": "Docker Compose - Step by Step",
+    "section": "14. 🔄 Updating to a New Version",
+    "text": "14. 🔄 Updating to a New Version\n# Stash local changes (e.g. uncommented ports: sections) before switching\ngit stash push\n\n# Pull the new tag\ngit fetch --tags origin\ngit switch -c prod/X.Y.Z vX.Y.Z\n\n# Restore local changes and resolve any conflicts\ngit stash pop\n\n# Pull updated images\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus --profile harvester --profile neo4j \\\n  --profile ikg --profile cdb --profile apollo \\\n  --profile keycloak --profile sovisuplus \\\n  pull --include-deps\n\n# Recreate containers\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus --profile harvester --profile neo4j \\\n  --profile ikg --profile cdb --profile apollo \\\n  --profile keycloak --profile sovisuplus \\\n  up -d\nTo force-recreate a single container without restarting the others:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile sovisuplus \\\n  up -d --no-deps --force-recreate sovisuplus\n\n🧭 Back to Docker Compose - Overview",
     "crumbs": [
       "Docker Compose",
       "Docker Compose - Step by Step"
