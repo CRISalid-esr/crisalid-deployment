@@ -113,7 +113,7 @@
     "href": "dev/step-by-step.html#create-.env-files",
     "title": "Docker Compose - Step by Step",
     "section": "5. 📄 Create .env Files",
-    "text": "5. 📄 Create .env Files\nAll configuration is done through .env files. Each component directory under docker/ has a .env.sample to start from.\ncd /opt/crisalid/crisalid-deployment/docker/\n\ncp .env.sample .env\ncp crisalid-bus/.env.sample  crisalid-bus/.env\ncp neo4j/.env.sample         neo4j/.env\ncp apollo/.env.sample        apollo/.env\ncp cdb/.env.sample           cdb/.env\ncp harvester/.env.sample     harvester/.env\ncp ikg/.env.sample           ikg/.env\ncp sovisuplus/.env.sample    sovisuplus/.env\ncp keycloak/.env.sample      keycloak/.env\ncp ofelia/.env.sample        ofelia/.env\ncp cvs/.env.sample           cvs/.env\n\n⚠️ All .env files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.\n\nThe root docker/.env holds shared credentials used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.\nAlso copy the RBAC roles sample for SoVisu+:\ncp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml\n\nAll subsequent docker compose commands in this guide assume you are in the docker/ directory.",
+    "text": "5. 📄 Create .env Files\nAll configuration is done through .env files. Each component directory under docker/ has a .env.sample to start from.\ncd /opt/crisalid/crisalid-deployment/docker/\n\ncp .env.sample .env\ncp crisalid-bus/.env.sample  crisalid-bus/.env\ncp neo4j/.env.sample         neo4j/.env\ncp apollo/.env.sample        apollo/.env\ncp cdb/.env.sample           cdb/.env\ncp harvester/.env.sample     harvester/.env\ncp ikg/.env.sample           ikg/.env\ncp sovisuplus/.env.sample    sovisuplus/.env\ncp keycloak/.env.sample      keycloak/.env\ncp ofelia/.env.sample        ofelia/.env\ncp cvs/.env.sample           cvs/.env\ncp neo4j-mcp/.env.sample     neo4j-mcp/.env\n\n⚠️ All .env files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.\n\nThe root docker/.env holds shared credentials used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.\nAlso copy the RBAC roles sample for SoVisu+:\ncp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml\n\nAll subsequent docker compose commands in this guide assume you are in the docker/ directory.",
     "crumbs": [
       "Docker Compose",
       "Docker Compose - Step by Step"
@@ -197,11 +197,22 @@
     ]
   },
   {
+    "objectID": "dev/step-by-step.html#start-neo4j-mcp-toolbox",
+    "href": "dev/step-by-step.html#start-neo4j-mcp-toolbox",
+    "title": "Docker Compose - Step by Step",
+    "section": "13. 🔌 Start Neo4j MCP Toolbox",
+    "text": "13. 🔌 Start Neo4j MCP Toolbox\nThe Neo4j MCP Toolbox exposes curated Cypher queries as MCP tools, allowing AI agents and LLM-based clients to query the CRISalid knowledge graph in a structured and authenticated way.\n\n\n\n\n\n\nKeycloak service accounts required for authenticated access\n\n\n\nThe toolbox validates incoming JWTs against Keycloak. Each client application that needs access must have a dedicated Keycloak service account. Service account setup is documented in Using CRISalid AI Skills.\n\n\n\nStart\nThe Neo4j MCP Toolbox requires Neo4j and Keycloak to be running.\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile apollo \\\n  --profile keycloak \\\n  --profile sovisuplus \\\n  --profile neo4j-mcp \\\n  up -d\nThe toolbox listens on port 5000 inside the Docker network and is reachable by other containers at http://neo4j-mcp:5000. It is not published to the host by default.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
     "objectID": "dev/step-by-step.html#configure-ofelia-scheduler",
     "href": "dev/step-by-step.html#configure-ofelia-scheduler",
     "title": "Docker Compose - Step by Step",
-    "section": "13. ⏰ Configure Ofelia (Scheduler)",
-    "text": "13. ⏰ Configure Ofelia (Scheduler)\nAdd --profile ofelia to the startup command. See Docker Compose - Overview for full configuration details.",
+    "section": "14. ⏰ Configure Ofelia (Scheduler)",
+    "text": "14. ⏰ Configure Ofelia (Scheduler)\nAdd --profile ofelia to the startup command. See Docker Compose - Overview for full configuration details.",
     "crumbs": [
       "Docker Compose",
       "Docker Compose - Step by Step"
@@ -211,8 +222,8 @@
     "objectID": "dev/step-by-step.html#updating-to-a-new-version",
     "href": "dev/step-by-step.html#updating-to-a-new-version",
     "title": "Docker Compose - Step by Step",
-    "section": "14. 🔄 Updating to a New Version",
-    "text": "14. 🔄 Updating to a New Version\n# Stash local changes (e.g. uncommented ports: sections) before switching\ngit stash push\n\n# Pull the new tag\ngit fetch --tags origin\ngit switch -c prod/X.Y.Z vX.Y.Z\n\n# Restore local changes and resolve any conflicts\ngit stash pop\n\n# Pull updated images\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus --profile harvester --profile neo4j \\\n  --profile ikg --profile cdb --profile apollo \\\n  --profile keycloak --profile sovisuplus \\\n  pull --include-deps\n\n# Recreate containers\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus --profile harvester --profile neo4j \\\n  --profile ikg --profile cdb --profile apollo \\\n  --profile keycloak --profile sovisuplus \\\n  up -d\nTo force-recreate a single container without restarting the others:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile sovisuplus \\\n  up -d --no-deps --force-recreate sovisuplus\n\n🧭 Back to Docker Compose - Overview",
+    "section": "15. 🔄 Updating to a New Version",
+    "text": "15. 🔄 Updating to a New Version\n# Stash local changes (e.g. uncommented ports: sections) before switching\ngit stash push\n\n# Pull the new tag\ngit fetch --tags origin\ngit switch -c prod/X.Y.Z vX.Y.Z\n\n# Restore local changes and resolve any conflicts\ngit stash pop\n\n# Pull updated images\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus --profile harvester --profile neo4j \\\n  --profile ikg --profile cdb --profile apollo \\\n  --profile keycloak --profile sovisuplus --profile neo4j-mcp \\\n  pull --include-deps\n\n# Recreate containers\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus --profile harvester --profile neo4j \\\n  --profile ikg --profile cdb --profile apollo \\\n  --profile keycloak --profile sovisuplus --profile neo4j-mcp \\\n  up -d\nTo force-recreate a single container without restarting the others:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile sovisuplus \\\n  up -d --no-deps --force-recreate sovisuplus\n\n🧭 Back to Docker Compose - Overview",
     "crumbs": [
       "Docker Compose",
       "Docker Compose - Step by Step"
@@ -384,14 +395,36 @@
     ]
   },
   {
-    "objectID": "ai/requirements.html",
-    "href": "ai/requirements.html",
-    "title": "Crisalid AI – Required Infrastructure and Dependencies",
+    "objectID": "ai/using-skills.html",
+    "href": "ai/using-skills.html",
+    "title": "Using CRISalid AI Skills",
+    "section": "",
+    "text": "The Neo4j MCP Toolbox exposes curated Cypher queries as MCP tools, making it easy to integrate structured CRISalid knowledge graph data into LLM-based agents and workflows.\nTwo toolsets are available:\n\n\n\n\n\n\n\nToolset\nTools\n\n\n\n\ncrisalid-restricted\nget-crisalid-schema, list-person-publications\n\n\ncrisalid-unrestricted\nabove + execute-cypher-readonly\n\n\n\nAll tools in the restricted toolset require a valid JWT — clients must authenticate via a Keycloak service account.\n\n\n1. Expose the Toolbox Port on the Host\nBy default, the neo4j-mcp service only exposes port 5000 inside the Docker network. Other containers (e.g. an LLM agent running in the same stack) can reach it at http://neo4j-mcp:5000 without any extra configuration.\nTo access the toolbox from the host machine (e.g. during development or from an external client), uncomment the ports: section in docker/neo4j-mcp/neo4j-mcp.yaml:\n# ports:\n#   - \"5000:5000\"\nThen restart the service:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile neo4j-mcp \\\n  up -d --no-deps --force-recreate neo4j-mcp\nThe toolbox will then be reachable at http://localhost:5000 on the host.\n\n\n\n2. Create a Keycloak Service Account\n\n\n\n\n\n\nImportant\n\n\n\nEach client application that calls the MCP toolbox needs its own dedicated Keycloak service account. The steps below create one example account — repeat them for every client.\n\n\n\nStep 1 — Create the client\nIn Keycloak admin → Clients → Create client.\nSet Client type to OpenID Connect and choose a Client ID (e.g. example-mcp-client):\n\n\n\nStep 2 — Configure capabilities\nOn the next screen (Capability config):\n\nEnable Client authentication\nCheck Service account roles only — uncheck Standard flow and Direct access grants\n\n\n\n\nStep 3 — Add an Audience mapper\nThe toolbox validates the JWT aud claim against the fixed value crisalid-graph-mcp. By default Keycloak does not include this in the token — you must add a mapper.\nNavigate to: Clients → your client → Client scopes → click the dedicated scope (&lt;client-id&gt;-dedicated) → Add mapper → Configure a new mapper → Audience.\nFill in the mapper as shown:\n\nName: mcp-example-client-audience\nIncluded Custom Audience: crisalid-graph-mcp\nAdd to access token: On\n\n\n\n\nStep 4 — Note the client secret\nGo to Clients → your client → Credentials and copy the secret. You will pass it as KEYCLOAK_CLIENT_SECRET in your client environment.\n\n\n\n\n3. Example Client (Python)\nInstall the dependency:\npip install toolbox-langchain\n# or with uv:\nuv add toolbox-langchain\nThe following example connects to the toolbox, authenticates against Keycloak using the client_credentials grant, and loads the restricted toolset:\nimport asyncio\nimport os\n\nimport httpx\nfrom toolbox_core.protocol import Protocol\nfrom toolbox_langchain import ToolboxClient\n\nTOOLBOX_URL = \"http://localhost:5000\"  # adjust if running inside the Docker network\nKEYCLOAK_ISSUER = os.environ[\"KEYCLOAK_ISSUER\"]        # e.g. https://keycloak.example.org/realms/crisalid-inst\nKEYCLOAK_CLIENT_ID = os.environ[\"KEYCLOAK_CLIENT_ID\"]  # e.g. example-mcp-client\nKEYCLOAK_CLIENT_SECRET = os.environ[\"KEYCLOAK_CLIENT_SECRET\"]\n\n\ndef get_token() -&gt; str:\n    response = httpx.post(\n        f\"{KEYCLOAK_ISSUER}/protocol/openid-connect/token\",\n        data={\n            \"grant_type\": \"client_credentials\",\n            \"client_id\": KEYCLOAK_CLIENT_ID,\n            \"client_secret\": KEYCLOAK_CLIENT_SECRET,\n        },\n    )\n    response.raise_for_status()\n    return response.json()[\"access_token\"]\n\n\nasync def main():\n    async with ToolboxClient(TOOLBOX_URL, protocol=Protocol.MCP_LATEST) as toolbox:\n        tools = await toolbox.aload_toolset(\n            \"crisalid-restricted\",\n            auth_token_getters={\"crisalid-keycloak\": get_token},\n        )\n        print(f\"Loaded {len(tools)} tool(s): {[t.name for t in tools]}\")\n\n        schema_tool = next(t for t in tools if t.name == \"get-crisalid-schema\")\n        result = await schema_tool.ainvoke({})\n        print(result)\n\n\nasyncio.run(main())\n\n\n\n\n\n\nNote\n\n\n\nProtocol.MCP_LATEST is required — toolbox v1.1.0 and above enforce the MCP protocol version on the client handshake.\n\n\nThe toolset name passed to aload_toolset() must match one of the toolsets served by the toolbox (crisalid-restricted or crisalid-unrestricted). The auth token getter key (crisalid-keycloak) must match the auth service name configured in the toolbox.",
+    "crumbs": [
+      "Docker Compose",
+      "Using CRISalid AI Skills"
+    ]
+  },
+  {
+    "objectID": "ai/kubernetes.html",
+    "href": "ai/kubernetes.html",
+    "title": "Crisalid AI – Kubernetes Deployment",
     "section": "",
     "text": "Work in Progress\n\n\n\nThis page is coming soon.",
     "crumbs": [
-      "Requirements",
-      "Crisalid AI – Required Infrastructure and Dependencies"
+      "Kubernetes",
+      "Crisalid AI – Kubernetes Deployment"
+    ]
+  },
+  {
+    "objectID": "ai/docker-compose.html",
+    "href": "ai/docker-compose.html",
+    "title": "Crisalid AI – Docker Compose Deployment",
+    "section": "",
+    "text": "This section covers deploying and using the CRISalid AI components alongside the core Docker Compose stack.",
+    "crumbs": [
+      "Docker Compose",
+      "Crisalid AI – Docker Compose Deployment"
     ]
   },
   {
@@ -406,25 +439,14 @@
     ]
   },
   {
-    "objectID": "ai/docker-compose.html",
-    "href": "ai/docker-compose.html",
-    "title": "Crisalid AI – Docker Compose Deployment",
+    "objectID": "ai/requirements.html",
+    "href": "ai/requirements.html",
+    "title": "Crisalid AI – Required Infrastructure and Dependencies",
     "section": "",
     "text": "Work in Progress\n\n\n\nThis page is coming soon.",
     "crumbs": [
-      "Docker Compose",
-      "Crisalid AI – Docker Compose Deployment"
-    ]
-  },
-  {
-    "objectID": "ai/kubernetes.html",
-    "href": "ai/kubernetes.html",
-    "title": "Crisalid AI – Kubernetes Deployment",
-    "section": "",
-    "text": "Work in Progress\n\n\n\nThis page is coming soon.",
-    "crumbs": [
-      "Kubernetes",
-      "Crisalid AI – Kubernetes Deployment"
+      "Requirements",
+      "Crisalid AI – Required Infrastructure and Dependencies"
     ]
   },
   {
@@ -553,7 +575,7 @@
     "href": "dev/docker-compose.html#choosing-the-components",
     "title": "Docker Compose - Overview",
     "section": "🔍 Choosing the Components",
-    "text": "🔍 Choosing the Components\nBefore you start, review the components available in map/components.qmd and decide which ones you need.\nThe main Compose file (docker/docker-compose.yaml) is modular. It uses the include directive and profiles to enable only selected components.\n\n\nMain docker-compose.yaml\n\nname: crisalid\n\ninclude:\n  - path: ./neo4j/neo4j.yaml\n    env_file: ./neo4j/.env\n    project_directory: ./neo4j\n  - path: ./apollo/apollo.yaml\n    env_file: ./apollo/.env\n    project_directory: ./apollo\n  - path: ./crisalid-bus/crisalid-bus.yaml\n    env_file: ./crisalid-bus/.env\n    project_directory: ./crisalid-bus\n  - path: ./harvester/harvester.yaml\n    env_file: ./harvester/.env\n    project_directory: ./harvester\n  - path: ./ikg/ikg.yaml\n    env_file: ./ikg/.env\n    project_directory: ./ikg\n  - path: ./cdb/cdb.yaml\n    env_file: ./cdb/.env\n    project_directory: ./cdb\n  - path: ./sovisuplus/sovisuplus.yaml\n    env_file: ./sovisuplus/.env\n    project_directory: ./sovisuplus\n  - path: ./sovisuplus/sovisuplus-maintenance.yaml\n    env_file: ./sovisuplus/.env\n    project_directory: ./sovisuplus\n  - path: ./keycloak/keycloak.yaml\n    env_file: ./keycloak/.env\n    project_directory: ./keycloak\n  - path: ./ofelia/ofelia.yaml\n    env_file: ./ofelia/.env\n    project_directory: ./ofelia\n  - path: ./cvs/cvs.yaml\n    env_file: ./cvs/.env\n    project_directory: ./cvs\n\n\nDEV example (with docker managed PostgreSQL)\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.dev.yaml \\\n  -f docker/docker-compose.local-postgres.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile harvester-db \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile cdb-db \\\n  --profile keycloak \\\n  --profile keycloak-db \\\n  --profile sovisuplus \\\n  --profile sovisuplus-db \\\n  --profile ofelia \\\n  up -d\n\n\nPROD example (with docker managed PostgreSQL)\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.prod.yaml \\\n  -f docker/docker-compose.local-postgres.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile harvester-db \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile cdb-db \\\n  --profile keycloak \\\n  --profile keycloak-db \\\n  --profile sovisuplus \\\n  --profile sovisuplus-db \\\n  --profile ofelia \\    \n  up -d\n\n\nPROD example (with external PostgreSQL)\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.prod.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile keycloak \\\n  --profile sovisuplus \\\n  --profile ofelia \\\n  up -d\n\n\nConfiguration check\nIf you are unsure which services and profiles are effectively enabled after variable expansion and file overrides, run:\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.dev.yaml \\\n  -f docker/docker-compose.local-postgres.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  # add the profiles you want to check \\\n    config",
+    "text": "🔍 Choosing the Components\nBefore you start, review the components available in map/components.qmd and decide which ones you need.\nThe main Compose file (docker/docker-compose.yaml) is modular. It uses the include directive and profiles to enable only selected components.\n\n\nMain docker-compose.yaml\n\nname: crisalid\n\ninclude:\n  - path: ./neo4j/neo4j.yaml\n    env_file: ./neo4j/.env\n    project_directory: ./neo4j\n  - path: ./apollo/apollo.yaml\n    env_file: ./apollo/.env\n    project_directory: ./apollo\n  - path: ./crisalid-bus/crisalid-bus.yaml\n    env_file: ./crisalid-bus/.env\n    project_directory: ./crisalid-bus\n  - path: ./harvester/harvester.yaml\n    env_file: ./harvester/.env\n    project_directory: ./harvester\n  - path: ./ikg/ikg.yaml\n    env_file: ./ikg/.env\n    project_directory: ./ikg\n  - path: ./cdb/cdb.yaml\n    env_file: ./cdb/.env\n    project_directory: ./cdb\n  - path: ./sovisuplus/sovisuplus.yaml\n    env_file: ./sovisuplus/.env\n    project_directory: ./sovisuplus\n  - path: ./sovisuplus/sovisuplus-maintenance.yaml\n    env_file: ./sovisuplus/.env\n    project_directory: ./sovisuplus\n  - path: ./keycloak/keycloak.yaml\n    env_file: ./keycloak/.env\n    project_directory: ./keycloak\n  - path: ./ofelia/ofelia.yaml\n    env_file: ./ofelia/.env\n    project_directory: ./ofelia\n  - path: ./cvs/cvs.yaml\n    env_file: ./cvs/.env\n    project_directory: ./cvs\n  - path: ./neo4j-mcp/neo4j-mcp.yaml\n    env_file: ./neo4j-mcp/.env\n    project_directory: ./neo4j-mcp\n\n\nDEV example (with docker managed PostgreSQL)\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.dev.yaml \\\n  -f docker/docker-compose.local-postgres.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile harvester-db \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile cdb-db \\\n  --profile keycloak \\\n  --profile keycloak-db \\\n  --profile sovisuplus \\\n  --profile sovisuplus-db \\\n  --profile ofelia \\\n  up -d\n\n\nPROD example (with docker managed PostgreSQL)\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.prod.yaml \\\n  -f docker/docker-compose.local-postgres.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile harvester-db \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile cdb-db \\\n  --profile keycloak \\\n  --profile keycloak-db \\\n  --profile sovisuplus \\\n  --profile sovisuplus-db \\\n  --profile ofelia \\    \n  up -d\n\n\nPROD example (with external PostgreSQL)\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.prod.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile keycloak \\\n  --profile sovisuplus \\\n  --profile ofelia \\\n  up -d\n\n\nConfiguration check\nIf you are unsure which services and profiles are effectively enabled after variable expansion and file overrides, run:\ndocker compose \\\n  -f docker/docker-compose.yaml \\\n  -f docker/docker-compose.dev.yaml \\\n  -f docker/docker-compose.local-postgres.yaml \\\n  --profile neo4j \\\n  --profile apollo \\\n  # add the profiles you want to check \\\n    config",
     "crumbs": [
       "Docker Compose",
       "Docker Compose - Overview"
