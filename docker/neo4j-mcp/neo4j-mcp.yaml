@@ -10,7 +10,8 @@ services:
       - NEO4J_URI=bolt://${NEO4J_HOST}:${NEO4J_BOLT_PORT}
       - NEO4J_USER=${NEO4J_USER}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}
-      - KEYCLOAK_ISSUER=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}
+      # Use the internal Keycloak address for OIDC discovery and JWKS fetching.
+      - KEYCLOAK_ISSUER=http://keycloak:8080/realms/${KEYCLOAK_REALM}
     depends_on:
       neo4j:
         condition: service_healthy
@@ -22,8 +23,11 @@ services:
       timeout: 5s
     networks:
       - ikg-network
+      - crisalid-front
     profiles:
       - neo4j-mcp
 networks:
   ikg-network:
+    driver: bridge
+  crisalid-front:
     driver: bridge
