@@ -86,3 +86,6 @@ services:
     image: crisalidesr/crisalid-vocab-search:os-euroscivoc-dev
   cvs-api:
     image: crisalidesr/crisalid-vocab-search:api-dev
+  # neo4j-mcp (MCP toolbox for the knowledge graph)
+  neo4j-mcp:
+    image: crisalidesr/crisalid-neo4j-mcp-toolbox:dev
