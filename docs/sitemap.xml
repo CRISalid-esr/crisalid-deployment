@@ -22,7 +22,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/step-by-step.html</loc>
-    <lastmod>2026-04-15T10:42:03.964Z</lastmod>
+    <lastmod>2026-04-19T06:46:49.979Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
@@ -37,19 +37,23 @@
     <lastmod>2026-02-28T09:08:08.279Z</lastmod>
   </url>
   <url>
-    <loc>https://docs.crisalid.org/ai/requirements.html</loc>
+    <loc>https://docs.crisalid.org/ai/using-skills.html</loc>
+    <lastmod>2026-04-19T06:43:31.744Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/kubernetes.html</loc>
     <lastmod>2026-04-15T09:39:20.192Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
+    <lastmod>2026-04-19T06:43:40.896Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/index.html</loc>
     <lastmod>2026-04-15T09:39:20.192Z</lastmod>
   </url>
   <url>
-    <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
-    <lastmod>2026-04-15T09:39:20.192Z</lastmod>
-  </url>
-  <url>
-    <loc>https://docs.crisalid.org/ai/kubernetes.html</loc>
+    <loc>https://docs.crisalid.org/ai/requirements.html</loc>
     <lastmod>2026-04-15T09:39:20.192Z</lastmod>
   </url>
   <url>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Crisalid AI – Kubernetes Deployment – CRISalid Deployment Documentation</title>
+<title>Using CRISalid AI Skills – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../ai/requirements.html" rel="next">
-<link href="../ai/using-skills.html" rel="prev">
+<link href="../ai/kubernetes.html" rel="next">
+<link href="../ai/docker-compose.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -249,7 +283,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/kubernetes.html">Kubernetes</a></li><li class="breadcrumb-item"><a href="../ai/kubernetes.html">Crisalid AI – Kubernetes Deployment</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/docker-compose.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../ai/using-skills.html">Using CRISalid AI Skills</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -295,7 +329,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link">
+  <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
 </li>
@@ -312,7 +346,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../ai/kubernetes.html" class="sidebar-item-text sidebar-link active">
+  <a href="../ai/kubernetes.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Crisalid AI – Kubernetes Deployment</span></a>
   </div>
 </li>
@@ -337,7 +371,15 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#expose-the-toolbox-port-on-the-host" id="toc-expose-the-toolbox-port-on-the-host" class="nav-link active" data-scroll-target="#expose-the-toolbox-port-on-the-host">1. Expose the Toolbox Port on the Host</a></li>
+  <li><a href="#create-a-keycloak-service-account" id="toc-create-a-keycloak-service-account" class="nav-link" data-scroll-target="#create-a-keycloak-service-account">2. Create a Keycloak Service Account</a></li>
+  <li><a href="#example-client-python" id="toc-example-client-python" class="nav-link" data-scroll-target="#example-client-python">3. Example Client (Python)</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -346,9 +388,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/kubernetes.html">Kubernetes</a></li><li class="breadcrumb-item"><a href="../ai/kubernetes.html">Crisalid AI – Kubernetes Deployment</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/docker-compose.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../ai/using-skills.html">Using CRISalid AI Skills</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Crisalid AI – Kubernetes Deployment</h1>
+<h1 class="title">Using CRISalid AI Skills</h1>
 </div>
 
 
@@ -365,21 +407,159 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
+<p>The <strong>Neo4j MCP Toolbox</strong> exposes curated Cypher queries as <a href="https://modelcontextprotocol.io/">MCP</a> tools, making it easy to integrate structured CRISalid knowledge graph data into LLM-based agents and workflows.</p>
+<p>Two toolsets are available:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Toolset</th>
+<th>Tools</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>crisalid-restricted</code></td>
+<td><code>get-crisalid-schema</code>, <code>list-person-publications</code></td>
+</tr>
+<tr class="even">
+<td><code>crisalid-unrestricted</code></td>
+<td>above + <code>execute-cypher-readonly</code></td>
+</tr>
+</tbody>
+</table>
+<p>All tools in the restricted toolset require a valid JWT — clients must authenticate via a Keycloak service account.</p>
+<hr>
+<section id="expose-the-toolbox-port-on-the-host" class="level3">
+<h3 class="anchored" data-anchor-id="expose-the-toolbox-port-on-the-host">1. Expose the Toolbox Port on the Host</h3>
+<p>By default, the <code>neo4j-mcp</code> service only exposes port <code>5000</code> <strong>inside</strong> the Docker network. Other containers (e.g.&nbsp;an LLM agent running in the same stack) can reach it at <code>http://neo4j-mcp:5000</code> without any extra configuration.</p>
+<p>To access the toolbox from the <strong>host machine</strong> (e.g.&nbsp;during development or from an external client), uncomment the <code>ports:</code> section in <code>docker/neo4j-mcp/neo4j-mcp.yaml</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ports:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   - "5000:5000"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then restart the service:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> neo4j-mcp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The toolbox will then be reachable at <code>http://localhost:5000</code> on the host.</p>
+<hr>
+</section>
+<section id="create-a-keycloak-service-account" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-keycloak-service-account">2. Create a Keycloak Service Account</h3>
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Work in Progress
+Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
+<p>Each client application that calls the MCP toolbox needs its own dedicated Keycloak service account. The steps below create one example account — repeat them for every client.</p>
 </div>
 </div>
+<section id="step-1-create-the-client" class="level4">
+<h4 class="anchored" data-anchor-id="step-1-create-the-client">Step 1 — Create the client</h4>
+<p>In Keycloak admin → <strong>Clients</strong> → <strong>Create client</strong>.</p>
+<p>Set <strong>Client type</strong> to <code>OpenID Connect</code> and choose a <strong>Client ID</strong> (e.g.&nbsp;<code>example-mcp-client</code>):</p>
+<p><img src="images/createclient1.png" class="img-fluid" alt="Keycloak Create client – General settings"></p>
+</section>
+<section id="step-2-configure-capabilities" class="level4">
+<h4 class="anchored" data-anchor-id="step-2-configure-capabilities">Step 2 — Configure capabilities</h4>
+<p>On the next screen (<strong>Capability config</strong>):</p>
+<ul>
+<li>Enable <strong>Client authentication</strong></li>
+<li>Check <strong>Service account roles</strong> only — uncheck Standard flow and Direct access grants</li>
+</ul>
+<p><img src="images/createclient2.png" class="img-fluid" alt="Keycloak Create client – Capability config"></p>
+</section>
+<section id="step-3-add-an-audience-mapper" class="level4">
+<h4 class="anchored" data-anchor-id="step-3-add-an-audience-mapper">Step 3 — Add an Audience mapper</h4>
+<p>The toolbox validates the JWT <code>aud</code> claim against the fixed value <code>crisalid-graph-mcp</code>. By default Keycloak does not include this in the token — you must add a mapper.</p>
+<p>Navigate to: <strong>Clients</strong> → your client → <strong>Client scopes</strong> → click the dedicated scope (<code>&lt;client-id&gt;-dedicated</code>) → <strong>Add mapper</strong> → <strong>Configure a new mapper</strong> → <strong>Audience</strong>.</p>
+<p>Fill in the mapper as shown:</p>
+<ul>
+<li><strong>Name</strong>: <code>mcp-example-client-audience</code></li>
+<li><strong>Included Custom Audience</strong>: <code>crisalid-graph-mcp</code></li>
+<li><strong>Add to access token</strong>: On</li>
+</ul>
+<p><img src="images/configureaudience.png" class="img-fluid" alt="Keycloak Add mapper – Audience"></p>
+</section>
+<section id="step-4-note-the-client-secret" class="level4">
+<h4 class="anchored" data-anchor-id="step-4-note-the-client-secret">Step 4 — Note the client secret</h4>
+<p>Go to <strong>Clients</strong> → your client → <strong>Credentials</strong> and copy the secret. You will pass it as <code>KEYCLOAK_CLIENT_SECRET</code> in your client environment.</p>
+<hr>
+</section>
+</section>
+<section id="example-client-python" class="level3">
+<h3 class="anchored" data-anchor-id="example-client-python">3. Example Client (Python)</h3>
+<p>Install the dependency:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install toolbox-langchain</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># or with uv:</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> add toolbox-langchain</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The following example connects to the toolbox, authenticates against Keycloak using the <code>client_credentials</code> grant, and loads the restricted toolset:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> asyncio</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> toolbox_core.protocol <span class="im">import</span> Protocol</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> toolbox_langchain <span class="im">import</span> ToolboxClient</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>TOOLBOX_URL <span class="op">=</span> <span class="st">"http://localhost:5000"</span>  <span class="co"># adjust if running inside the Docker network</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>KEYCLOAK_ISSUER <span class="op">=</span> os.environ[<span class="st">"KEYCLOAK_ISSUER"</span>]        <span class="co"># e.g. https://keycloak.example.org/realms/crisalid-inst</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>KEYCLOAK_CLIENT_ID <span class="op">=</span> os.environ[<span class="st">"KEYCLOAK_CLIENT_ID"</span>]  <span class="co"># e.g. example-mcp-client</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>KEYCLOAK_CLIENT_SECRET <span class="op">=</span> os.environ[<span class="st">"KEYCLOAK_CLIENT_SECRET"</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_token() <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> httpx.post(</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>KEYCLOAK_ISSUER<span class="sc">}</span><span class="ss">/protocol/openid-connect/token"</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        data<span class="op">=</span>{</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">"grant_type"</span>: <span class="st">"client_credentials"</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">"client_id"</span>: KEYCLOAK_CLIENT_ID,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">"client_secret"</span>: KEYCLOAK_CLIENT_SECRET,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    response.raise_for_status()</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response.json()[<span class="st">"access_token"</span>]</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="kw">def</span> main():</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">async</span> <span class="cf">with</span> ToolboxClient(TOOLBOX_URL, protocol<span class="op">=</span>Protocol.MCP_LATEST) <span class="im">as</span> toolbox:</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        tools <span class="op">=</span> <span class="cf">await</span> toolbox.aload_toolset(</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"crisalid-restricted"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>            auth_token_getters<span class="op">=</span>{<span class="st">"crisalid-keycloak"</span>: get_token},</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Loaded </span><span class="sc">{</span><span class="bu">len</span>(tools)<span class="sc">}</span><span class="ss"> tool(s): </span><span class="sc">{</span>[t.name <span class="cf">for</span> t <span class="kw">in</span> tools]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        schema_tool <span class="op">=</span> <span class="bu">next</span>(t <span class="cf">for</span> t <span class="kw">in</span> tools <span class="cf">if</span> t.name <span class="op">==</span> <span class="st">"get-crisalid-schema"</span>)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> <span class="cf">await</span> schema_tool.ainvoke({})</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(result)</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>asyncio.run(main())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>Protocol.MCP_LATEST</code> is required — toolbox v1.1.0 and above enforce the MCP protocol version on the client handshake.</p>
+</div>
+</div>
+<p>The toolset name passed to <code>aload_toolset()</code> must match one of the toolsets served by the toolbox (<code>crisalid-restricted</code> or <code>crisalid-unrestricted</code>). The auth token getter key (<code>crisalid-keycloak</code>) must match the auth service name configured in the toolbox.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -801,13 +981,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../ai/using-skills.html" class="pagination-link" aria-label="Using CRISalid AI Skills">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Using CRISalid AI Skills</span>
+      <a href="../ai/docker-compose.html" class="pagination-link" aria-label="Crisalid AI – Docker Compose Deployment">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Crisalid AI – Docker Compose Deployment</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../ai/requirements.html" class="pagination-link" aria-label="Crisalid AI – Required Infrastructure and Dependencies">
-        <span class="nav-page-text">Crisalid AI – Required Infrastructure and Dependencies</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../ai/kubernetes.html" class="pagination-link" aria-label="Crisalid AI – Kubernetes Deployment">
+        <span class="nav-page-text">Crisalid AI – Kubernetes Deployment</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
