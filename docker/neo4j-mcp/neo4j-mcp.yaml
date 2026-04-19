@@ -1,6 +1,6 @@
 services:
   neo4j-mcp:
-    image: crisalidesr/crisalid-neo4j-mcp-toolbox
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
     # ports:
     #   - "5000:5000"
