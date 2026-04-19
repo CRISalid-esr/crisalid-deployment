@@ -2,6 +2,8 @@ services:
   neo4j-mcp:
     image: crisalidesr/crisalid-neo4j-mcp-toolbox
     restart: unless-stopped
+    # ports:
+    #   - "5000:5000"
     expose:
       - "5000"
     environment:

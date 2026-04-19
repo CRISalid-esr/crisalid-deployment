@@ -129,6 +129,7 @@ cp sovisuplus/.env.sample    sovisuplus/.env
 cp keycloak/.env.sample      keycloak/.env
 cp ofelia/.env.sample        ofelia/.env
 cp cvs/.env.sample           cvs/.env
+cp neo4j-mcp/.env.sample     neo4j-mcp/.env
 ```
 
 > ⚠️ All `.env` files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.
@@ -530,13 +531,47 @@ Once running, SoVisu+ should be accessible at your configured public URL (via th
 
 ---
 
-## 13. ⏰ Configure Ofelia (Scheduler)
+## 13. 🔌 Start Neo4j MCP Toolbox
+
+The Neo4j MCP Toolbox exposes curated Cypher queries as MCP tools, allowing AI agents and LLM-based clients to query the CRISalid knowledge graph in a structured and authenticated way.
+
+::: {.callout-note}
+## Keycloak service accounts required for authenticated access
+
+The toolbox validates incoming JWTs against Keycloak. Each client application that needs access must have a dedicated Keycloak service account. Service account setup is documented in [Using CRISalid AI Skills](../ai/using-skills.qmd).
+:::
+
+### Start
+
+The Neo4j MCP Toolbox requires Neo4j and Keycloak to be running.
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.prod.yaml \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile neo4j \
+  --profile ikg \
+  --profile cdb \
+  --profile apollo \
+  --profile keycloak \
+  --profile sovisuplus \
+  --profile neo4j-mcp \
+  up -d
+```
+
+The toolbox listens on port `5000` inside the Docker network and is reachable by other containers at `http://neo4j-mcp:5000`. It is not published to the host by default.
+
+---
+
+## 14. ⏰ Configure Ofelia (Scheduler)
 
 Add `--profile ofelia` to the startup command. See [Docker Compose - Overview](docker-compose.qmd#configure-ofelia-system-wide-scheduler) for full configuration details.
 
 ---
 
-## 14. 🔄 Updating to a New Version
+## 15. 🔄 Updating to a New Version
 
 ```bash
 # Stash local changes (e.g. uncommented ports: sections) before switching
@@ -555,7 +590,7 @@ docker compose \
   -f docker-compose.prod.yaml \
   --profile crisalid-bus --profile harvester --profile neo4j \
   --profile ikg --profile cdb --profile apollo \
-  --profile keycloak --profile sovisuplus \
+  --profile keycloak --profile sovisuplus --profile neo4j-mcp \
   pull --include-deps
 
 # Recreate containers
@@ -564,7 +599,7 @@ docker compose \
   -f docker-compose.prod.yaml \
   --profile crisalid-bus --profile harvester --profile neo4j \
   --profile ikg --profile cdb --profile apollo \
-  --profile keycloak --profile sovisuplus \
+  --profile keycloak --profile sovisuplus --profile neo4j-mcp \
   up -d
 ```
 

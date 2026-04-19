@@ -74,6 +74,8 @@ website:
         - section: "Docker Compose"
           contents:
             - ai/docker-compose.qmd
+            - href: ai/using-skills.qmd
+              text: "Using CRISalid AI Skills"
         - section: "Kubernetes"
           contents:
             - ai/kubernetes.qmd
