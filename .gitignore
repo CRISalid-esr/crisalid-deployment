@@ -1,6 +1,8 @@
 /.quarto/
 .idea
 postgres-data
+docker/ikg/data/openalex/*
+!docker/ikg/data/openalex/.gitkeep
 realm-export
 /etc/*
 !/etc/.gitkeep
