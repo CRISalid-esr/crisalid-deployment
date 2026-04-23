@@ -19,9 +19,11 @@ for entity in "${ENTITIES[@]}"; do
     local_path="${local_path%.gz}"   # store decompressed
     [ -f "$local_path" ] && continue
     mkdir -p "$(dirname "$local_path")"
+    chmod a+rwx "$(dirname "$local_path")"
     echo "  ${key#data/}"
     curl -sf "${BUCKET}/${key}" | gunzip > "${local_path}.tmp"
     mv "${local_path}.tmp" "$local_path"
+    chmod a+rw "$local_path"
   done <<< "$keys"
 done
 
