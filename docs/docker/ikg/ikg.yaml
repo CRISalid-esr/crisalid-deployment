@@ -67,7 +67,7 @@ services:
         condition: service_healthy
     command: bash -c "uvicorn app.main:app --host 0.0.0.0 --port 8000"
     volumes:
-      - ./data/openalex:/app/data/openalex
+      - ./data:/app/data
     networks:
       - ikg-network
       - crisalid-back
