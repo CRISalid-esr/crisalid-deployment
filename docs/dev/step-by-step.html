@@ -478,6 +478,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#start-ikg" id="toc-start-ikg" class="nav-link" data-scroll-target="#start-ikg">9. 🔗 Start IKG</a>
   <ul class="collapse">
   <li><a href="#configure" id="toc-configure" class="nav-link" data-scroll-target="#configure">Configure</a></li>
+  <li><a href="#before-the-first-start" id="toc-before-the-first-start" class="nav-link" data-scroll-target="#before-the-first-start">Before the first start</a></li>
   <li><a href="#start-2" id="toc-start-2" class="nav-link" data-scroll-target="#start-2">Start</a></li>
   <li><a href="#verify-3" id="toc-verify-3" class="nav-link" data-scroll-target="#verify-3">Verify</a></li>
   </ul></li>
@@ -760,21 +761,27 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 </ul>
 <p>You can also choose to not expose port 8001 on the host (it only serves the Swagger UI and a health-check REST endpoint; actual data flows through RabbitMQ or Apollo/GraphQL).</p>
 </section>
+<section id="before-the-first-start" class="level3">
+<h3 class="anchored" data-anchor-id="before-the-first-start">Before the first start</h3>
+<p>Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a> for full details.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
 <section id="start-2" class="level3">
 <h3 class="anchored" data-anchor-id="start-2">Start</h3>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="verify-3" class="level3">
 <h3 class="anchored" data-anchor-id="verify-3">Verify</h3>
 <p>If port 8001 is exposed:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8001:127.0.0.1:8001 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8001:127.0.0.1:8001 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Test the health route in the Swagger at <a href="http://localhost:8001/docs">http://localhost:8001/docs</a>.</p>
 <hr>
 </section>
@@ -784,15 +791,15 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 <section id="configure-1" class="level3">
 <h3 class="anchored" data-anchor-id="configure-1">Configure</h3>
 <p>Edit the root <code>.env</code> to set LDAP parameters (if applicable) and Airflow admin credentials:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="add-data-files" class="level3">
 <h3 class="anchored" data-anchor-id="add-data-files">Add data files</h3>
 <p>Place your institution’s data files in the CDB data directory:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /opt/crisalid/crisalid-deployment/docker/cdb/data</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># copy your files, e.g.:</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cp structures.csv /opt/crisalid/crisalid-deployment/docker/cdb/data/</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># cp people.csv     /opt/crisalid/crisalid-deployment/docker/cdb/data/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /opt/crisalid/crisalid-deployment/docker/cdb/data</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># copy your files, e.g.:</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cp structures.csv /opt/crisalid/crisalid-deployment/docker/cdb/data/</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># cp people.csv     /opt/crisalid/crisalid-deployment/docker/cdb/data/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Data format documentation (French):</p>
 <ul>
 <li><a href="https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1478328327/Import+des+donn%C3%A9es+structures">Structures</a></li>
@@ -801,29 +808,29 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 </section>
 <section id="generate-the-airflow-configuration" class="level3">
 <h3 class="anchored" data-anchor-id="generate-the-airflow-configuration">Generate the Airflow configuration</h3>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_cdb.sh</span> prod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_cdb.sh</span> prod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p>This script overwrites the Airflow <code>.env</code> file. Re-run it whenever the root <code>.env</code> changes.</p>
 </blockquote>
 </section>
 <section id="start-3" class="level3">
 <h3 class="anchored" data-anchor-id="start-3">Start</h3>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p>If you are using local PostgreSQL containers for CDB, add <code>-f docker-compose.local-postgres.yaml</code> and <code>--profile cdb-db</code>. See <a href="../dev/docker-compose.html">Docker Compose - Overview</a> for details.</p>
 </blockquote>
 </section>
 <section id="verify-4" class="level3">
 <h3 class="anchored" data-anchor-id="verify-4">Verify</h3>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8081:127.0.0.1:8081 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8081:127.0.0.1:8081 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Access the Airflow UI at <a href="http://localhost:8081">http://localhost:8081</a>.</p>
 <ol type="1">
 <li>Enable the <code>broadcast_entities</code> DAG (toggle the on/off switch).</li>
@@ -848,12 +855,12 @@ Corporate proxy — pip install may fail
 <pre><code>ERROR: Could not find a version that satisfies the requirement pika==1.3.2</code></pre>
 <p>You may encounter other undocumented proxy-related issues not covered here.</p>
 <p><strong>Workaround:</strong> pre-download the wheels on a machine with direct internet access and serve them as a local directory:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> vendor</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> download <span class="at">-d</span> vendor <span class="at">--only-binary</span><span class="op">=</span>:all: pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> vendor</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> download <span class="at">-d</span> vendor <span class="at">--only-binary</span><span class="op">=</span>:all: pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then in <code>cdb/.env</code>, switch to offline install:</p>
 <pre class="env"><code>ADDITIONAL_LIBRARIES=--no-index --find-links /opt/vendor pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1</code></pre>
 <p>And in <code>cdb/cdb.yaml</code>, add the vendor directory as a read-only volume:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> ${AIRFLOW_PROJ_DIR:-.}/vendor:/opt/vendor:ro</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> ${AIRFLOW_PROJ_DIR:-.}/vendor:/opt/vendor:ro</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <hr>
@@ -865,24 +872,24 @@ Corporate proxy — pip install may fail
 <section id="configure-2" class="level3">
 <h3 class="anchored" data-anchor-id="configure-2">Configure</h3>
 <p>Set an API key for SoVisu+ in the root <code>.env</code>:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env   <span class="co"># set SOVISUPLUS_GRAPHQL_API_KEY</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env   <span class="co"># set SOVISUPLUS_GRAPHQL_API_KEY</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="start-4" class="level3">
 <h3 class="anchored" data-anchor-id="start-4">Start</h3>
-<div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="verify-5" class="level3">
 <h3 class="anchored" data-anchor-id="verify-5">Verify</h3>
-<div class="sourceCode" id="cb35"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 4000:127.0.0.1:4000 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 4000:127.0.0.1:4000 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Access the Apollo Sandbox at <a href="http://localhost:4000/graphql">http://localhost:4000/graphql</a>.</p>
 <hr>
 </section>
@@ -892,9 +899,9 @@ Corporate proxy — pip install may fail
 <section id="configure-3" class="level3">
 <h3 class="anchored" data-anchor-id="configure-3">Configure</h3>
 <p>Edit the relevant <code>.env</code> files:</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env             <span class="co"># shared: KEYCLOAK_*, SOVISUPLUS_*, NextAuth secret</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> sovisuplus/.env  <span class="co"># SoVisu+-specific settings</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> keycloak/.env    <span class="co"># Keycloak admin credentials and DB config</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env             <span class="co"># shared: KEYCLOAK_*, SOVISUPLUS_*, NextAuth secret</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> sovisuplus/.env  <span class="co"># SoVisu+-specific settings</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> keycloak/.env    <span class="co"># Keycloak admin credentials and DB config</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="https-via-reverse-proxy-recommended" class="level4">
 <h4 class="anchored" data-anchor-id="https-via-reverse-proxy-recommended">HTTPS via reverse proxy (recommended)</h4>
 <p>If Keycloak and SoVisu+ are exposed through a <strong>reverse proxy handling TLS termination</strong> (recommended for production), use these settings in <code>keycloak/.env</code>:</p>
@@ -916,33 +923,33 @@ SOVISUPLUS_PORT=443
 
 SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=&lt;your-client-secret&gt;</code></pre>
 <p>To generate a NextAuth secret:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openssl</span> rand <span class="at">-base64</span> 32</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openssl</span> rand <span class="at">-base64</span> 32</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="custom-sovisu-theme" class="level4">
 <h4 class="anchored" data-anchor-id="custom-sovisu-theme">Custom SoVisu+ theme</h4>
 <p>Copy and customise the sample theme:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> sovisuplus/theme-sample sovisuplus/theme</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># edit theme files to match your institution's branding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> sovisuplus/theme-sample sovisuplus/theme</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># edit theme files to match your institution's branding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="generate-keycloak-configuration" class="level3">
 <h3 class="anchored" data-anchor-id="generate-keycloak-configuration">Generate Keycloak configuration</h3>
-<div class="sourceCode" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_keycloak.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_keycloak.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="start-5" class="level3">
 <h3 class="anchored" data-anchor-id="start-5">Start</h3>
-<div class="sourceCode" id="cb42"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p>If using local PostgreSQL containers, add <code>-f docker-compose.local-postgres.yaml</code> and the relevant <code>--profile *-db</code> flags.</p>
 </blockquote>
@@ -972,19 +979,19 @@ Keycloak service accounts required for authenticated access
 <section id="start-6" class="level3">
 <h3 class="anchored" data-anchor-id="start-6">Start</h3>
 <p>The Neo4j MCP Toolbox requires Neo4j and Keycloak to be running.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
-<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The toolbox listens on port <code>5000</code> inside the Docker network and is reachable by other containers at <code>http://neo4j-mcp:5000</code>. It is not published to the host by default.</p>
 <hr>
 </section>
@@ -996,39 +1003,39 @@ Keycloak service accounts required for authenticated access
 </section>
 <section id="updating-to-a-new-version" class="level2">
 <h2 class="anchored" data-anchor-id="updating-to-a-new-version">15. 🔄 Updating to a New Version</h2>
-<div class="sourceCode" id="cb44"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
-<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
-<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To force-recreate a single container without restarting the others:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 <p>🧭 Back to <a href="../dev/docker-compose.html">Docker Compose - Overview</a></p>
 
