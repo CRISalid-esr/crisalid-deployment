@@ -287,6 +287,16 @@ Edit `ikg/.env` — the two main variables are:
 
 You can also choose to not expose port 8001 on the host (it only serves the Swagger UI and a health-check REST endpoint; actual data flows through RabbitMQ or Apollo/GraphQL).
 
+### Before the first start
+
+Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see [Download the OpenAlex Classification Tree](docker-compose.qmd#openalex-tree-download) for full details.
+
+```bash
+bash docker/scripts/download_openalex_tree.sh
+```
+
+---
+
 ### Start
 
 ```bash

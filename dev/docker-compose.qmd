@@ -313,7 +313,23 @@ Full documentation (in French):
 
 ---
 
-### 5. 🔑 Configure Keycloak
+### 5. 🌐 Download the OpenAlex Classification Tree {#openalex-tree-download}
+
+Before starting IKG for the first time, download the OpenAlex snapshot data (domains, fields,
+subfields, and topics). IKG uses these files to build the classification tree in Neo4j on its
+first startup, then wipes them automatically.
+
+```bash
+bash docker/scripts/download_openalex_tree.sh
+```
+
+When IKG starts, it checks the mounted data directory for snapshot files. If files are present, it
+runs the import (which is idempotent) and then wipes them so they do not trigger a re-import on the
+next startup. To refresh the tree later, re-run the script and restart IKG.
+
+---
+
+### 6. 🔑 Configure Keycloak
 
 Keycloak is handling authentication within the system. Multiple client applications (such as Sovisu+) can share the same
 authentication realm. To set up Keycloak in this environment, follow these steps:
@@ -366,7 +382,7 @@ keys.
 127.0.0.1 keycloak.local
 ```
 
-### 6. **SoVisu+ custom themes**
+### 7. **SoVisu+ custom themes**
 
 SoVisu+ allows you to customize its appearance using themes. You can create your own theme by following these steps:
 
@@ -378,7 +394,7 @@ cp -r sovisuplus/theme-sample sovisuplus/theme
 
 2. **Edit the theme files** in `sovisuplus/theme` to customize text and images according to your institution's branding.
 
-### 7. SoVisu+ RBAC Roles File
+### 8. SoVisu+ RBAC Roles File
 
 SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
 
@@ -391,7 +407,7 @@ cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
 * After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions
   in database.
 
-### 8. ⏰ Configure Ofelia (system-wide scheduler)
+### 9. ⏰ Configure Ofelia (system-wide scheduler)
 
 [Ofelia](https://hub.docker.com/r/mcuadros/ofelia) is the **scheduler of the whole CRISalid stack**.
 It runs as its own container and periodically triggers tasks for other containers (by running a CLI command
