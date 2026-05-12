@@ -1,0 +1,39 @@
+services:
+  crisalid-agents:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    # ports:
+    #   - "9099:9099"
+    expose:
+      - "9099"
+    environment:
+      - MODEL=${CRISALID_AGENTS_MODEL}
+      - API_KEY=${CRISALID_AGENTS_API_KEY}
+      - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
+      - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
+      - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
+      - PIPELINES_API_KEY=${CRISALID_AGENTS_PIPELINES_API_KEY}
+      # Use the internal Keycloak address for token requests (client credentials grant)
+      - KEYCLOAK_ISSUER=http://keycloak-tls:8080/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
+    depends_on:
+      neo4j-mcp:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-sf", "http://localhost:9099/" ]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - crisalid-front
+      - agents-network
+    profiles:
+      - crisalid-agents
+networks:
+  crisalid-front:
+    driver: bridge
+  agents-network:
+    driver: bridge

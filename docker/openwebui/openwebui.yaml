@@ -1,0 +1,18 @@
+services:
+  openwebui:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    ports:
+      - "${OPENWEBUI_PORT}:8080"
+    volumes:
+      - ./data:/app/backend/data
+    depends_on:
+      crisalid-agents:
+        condition: service_healthy
+    networks:
+      - agents-network
+    profiles:
+      - openwebui
+networks:
+  agents-network:
+    driver: bridge
