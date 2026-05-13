@@ -71,17 +71,13 @@ website:
         - section: "Overview"
           contents:
             - ai/index.qmd
-        - section: "Docker Compose"
+            - ai/security.qmd
+        - section: "Installation"
           contents:
+            - ai/local-workstation.qmd
             - ai/docker-compose.qmd
             - href: ai/using-skills.qmd
               text: "Using CRISalid AI Skills"
-        - section: "Kubernetes"
-          contents:
-            - ai/kubernetes.qmd
-        - section: "Requirements"
-          contents:
-            - ai/requirements.qmd
     - id: security
       title: "🔒 Security"
 

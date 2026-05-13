@@ -37,3 +37,9 @@ include:
   - path: ./neo4j-mcp/neo4j-mcp.yaml
     env_file: ./neo4j-mcp/.env
     project_directory: ./neo4j-mcp
+  - path: ./crisalid-agents/crisalid-agents.yaml
+    env_file: ./crisalid-agents/.env
+    project_directory: ./crisalid-agents
+  - path: ./openwebui/openwebui.yaml
+    env_file: ./openwebui/.env
+    project_directory: ./openwebui
