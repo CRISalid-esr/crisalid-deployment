@@ -3,6 +3,7 @@
 postgres-data
 docker/ikg/data/openalex/*
 !docker/ikg/data/openalex/.gitkeep
+docker/openwebui/data/
 realm-export
 /etc/*
 !/etc/.gitkeep

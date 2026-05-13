@@ -216,29 +216,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="dropdown-header">Overview</li>
         <li>
     <a class="dropdown-item" href="../ai/index.html">
- <span class="dropdown-text">Crisalid AI – Overview</span></a>
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/security.html">
+ <span class="dropdown-text">Security</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Docker Compose</li>
+        <li class="dropdown-header">Installation</li>
+        <li>
+    <a class="dropdown-item" href="../ai/local-workstation.html">
+ <span class="dropdown-text">Local Workstation</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="../ai/docker-compose.html">
- <span class="dropdown-text">Crisalid AI – Docker Compose Deployment</span></a>
+ <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Kubernetes</li>
         <li>
-    <a class="dropdown-item" href="../ai/kubernetes.html">
- <span class="dropdown-text">Crisalid AI – Kubernetes Deployment</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Requirements</li>
-        <li>
-    <a class="dropdown-item" href="../ai/requirements.html">
- <span class="dropdown-text">Crisalid AI – Required Infrastructure and Dependencies</span></a>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
   </li>  
     </ul>
   </li>
@@ -582,7 +582,7 @@ sovisuplus.yaml
 <span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}</span></span>
 <span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}</span></span>
 <span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_PUBLIC_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_INTERNAL_ADDR=http://keycloak:8080</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_INTERNAL_ADDR=http://${KEYCLOAK_INTERNAL_HOST}:8080</span></span>
 <span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_REALM=${KEYCLOAK_REALM}</span></span>
 <span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ORCID_URL=${ORCID_URL}</span></span>
 <span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ORCID_SCOPES=${ORCID_SCOPES}</span></span>

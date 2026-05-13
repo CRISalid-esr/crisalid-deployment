@@ -216,29 +216,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="dropdown-header">Overview</li>
         <li>
     <a class="dropdown-item" href="../ai/index.html">
- <span class="dropdown-text">Crisalid AI – Overview</span></a>
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/security.html">
+ <span class="dropdown-text">Security</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Docker Compose</li>
+        <li class="dropdown-header">Installation</li>
+        <li>
+    <a class="dropdown-item" href="../ai/local-workstation.html">
+ <span class="dropdown-text">Local Workstation</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="../ai/docker-compose.html">
- <span class="dropdown-text">Crisalid AI – Docker Compose Deployment</span></a>
+ <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Kubernetes</li>
         <li>
-    <a class="dropdown-item" href="../ai/kubernetes.html">
- <span class="dropdown-text">Crisalid AI – Kubernetes Deployment</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Requirements</li>
-        <li>
-    <a class="dropdown-item" href="../ai/requirements.html">
- <span class="dropdown-text">Crisalid AI – Required Infrastructure and Dependencies</span></a>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
   </li>  
     </ul>
   </li>
@@ -605,14 +605,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Ensure all the environment variables are set correctly before running the script (step 2).</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_keycloak.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="3" type="1">
+<li><strong>Update <code>KEYCLOAK_INTERNAL_HOST</code> in <code>docker/.env</code>:</strong></li>
+</ol>
+<p>Services that call Keycloak internally (neo4j-mcp, crisalid-agents, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker/.env</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_INTERNAL_HOST</span><span class="op">=</span>keycloak-tls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The default value is <code>keycloak</code> (plain HTTP profile). Forgetting this change will cause internal token requests to fail with a connection error.</p>
+<ol start="4" type="1">
 <li><strong>Launch Docker Compose with the TLS Profile:</strong></li>
 </ol>
 <p>Replace <code>--profile keycloak</code> with the dedicated <code>--profile keycloak-tls</code> when starting Docker Compose.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ... all other profiles ...</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> keycloak-tls <span class="dt">\ </span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> sovisuplus-db <span class="dt">\</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">--remove-orphans</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ... all other profiles ...</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> keycloak-tls <span class="dt">\ </span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--profile</span> sovisuplus-db <span class="dt">\</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">--remove-orphans</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="verification" class="level3">
 <h3 class="anchored" data-anchor-id="verification">Verification</h3>
 <ul>

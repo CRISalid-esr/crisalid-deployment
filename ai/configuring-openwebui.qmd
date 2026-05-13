@@ -1,5 +1,5 @@
 ---
-title: "Crisalid AI – Required Infrastructure and Dependencies"
+title: "Configuring OpenWebUI"
 ---
 
 ::: {.callout-note appearance="simple"}

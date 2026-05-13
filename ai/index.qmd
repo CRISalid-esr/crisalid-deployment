@@ -1,8 +1,118 @@
 ---
-title: "Crisalid AI – Overview"
+title: "Introduction"
+format:
+  html:
+    toc: true
+    toc-location: left
 ---
 
-::: {.callout-note appearance="simple"}
-## Work in Progress
-This page is coming soon.
+Crisalid AI aims to enable agents using artificial intelligence to utilise the knowledge graph.
+
+A knowledge graph offers the same benefits as a vector store — embedding-based retrieval, semantic search — but goes further. A traditional RAG can answer questions such as:
+
+> *Which researcher or team is working on computer vision applied to medical imaging?*
+
+A knowledge-graph-backed agent can also answer **structural and relational queries** that are beyond the reach of vector search:
+
+> *What are the three main research topics of UMR XXXXX?*
+>
+> *What kinds of collaborations between our institution and University XXXXX are the most transdisciplinary?*
+
+More broadly, this approach opens the way to **conversational analytics** — providing actionable insights through natural language, without the heavy business intelligence tooling and specialist skills traditionally required.
+
+The CRISalid knowledge graph covers the **research sector** of a teaching and research institution, and is intended to extend to its entire core business. Currently it mainly contains information on:
+
+- **Individuals** — researchers, staff
+- **Research structures** — laboratories, teams
+- **Scientific output** — publications, datasets
+
+The graph is actively expanding — planned and in-progress extensions include:
+
+- **Research projects** — integration of UniCaen's Oscar application and the Learning Planet Institute's Projects platform is currently underway
+- **PhD students** — ADUM integration
+- **Research activity**: events, editorial activity, science communication
+- **Teaching activities**
+
+---
+
+::: {.callout-warning}
+## Data sensitivity
+The use of Crisalid AI may provide access to **internal institutional data** (ongoing research projects) or **personal data**. Ensure that [access controls are configured appropriately](security.qmd) before exposing the system to users.
+:::
+
+::: {.callout-tip}
+## Recommended LLMs
+Whilst the use of any LLM is technically feasible, we recommend the use of **sovereign LLMs** — such as those offered by [ILaaS](https://www.ilaas.fr/) — in order to keep institutional data under national jurisdiction.
+:::
+
+---
+
+## Architecture
+
+Crisalid AI consists of four layers, from the user interface down to the knowledge graph:
+
+```{mermaid}
+flowchart LR
+    UI["🖥️ User Interface<br/>OpenWebUI · email · …"]
+    AGENTS["🤖 Crisalid Agents<br/>OpenWebUI Pipelines<br/>LangChain · LangGraph"]
+    SKILLS["🛠️ Crisalid AI Skills<br/>MCP Tools"]
+    GRAPH["🕸️ Neo4j Graph<br/>(IKG)"]
+
+    UI --> AGENTS --> SKILLS --> GRAPH
+```
+
+### Why a layered architecture?
+
+Separating concerns across layers maximises reuse and flexibility:
+
+- A **Crisalid AI Skills** tool can be used both in a long-running production agent and in a one-off agent created for a limited trial with a business service.
+- A **Crisalid Agents** agent can be developed exploratively using LangChain whilst benefiting from the full Crisalid AI ecosystem.
+- **Other user interfaces** may be added in the future: alternative chat solutions (LibreChat), or email and workflow tools such as N8N.
+
+---
+
+## Layers
+
+### 🕸️ The graph layer
+
+The Neo4j graph is powered by the [IKG middleware](https://github.com/CRISalid-esr/crisalid-ikg#crisalid-institutional-knowledge-graph). IKG is **not** part of the Crisalid AI stack — it is a prerequisite to build the graph (see [Crisalid Core](../map/index.qmd)).
+
+### 🛠️ The tools layer
+
+The [crisalid-ai-skills](https://github.com/CRISalid-esr/crisalid-ai-skills) repository brings together the tool technologies that enable access to the graph, whether via MCP, skills, or non-standard approaches.
+
+The current implementation uses the [Neo4j MCP Toolbox](https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/) ([documentation](https://mcp-toolbox.dev/documentation/introduction/)).
+
+Two toolsets are available:
+
+| Toolset | Description |
+|---|---|
+| `crisalid-restricted` | A small set of tools with pre-prepared Cypher queries |
+| `crisalid-unrestricted` | All of the above, plus the ability to execute any read-only Cypher query |
+
+::: {.callout-important}
+With **Neo4j Community Edition**, role-based access control (RBAC) is not available. The `crisalid-unrestricted` toolset is therefore a sensitive option that should be reserved for agents requiring elevated authorisation.
+:::
+
+### 🤖 The agent layer
+
+The agent layer enables the development of agents within the LangChain–LangGraph ecosystem, leveraging the full Crisalid AI stack.
+
+Currently, two general-purpose agents have been developed:
+
+- **Active** — a [LangGraph](https://langchain-ai.github.io/langgraph/)-based agent using Crisalid AI Skills tools.
+- **Disabled** — an agent based on direct [LangChain Neo4j integration](https://neo4j.com/labs/genai-ecosystem/langchain/), currently inactive due to disappointing performance.
+
+More specialised agents may be developed in the future.
+
+Crisalid Agents also includes **OpenWebUI Pipelines**, enabling LangGraph agents to be deployed directly from OpenWebUI.
+
+### 🖥️ The interface layer
+
+For the time being, this consists solely of **OpenWebUI** — a self-hosted chat interface accessible via a web browser.
+
+The LangChain/LangGraph agents in Crisalid Agents are presented to the user as **pipelines** — in the place where the user would normally select LLMs in a basic use of OpenWebUI.
+
+::: {.callout-note}
+Although the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.
 :::

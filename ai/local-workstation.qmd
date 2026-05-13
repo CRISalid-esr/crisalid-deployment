@@ -1,5 +1,5 @@
 ---
-title: "Crisalid AI – Kubernetes Deployment"
+title: "Local Workstation"
 ---
 
 ::: {.callout-note appearance="simple"}

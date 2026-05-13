@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Crisalid AI – Overview – CRISalid Deployment Documentation</title>
+<title>Introduction – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../ai/docker-compose.html" rel="next">
+<link href="../ai/security.html" rel="next">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -69,6 +69,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../index.css">
@@ -181,29 +184,29 @@ ul.task-list li input[type="checkbox"] {
         <li class="dropdown-header">Overview</li>
         <li>
     <a class="dropdown-item" href="../ai/index.html">
- <span class="dropdown-text">Crisalid AI – Overview</span></a>
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/security.html">
+ <span class="dropdown-text">Security</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Docker Compose</li>
+        <li class="dropdown-header">Installation</li>
+        <li>
+    <a class="dropdown-item" href="../ai/local-workstation.html">
+ <span class="dropdown-text">Local Workstation</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="../ai/docker-compose.html">
- <span class="dropdown-text">Crisalid AI – Docker Compose Deployment</span></a>
+ <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Kubernetes</li>
         <li>
-    <a class="dropdown-item" href="../ai/kubernetes.html">
- <span class="dropdown-text">Crisalid AI – Kubernetes Deployment</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Requirements</li>
-        <li>
-    <a class="dropdown-item" href="../ai/requirements.html">
- <span class="dropdown-text">Crisalid AI – Required Infrastructure and Dependencies</span></a>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
   </li>  
     </ul>
   </li>
@@ -248,7 +251,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/index.html">Crisalid AI – Overview</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/index.html">Introduction</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -272,7 +275,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../ai/index.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Crisalid AI – Overview</span></a>
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ai/security.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Security</span></a>
   </div>
 </li>
       </ul>
@@ -280,7 +289,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Docker Compose</span></a>
+ <span class="menu-text">Installation</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -288,8 +297,14 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../ai/local-workstation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Local Workstation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../ai/docker-compose.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Crisalid AI – Docker Compose Deployment</span></a>
+ <span class="menu-text">Docker Compose</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -298,45 +313,33 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
 </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Kubernetes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../ai/kubernetes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Crisalid AI – Kubernetes Deployment</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Requirements</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../ai/requirements.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Crisalid AI – Required Infrastructure and Dependencies</span></a>
+  <a href="../ai/configuring-openwebui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Configuring OpenWebUI</span></a>
   </div>
 </li>
       </ul>
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#architecture" id="toc-architecture" class="nav-link active" data-scroll-target="#architecture">Architecture</a>
+  <ul class="collapse">
+  <li><a href="#why-a-layered-architecture" id="toc-why-a-layered-architecture" class="nav-link" data-scroll-target="#why-a-layered-architecture">Why a layered architecture?</a></li>
+  </ul></li>
+  <li><a href="#layers" id="toc-layers" class="nav-link" data-scroll-target="#layers">Layers</a>
+  <ul class="collapse">
+  <li><a href="#the-graph-layer" id="toc-the-graph-layer" class="nav-link" data-scroll-target="#the-graph-layer">🕸️ The graph layer</a></li>
+  <li><a href="#the-tools-layer" id="toc-the-tools-layer" class="nav-link" data-scroll-target="#the-tools-layer">🛠️ The tools layer</a></li>
+  <li><a href="#the-agent-layer" id="toc-the-agent-layer" class="nav-link" data-scroll-target="#the-agent-layer">🤖 The agent layer</a></li>
+  <li><a href="#the-interface-layer" id="toc-the-interface-layer" class="nav-link" data-scroll-target="#the-interface-layer">🖥️ The interface layer</a></li>
+  </ul></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -345,9 +348,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/index.html">Crisalid AI – Overview</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/index.html">Introduction</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Crisalid AI – Overview</h1>
+<h1 class="title">Introduction</h1>
 </div>
 
 
@@ -364,21 +367,169 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
+<p>Crisalid AI aims to enable agents using artificial intelligence to utilise the knowledge graph.</p>
+<p>A knowledge graph offers the same benefits as a vector store — embedding-based retrieval, semantic search — but goes further. A traditional RAG can answer questions such as:</p>
+<blockquote class="blockquote">
+<p><em>Which researcher or team is working on computer vision applied to medical imaging?</em></p>
+</blockquote>
+<p>A knowledge-graph-backed agent can also answer <strong>structural and relational queries</strong> that are beyond the reach of vector search:</p>
+<blockquote class="blockquote">
+<p><em>What are the three main research topics of UMR XXXXX?</em></p>
+<p><em>What kinds of collaborations between our institution and University XXXXX are the most transdisciplinary?</em></p>
+</blockquote>
+<p>More broadly, this approach opens the way to <strong>conversational analytics</strong> — providing actionable insights through natural language, without the heavy business intelligence tooling and specialist skills traditionally required.</p>
+<p>The CRISalid knowledge graph covers the <strong>research sector</strong> of a teaching and research institution, and is intended to extend to its entire core business. Currently it mainly contains information on:</p>
+<ul>
+<li><strong>Individuals</strong> — researchers, staff</li>
+<li><strong>Research structures</strong> — laboratories, teams</li>
+<li><strong>Scientific output</strong> — publications, datasets</li>
+</ul>
+<p>The graph is actively expanding — planned and in-progress extensions include:</p>
+<ul>
+<li><strong>Research projects</strong> — integration of UniCaen’s Oscar application and the Learning Planet Institute’s Projects platform is currently underway</li>
+<li><strong>PhD students</strong> — ADUM integration</li>
+<li><strong>Research activity</strong>: events, editorial activity, science communication</li>
+<li><strong>Teaching activities</strong></li>
+</ul>
+<hr>
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Work in Progress
+Data sensitivity
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
+<p>The use of Crisalid AI may provide access to <strong>internal institutional data</strong> (ongoing research projects) or <strong>personal data</strong>. Ensure that <a href="../ai/security.html">access controls are configured appropriately</a> before exposing the system to users.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Recommended LLMs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Whilst the use of any LLM is technically feasible, we recommend the use of <strong>sovereign LLMs</strong> — such as those offered by <a href="https://www.ilaas.fr/">ILaaS</a> — in order to keep institutional data under national jurisdiction.</p>
+</div>
+</div>
+<hr>
+<section id="architecture" class="level2">
+<h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
+<p>Crisalid AI consists of four layers, from the user interface down to the knowledge graph:</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    UI["🖥️ User Interface&lt;br/&gt;OpenWebUI · email · …"]
+    AGENTS["🤖 Crisalid Agents&lt;br/&gt;OpenWebUI Pipelines&lt;br/&gt;LangChain · LangGraph"]
+    SKILLS["🛠️ Crisalid AI Skills&lt;br/&gt;MCP Tools"]
+    GRAPH["🕸️ Neo4j Graph&lt;br/&gt;(IKG)"]
+
+    UI --&gt; AGENTS --&gt; SKILLS --&gt; GRAPH
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<section id="why-a-layered-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="why-a-layered-architecture">Why a layered architecture?</h3>
+<p>Separating concerns across layers maximises reuse and flexibility:</p>
+<ul>
+<li>A <strong>Crisalid AI Skills</strong> tool can be used both in a long-running production agent and in a one-off agent created for a limited trial with a business service.</li>
+<li>A <strong>Crisalid Agents</strong> agent can be developed exploratively using LangChain whilst benefiting from the full Crisalid AI ecosystem.</li>
+<li><strong>Other user interfaces</strong> may be added in the future: alternative chat solutions (LibreChat), or email and workflow tools such as N8N.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="layers" class="level2">
+<h2 class="anchored" data-anchor-id="layers">Layers</h2>
+<section id="the-graph-layer" class="level3">
+<h3 class="anchored" data-anchor-id="the-graph-layer">🕸️ The graph layer</h3>
+<p>The Neo4j graph is powered by the <a href="https://github.com/CRISalid-esr/crisalid-ikg#crisalid-institutional-knowledge-graph">IKG middleware</a>. IKG is <strong>not</strong> part of the Crisalid AI stack — it is a prerequisite to build the graph (see <a href="../map/index.html">Crisalid Core</a>).</p>
+</section>
+<section id="the-tools-layer" class="level3">
+<h3 class="anchored" data-anchor-id="the-tools-layer">🛠️ The tools layer</h3>
+<p>The <a href="https://github.com/CRISalid-esr/crisalid-ai-skills">crisalid-ai-skills</a> repository brings together the tool technologies that enable access to the graph, whether via MCP, skills, or non-standard approaches.</p>
+<p>The current implementation uses the <a href="https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/">Neo4j MCP Toolbox</a> (<a href="https://mcp-toolbox.dev/documentation/introduction/">documentation</a>).</p>
+<p>Two toolsets are available:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Toolset</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>crisalid-restricted</code></td>
+<td>A small set of tools with pre-prepared Cypher queries</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-unrestricted</code></td>
+<td>All of the above, plus the ability to execute any read-only Cypher query</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With <strong>Neo4j Community Edition</strong>, role-based access control (RBAC) is not available. The <code>crisalid-unrestricted</code> toolset is therefore a sensitive option that should be reserved for agents requiring elevated authorisation.</p>
+</div>
+</div>
+</section>
+<section id="the-agent-layer" class="level3">
+<h3 class="anchored" data-anchor-id="the-agent-layer">🤖 The agent layer</h3>
+<p>The agent layer enables the development of agents within the LangChain–LangGraph ecosystem, leveraging the full Crisalid AI stack.</p>
+<p>Currently, two general-purpose agents have been developed:</p>
+<ul>
+<li><strong>Active</strong> — a <a href="https://langchain-ai.github.io/langgraph/">LangGraph</a>-based agent using Crisalid AI Skills tools.</li>
+<li><strong>Disabled</strong> — an agent based on direct <a href="https://neo4j.com/labs/genai-ecosystem/langchain/">LangChain Neo4j integration</a>, currently inactive due to disappointing performance.</li>
+</ul>
+<p>More specialised agents may be developed in the future.</p>
+<p>Crisalid Agents also includes <strong>OpenWebUI Pipelines</strong>, enabling LangGraph agents to be deployed directly from OpenWebUI.</p>
+</section>
+<section id="the-interface-layer" class="level3">
+<h3 class="anchored" data-anchor-id="the-interface-layer">🖥️ The interface layer</h3>
+<p>For the time being, this consists solely of <strong>OpenWebUI</strong> — a self-hosted chat interface accessible via a web browser.</p>
+<p>The LangChain/LangGraph agents in Crisalid Agents are presented to the user as <strong>pipelines</strong> — in the place where the user would normally select LLMs in a basic use of OpenWebUI.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Although the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.</p>
 </div>
 </div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -802,8 +953,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../ai/docker-compose.html" class="pagination-link" aria-label="Crisalid AI – Docker Compose Deployment">
-        <span class="nav-page-text">Crisalid AI – Docker Compose Deployment</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../ai/security.html" class="pagination-link" aria-label="Security">
+        <span class="nav-page-text">Security</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -216,29 +216,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="dropdown-header">Overview</li>
         <li>
     <a class="dropdown-item" href="../ai/index.html">
- <span class="dropdown-text">Crisalid AI – Overview</span></a>
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/security.html">
+ <span class="dropdown-text">Security</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Docker Compose</li>
+        <li class="dropdown-header">Installation</li>
+        <li>
+    <a class="dropdown-item" href="../ai/local-workstation.html">
+ <span class="dropdown-text">Local Workstation</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="../ai/docker-compose.html">
- <span class="dropdown-text">Crisalid AI – Docker Compose Deployment</span></a>
+ <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Kubernetes</li>
         <li>
-    <a class="dropdown-item" href="../ai/kubernetes.html">
- <span class="dropdown-text">Crisalid AI – Kubernetes Deployment</span></a>
-  </li>  
-        <li><hr class="dropdown-divider"></li>
-        <li class="dropdown-header">Requirements</li>
-        <li>
-    <a class="dropdown-item" href="../ai/requirements.html">
- <span class="dropdown-text">Crisalid AI – Required Infrastructure and Dependencies</span></a>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
   </li>  
     </ul>
   </li>
@@ -611,7 +611,13 @@ Main docker-compose.yaml
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./cvs</span></span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./neo4j-mcp/neo4j-mcp.yaml</span></span>
 <span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./neo4j-mcp/.env</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./neo4j-mcp</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./neo4j-mcp</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./crisalid-agents/crisalid-agents.yaml</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./crisalid-agents/.env</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./crisalid-agents</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./openwebui/openwebui.yaml</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./openwebui/.env</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./openwebui</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <section id="dev-example-with-docker-managed-postgresql" class="level3">
 <h3 class="anchored" data-anchor-id="dev-example-with-docker-managed-postgresql">DEV example (with docker managed PostgreSQL)</h3>

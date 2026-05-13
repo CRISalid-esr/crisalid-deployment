@@ -26,7 +26,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
-    <lastmod>2026-02-28T09:08:08.281Z</lastmod>
+    <lastmod>2026-05-12T01:46:41.509Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
@@ -41,20 +41,24 @@
     <lastmod>2026-04-19T07:26:35.435Z</lastmod>
   </url>
   <url>
-    <loc>https://docs.crisalid.org/ai/kubernetes.html</loc>
-    <lastmod>2026-04-15T09:39:20.192Z</lastmod>
+    <loc>https://docs.crisalid.org/ai/local-workstation.html</loc>
+    <lastmod>2026-05-13T05:04:23.455Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
-    <lastmod>2026-04-19T07:26:35.431Z</lastmod>
+    <lastmod>2026-05-13T05:04:28.504Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/configuring-openwebui.html</loc>
+    <lastmod>2026-05-13T05:04:33.576Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/index.html</loc>
-    <lastmod>2026-04-15T09:39:20.192Z</lastmod>
+    <lastmod>2026-05-13T05:18:45.268Z</lastmod>
   </url>
   <url>
-    <loc>https://docs.crisalid.org/ai/requirements.html</loc>
-    <lastmod>2026-04-15T09:39:20.192Z</lastmod>
+    <loc>https://docs.crisalid.org/ai/security.html</loc>
+    <lastmod>2026-05-13T05:04:18.363Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>

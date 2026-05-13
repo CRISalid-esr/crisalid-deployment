@@ -1,5 +1,8 @@
 ---
-title: "Crisalid AI – Docker Compose Deployment"
+title: "Docker Compose"
 ---
 
-This section covers deploying and using the CRISalid AI components alongside the core Docker Compose stack.
+::: {.callout-note appearance="simple"}
+## Work in Progress
+This page is coming soon.
+:::

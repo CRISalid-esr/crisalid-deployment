@@ -89,3 +89,9 @@ services:
   # neo4j-mcp (MCP toolbox for the knowledge graph)
   neo4j-mcp:
     image: crisalidesr/crisalid-neo4j-mcp-toolbox:1.0
+  # crisalid-agents (OpenWebUI pipelines / graph agent)
+  crisalid-agents:
+    image: crisalid-agents
+  # openwebui (user-facing chat UI)
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main-slim
