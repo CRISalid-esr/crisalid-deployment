@@ -78,6 +78,7 @@ website:
             - ai/docker-compose.qmd
             - href: ai/using-skills.qmd
               text: "Using CRISalid AI Skills"
+            - ai/configuring-openwebui.qmd
     - id: security
       title: "🔒 Security"
 

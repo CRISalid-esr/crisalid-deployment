@@ -408,67 +408,122 @@
   {
     "objectID": "ai/local-workstation.html",
     "href": "ai/local-workstation.html",
-    "title": "Crisalid AI – Local Workstation",
+    "title": "Local Workstation",
     "section": "",
     "text": "Work in Progress\n\n\n\nThis page is coming soon.",
     "crumbs": [
       "Installation",
-      "Crisalid AI – Local Workstation"
+      "Local Workstation"
     ]
   },
   {
     "objectID": "ai/docker-compose.html",
     "href": "ai/docker-compose.html",
-    "title": "Crisalid AI – Docker Compose",
+    "title": "Docker Compose",
     "section": "",
     "text": "Work in Progress\n\n\n\nThis page is coming soon.",
     "crumbs": [
       "Installation",
-      "Crisalid AI – Docker Compose"
+      "Docker Compose"
+    ]
+  },
+  {
+    "objectID": "ai/configuring-openwebui.html",
+    "href": "ai/configuring-openwebui.html",
+    "title": "Configuring OpenWebUI",
+    "section": "",
+    "text": "Work in Progress\n\n\n\nThis page is coming soon.",
+    "crumbs": [
+      "Installation",
+      "Configuring OpenWebUI"
     ]
   },
   {
     "objectID": "ai/index.html",
     "href": "ai/index.html",
-    "title": "Crisalid AI – Introduction",
+    "title": "Introduction",
     "section": "",
-    "text": "Crisalid AI aims to enable agents using artificial intelligence to utilise the knowledge graph.",
+    "text": "Crisalid AI aims to enable agents using artificial intelligence to utilise the knowledge graph.\nA knowledge graph offers the same benefits as a vector store — embedding-based retrieval, semantic search — but goes further. A traditional RAG can answer questions such as:\nA knowledge-graph-backed agent can also answer structural and relational queries that are beyond the reach of vector search:\nMore broadly, this approach opens the way to conversational analytics — providing actionable insights through natural language, without the heavy business intelligence tooling and specialist skills traditionally required.\nThe CRISalid knowledge graph covers the research sector of a teaching and research institution, and is intended to extend to its entire core business. Currently it mainly contains information on:\nThe graph is actively expanding — planned and in-progress extensions include:",
     "crumbs": [
       "Overview",
-      "Crisalid AI – Introduction"
+      "Introduction"
     ]
   },
   {
     "objectID": "ai/index.html#architecture",
     "href": "ai/index.html#architecture",
-    "title": "Crisalid AI – Introduction",
+    "title": "Introduction",
     "section": "Architecture",
     "text": "Architecture\nCrisalid AI consists of four layers, from the user interface down to the knowledge graph:\n\n\n\n\n\nflowchart LR\n    UI[\"🖥️ User Interface&lt;br/&gt;OpenWebUI · email · …\"]\n    AGENTS[\"🤖 Crisalid Agents&lt;br/&gt;OpenWebUI Pipelines&lt;br/&gt;LangChain · LangGraph\"]\n    SKILLS[\"🛠️ Crisalid AI Skills&lt;br/&gt;MCP Tools\"]\n    GRAPH[\"🕸️ Neo4j Graph&lt;br/&gt;(IKG)\"]\n\n    UI --&gt; AGENTS --&gt; SKILLS --&gt; GRAPH\n\n\n\n\n\n\n\nWhy a layered architecture?\nSeparating concerns across layers maximises reuse and flexibility:\n\nA Crisalid AI Skills tool can be used both in a long-running production agent and in a one-off agent created for a limited trial with a business service.\nA Crisalid Agents agent can be developed exploratively using LangChain whilst benefiting from the full Crisalid AI ecosystem.\nOther user interfaces may be added in the future: alternative chat solutions (LibreChat), or email and workflow tools such as N8N.",
     "crumbs": [
       "Overview",
-      "Crisalid AI – Introduction"
+      "Introduction"
     ]
   },
   {
     "objectID": "ai/index.html#layers",
     "href": "ai/index.html#layers",
-    "title": "Crisalid AI – Introduction",
+    "title": "Introduction",
     "section": "Layers",
     "text": "Layers\n\n🕸️ The graph layer\nThe Neo4j graph is powered by the IKG middleware. IKG is not part of the Crisalid AI stack — it is a prerequisite to build the graph (see Crisalid Core).\n\n\n🛠️ The tools layer\nThe crisalid-ai-skills repository brings together the tool technologies that enable access to the graph, whether via MCP, skills, or non-standard approaches.\nThe current implementation uses the Neo4j MCP Toolbox (documentation).\nTwo toolsets are available:\n\n\n\n\n\n\n\nToolset\nDescription\n\n\n\n\ncrisalid-restricted\nA small set of tools with pre-prepared Cypher queries\n\n\ncrisalid-unrestricted\nAll of the above, plus the ability to execute any read-only Cypher query\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nWith Neo4j Community Edition, role-based access control (RBAC) is not available. The crisalid-unrestricted toolset is therefore a sensitive option that should be reserved for agents requiring elevated authorisation.\n\n\n\n\n🤖 The agent layer\nThe agent layer enables the development of agents within the LangChain–LangGraph ecosystem, leveraging the full Crisalid AI stack.\nCurrently, two general-purpose agents have been developed:\n\nActive — a LangGraph-based agent using Crisalid AI Skills tools.\nDisabled — an agent based on direct LangChain Neo4j integration, currently inactive due to disappointing performance.\n\nMore specialised agents may be developed in the future.\nCrisalid Agents also includes OpenWebUI Pipelines, enabling LangGraph agents to be deployed directly from OpenWebUI.\n\n\n🖥️ The interface layer\nFor the time being, this consists solely of OpenWebUI — a self-hosted chat interface accessible via a web browser.\nThe LangChain/LangGraph agents in Crisalid Agents are presented to the user as pipelines — in the place where the user would normally select LLMs in a basic use of OpenWebUI.\n\n\n\n\n\n\nNote\n\n\n\nAlthough the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.",
     "crumbs": [
       "Overview",
-      "Crisalid AI – Introduction"
+      "Introduction"
     ]
   },
   {
     "objectID": "ai/security.html",
     "href": "ai/security.html",
-    "title": "Crisalid AI – Security",
+    "title": "Security",
     "section": "",
-    "text": "Work in Progress\n\n\n\nThis page is coming soon.",
+    "text": "Exposure risk\n\n\n\nExposing Crisalid AI on the web without proper security puts you at risk of:\n\nData leaks — institutional or personal data from the knowledge graph accessible to unauthorised users\nLLM exhaustion — uncontrolled consumption of tokens, which is critical with pay-per-token or quota-limited providers\nCrisalid AI’s four-layer architecture means that security must be configured at each layer independently. The sections below cover each layer from the graph up.",
     "crumbs": [
       "Overview",
-      "Crisalid AI – Security"
+      "Security"
+    ]
+  },
+  {
+    "objectID": "ai/security.html#the-graph-layer-neo4j",
+    "href": "ai/security.html#the-graph-layer-neo4j",
+    "title": "Security",
+    "section": "🕸️ The graph layer — Neo4j",
+    "text": "🕸️ The graph layer — Neo4j\nNeo4j is secured by a username and password, configured in docker/neo4j/.env.\n\n\n\n\n\n\nNo RBAC in Neo4j Community Edition\n\n\n\nNeo4j Community Edition does not support role-based access control (RBAC). All authenticated users have the same level of access to the graph. For fine-grained access control, the Enterprise Edition is required.\nIn a Community Edition deployment, the choice of toolset (crisalid-restricted vs crisalid-unrestricted) is the primary access control mechanism — see the tools layer below.\n\n\nIn production, avoid storing the Neo4j password in plain-text .env files. Use a sovereign secret management solution such as HashiCorp Vault.",
+    "crumbs": [
+      "Overview",
+      "Security"
+    ]
+  },
+  {
+    "objectID": "ai/security.html#the-tools-layer-neo4j-mcp",
+    "href": "ai/security.html#the-tools-layer-neo4j-mcp",
+    "title": "Security",
+    "section": "🛠️ The tools layer — Neo4j MCP",
+    "text": "🛠️ The tools layer — Neo4j MCP\nThe Neo4j MCP Toolbox does not support passwords or API keys. Authentication relies exclusively on JWT tokens issued by an OIDC provider — in the Crisalid stack, this is Keycloak.\nEach client application (such as crisalid-agents) must be provisioned with a Keycloak service account to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.\n\n\n\n\n\n\nLocal workstation\n\n\n\nThe Keycloak requirement makes MCP toolbox authentication impractical on a local workstation. For local development, leave KEYCLOAK_CLIENT_ID and KEYCLOAK_CLIENT_SECRET empty in docker/crisalid-agents/.env — the toolbox client will then connect without authentication (suitable for a trusted local environment only).\n\n\nPort 5000 is not exposed on the host — it is only reachable inside the Docker network. See the local workstation page if you need to access it from outside the stack.\nFor the full Keycloak service account setup procedure, see Using CRISalid AI Skills.",
+    "crumbs": [
+      "Overview",
+      "Security"
+    ]
+  },
+  {
+    "objectID": "ai/security.html#the-agent-layer-crisalid-agents-openwebui-pipelines",
+    "href": "ai/security.html#the-agent-layer-crisalid-agents-openwebui-pipelines",
+    "title": "Security",
+    "section": "🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)",
+    "text": "🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)\nOpenWebUI Pipelines exposes a FastAPI server on port 9099. This endpoint is secured by a shared API key (PIPELINES_API_KEY).\nThe key is set once and must be provided by any client connecting to the pipelines server — in the Crisalid stack, this client is OpenWebUI itself.\nIn the Docker deployment, the key is configured in the shared docker/.env:\nCRISALID_AGENTS_PIPELINES_API_KEY=&lt;your-secret-key&gt;\nIt is injected into crisalid-agents as PIPELINES_API_KEY — the server uses it to authenticate incoming requests.\nWhen adding the pipelines connection in OpenWebUI (Admin panel → Settings → Connections, URL http://crisalid-agents:9099), enter this key by hand in the API key field.\nPort 9099 is not exposed on the host — it is only reachable inside the Docker network (agents-network).",
+    "crumbs": [
+      "Overview",
+      "Security"
+    ]
+  },
+  {
+    "objectID": "ai/security.html#the-interface-layer-openwebui",
+    "href": "ai/security.html#the-interface-layer-openwebui",
+    "title": "Security",
+    "section": "🖥️ The interface layer — OpenWebUI",
+    "text": "🖥️ The interface layer — OpenWebUI\nOpenWebUI is the only layer directly exposed to end users.\n\nUser registration is disabled (ENABLE_SIGNUP=false) — accounts must be created manually by an administrator.\nAn admin account is seeded on first run via OPENWEBUI_ADMIN_EMAIL and OPENWEBUI_ADMIN_PASSWORD in docker/openwebui/.env.\nKeycloak SSO integration is planned for a future release.",
+    "crumbs": [
+      "Overview",
+      "Security"
     ]
   },
   {

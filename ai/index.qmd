@@ -1,5 +1,5 @@
 ---
-title: "Crisalid AI – Introduction"
+title: "Introduction"
 format:
   html:
     toc: true
@@ -7,6 +7,33 @@ format:
 ---
 
 Crisalid AI aims to enable agents using artificial intelligence to utilise the knowledge graph.
+
+A knowledge graph offers the same benefits as a vector store — embedding-based retrieval, semantic search — but goes further. A traditional RAG can answer questions such as:
+
+> *Which researcher or team is working on computer vision applied to medical imaging?*
+
+A knowledge-graph-backed agent can also answer **structural and relational queries** that are beyond the reach of vector search:
+
+> *What are the three main research topics of UMR XXXXX?*
+>
+> *What kinds of collaborations between our institution and University XXXXX are the most transdisciplinary?*
+
+More broadly, this approach opens the way to **conversational analytics** — providing actionable insights through natural language, without the heavy business intelligence tooling and specialist skills traditionally required.
+
+The CRISalid knowledge graph covers the **research sector** of a teaching and research institution, and is intended to extend to its entire core business. Currently it mainly contains information on:
+
+- **Individuals** — researchers, staff
+- **Research structures** — laboratories, teams
+- **Scientific output** — publications, datasets
+
+The graph is actively expanding — planned and in-progress extensions include:
+
+- **Research projects** — integration of UniCaen's Oscar application and the Learning Planet Institute's Projects platform is currently underway
+- **PhD students** — ADUM integration
+- **Research activity**: events, editorial activity, science communication
+- **Teaching activities**
+
+---
 
 ::: {.callout-warning}
 ## Data sensitivity

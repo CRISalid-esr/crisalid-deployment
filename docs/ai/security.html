@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Crisalid AI – Security – CRISalid Deployment Documentation</title>
+<title>Security – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -182,25 +216,29 @@ ul.task-list li input[type="checkbox"] {
         <li class="dropdown-header">Overview</li>
         <li>
     <a class="dropdown-item" href="../ai/index.html">
- <span class="dropdown-text">Crisalid AI – Introduction</span></a>
+ <span class="dropdown-text">Introduction</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/security.html">
- <span class="dropdown-text">Crisalid AI – Security</span></a>
+ <span class="dropdown-text">Security</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
         <li class="dropdown-header">Installation</li>
         <li>
     <a class="dropdown-item" href="../ai/local-workstation.html">
- <span class="dropdown-text">Crisalid AI – Local Workstation</span></a>
+ <span class="dropdown-text">Local Workstation</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/docker-compose.html">
- <span class="dropdown-text">Crisalid AI – Docker Compose</span></a>
+ <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
   </li>  
     </ul>
   </li>
@@ -245,7 +283,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/security.html">Crisalid AI – Security</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/security.html">Security</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -269,13 +307,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../ai/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Crisalid AI – Introduction</span></a>
+ <span class="menu-text">Introduction</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../ai/security.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Crisalid AI – Security</span></a>
+ <span class="menu-text">Security</span></a>
   </div>
 </li>
       </ul>
@@ -292,13 +330,13 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../ai/local-workstation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Crisalid AI – Local Workstation</span></a>
+ <span class="menu-text">Local Workstation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../ai/docker-compose.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Crisalid AI – Docker Compose</span></a>
+ <span class="menu-text">Docker Compose</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -307,11 +345,26 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ai/configuring-openwebui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Configuring OpenWebUI</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#the-graph-layer-neo4j" id="toc-the-graph-layer-neo4j" class="nav-link active" data-scroll-target="#the-graph-layer-neo4j">🕸️ The graph layer — Neo4j</a></li>
+  <li><a href="#the-tools-layer-neo4j-mcp" id="toc-the-tools-layer-neo4j-mcp" class="nav-link" data-scroll-target="#the-tools-layer-neo4j-mcp">🛠️ The tools layer — Neo4j MCP</a></li>
+  <li><a href="#the-agent-layer-crisalid-agents-openwebui-pipelines" id="toc-the-agent-layer-crisalid-agents-openwebui-pipelines" class="nav-link" data-scroll-target="#the-agent-layer-crisalid-agents-openwebui-pipelines">🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)</a></li>
+  <li><a href="#the-interface-layer-openwebui" id="toc-the-interface-layer-openwebui" class="nav-link" data-scroll-target="#the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -320,9 +373,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/security.html">Crisalid AI – Security</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../ai/security.html">Security</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Crisalid AI – Security</h1>
+<h1 class="title">Security</h1>
 </div>
 
 
@@ -339,21 +392,88 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Work in Progress
+Exposure risk
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
+<p>Exposing Crisalid AI on the web without proper security puts you at risk of:</p>
+<ul>
+<li><strong>Data leaks</strong> — institutional or personal data from the knowledge graph accessible to unauthorised users</li>
+<li><strong>LLM exhaustion</strong> — uncontrolled consumption of tokens, which is critical with pay-per-token or quota-limited providers</li>
+</ul>
 </div>
 </div>
+<p>Crisalid AI’s <a href="../ai/index.html#architecture">four-layer architecture</a> means that security must be configured at each layer independently. The sections below cover each layer from the graph up.</p>
+<hr>
+<section id="the-graph-layer-neo4j" class="level2">
+<h2 class="anchored" data-anchor-id="the-graph-layer-neo4j">🕸️ The graph layer — Neo4j</h2>
+<p>Neo4j is secured by a <strong>username and password</strong>, configured in <code>docker/neo4j/.env</code>.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+No RBAC in Neo4j Community Edition
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Neo4j Community Edition does not support role-based access control (RBAC). All authenticated users have the same level of access to the graph. For fine-grained access control, the Enterprise Edition is required.</p>
+<p>In a Community Edition deployment, the choice of toolset (<code>crisalid-restricted</code> vs <code>crisalid-unrestricted</code>) is the primary access control mechanism — see <a href="#the-tools-layer-neo4j-mcp">the tools layer</a> below.</p>
+</div>
+</div>
+<p>In production, avoid storing the Neo4j password in plain-text <code>.env</code> files. Use a sovereign secret management solution such as <a href="https://www.vaultproject.io/">HashiCorp Vault</a>.</p>
+<hr>
+</section>
+<section id="the-tools-layer-neo4j-mcp" class="level2">
+<h2 class="anchored" data-anchor-id="the-tools-layer-neo4j-mcp">🛠️ The tools layer — Neo4j MCP</h2>
+<p>The <a href="https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/">Neo4j MCP Toolbox</a> does <strong>not</strong> support passwords or API keys. Authentication relies exclusively on <strong>JWT tokens</strong> issued by an OIDC provider — in the Crisalid stack, this is <strong>Keycloak</strong>.</p>
+<p>Each client application (such as <code>crisalid-agents</code>) must be provisioned with a <strong>Keycloak service account</strong> to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Local workstation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Keycloak requirement makes MCP toolbox authentication impractical on a local workstation. For local development, leave <code>KEYCLOAK_CLIENT_ID</code> and <code>KEYCLOAK_CLIENT_SECRET</code> empty in <code>docker/crisalid-agents/.env</code> — the toolbox client will then connect without authentication (suitable for a trusted local environment only).</p>
+</div>
+</div>
+<p>Port 5000 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network. See the <a href="../ai/local-workstation.html">local workstation</a> page if you need to access it from outside the stack.</p>
+<p>For the full Keycloak service account setup procedure, see <a href="../ai/using-skills.html">Using CRISalid AI Skills</a>.</p>
+<hr>
+</section>
+<section id="the-agent-layer-crisalid-agents-openwebui-pipelines" class="level2">
+<h2 class="anchored" data-anchor-id="the-agent-layer-crisalid-agents-openwebui-pipelines">🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)</h2>
+<p><a href="https://github.com/open-webui/pipelines">OpenWebUI Pipelines</a> exposes a FastAPI server on port 9099. This endpoint is secured by a <strong>shared API key</strong> (<code>PIPELINES_API_KEY</code>).</p>
+<p>The key is set once and must be provided by any client connecting to the pipelines server — in the Crisalid stack, this client is OpenWebUI itself.</p>
+<p><strong>In the Docker deployment</strong>, the key is configured in the shared <code>docker/.env</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">CRISALID_AGENTS_PIPELINES_API_KEY</span><span class="op">=&lt;</span>your-secret-key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It is injected into <code>crisalid-agents</code> as <code>PIPELINES_API_KEY</code> — the server uses it to authenticate incoming requests.</p>
+<p>When adding the pipelines connection in OpenWebUI (<strong>Admin panel → Settings → Connections</strong>, URL <code>http://crisalid-agents:9099</code>), enter this key by hand in the API key field.</p>
+<p>Port 9099 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network (<code>agents-network</code>).</p>
+<hr>
+</section>
+<section id="the-interface-layer-openwebui" class="level2">
+<h2 class="anchored" data-anchor-id="the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</h2>
+<p>OpenWebUI is the only layer directly exposed to end users.</p>
+<ul>
+<li><strong>User registration is disabled</strong> (<code>ENABLE_SIGNUP=false</code>) — accounts must be created manually by an administrator.</li>
+<li>An <strong>admin account is seeded</strong> on first run via <code>OPENWEBUI_ADMIN_EMAIL</code> and <code>OPENWEBUI_ADMIN_PASSWORD</code> in <code>docker/openwebui/.env</code>.</li>
+<li><strong>Keycloak SSO</strong> integration is planned for a future release.</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -775,13 +895,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../ai/index.html" class="pagination-link" aria-label="Crisalid AI – Introduction">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Crisalid AI – Introduction</span>
+      <a href="../ai/index.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introduction</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../ai/local-workstation.html" class="pagination-link" aria-label="Crisalid AI – Local Workstation">
-        <span class="nav-page-text">Crisalid AI – Local Workstation</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../ai/local-workstation.html" class="pagination-link" aria-label="Local Workstation">
+        <span class="nav-page-text">Local Workstation</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
