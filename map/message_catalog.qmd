@@ -1105,9 +1105,9 @@ no
 
 ##### Payload
 
-The payload is a flat object with three top-level keys. The `fields` section intentionally contains only
-identification and labelling data. For full structure data (relationships, missions, contacts, etc.), consumers
-should query the GraphQL API using the `uid`.
+The payload is a flat object with three top-level keys. The `fields` section contains all data available for
+the structure in the IKG graph. `main_mission` and `secondary_missions` are only present for `unit` type
+structures (research units, support units, administrative units).
 
 <details>
 <summary>JSON schema for structure events</summary>
@@ -1118,6 +1118,13 @@ should query the GraphQL API using the `uid`.
   "event": "created|updated|deleted|unchanged",
   "fields": {
     "uid": "<string>",
+    "national_type": "UMR|UAR|UR|IRL|UNIV|EPE|EPST|GE|COMUE|UFR|FAC|TEAM|THEME|null",
+    "local_types": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
     "identifiers": [
       {
         "type": "local|uai|nns|ror|wikidata|scopus",
@@ -1141,17 +1148,51 @@ should query the GraphQL API using the `uid`.
         "value": "<string>",
         "language": "<language code>"
       }
+    ],
+    "memberships": [
+      {
+        "target": "<uid of the supervising or member-of organisation>",
+        "position": "main_supervision|associated_supervision|participating_supervision|null",
+        "start_date": "YYYY-MM-DD|null",
+        "end_date": "YYYY-MM-DD|null"
+      }
+    ],
+    "parents": [
+      {
+        "target": "<uid of the structurally containing organisation>",
+        "start_date": "YYYY-MM-DD|null",
+        "end_date": "YYYY-MM-DD|null"
+      }
+    ],
+    "addresses": [
+      {
+        "street": [{"value": "<string>", "language": "<language code>"}],
+        "city": [{"value": "<string>", "language": "<language code>"}],
+        "zip_code": [{"value": "<string>", "language": "<language code>"}],
+        "country": [{"value": "<string>", "language": "<language code>"}]
+      }
+    ],
+    "electronical_addresses": [
+      {
+        "uri": "<string>"
+      }
+    ],
+    "main_mission": "research|scientific_services|administrative_services",
+    "secondary_missions": [
+      "research|scientific_services|administrative_services|teaching"
     ]
   }
 }
 ```
+
+> `main_mission` and `secondary_missions` are only present when `type` is `unit`.
 
 </details>
 
 ###### Example payloads
 
 <details>
-<summary>Example of a "created" event for a research unit</summary>
+<summary>Example of a "created" event for a research unit with supervisions</summary>
 
 ```json
 {
@@ -1159,46 +1200,49 @@ should query the GraphQL API using the `uid`.
   "event": "created",
   "fields": {
     "uid": "local-123456",
+    "national_type": "UMR",
+    "local_types": [],
     "identifiers": [
-      {
-        "type": "local",
-        "value": "123456"
-      },
-      {
-        "type": "nns",
-        "value": "200012123S"
-      },
-      {
-        "type": "ror",
-        "value": "02feahw73"
-      }
+      {"type": "local", "value": "123456"},
+      {"type": "nns", "value": "200012123S"},
+      {"type": "ror", "value": "02feahw73"}
     ],
     "long_labels": [
-      {
-        "value": "Laboratoire de recherche en astrophysique",
-        "language": "fr"
-      },
-      {
-        "value": "Laboratory for Astrophysics Research",
-        "language": "en"
-      }
+      {"value": "Laboratoire de recherche en astrophysique", "language": "fr"},
+      {"value": "Laboratory for Astrophysics Research", "language": "en"}
     ],
     "short_labels": [
-      {
-        "value": "LRA",
-        "language": "fr"
-      }
+      {"value": "LRA", "language": "fr"}
     ],
     "descriptions": [
+      {"value": "Unité mixte de recherche en astrophysique sous tutelle de l'université et du CNRS.", "language": "fr"},
+      {"value": "Joint research unit in astrophysics under joint supervision of the university and CNRS.", "language": "en"}
+    ],
+    "memberships": [
       {
-        "value": "Unité mixte de recherche en astrophysique sous tutelle de l'université et du CNRS.",
-        "language": "fr"
+        "target": "uai-0751818J",
+        "position": "main_supervision",
+        "start_date": "2000-01-01",
+        "end_date": null
       },
       {
-        "value": "Joint research unit in astrophysics under joint supervision of the university and CNRS.",
-        "language": "en"
+        "target": "uai-0757581P",
+        "position": "associated_supervision",
+        "start_date": "2000-01-01",
+        "end_date": null
       }
-    ]
+    ],
+    "parents": [
+      {
+        "target": "local-FAC-SCI-001",
+        "start_date": "2000-01-01",
+        "end_date": null
+      }
+    ],
+    "addresses": [],
+    "electronical_addresses": [],
+    "main_mission": "research",
+    "secondary_missions": []
   }
 }
 ```
@@ -1214,29 +1258,23 @@ should query the GraphQL API using the `uid`.
   "event": "updated",
   "fields": {
     "uid": "uai-0751818J",
+    "national_type": "UNIV",
+    "local_types": [],
     "identifiers": [
-      {
-        "type": "uai",
-        "value": "0751818J"
-      },
-      {
-        "type": "ror",
-        "value": "05ykr0d48"
-      }
+      {"type": "uai", "value": "0751818J"},
+      {"type": "ror", "value": "05ykr0d48"}
     ],
     "long_labels": [
-      {
-        "value": "Université Étienne Dupond",
-        "language": "fr"
-      }
+      {"value": "Université Étienne Dupond", "language": "fr"}
     ],
     "short_labels": [
-      {
-        "value": "UniED",
-        "language": "fr"
-      }
+      {"value": "UniED", "language": "fr"}
     ],
-    "descriptions": []
+    "descriptions": [],
+    "memberships": [],
+    "parents": [],
+    "addresses": [],
+    "electronical_addresses": []
   }
 }
 ```
@@ -1252,20 +1290,26 @@ should query the GraphQL API using the `uid`.
   "event": "deleted",
   "fields": {
     "uid": "local-FAC-SCI-001",
+    "national_type": "FAC",
+    "local_types": [],
     "identifiers": [
-      {
-        "type": "local",
-        "value": "FAC-SCI-001"
-      }
+      {"type": "local", "value": "FAC-SCI-001"}
     ],
     "long_labels": [
-      {
-        "value": "Faculté des sciences",
-        "language": "fr"
-      }
+      {"value": "Faculté des sciences", "language": "fr"}
     ],
     "short_labels": [],
-    "descriptions": []
+    "descriptions": [],
+    "memberships": [],
+    "parents": [
+      {
+        "target": "uai-0751818J",
+        "start_date": "1995-01-01",
+        "end_date": null
+      }
+    ],
+    "addresses": [],
+    "electronical_addresses": []
   }
 }
 ```
@@ -1273,7 +1317,7 @@ should query the GraphQL API using the `uid`.
 </details>
 
 <details>
-<summary>Example of an "unchanged" event for a team</summary>
+<summary>Example of an "unchanged" event for a team with axis membership</summary>
 
 ```json
 {
@@ -1281,24 +1325,34 @@ should query the GraphQL API using the `uid`.
   "event": "unchanged",
   "fields": {
     "uid": "local-TEAM-ASTRO-001",
+    "national_type": "TEAM",
+    "local_types": [],
     "identifiers": [
-      {
-        "type": "local",
-        "value": "TEAM-ASTRO-001"
-      }
+      {"type": "local", "value": "TEAM-ASTRO-001"}
     ],
     "long_labels": [
-      {
-        "value": "Équipe astrophysique théorique",
-        "language": "fr"
-      },
-      {
-        "value": "Theoretical Astrophysics Team",
-        "language": "en"
-      }
+      {"value": "Équipe astrophysique théorique", "language": "fr"},
+      {"value": "Theoretical Astrophysics Team", "language": "en"}
     ],
     "short_labels": [],
-    "descriptions": []
+    "descriptions": [],
+    "memberships": [
+      {
+        "target": "local-AXIS-OBS-001",
+        "position": null,
+        "start_date": "2010-01-01",
+        "end_date": null
+      }
+    ],
+    "parents": [
+      {
+        "target": "local-123456",
+        "start_date": "2010-01-01",
+        "end_date": null
+      }
+    ],
+    "addresses": [],
+    "electronical_addresses": []
   }
 }
 ```
@@ -1309,14 +1363,20 @@ should query the GraphQL API using the `uid`.
 
 * The `type` field reflects the structure's `generic_type`: `unit` (research and support units), `institution`,
   `institution_subdivision`, `unit_subdivision`, `team`.
-* The `fields` section contains only identification and labelling data. Relationships, missions, contacts and
-  taxonomy details are not included — consumers that need full structure data should query the GraphQL API
-  using the `uid`.
+* `main_mission` and `secondary_missions` are only present when `type` is `unit`. They are absent for
+  institutions, institution subdivisions, unit subdivisions, and teams.
+* `memberships` carries `MEMBER_OF` relationships (supervision chains for research units; org-level membership
+  for teams and subdivisions). The `position` field is only set for supervision relationships
+  (`main_supervision`, `associated_supervision`, `participating_supervision`).
+* `parents` carries `PART_OF` relationships (structural inclusion — e.g. a faculty inside a university,
+  a team inside a research unit).
+* `addresses` and `electronical_addresses` are included in the schema for completeness but are currently
+  empty in all events — contact data is not yet persisted in the graph.
 * The `uid` is the IKG-computed primary key (e.g. `local-123456`, `uai-0751818J`). It is stable for the
   lifetime of the structure and can be used as a join key across events.
-* An `unchanged` event is published when the inbound directory message produced no changes in the graph. Consumers
-  implementing reconciliation logic can use it to confirm that the structure is still active.
-* A `deleted` event signals that the structure has been removed from the graph. Consumers should treat subsequent
-  references to its `uid` as invalid.
+* An `unchanged` event is published when the inbound directory message produced no changes in the graph.
+  Consumers implementing reconciliation logic can use it to confirm that the structure is still active.
+* A `deleted` event signals that the structure has been removed from the graph. Consumers should treat
+  subsequent references to its `uid` as invalid.
 
 ---
