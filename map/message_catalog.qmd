@@ -1031,3 +1031,292 @@ no
   publication harvesting). External people carry no `memberships` or `employments`.
 
 ---
+
+## Exchange : `graph`
+
+### Purpose
+
+Outgoing lifecycle events published by crisalid-ikg to downstream consumers. Each event signals that an entity in
+the knowledge graph has been created, updated, deleted, or confirmed unchanged following inbound directory or
+harvesting messages.
+
+### Exchange Type
+
+```text
+topic
+```
+
+### Delivery Strategy
+
+```text
+at-least-once
+```
+
+### Topic and Routing Key Patterns
+
+```text
+event.structures.structure.<action>
+event.people.person.<action>
+```
+
+<details>
+<summary>Full list of actions for each entity type</summary>
+```text
+event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged
+```
+</details>
+
+### Message Catalog for `graph` exchange
+
+---
+
+#### Structure events (`graph` exchange)
+
+##### Routing keys
+
+Pattern:
+
+```text
+event.structures.structure.<action>
+```
+
+<details>
+<summary>Full list of routing keys for structure events</summary>
+```text
+event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+```
+</details>
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+The payload is a flat object with three top-level keys. The `fields` section intentionally contains only
+identification and labelling data. For full structure data (relationships, missions, contacts, etc.), consumers
+should query the GraphQL API using the `uid`.
+
+<details>
+<summary>JSON schema for structure events</summary>
+
+```json
+{
+  "type": "unit|institution|institution_subdivision|unit_subdivision|team",
+  "event": "created|updated|deleted|unchanged",
+  "fields": {
+    "uid": "<string>",
+    "identifiers": [
+      {
+        "type": "local|uai|nns|ror|wikidata|scopus",
+        "value": "<string>"
+      }
+    ],
+    "long_labels": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
+    "short_labels": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
+    "descriptions": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ]
+  }
+}
+```
+
+</details>
+
+###### Example payloads
+
+<details>
+<summary>Example of a "created" event for a research unit</summary>
+
+```json
+{
+  "type": "unit",
+  "event": "created",
+  "fields": {
+    "uid": "local-123456",
+    "identifiers": [
+      {
+        "type": "local",
+        "value": "123456"
+      },
+      {
+        "type": "nns",
+        "value": "200012123S"
+      },
+      {
+        "type": "ror",
+        "value": "02feahw73"
+      }
+    ],
+    "long_labels": [
+      {
+        "value": "Laboratoire de recherche en astrophysique",
+        "language": "fr"
+      },
+      {
+        "value": "Laboratory for Astrophysics Research",
+        "language": "en"
+      }
+    ],
+    "short_labels": [
+      {
+        "value": "LRA",
+        "language": "fr"
+      }
+    ],
+    "descriptions": [
+      {
+        "value": "Unité mixte de recherche en astrophysique sous tutelle de l'université et du CNRS.",
+        "language": "fr"
+      },
+      {
+        "value": "Joint research unit in astrophysics under joint supervision of the university and CNRS.",
+        "language": "en"
+      }
+    ]
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "updated" event for an institution</summary>
+
+```json
+{
+  "type": "institution",
+  "event": "updated",
+  "fields": {
+    "uid": "uai-0751818J",
+    "identifiers": [
+      {
+        "type": "uai",
+        "value": "0751818J"
+      },
+      {
+        "type": "ror",
+        "value": "05ykr0d48"
+      }
+    ],
+    "long_labels": [
+      {
+        "value": "Université Étienne Dupond",
+        "language": "fr"
+      }
+    ],
+    "short_labels": [
+      {
+        "value": "UniED",
+        "language": "fr"
+      }
+    ],
+    "descriptions": []
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of a "deleted" event for an institution subdivision</summary>
+
+```json
+{
+  "type": "institution_subdivision",
+  "event": "deleted",
+  "fields": {
+    "uid": "local-FAC-SCI-001",
+    "identifiers": [
+      {
+        "type": "local",
+        "value": "FAC-SCI-001"
+      }
+    ],
+    "long_labels": [
+      {
+        "value": "Faculté des sciences",
+        "language": "fr"
+      }
+    ],
+    "short_labels": [],
+    "descriptions": []
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "unchanged" event for a team</summary>
+
+```json
+{
+  "type": "team",
+  "event": "unchanged",
+  "fields": {
+    "uid": "local-TEAM-ASTRO-001",
+    "identifiers": [
+      {
+        "type": "local",
+        "value": "TEAM-ASTRO-001"
+      }
+    ],
+    "long_labels": [
+      {
+        "value": "Équipe astrophysique théorique",
+        "language": "fr"
+      },
+      {
+        "value": "Theoretical Astrophysics Team",
+        "language": "en"
+      }
+    ],
+    "short_labels": [],
+    "descriptions": []
+  }
+}
+```
+
+</details>
+
+##### Additional considerations
+
+* The `type` field reflects the structure's `generic_type`: `unit` (research and support units), `institution`,
+  `institution_subdivision`, `unit_subdivision`, `team`.
+* The `fields` section contains only identification and labelling data. Relationships, missions, contacts and
+  taxonomy details are not included — consumers that need full structure data should query the GraphQL API
+  using the `uid`.
+* The `uid` is the IKG-computed primary key (e.g. `local-123456`, `uai-0751818J`). It is stable for the
+  lifetime of the structure and can be used as a join key across events.
+* An `unchanged` event is published when the inbound directory message produced no changes in the graph. Consumers
+  implementing reconciliation logic can use it to confirm that the structure is still active.
+* A `deleted` event signals that the structure has been removed from the graph. Consumers should treat subsequent
+  references to its `uid` as invalid.
+
+---
