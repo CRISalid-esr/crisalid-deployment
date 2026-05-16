@@ -682,3 +682,352 @@ no
 </details>
 
 ---
+
+#### People events (`directory` exchange)
+
+##### Routing keys
+
+Pattern:
+
+```text
+event.people.person.<action>
+```
+
+<details>
+<summary>Full list of routing keys for people events</summary>
+```text
+event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged
+```
+</details>
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+<details>
+<summary>JSON schema for people events</summary>
+
+```json
+{
+  "people_event": {
+    "type": "created|updated|deleted|unchanged",
+    "data": {
+      "display_name": "<string>",
+      "display_name_variants": [
+        "<string>"
+      ],
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "<string>",
+              "language": "<language code>"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "<string>",
+              "language": "<language code>"
+            }
+          ],
+          "other_names": [
+            {
+              "value": "<string>",
+              "language": "<language code>"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "orcid|idref|idhals|idhali|local|scopus",
+          "value": "<string>"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "<string>",
+          "start_date": "YYYY-MM-DD|null",
+          "end_date": "YYYY-MM-DD|null",
+          "past": false,
+          "future": false
+        }
+      ],
+      "employments": [
+        {
+          "entity_uid": "<string>",
+          "position": {
+            "code": "<string>"
+          },
+          "start_date": "YYYY-MM-DD|null",
+          "end_date": "YYYY-MM-DD|null",
+          "past": false,
+          "future": false
+        }
+      ],
+      "external": false
+    }
+  }
+}
+```
+
+</details>
+
+###### Example payloads
+
+<details>
+<summary>Example of a "created" event for a researcher with ORCID, IdRef, membership and employment</summary>
+
+```json
+{
+  "people_event": {
+    "type": "created",
+    "data": {
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Marie",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Lefebvre",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "mlefebvre@univ-example.fr"
+        },
+        {
+          "type": "orcid",
+          "value": "0000-0002-1234-5678"
+        },
+        {
+          "type": "idref",
+          "value": "123456789"
+        },
+        {
+          "type": "idhals",
+          "value": "marie-lefebvre"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "local-U123",
+          "start_date": "2018-09-01",
+          "end_date": null
+        }
+      ],
+      "employments": [
+        {
+          "entity_uid": "uai-0751818J",
+          "position": {
+            "code": "MCF"
+          },
+          "start_date": "2018-09-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "updated" event for a researcher with two names (birth and married) and HAL numeric identifier</summary>
+
+```json
+{
+  "people_event": {
+    "type": "updated",
+    "data": {
+      "display_name": "Sophie Martin",
+      "display_name_variants": [
+        "Sophie Durand",
+        "S. Martin"
+      ],
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Sophie",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Martin",
+              "language": "fr"
+            }
+          ]
+        },
+        {
+          "first_names": [
+            {
+              "value": "Sophie",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Durand",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "smartin@univ-example.fr"
+        },
+        {
+          "type": "orcid",
+          "value": "0000-0003-9876-5432"
+        },
+        {
+          "type": "idhali",
+          "value": "987654"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "local-U123",
+          "start_date": "2015-01-01",
+          "end_date": null
+        }
+      ],
+      "employments": [
+        {
+          "entity_uid": "uai-0751818J",
+          "position": {
+            "code": "PR"
+          },
+          "start_date": "2015-01-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "unchanged" event for a researcher with membership only (no employment)</summary>
+
+```json
+{
+  "people_event": {
+    "type": "unchanged",
+    "data": {
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Jeanne",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Dupont",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "jdupont@univ-example.fr"
+        },
+        {
+          "type": "idref",
+          "value": "012345678"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "local-U123",
+          "start_date": "2020-09-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of a "deleted" event</summary>
+
+```json
+{
+  "people_event": {
+    "type": "deleted",
+    "data": {
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Paul",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Bernard",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "pbernard@univ-example.fr"
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+##### Additional considerations
+
+* Either `display_name` or at least one entry in `names` must be provided. If `display_name` is absent, it is
+  computed automatically from the first available name.
+* `display_name_variants` is optional. Use it when the person is known under multiple forms of their name
+  (e.g. birth name alongside married name, or initials).
+* A person may have multiple `names` entries — use one entry per distinct name form (birth name, married name, pseudonym).
+* Identifier types: `local` (institutional login or employee id), `orcid`, `idref`, `idhals` (HAL login),
+  `idhali` (HAL numeric id), `scopus`.
+* `memberships.entity_uid` must reference a research structure already known to IKG, using either the `local-<id>`
+  format or an external identifier prefix such as `uai-<code>`.
+* `employments.entity_uid` references an institution. The `position.code` must be a valid HCERES position code
+  (e.g. `PR`, `MCF`, `DR`, `CR`, `IR`, `Post-doc`).
+* `external: true` marks people who are not managed by the institution (e.g. co-authors discovered through
+  publication harvesting). External people carry no `memberships` or `employments`.
+
+---
