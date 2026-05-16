@@ -195,7 +195,7 @@ no
           "end_date": "YYYY-MM-DD|null"
         },
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "<string>",
           "start_date": "YYYY-MM-DD|null",
           "end_date": "YYYY-MM-DD|null"
@@ -216,7 +216,7 @@ no
 ```json
 {
   "structures_event": {
-    "type": "unchanged",
+    "type": "created",
     "data": {
       "generic_type": "unit",
       "type": "UMR",
@@ -307,7 +307,7 @@ no
 
 * A research structure must have a generic type **and** at least one type or local type.
 * Relationships of type "member_of" can have a subtype _only_ when characterizing the supervision of a research unit.
-  Inclusion relationships ("is_part_of") do not have subtypes.
+  Inclusion relationships ("part_of") do not have subtypes.
 * The targets of relationships must be the tracking ids of structures already created in previous messages, except for
   external institutions that you do not manage: in this case,
   simply indicate "uai-1234" or "ror-ABCD" according to the type of identifier you have for the external institution.
@@ -369,7 +369,7 @@ no
       ],
       "relationships": [
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "EXAMPLE-UNIV-001",
           "start_date": "2010-01-01",
           "end_date": "2030-12-31"
@@ -381,11 +381,11 @@ no
 }
 ```
 
-**Note:** This example demonstrates `is_part_of` relationship with both `start_date` and `end_date` defined, showing a bounded temporal relationship.
+**Note:** This example demonstrates `part_of` relationship with both `start_date` and `end_date` defined, showing a bounded temporal relationship.
 
 </details>
 
-###### Additional example: Unit subdivision with open-ended temporal relationship (UFR)
+###### Additional example: Institution subdivision with open-ended temporal relationship (UFR)
 
 <details>
 <summary>Example of a "created" event for a UFR (Unité de Formation et Recherche) with temporal inclusion</summary>
@@ -438,7 +438,7 @@ no
       ],
       "relationships": [
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "FAC-EXAMPLE-001",
           "start_date": "2010-01-01",
           "end_date": null
@@ -454,7 +454,7 @@ no
 
 </details>
 
-###### Additional example: Research unit with both member_of and is_part_of relationships
+###### Additional example: Research unit with both member_of and part_of relationships
 
 <details>
 <summary>Example of a "created" event for a research unit with multiple relationship types</summary>
@@ -511,11 +511,11 @@ no
       ],
       "relationships": [
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "PLATFORM-EXAMPLE-001"
         },
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "UFR-MEDICINE-001"
         },
         {
@@ -540,7 +540,7 @@ no
 ```
 
 **Note:** This example demonstrates the difference between:
-- **`is_part_of`**: Structural inclusion relationships (without subtypes)
+- **`part_of`**: Structural inclusion relationships (without subtypes)
 - **`member_of`**: Supervision relationships (with subtypes like `main_supervision` or `associated_supervision`)
 
 </details>
@@ -598,7 +598,7 @@ no
       ],
       "relationships": [
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "FACILITY-EXAMPLE-001",
           "start_date": "2015-06-01",
           "end_date": "2025-12-31"
@@ -667,7 +667,7 @@ no
       ],
       "relationships": [
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "UMR-EXAMPLE-001"
         }
       ],
@@ -677,7 +677,7 @@ no
 }
 ```
 
-**Note:** Teams are typically sub-units within research units and have `is_part_of` relationships without temporal boundaries.
+**Note:** Teams are typically sub-units within research units and have `part_of` relationships without temporal boundaries.
 
 </details>
 
