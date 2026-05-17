@@ -456,6 +456,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#topic-and-routing-key-patterns" id="toc-topic-and-routing-key-patterns" class="nav-link" data-scroll-target="#topic-and-routing-key-patterns">Topic and Routing Key Patterns</a></li>
   <li><a href="#message-catalog-for-directory-exchange" id="toc-message-catalog-for-directory-exchange" class="nav-link" data-scroll-target="#message-catalog-for-directory-exchange">Message Catalog for <code>directory</code> exchange</a></li>
   </ul></li>
+  <li><a href="#exchange-graph" id="toc-exchange-graph" class="nav-link" data-scroll-target="#exchange-graph">Exchange : <code>graph</code></a>
+  <ul class="collapse">
+  <li><a href="#purpose-1" id="toc-purpose-1" class="nav-link" data-scroll-target="#purpose-1">Purpose</a></li>
+  <li><a href="#exchange-type-1" id="toc-exchange-type-1" class="nav-link" data-scroll-target="#exchange-type-1">Exchange Type</a></li>
+  <li><a href="#delivery-strategy-1" id="toc-delivery-strategy-1" class="nav-link" data-scroll-target="#delivery-strategy-1">Delivery Strategy</a></li>
+  <li><a href="#topic-and-routing-key-patterns-1" id="toc-topic-and-routing-key-patterns-1" class="nav-link" data-scroll-target="#topic-and-routing-key-patterns-1">Topic and Routing Key Patterns</a></li>
+  <li><a href="#message-catalog-for-graph-exchange" id="toc-message-catalog-for-graph-exchange" class="nav-link" data-scroll-target="#message-catalog-for-graph-exchange">Message Catalog for <code>graph</code> exchange</a></li>
+  </ul></li>
   </ul>
 </nav>
 </nav>
@@ -714,7 +722,7 @@ JSON schema for structure events
 <span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span></span>
 <span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
 <span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
 <span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
 <span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span></span>
@@ -732,7 +740,7 @@ Example of a “created” event for a research unit
 </summary>
 <div class="sourceCode" id="cb9"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"structures_event"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"unchanged"</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"created"</span><span class="fu">,</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"data"</span><span class="fu">:</span> <span class="fu">{</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"generic_type"</span><span class="fu">:</span> <span class="st">"unit"</span><span class="fu">,</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"UMR"</span><span class="fu">,</span></span>
@@ -822,7 +830,7 @@ Example of a “created” event for a research unit
 <h5 class="anchored" data-anchor-id="additional-considerations">Additional considerations</h5>
 <ul>
 <li>A research structure must have a generic type <strong>and</strong> at least one type or local type.</li>
-<li>Relationships of type “member_of” can have a subtype <em>only</em> when characterizing the supervision of a research unit. Inclusion relationships (“is_part_of”) do not have subtypes.</li>
+<li>Relationships of type “member_of” can have a subtype <em>only</em> when characterizing the supervision of a research unit. Inclusion relationships (“part_of”) do not have subtypes.</li>
 <li>The targets of relationships must be the tracking ids of structures already created in previous messages, except for external institutions that you do not manage: in this case, simply indicate “uai-1234” or “ror-ABCD” according to the type of identifier you have for the external institution.</li>
 <li>For details on typologies, see the CRISalid Wiki: https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures+v2</li>
 </ul>
@@ -880,7 +888,7 @@ Example of a “created” event for a faculty with temporal inclusion relations
 <span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
 <span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"relationships"</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"EXAMPLE-UNIV-001"</span><span class="fu">,</span></span>
 <span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2010-01-01"</span><span class="fu">,</span></span>
 <span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"2030-12-31"</span></span>
@@ -890,11 +898,11 @@ Example of a “created” event for a faculty with temporal inclusion relations
 <span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
 <span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Note:</strong> This example demonstrates <code>is_part_of</code> relationship with both <code>start_date</code> and <code>end_date</code> defined, showing a bounded temporal relationship.</p>
+<p><strong>Note:</strong> This example demonstrates <code>part_of</code> relationship with both <code>start_date</code> and <code>end_date</code> defined, showing a bounded temporal relationship.</p>
 </details>
 </section>
-<section id="additional-example-unit-subdivision-with-open-ended-temporal-relationship-ufr" class="level6">
-<h6 class="anchored" data-anchor-id="additional-example-unit-subdivision-with-open-ended-temporal-relationship-ufr">Additional example: Unit subdivision with open-ended temporal relationship (UFR)</h6>
+<section id="additional-example-institution-subdivision-with-open-ended-temporal-relationship-ufr" class="level6">
+<h6 class="anchored" data-anchor-id="additional-example-institution-subdivision-with-open-ended-temporal-relationship-ufr">Additional example: Institution subdivision with open-ended temporal relationship (UFR)</h6>
 <details>
 <summary>
 Example of a “created” event for a UFR (Unité de Formation et Recherche) with temporal inclusion
@@ -946,7 +954,7 @@ Example of a “created” event for a UFR (Unité de Formation et Recherche) wi
 <span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
 <span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"relationships"</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"FAC-EXAMPLE-001"</span><span class="fu">,</span></span>
 <span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2010-01-01"</span><span class="fu">,</span></span>
 <span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
@@ -959,8 +967,8 @@ Example of a “created” event for a UFR (Unité de Formation et Recherche) wi
 <p><strong>Note:</strong> This example shows <code>end_date: null</code>, indicating an open-ended relationship (still active).</p>
 </details>
 </section>
-<section id="additional-example-research-unit-with-both-member_of-and-is_part_of-relationships" class="level6">
-<h6 class="anchored" data-anchor-id="additional-example-research-unit-with-both-member_of-and-is_part_of-relationships">Additional example: Research unit with both member_of and is_part_of relationships</h6>
+<section id="additional-example-research-unit-with-both-member_of-and-part_of-relationships" class="level6">
+<h6 class="anchored" data-anchor-id="additional-example-research-unit-with-both-member_of-and-part_of-relationships">Additional example: Research unit with both member_of and part_of relationships</h6>
 <details>
 <summary>
 Example of a “created” event for a research unit with multiple relationship types
@@ -1016,11 +1024,11 @@ Example of a “created” event for a research unit with multiple relationship 
 <span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
 <span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"relationships"</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"PLATFORM-EXAMPLE-001"</span></span>
 <span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
 <span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"UFR-MEDICINE-001"</span></span>
 <span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
 <span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
@@ -1042,7 +1050,7 @@ Example of a “created” event for a research unit with multiple relationship 
 <span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
 <span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Note:</strong> This example demonstrates the difference between: - <strong><code>is_part_of</code></strong>: Structural inclusion relationships (without subtypes) - <strong><code>member_of</code></strong>: Supervision relationships (with subtypes like <code>main_supervision</code> or <code>associated_supervision</code>)</p>
+<p><strong>Note:</strong> This example demonstrates the difference between: - <strong><code>part_of</code></strong>: Structural inclusion relationships (without subtypes) - <strong><code>member_of</code></strong>: Supervision relationships (with subtypes like <code>main_supervision</code> or <code>associated_supervision</code>)</p>
 </details>
 </section>
 <section id="additional-example-service-unit-with-limited-temporal-relationship-usm" class="level6">
@@ -1098,7 +1106,7 @@ Example of a “created” event for a service unit with bounded temporal relati
 <span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
 <span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"relationships"</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"FACILITY-EXAMPLE-001"</span><span class="fu">,</span></span>
 <span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2015-06-01"</span><span class="fu">,</span></span>
 <span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"2025-12-31"</span></span>
@@ -1164,7 +1172,7 @@ Example of a “created” event for a research team
 <span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
 <span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"relationships"</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"is_part_of"</span><span class="fu">,</span></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"part_of"</span><span class="fu">,</span></span>
 <span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"UMR-EXAMPLE-001"</span></span>
 <span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
 <span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
@@ -1172,12 +1180,651 @@ Example of a “created” event for a research team
 <span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
 <span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
 <span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><strong>Note:</strong> Teams are typically sub-units within research units and have <code>is_part_of</code> relationships without temporal boundaries.</p>
+<p><strong>Note:</strong> Teams are typically sub-units within research units and have <code>part_of</code> relationships without temporal boundaries.</p>
 </details>
+<hr>
+</section>
+</section>
+</section>
+<section id="people-events-directory-exchange" class="level4">
+<h4 class="anchored" data-anchor-id="people-events-directory-exchange">People events (<code>directory</code> exchange)</h4>
+<section id="routing-keys-1" class="level5">
+<h5 class="anchored" data-anchor-id="routing-keys-1">Routing keys</h5>
+<p>Pattern:</p>
+<pre class="text"><code>event.people.person.&lt;action&gt;</code></pre>
+<details>
+<summary>
+Full list of routing keys for people events
+</summary>
+<pre class="text"><code>event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged</code></pre>
+</details>
+</section>
+<section id="ack-required-1" class="level5">
+<h5 class="anchored" data-anchor-id="ack-required-1">Ack required</h5>
+<pre class="text"><code>no</code></pre>
+</section>
+<section id="payload-1" class="level5">
+<h5 class="anchored" data-anchor-id="payload-1">Payload</h5>
+<details>
+<summary>
+JSON schema for people events
+</summary>
+<div class="sourceCode" id="cb18"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"people_event"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"created|updated|deleted|unchanged"</span><span class="fu">,</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"data"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"display_name"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"display_name_variants"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"&lt;string&gt;"</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"first_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"last_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"other_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"orcid|idref|idhals|idhali|local|scopus"</span><span class="fu">,</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"past"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"future"</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"employments"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb18-49"><a href="#cb18-49" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"position"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-50"><a href="#cb18-50" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"code"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span></span>
+<span id="cb18-51"><a href="#cb18-51" aria-hidden="true" tabindex="-1"></a>          <span class="fu">},</span></span>
+<span id="cb18-52"><a href="#cb18-52" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
+<span id="cb18-53"><a href="#cb18-53" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
+<span id="cb18-54"><a href="#cb18-54" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"past"</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"future"</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb18-56"><a href="#cb18-56" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb18-57"><a href="#cb18-57" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-58"><a href="#cb18-58" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"external"</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb18-59"><a href="#cb18-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb18-60"><a href="#cb18-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb18-61"><a href="#cb18-61" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<section id="example-payloads-1" class="level6">
+<h6 class="anchored" data-anchor-id="example-payloads-1">Example payloads</h6>
+<details>
+<summary>
+Example of a “created” event for a researcher with ORCID, IdRef, membership and employment
+</summary>
+<div class="sourceCode" id="cb19"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"people_event"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"created"</span><span class="fu">,</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"data"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"first_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Marie"</span><span class="fu">,</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"last_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Lefebvre"</span><span class="fu">,</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"mlefebvre@univ-example.fr"</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"orcid"</span><span class="fu">,</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"0000-0002-1234-5678"</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"idref"</span><span class="fu">,</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"123456789"</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"idhals"</span><span class="fu">,</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"marie-lefebvre"</span></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"local-U123"</span><span class="fu">,</span></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2018-09-01"</span><span class="fu">,</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"employments"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"uai-0751818J"</span><span class="fu">,</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"position"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"code"</span><span class="fu">:</span> <span class="st">"MCF"</span></span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>          <span class="fu">},</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2018-09-01"</span><span class="fu">,</span></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details>
+<summary>
+Example of an “updated” event for a researcher with two names (birth and married) and HAL numeric identifier
+</summary>
+<div class="sourceCode" id="cb20"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"people_event"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"updated"</span><span class="fu">,</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"data"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"display_name"</span><span class="fu">:</span> <span class="st">"Sophie Martin"</span><span class="fu">,</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"display_name_variants"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Sophie Durand"</span><span class="ot">,</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"S. Martin"</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"first_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Sophie"</span><span class="fu">,</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"last_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Martin"</span><span class="fu">,</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"first_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Sophie"</span><span class="fu">,</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"last_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Durand"</span><span class="fu">,</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"smartin@univ-example.fr"</span></span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"orcid"</span><span class="fu">,</span></span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"0000-0003-9876-5432"</span></span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"idhali"</span><span class="fu">,</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"987654"</span></span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"local-U123"</span><span class="fu">,</span></span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2015-01-01"</span><span class="fu">,</span></span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"employments"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb20-63"><a href="#cb20-63" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"uai-0751818J"</span><span class="fu">,</span></span>
+<span id="cb20-64"><a href="#cb20-64" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"position"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-65"><a href="#cb20-65" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"code"</span><span class="fu">:</span> <span class="st">"PR"</span></span>
+<span id="cb20-66"><a href="#cb20-66" aria-hidden="true" tabindex="-1"></a>          <span class="fu">},</span></span>
+<span id="cb20-67"><a href="#cb20-67" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2015-01-01"</span><span class="fu">,</span></span>
+<span id="cb20-68"><a href="#cb20-68" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb20-69"><a href="#cb20-69" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb20-70"><a href="#cb20-70" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb20-71"><a href="#cb20-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb20-72"><a href="#cb20-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb20-73"><a href="#cb20-73" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details>
+<summary>
+Example of an “unchanged” event for a researcher with membership only (no employment)
+</summary>
+<div class="sourceCode" id="cb21"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"people_event"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"unchanged"</span><span class="fu">,</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"data"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"first_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Jeanne"</span><span class="fu">,</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"last_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Dupont"</span><span class="fu">,</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"jdupont@univ-example.fr"</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"idref"</span><span class="fu">,</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"012345678"</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"entity_uid"</span><span class="fu">:</span> <span class="st">"local-U123"</span><span class="fu">,</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2020-09-01"</span><span class="fu">,</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details>
+<summary>
+Example of a “deleted” event
+</summary>
+<div class="sourceCode" id="cb22"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"people_event"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"deleted"</span><span class="fu">,</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"data"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"first_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Paul"</span><span class="fu">,</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"last_names"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Bernard"</span><span class="fu">,</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>              <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"pbernard@univ-example.fr"</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</section>
+</section>
+<section id="additional-considerations-1" class="level5">
+<h5 class="anchored" data-anchor-id="additional-considerations-1">Additional considerations</h5>
+<ul>
+<li>Either <code>display_name</code> or at least one entry in <code>names</code> must be provided. If <code>display_name</code> is absent, it is computed automatically from the first available name.</li>
+<li><code>display_name_variants</code> is optional. Use it when the person is known under multiple forms of their name (e.g.&nbsp;birth name alongside married name, or initials).</li>
+<li>A person may have multiple <code>names</code> entries — use one entry per distinct name form (birth name, married name, pseudonym).</li>
+<li>Identifier types: <code>local</code> (institutional login or employee id), <code>orcid</code>, <code>idref</code>, <code>idhals</code> (HAL login), <code>idhali</code> (HAL numeric id), <code>scopus</code>.</li>
+<li><code>memberships.entity_uid</code> must reference a research structure already known to IKG, using either the <code>local-&lt;id&gt;</code> format or an external identifier prefix such as <code>uai-&lt;code&gt;</code>.</li>
+<li><code>employments.entity_uid</code> references an institution. The <code>position.code</code> must be a valid HCERES position code (e.g.&nbsp;<code>PR</code>, <code>MCF</code>, <code>DR</code>, <code>CR</code>, <code>IR</code>, <code>Post-doc</code>).</li>
+<li><code>external: true</code> marks people who are not managed by the institution (e.g.&nbsp;co-authors discovered through publication harvesting). External people carry no <code>memberships</code> or <code>employments</code>.</li>
+</ul>
+<hr>
+</section>
+</section>
+</section>
+</section>
+<section id="exchange-graph" class="level2">
+<h2 class="anchored" data-anchor-id="exchange-graph">Exchange : <code>graph</code></h2>
+<section id="purpose-1" class="level3">
+<h3 class="anchored" data-anchor-id="purpose-1">Purpose</h3>
+<p>Outgoing lifecycle events published by crisalid-ikg to downstream consumers. Each event signals that an entity in the knowledge graph has been created, updated, deleted, or confirmed unchanged following inbound directory or harvesting messages.</p>
+</section>
+<section id="exchange-type-1" class="level3">
+<h3 class="anchored" data-anchor-id="exchange-type-1">Exchange Type</h3>
+<pre class="text"><code>topic</code></pre>
+</section>
+<section id="delivery-strategy-1" class="level3">
+<h3 class="anchored" data-anchor-id="delivery-strategy-1">Delivery Strategy</h3>
+<pre class="text"><code>at-least-once</code></pre>
+</section>
+<section id="topic-and-routing-key-patterns-1" class="level3">
+<h3 class="anchored" data-anchor-id="topic-and-routing-key-patterns-1">Topic and Routing Key Patterns</h3>
+<pre class="text"><code>event.structures.structure.&lt;action&gt;
+event.people.person.&lt;action&gt;</code></pre>
+<details>
+<summary>
+Full list of actions for each entity type
+</summary>
+<pre class="text"><code>event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged</code></pre>
+</details>
+</section>
+<section id="message-catalog-for-graph-exchange" class="level3">
+<h3 class="anchored" data-anchor-id="message-catalog-for-graph-exchange">Message Catalog for <code>graph</code> exchange</h3>
+<hr>
+<section id="structure-events-graph-exchange" class="level4">
+<h4 class="anchored" data-anchor-id="structure-events-graph-exchange">Structure events (<code>graph</code> exchange)</h4>
+<section id="routing-keys-2" class="level5">
+<h5 class="anchored" data-anchor-id="routing-keys-2">Routing keys</h5>
+<p>Pattern:</p>
+<pre class="text"><code>event.structures.structure.&lt;action&gt;</code></pre>
+<details>
+<summary>
+Full list of routing keys for structure events
+</summary>
+<pre class="text"><code>event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged</code></pre>
+</details>
+</section>
+<section id="ack-required-2" class="level5">
+<h5 class="anchored" data-anchor-id="ack-required-2">Ack required</h5>
+<pre class="text"><code>no</code></pre>
+</section>
+<section id="payload-2" class="level5">
+<h5 class="anchored" data-anchor-id="payload-2">Payload</h5>
+<p>The payload is a flat object with three top-level keys. The <code>fields</code> section contains all data available for the structure in the IKG graph. <code>main_mission</code> and <code>secondary_missions</code> are only present for <code>unit</code> type structures (research units, support units, administrative units).</p>
+<details>
+<summary>
+JSON schema for structure events
+</summary>
+<div class="sourceCode" id="cb30"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"unit|institution|institution_subdivision|unit_subdivision|team"</span><span class="fu">,</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"event"</span><span class="fu">:</span> <span class="st">"created|updated|deleted|unchanged"</span><span class="fu">,</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"fields"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"uid"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"national_type"</span><span class="fu">:</span> <span class="st">"UMR|UAR|UR|IRL|UNIV|EPE|EPST|GE|COMUE|UFR|FAC|TEAM|THEME|null"</span><span class="fu">,</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"local_types"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local|uai|nns|ror|wikidata|scopus"</span><span class="fu">,</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"long_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"short_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"descriptions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span></span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"&lt;uid of the supervising or member-of organisation&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"position"</span><span class="fu">:</span> <span class="st">"main_supervision|associated_supervision|participating_supervision|null"</span><span class="fu">,</span></span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span></span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"parents"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"&lt;uid of the structurally containing organisation&gt;"</span><span class="fu">,</span></span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span><span class="fu">,</span></span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="st">"YYYY-MM-DD|null"</span></span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"addresses"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"street"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span><span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"city"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span><span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"zip_code"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span><span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"country"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"&lt;language code&gt;"</span><span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"electronical_addresses"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"uri"</span><span class="fu">:</span> <span class="st">"&lt;string&gt;"</span></span>
+<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"main_mission"</span><span class="fu">:</span> <span class="st">"research|scientific_services|administrative_services"</span><span class="fu">,</span></span>
+<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"secondary_missions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a>      <span class="st">"research|scientific_services|administrative_services|teaching"</span></span>
+<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p><code>main_mission</code> and <code>secondary_missions</code> are only present when <code>type</code> is <code>unit</code>.</p>
+</blockquote>
+</details>
+<section id="example-payloads-2" class="level6">
+<h6 class="anchored" data-anchor-id="example-payloads-2">Example payloads</h6>
+<details>
+<summary>
+Example of a “created” event for a research unit with supervisions
+</summary>
+<div class="sourceCode" id="cb31"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"unit"</span><span class="fu">,</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"event"</span><span class="fu">:</span> <span class="st">"created"</span><span class="fu">,</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"fields"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"uid"</span><span class="fu">:</span> <span class="st">"local-123456"</span><span class="fu">,</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"national_type"</span><span class="fu">:</span> <span class="st">"UMR"</span><span class="fu">,</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"local_types"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"123456"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"nns"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"200012123S"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"ror"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"02feahw73"</span><span class="fu">}</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"long_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Laboratoire de recherche en astrophysique"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Laboratory for Astrophysics Research"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"en"</span><span class="fu">}</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"short_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"LRA"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"descriptions"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Unité mixte de recherche en astrophysique sous tutelle de l'université et du CNRS."</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Joint research unit in astrophysics under joint supervision of the university and CNRS."</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"en"</span><span class="fu">}</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"uai-0751818J"</span><span class="fu">,</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"position"</span><span class="fu">:</span> <span class="st">"main_supervision"</span><span class="fu">,</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2000-01-01"</span><span class="fu">,</span></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"uai-0757581P"</span><span class="fu">,</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"position"</span><span class="fu">:</span> <span class="st">"associated_supervision"</span><span class="fu">,</span></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2000-01-01"</span><span class="fu">,</span></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"parents"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"local-FAC-SCI-001"</span><span class="fu">,</span></span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2000-01-01"</span><span class="fu">,</span></span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"addresses"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"electronical_addresses"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"main_mission"</span><span class="fu">:</span> <span class="st">"research"</span><span class="fu">,</span></span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"secondary_missions"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details>
+<summary>
+Example of an “updated” event for an institution
+</summary>
+<div class="sourceCode" id="cb32"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"institution"</span><span class="fu">,</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"event"</span><span class="fu">:</span> <span class="st">"updated"</span><span class="fu">,</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"fields"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"uid"</span><span class="fu">:</span> <span class="st">"uai-0751818J"</span><span class="fu">,</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"national_type"</span><span class="fu">:</span> <span class="st">"UNIV"</span><span class="fu">,</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"local_types"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"uai"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"0751818J"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"ror"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"05ykr0d48"</span><span class="fu">}</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"long_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Université Étienne Dupond"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"short_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"UniED"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"descriptions"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"parents"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"addresses"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"electronical_addresses"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details>
+<summary>
+Example of a “deleted” event for an institution subdivision
+</summary>
+<div class="sourceCode" id="cb33"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"institution_subdivision"</span><span class="fu">,</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"event"</span><span class="fu">:</span> <span class="st">"deleted"</span><span class="fu">,</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"fields"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"uid"</span><span class="fu">:</span> <span class="st">"local-FAC-SCI-001"</span><span class="fu">,</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"national_type"</span><span class="fu">:</span> <span class="st">"FAC"</span><span class="fu">,</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"local_types"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"FAC-SCI-001"</span><span class="fu">}</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"long_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Faculté des sciences"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"short_labels"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"descriptions"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"parents"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"uai-0751818J"</span><span class="fu">,</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"1995-01-01"</span><span class="fu">,</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"addresses"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"electronical_addresses"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<details>
+<summary>
+Example of an “unchanged” event for a team with axis membership
+</summary>
+<div class="sourceCode" id="cb34"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"team"</span><span class="fu">,</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"event"</span><span class="fu">:</span> <span class="st">"unchanged"</span><span class="fu">,</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"fields"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"uid"</span><span class="fu">:</span> <span class="st">"local-TEAM-ASTRO-001"</span><span class="fu">,</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"national_type"</span><span class="fu">:</span> <span class="st">"TEAM"</span><span class="fu">,</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"local_types"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"identifiers"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"local"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"TEAM-ASTRO-001"</span><span class="fu">}</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"long_labels"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Équipe astrophysique théorique"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"fr"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Theoretical Astrophysics Team"</span><span class="fu">,</span> <span class="dt">"language"</span><span class="fu">:</span> <span class="st">"en"</span><span class="fu">}</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"short_labels"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"descriptions"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"memberships"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"local-AXIS-OBS-001"</span><span class="fu">,</span></span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"position"</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2010-01-01"</span><span class="fu">,</span></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"parents"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"target"</span><span class="fu">:</span> <span class="st">"local-123456"</span><span class="fu">,</span></span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"start_date"</span><span class="fu">:</span> <span class="st">"2010-01-01"</span><span class="fu">,</span></span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"end_date"</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"addresses"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"electronical_addresses"</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</section>
+</section>
+<section id="additional-considerations-2" class="level5">
+<h5 class="anchored" data-anchor-id="additional-considerations-2">Additional considerations</h5>
+<ul>
+<li>The <code>type</code> field reflects the structure’s <code>generic_type</code>: <code>unit</code> (research and support units), <code>institution</code>, <code>institution_subdivision</code>, <code>unit_subdivision</code>, <code>team</code>.</li>
+<li><code>main_mission</code> and <code>secondary_missions</code> are only present when <code>type</code> is <code>unit</code>. They are absent for institutions, institution subdivisions, unit subdivisions, and teams.</li>
+<li><code>memberships</code> carries <code>MEMBER_OF</code> relationships (supervision chains for research units; org-level membership for teams and subdivisions). The <code>position</code> field is only set for supervision relationships (<code>main_supervision</code>, <code>associated_supervision</code>, <code>participating_supervision</code>).</li>
+<li><code>parents</code> carries <code>PART_OF</code> relationships (structural inclusion — e.g.&nbsp;a faculty inside a university, a team inside a research unit).</li>
+<li><code>addresses</code> and <code>electronical_addresses</code> are included in the schema for completeness but are currently empty in all events — contact data is not yet persisted in the graph.</li>
+<li>The <code>uid</code> is the IKG-computed primary key (e.g.&nbsp;<code>local-123456</code>, <code>uai-0751818J</code>). It is stable for the lifetime of the structure and can be used as a join key across events.</li>
+<li>An <code>unchanged</code> event is published when the inbound directory message produced no changes in the graph. Consumers implementing reconciliation logic can use it to confirm that the structure is still active.</li>
+<li>A <code>deleted</code> event signals that the structure has been removed from the graph. Consumers should treat subsequent references to its <code>uid</code> as invalid.</li>
+</ul>
 <hr>
 
 
-</section>
 </section>
 </section>
 </section>
