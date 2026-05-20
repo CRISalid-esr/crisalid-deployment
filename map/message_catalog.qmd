@@ -329,8 +329,6 @@ no
       "generic_type": "institution_subdivision",
       "type": "FAC",
       "local_types": [],
-      "main_mission": "research",
-      "secondary_missions": ["teaching"],
       "long_labels": [
         {
           "value": "Example Faculty of Sciences",
@@ -370,7 +368,7 @@ no
       "relationships": [
         {
           "type": "part_of",
-          "target": "EXAMPLE-UNIV-001",
+          "target": "local-EXAMPLE-UNIV-001",
           "start_date": "2010-01-01",
           "end_date": "2030-12-31"
         }
@@ -398,8 +396,6 @@ no
       "generic_type": "institution_subdivision",
       "type": "UFR",
       "local_types": [],
-      "main_mission": "research",
-      "secondary_missions": ["teaching"],
       "long_labels": [
         {
           "value": "Example School of Medicine",
@@ -439,7 +435,7 @@ no
       "relationships": [
         {
           "type": "part_of",
-          "target": "FAC-EXAMPLE-001",
+          "target": "local-FAC-EXAMPLE-001",
           "start_date": "2010-01-01",
           "end_date": null
         }
@@ -512,23 +508,27 @@ no
       "relationships": [
         {
           "type": "part_of",
-          "target": "PLATFORM-EXAMPLE-001"
+          "target": "local-PLATFORM-EXAMPLE-001",
+          "start_date": null,
+          "end_date": null
         },
         {
           "type": "part_of",
-          "target": "UFR-MEDICINE-001"
+          "target": "local-UFR-MEDICINE-001",
+          "start_date": null,
+          "end_date": null
         },
         {
           "type": "member_of",
           "subtype": "main_supervision",
-          "target": "EXAMPLE-UNIV-001",
+          "target": "local-EXAMPLE-UNIV-001",
           "start_date": "2000-01-01",
           "end_date": null
         },
         {
           "type": "member_of",
           "subtype": "associated_supervision",
-          "target": "RESEARCH-ORG-EXAMPLE",
+          "target": "ror-RESEARCH-ORG-EXAMPLE",
           "start_date": "2005-06-15",
           "end_date": null
         }
@@ -627,8 +627,6 @@ no
       "generic_type": "team",
       "type": "TEAM",
       "local_types": [],
-      "main_mission": "research",
-      "secondary_missions": [],
       "long_labels": [
         {
           "value": "Example Research Team",
@@ -1177,15 +1175,19 @@ structures (research units, support units, administrative units).
         "uri": "<string>"
       }
     ],
-    "main_mission": "research|scientific_services|administrative_services",
+    "main_mission": "research|scientific_services|administrative_services|teaching",
     "secondary_missions": [
       "research|scientific_services|administrative_services|teaching"
-    ]
+    ],
+    "external": false
   }
 }
 ```
 
 > `main_mission` and `secondary_missions` are only present when `type` is `unit`.
+> `external` is `false` for structures sourced from the institutional directory, and `true` for structures
+> auto-created by IKG from the national registry (e.g. a supervising institution referenced by uid but not
+> directly sent by the directory).
 
 </details>
 
@@ -1242,7 +1244,8 @@ structures (research units, support units, administrative units).
     "addresses": [],
     "electronical_addresses": [],
     "main_mission": "research",
-    "secondary_missions": []
+    "secondary_missions": [],
+    "external": false
   }
 }
 ```
@@ -1274,7 +1277,8 @@ structures (research units, support units, administrative units).
     "memberships": [],
     "parents": [],
     "addresses": [],
-    "electronical_addresses": []
+    "electronical_addresses": [],
+    "external": false
   }
 }
 ```
@@ -1309,7 +1313,8 @@ structures (research units, support units, administrative units).
       }
     ],
     "addresses": [],
-    "electronical_addresses": []
+    "electronical_addresses": [],
+    "external": false
   }
 }
 ```
@@ -1352,7 +1357,8 @@ structures (research units, support units, administrative units).
       }
     ],
     "addresses": [],
-    "electronical_addresses": []
+    "electronical_addresses": [],
+    "external": false
   }
 }
 ```
@@ -1374,6 +1380,10 @@ structures (research units, support units, administrative units).
   empty in all events — contact data is not yet persisted in the graph.
 * The `uid` is the IKG-computed primary key (e.g. `local-123456`, `uai-0751818J`). It is stable for the
   lifetime of the structure and can be used as a join key across events.
+* `external: false` means the structure was sourced from the institution's own directory. `external: true`
+  means the structure was auto-created by IKG from the national registry because it appeared as a relationship
+  target (e.g. a supervising institution referenced by a UAI or ROR identifier but never sent directly by the
+  directory). Registry-created structures carry only a limited set of fields (labels, identifiers, address).
 * An `unchanged` event is published when the inbound directory message produced no changes in the graph.
   Consumers implementing reconciliation logic can use it to confirm that the structure is still active.
 * A `deleted` event signals that the structure has been removed from the graph. Consumers should treat
