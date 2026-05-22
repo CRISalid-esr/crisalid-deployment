@@ -1,0 +1,87 @@
+---
+title: "Embeddings in the Knowledge Graph"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+The IKG middleware can store **embedding vectors** directly on graph nodes, enabling semantic similarity search alongside the structural queries already supported by Cypher.
+This is the foundation for **retrieval-augmented generation (RAG)** in Crisalid AI: an agent can retrieve the most semantically relevant entities (documents, research units, concepts) in a single vector query, rather than scanning the whole graph.
+
+::: {.callout-note}
+Embedding computation is **opt-in**. Eligible nodes are labelled in the graph regardless of whether computation is enabled, so you can populate the graph first and add embeddings later — no rebuild required.
+:::
+
+## Enabling embeddings
+
+Set the following variables in your `.env` file (see `.env.sample` for the full list and defaults):
+
+```env
+EMBEDDING_ENABLED=true
+EMBEDDING_PROVIDER=openai_compatible
+EMBEDDING_API_URL=https://your-embedding-server/
+EMBEDDING_API_KEY=<your-api-key>
+EMBEDDING_API_MODEL=<model-name>
+EMBEDDING_DIMENSIONS=<model-output-dimension>
+EMBEDDING_BATCH_SIZE=64
+EMBEDDING_TIMEOUT_SECONDS=30
+```
+
+Only the **`openai_compatible` provider** is supported in Docker Compose deployments. It connects to any remote HTTP service exposing a `/v1/embeddings` endpoint (OpenAI, vLLM, Hugging Face TEI, or any compatible API).
+
+`EMBEDDING_DIMENSIONS` must match the model's actual output size; it is used to configure the Neo4j vector index.
+
+::: {.callout-tip}
+## Recommended provider: ILaaS
+[ILaaS](https://www.ilaas.fr/rag-ilaas/) offers a sovereign French embedding API that works out of the box with the `openai_compatible` provider. It is the recommended choice for institutions subject to French or European data sovereignty requirements.
+
+See the [ILaaS RAG documentation](https://www.ilaas.fr/rag-ilaas/) for API key provisioning and usage limits.
+
+With ILaaS and the `bge-m3` model (strong multilingual performance on academic French and English):
+
+```env
+EMBEDDING_ENABLED=true
+EMBEDDING_PROVIDER=openai_compatible
+EMBEDDING_API_URL=https://rag-api.ilaas.fr
+EMBEDDING_API_KEY=<your-ilaas-api-key>
+EMBEDDING_API_MODEL=bge-m3
+EMBEDDING_DIMENSIONS=1024
+EMBEDDING_BATCH_SIZE=64
+EMBEDDING_TIMEOUT_SECONDS=30
+```
+:::
+
+## Computing embeddings
+
+Once enabled, embeddings are updated **automatically** after each write that produces embeddable nodes. For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:
+
+```bash
+# Process all pending and failed nodes (default)
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings
+
+# Restrict to specific literal types (e.g. titles and abstracts only)
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \
+  --types document_title,document_abstract
+```
+
+The command prints status counts before and after:
+
+```
+Embedding status counts: {'pending': 42831, 'success': 0}
+...
+Done. Embedding status counts after: {'success': 42831}
+```
+
+## Changing the embedding model
+
+If you switch to a model with a different output dimension, update `EMBEDDING_API_MODEL` and `EMBEDDING_DIMENSIONS` in `.env`, restart the stack, then rebuild the vector index:
+
+```bash
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \
+  --recreate-vector-indexes
+```
+
+::: {.callout-warning}
+`--recreate-vector-indexes` resets **all** embeddings and recomputes them from scratch. The graph remains usable during reprocessing; vector search results will be partial until all nodes are processed.
+:::

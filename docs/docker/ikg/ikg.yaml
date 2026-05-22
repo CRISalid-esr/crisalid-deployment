@@ -53,6 +53,14 @@ services:
       - ES_PASSWORD=elastic
       - ORG_REGISTRY_URL=http://crisalid-org-registry:3000
       - HARVESTERS=${HARVESTERS:-"idref,scanr,hal,openalex,scopus"}
+      - EMBEDDING_ENABLED=${EMBEDDING_ENABLED:-false}
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
+      - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
+      - EMBEDDING_DIMENSIONS=${EMBEDDING_DIMENSIONS:-384}
+      - EMBEDDING_BATCH_SIZE=${EMBEDDING_BATCH_SIZE:-32}
+      - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/api/v1/healthness" ]
       interval: 10s
