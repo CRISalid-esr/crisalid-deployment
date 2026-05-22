@@ -79,6 +79,8 @@ website:
             - href: ai/using-skills.qmd
               text: "Using CRISalid AI Skills"
             - ai/configuring-openwebui.qmd
+            - href: ai/ikg-embeddings.qmd
+              text: "Embeddings in the Knowledge Graph"
     - id: security
       title: "🔒 Security"
 

@@ -1,0 +1,126 @@
+---
+title: "Embeddings in the Knowledge Graph"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+The IKG middleware can store **embedding vectors** directly on graph nodes, enabling semantic similarity search alongside the structural queries already supported by Cypher.
+This is the foundation for **retrieval-augmented generation (RAG)** use cases in Crisalid AI: rather than scanning the whole graph, an agent can retrieve the most semantically relevant entities (documents, research units, concepts) in a single vector query.
+
+## What gets embedded
+
+Embedding vectors are stored on `Literal` and `TextLiteral` nodes whose content is semantically meaningful. These nodes carry the `:Embeddable` label in the graph. The current embeddable types are:
+
+| Type | Example |
+|---|---|
+| `document_title` | Title of a publication |
+| `document_abstract` | Abstract of a publication |
+| `concept_pref_label` / `concept_alt_label` | Subject keyword |
+| `concept_definition` | Definition of a subject concept |
+| `research_unit_name` / `research_unit_description` | Name and description of a lab |
+| `institution_name` | Name of an institution |
+| `institution_country_name` / `institution_state_name` / `institution_continent_name` | Geographic labels |
+| `organization_long_label` / `organization_description` | Label and description of an organisation |
+| `authority_organization_state_name` | External organisation name (affiliation signatures) |
+
+Short strings such as person names, postal codes, or acronyms are intentionally excluded.
+
+::: {.callout-note}
+The `:Embeddable` label is applied to eligible nodes **regardless of whether embedding computation is enabled**. You can populate the graph first and compute embeddings later — no graph rebuild is needed.
+:::
+
+A single Neo4j vector index (`embeddable_embedding`) is maintained on `Embeddable.embedding` with cosine similarity, covering both `Literal` and `TextLiteral` nodes uniformly.
+
+## Enabling embeddings
+
+Embedding computation is **disabled by default**. To enable it, set the following variables in your `.env` file (see `.env.sample` for the full list):
+
+```env
+EMBEDDING_ENABLED=true
+EMBEDDING_PROVIDER=openai_compatible
+EMBEDDING_API_URL=https://rag-api.ilaas.fr
+EMBEDDING_API_KEY=<your-ilaas-api-key>
+EMBEDDING_API_MODEL=bge-m3
+EMBEDDING_DIMENSIONS=1024
+EMBEDDING_BATCH_SIZE=64
+EMBEDDING_TIMEOUT_SECONDS=30
+```
+
+Only the **`openai_compatible` provider** is supported in Docker Compose deployments. It calls a remote HTTP endpoint exposing a `/v1/embeddings` route.
+
+::: {.callout-tip}
+## Recommended provider: ILaaS RAG API
+[ILaaS](https://www.ilaas.fr/rag-ilaas/) offers a sovereign French embedding API compatible with the `openai_compatible` provider.
+The `bge-m3` model (1024 dimensions) delivers strong performance on both French and English academic text.
+See the [ILaaS RAG documentation](https://www.ilaas.fr/rag-ilaas/) for API key provisioning and usage limits.
+:::
+
+## Computing embeddings
+
+Once enabled, embeddings are updated **automatically** after each write that produces embeddable nodes (document ingestion, structure creation, etc.). For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:
+
+```bash
+# Process all pending and failed nodes (default)
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings
+
+# Restrict to specific literal types
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \
+  --types document_title,document_abstract
+
+# Include nodes already computed successfully (full recompute)
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \
+  --statuses pending,failed,success
+```
+
+The command prints status counts before and after processing:
+
+```
+Embedding status counts: {'pending': 42831, 'success': 0}
+Processing statuses=['pending', 'failed'], types=None, model_exclude=None
+...
+Done. Embedding status counts after: {'success': 42831}
+```
+
+## Applying embeddings to an existing graph
+
+If the graph was populated before embeddings were enabled, all eligible nodes already carry the `:Embeddable` label with `embedding_status = 'pending'`. No rebuild is required — just run:
+
+```bash
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings
+```
+
+This processes all pending nodes in batches and is safe to interrupt and resume.
+
+## Changing the embedding model
+
+If you switch to a model with a **different output dimension**, update `EMBEDDING_API_MODEL` and `EMBEDDING_DIMENSIONS` in `.env`, restart the stack, then rebuild the vector index:
+
+```bash
+docker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \
+  --recreate-vector-indexes
+```
+
+This command:
+
+1. Resets all embedding properties on `:Embeddable` nodes (`embedding_status → pending`)
+2. Drops the existing vector index
+3. Recreates it with the new dimension from `EMBEDDING_DIMENSIONS`
+4. Recomputes all embeddings from scratch
+
+::: {.callout-warning}
+`--recreate-vector-indexes` resets **all** embeddings. The graph remains fully usable during reprocessing; vector search results will be partial until all nodes are processed.
+:::
+
+## Embedding status reference
+
+Each `:Embeddable` node carries an `embedding_status` property:
+
+| Status | Meaning |
+|---|---|
+| `pending` | Node created or updated; embedding not yet computed |
+| `success` | Embedding stored; `embedding`, `embedding_hash`, and `embedding_model` are set |
+| `failed` | Provider call failed; `embedding_error` contains the reason |
+
+Failed nodes are not retried automatically. Re-run `compute-embeddings` (which processes `pending` and `failed` by default) to retry them.
