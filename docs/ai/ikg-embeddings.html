@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Identify Relevant Components – CRISalid Deployment Documentation</title>
+<title>Embeddings in the Knowledge Graph – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../map/harvesting.html" rel="next">
-<link href="../map/index.html" rel="prev">
+<link href="../ai/configuring-openwebui.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -253,7 +286,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../map/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../map/components.html">Identify Relevant Components</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/local-workstation.html">Installation</a></li><li class="breadcrumb-item"><a href="../ai/ikg-embeddings.html">Embeddings in the Knowledge Graph</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -276,26 +309,14 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../map/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">System Overview</span></a>
+  <a href="../ai/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../map/components.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Identify Relevant Components</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../map/harvesting.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Harvesting Configuration</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../map/message_catalog.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  <a href="../ai/security.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Security</span></a>
   </div>
 </li>
       </ul>
@@ -303,7 +324,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Docker Compose</span></a>
+ <span class="menu-text">Installation</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -311,103 +332,47 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Docker Compose – Introduction</span></a>
+  <a href="../ai/local-workstation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Local Workstation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/docker-compose.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Docker Compose - Overview</span></a>
+  <a href="../ai/docker-compose.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/step-by-step.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Docker Compose - Step by Step</span></a>
+  <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/dev-backend.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using Docker Compose as Backend for Local Development</span></a>
+  <a href="../ai/configuring-openwebui.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Configuring OpenWebUI</span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/local-tls.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dev/export-kc-realm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Export Keycloak Realm</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dev/backup-restore-with-dc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Data backup and restoration with Docker Compose</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Manual Installation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Kubernetes</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../prod/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kubernetes – Introduction</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../prod/helm_charts.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kubernetes Deployment</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../prod/manual_installation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Manual Installation</span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Requirements</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../requirements/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Required Infrastructure and Dependencies</span></a>
+  <a href="../ai/ikg-embeddings.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Embeddings in the Knowledge Graph</span></a>
   </div>
 </li>
       </ul>
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#enabling-embeddings" id="toc-enabling-embeddings" class="nav-link active" data-scroll-target="#enabling-embeddings">Enabling embeddings</a></li>
+  <li><a href="#computing-embeddings" id="toc-computing-embeddings" class="nav-link" data-scroll-target="#computing-embeddings">Computing embeddings</a></li>
+  <li><a href="#changing-the-embedding-model" id="toc-changing-the-embedding-model" class="nav-link" data-scroll-target="#changing-the-embedding-model">Changing the embedding model</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -416,9 +381,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../map/index.html">Overview</a></li><li class="breadcrumb-item"><a href="../map/components.html">Identify Relevant Components</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/local-workstation.html">Installation</a></li><li class="breadcrumb-item"><a href="../ai/ikg-embeddings.html">Embeddings in the Knowledge Graph</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Identify Relevant Components</h1>
+<h1 class="title">Embeddings in the Knowledge Graph</h1>
 </div>
 
 
@@ -435,21 +400,92 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
+<p>The IKG middleware can store <strong>embedding vectors</strong> directly on graph nodes, enabling semantic similarity search alongside the structural queries already supported by Cypher. This is the foundation for <strong>retrieval-augmented generation (RAG)</strong> in Crisalid AI: an agent can retrieve the most semantically relevant entities (documents, research units, concepts) in a single vector query, rather than scanning the whole graph.</p>
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Work in Progress
+Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
+<p>Embedding computation is <strong>opt-in</strong>. Eligible nodes are labelled in the graph regardless of whether computation is enabled, so you can populate the graph first and add embeddings later — no rebuild required.</p>
+</div>
+</div>
+<section id="enabling-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="enabling-embeddings">Enabling embeddings</h2>
+<p>Set the following variables in your <code>.env</code> file (see <code>.env.sample</code> for the full list and defaults):</p>
+<pre class="env"><code>EMBEDDING_ENABLED=true
+EMBEDDING_PROVIDER=openai_compatible
+EMBEDDING_API_URL=https://your-embedding-server/
+EMBEDDING_API_KEY=&lt;your-api-key&gt;
+EMBEDDING_API_MODEL=&lt;model-name&gt;
+EMBEDDING_DIMENSIONS=&lt;model-output-dimension&gt;
+EMBEDDING_BATCH_SIZE=64
+EMBEDDING_TIMEOUT_SECONDS=30</code></pre>
+<p>Only the <strong><code>openai_compatible</code> provider</strong> is supported in Docker Compose deployments. It connects to any remote HTTP service exposing a <code>/v1/embeddings</code> endpoint (OpenAI, vLLM, Hugging Face TEI, or any compatible API).</p>
+<p><code>EMBEDDING_DIMENSIONS</code> must match the model’s actual output size; it is used to configure the Neo4j vector index.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Recommended provider: ILaaS
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="https://www.ilaas.fr/rag-ilaas/">ILaaS</a> offers a sovereign French embedding API that works out of the box with the <code>openai_compatible</code> provider. It is the recommended choice for institutions subject to French or European data sovereignty requirements.</p>
+<p>See the <a href="https://www.ilaas.fr/rag-ilaas/">ILaaS RAG documentation</a> for API key provisioning and usage limits.</p>
+<p>With ILaaS and the <code>bge-m3</code> model (strong multilingual performance on academic French and English):</p>
+<pre class="env"><code>EMBEDDING_ENABLED=true
+EMBEDDING_PROVIDER=openai_compatible
+EMBEDDING_API_URL=https://rag-api.ilaas.fr
+EMBEDDING_API_KEY=&lt;your-ilaas-api-key&gt;
+EMBEDDING_API_MODEL=bge-m3
+EMBEDDING_DIMENSIONS=1024
+EMBEDDING_BATCH_SIZE=64
+EMBEDDING_TIMEOUT_SECONDS=30</code></pre>
+</div>
+</div>
+</section>
+<section id="computing-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="computing-embeddings">Computing embeddings</h2>
+<p>Once enabled, embeddings are updated <strong>automatically</strong> after each write that produces embeddable nodes. For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process all pending and failed nodes (default)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Restrict to specific literal types (e.g. titles and abstracts only)</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--types</span> document_title,document_abstract</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The command prints status counts before and after:</p>
+<pre><code>Embedding status counts: {'pending': 42831, 'success': 0}
+...
+Done. Embedding status counts after: {'success': 42831}</code></pre>
+</section>
+<section id="changing-the-embedding-model" class="level2">
+<h2 class="anchored" data-anchor-id="changing-the-embedding-model">Changing the embedding model</h2>
+<p>If you switch to a model with a different output dimension, update <code>EMBEDDING_API_MODEL</code> and <code>EMBEDDING_DIMENSIONS</code> in <code>.env</code>, restart the stack, then rebuild the vector index:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--recreate-vector-indexes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>--recreate-vector-indexes</code> resets <strong>all</strong> embeddings and recomputes them from scratch. The graph remains usable during reprocessing; vector search results will be partial until all nodes are processed.</p>
 </div>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -871,14 +907,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../map/index.html" class="pagination-link" aria-label="System Overview">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">System Overview</span>
+      <a href="../ai/configuring-openwebui.html" class="pagination-link" aria-label="Configuring OpenWebUI">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Configuring OpenWebUI</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../map/harvesting.html" class="pagination-link" aria-label="Harvesting Configuration">
-        <span class="nav-page-text">Harvesting Configuration</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
