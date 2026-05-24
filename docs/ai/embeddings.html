@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Embeddings in the Knowledge Graph – CRISalid Deployment Documentation</title>
+<title>Semantic Embeddings – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -240,8 +240,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Configuring OpenWebUI</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../ai/ikg-embeddings.html">
- <span class="dropdown-text">Embeddings in the Knowledge Graph</span></a>
+    <a class="dropdown-item" href="../ai/embeddings.html">
+ <span class="dropdown-text">Semantic Embeddings</span></a>
   </li>  
     </ul>
   </li>
@@ -286,7 +286,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/local-workstation.html">Installation</a></li><li class="breadcrumb-item"><a href="../ai/ikg-embeddings.html">Embeddings in the Knowledge Graph</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/local-workstation.html">Installation</a></li><li class="breadcrumb-item"><a href="../ai/embeddings.html">Semantic Embeddings</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -356,8 +356,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../ai/ikg-embeddings.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Embeddings in the Knowledge Graph</span></a>
+  <a href="../ai/embeddings.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Semantic Embeddings</span></a>
   </div>
 </li>
       </ul>
@@ -368,8 +368,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#enabling-embeddings" id="toc-enabling-embeddings" class="nav-link active" data-scroll-target="#enabling-embeddings">Enabling embeddings</a></li>
-  <li><a href="#computing-embeddings" id="toc-computing-embeddings" class="nav-link" data-scroll-target="#computing-embeddings">Computing embeddings</a></li>
+  <li><a href="#shared-configuration" id="toc-shared-configuration" class="nav-link active" data-scroll-target="#shared-configuration">Shared configuration</a></li>
+  <li><a href="#ikg-specific-configuration" id="toc-ikg-specific-configuration" class="nav-link" data-scroll-target="#ikg-specific-configuration">IKG-specific configuration</a></li>
+  <li><a href="#computing-embeddings-ikg" id="toc-computing-embeddings-ikg" class="nav-link" data-scroll-target="#computing-embeddings-ikg">Computing embeddings (IKG)</a></li>
   <li><a href="#changing-the-embedding-model" id="toc-changing-the-embedding-model" class="nav-link" data-scroll-target="#changing-the-embedding-model">Changing the embedding model</a></li>
   </ul>
 </nav>
@@ -381,9 +382,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/local-workstation.html">Installation</a></li><li class="breadcrumb-item"><a href="../ai/ikg-embeddings.html">Embeddings in the Knowledge Graph</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../ai/local-workstation.html">Installation</a></li><li class="breadcrumb-item"><a href="../ai/embeddings.html">Semantic Embeddings</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Embeddings in the Knowledge Graph</h1>
+<h1 class="title">Semantic Embeddings</h1>
 </div>
 
 
@@ -400,7 +401,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>The IKG middleware can store <strong>embedding vectors</strong> directly on graph nodes, enabling semantic similarity search alongside the structural queries already supported by Cypher. This is the foundation for <strong>retrieval-augmented generation (RAG)</strong> in Crisalid AI: an agent can retrieve the most semantically relevant entities (documents, research units, concepts) in a single vector query, rather than scanning the whole graph.</p>
+<p>Embedding vectors are used by two services in the CRISalid AI stack:</p>
+<ul>
+<li><strong>IKG</strong> stores embedding vectors directly on graph nodes, enabling vector similarity search in Neo4j. Vectors are computed offline, in batch, after each write that produces embeddable nodes (document titles, abstracts, etc.).</li>
+<li><strong>CRISalid Agents</strong> computes embeddings on demand at query time to power semantic tools such as <code>publications-by-theme</code>, which searches the graph by semantic similarity rather than exact keyword matching.</li>
+</ul>
+<p>Both services use the same embedding endpoint and model — configured once in the shared <code>.env</code>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -411,22 +417,17 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Embedding computation is <strong>opt-in</strong>. Eligible nodes are labelled in the graph regardless of whether computation is enabled, so you can populate the graph first and add embeddings later — no rebuild required.</p>
+<p>For IKG, embedding computation is <strong>opt-in</strong>. Eligible nodes are labelled in the graph regardless of whether computation is enabled, so you can populate the graph first and add embeddings later — no rebuild required.</p>
 </div>
 </div>
-<section id="enabling-embeddings" class="level2">
-<h2 class="anchored" data-anchor-id="enabling-embeddings">Enabling embeddings</h2>
-<p>Set the following variables in your <code>.env</code> file (see <code>.env.sample</code> for the full list and defaults):</p>
-<pre class="env"><code>EMBEDDING_ENABLED=true
-EMBEDDING_PROVIDER=openai_compatible
-EMBEDDING_API_URL=https://your-embedding-server/
+<section id="shared-configuration" class="level2">
+<h2 class="anchored" data-anchor-id="shared-configuration">Shared configuration</h2>
+<p>The following variables are shared by IKG and CRISalid Agents. Set them in the <strong>common <code>.env</code></strong> file:</p>
+<pre class="env"><code>EMBEDDING_API_URL=https://your-embedding-server/
 EMBEDDING_API_KEY=&lt;your-api-key&gt;
 EMBEDDING_API_MODEL=&lt;model-name&gt;
-EMBEDDING_DIMENSIONS=&lt;model-output-dimension&gt;
-EMBEDDING_BATCH_SIZE=64
 EMBEDDING_TIMEOUT_SECONDS=30</code></pre>
 <p>Only the <strong><code>openai_compatible</code> provider</strong> is supported in Docker Compose deployments. It connects to any remote HTTP service exposing a <code>/v1/embeddings</code> endpoint (OpenAI, vLLM, Hugging Face TEI, or any compatible API).</p>
-<p><code>EMBEDDING_DIMENSIONS</code> must match the model’s actual output size; it is used to configure the Neo4j vector index.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -438,28 +439,36 @@ Recommended provider: ILaaS
 </div>
 <div class="callout-body-container callout-body">
 <p><a href="https://www.ilaas.fr/rag-ilaas/">ILaaS</a> offers a sovereign French embedding API that works out of the box with the <code>openai_compatible</code> provider. It is the recommended choice for institutions subject to French or European data sovereignty requirements.</p>
-<p>See the <a href="https://www.ilaas.fr/rag-ilaas/">ILaaS RAG documentation</a> for API key provisioning and usage limits.</p>
 <p>With ILaaS and the <code>bge-m3</code> model (strong multilingual performance on academic French and English):</p>
-<pre class="env"><code>EMBEDDING_ENABLED=true
-EMBEDDING_PROVIDER=openai_compatible
-EMBEDDING_API_URL=https://rag-api.ilaas.fr
+<pre class="env"><code>EMBEDDING_API_URL=https://rag-api.ilaas.fr
 EMBEDDING_API_KEY=&lt;your-ilaas-api-key&gt;
 EMBEDDING_API_MODEL=bge-m3
-EMBEDDING_DIMENSIONS=1024
-EMBEDDING_BATCH_SIZE=64
 EMBEDDING_TIMEOUT_SECONDS=30</code></pre>
 </div>
 </div>
 </section>
-<section id="computing-embeddings" class="level2">
-<h2 class="anchored" data-anchor-id="computing-embeddings">Computing embeddings</h2>
+<section id="ikg-specific-configuration" class="level2">
+<h2 class="anchored" data-anchor-id="ikg-specific-configuration">IKG-specific configuration</h2>
+<p>The following variables are specific to IKG and are set in <code>docker/ikg/.env</code>:</p>
+<pre class="env"><code># Enable batch embedding computation in the IKG service (default: false)
+EMBEDDING_ENABLED=true
+
+# Must match the model's actual output size; used to configure the Neo4j vector index.
+# Common values: 384 (multilingual-e5-small), 768 (e5-base), 1024 (bge-m3), 1536 (OpenAI ada-002)
+EMBEDDING_DIMENSIONS=1024
+
+# Number of texts sent per request. Must not exceed the server's max-client-batch-size.
+EMBEDDING_BATCH_SIZE=32</code></pre>
+</section>
+<section id="computing-embeddings-ikg" class="level2">
+<h2 class="anchored" data-anchor-id="computing-embeddings-ikg">Computing embeddings (IKG)</h2>
 <p>Once enabled, embeddings are updated <strong>automatically</strong> after each write that produces embeddable nodes. For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process all pending and failed nodes (default)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Restrict to specific literal types (e.g. titles and abstracts only)</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--types</span> document_title,document_abstract</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process all pending and failed nodes (default)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Restrict to specific literal types (e.g. titles and abstracts only)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--types</span> document_title,document_abstract</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The command prints status counts before and after:</p>
 <pre><code>Embedding status counts: {'pending': 42831, 'success': 0}
 ...
@@ -467,9 +476,9 @@ Done. Embedding status counts after: {'success': 42831}</code></pre>
 </section>
 <section id="changing-the-embedding-model" class="level2">
 <h2 class="anchored" data-anchor-id="changing-the-embedding-model">Changing the embedding model</h2>
-<p>If you switch to a model with a different output dimension, update <code>EMBEDDING_API_MODEL</code> and <code>EMBEDDING_DIMENSIONS</code> in <code>.env</code>, restart the stack, then rebuild the vector index:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--recreate-vector-indexes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you switch to a model with a different output dimension, update <code>EMBEDDING_API_MODEL</code> in the common <code>.env</code> and <code>EMBEDDING_DIMENSIONS</code> in <code>docker/ikg/.env</code>, restart the stack, then rebuild the vector index:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--recreate-vector-indexes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
