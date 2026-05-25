@@ -475,9 +475,13 @@ If Keycloak and SoVisu+ are exposed through a **reverse proxy handling TLS termi
 ```env
 KEYCLOAK_HTTP_ENABLED=true
 KEYCLOAK_HOSTNAME_STRICT_HTTPS=false
-KEYCLOAK_HOSTNAME_STRICT_BACKCHANNEL=false
+# xforwarded (default) works with most reverse proxies (nginx, Traefik, Apache)
+# Set to "forwarded" for RFC 7239-compliant proxies (e.g. HAProxy with Forwarded header)
+KEYCLOAK_PROXY_HEADERS=xforwarded
 ```
 
+> `KEYCLOAK_HTTP_ENABLED=true` is required alongside `KEYCLOAK_PROXY_HEADERS`: the reverse proxy terminates TLS and forwards requests to Keycloak over plain HTTP, so Keycloak must accept HTTP connections.
+>
 > With this setup, server-to-server calls from SoVisu+ to Keycloak (e.g. `.well-known` discovery) travel over plain HTTP internally, while external traffic is secured by the reverse proxy.
 
 Set the public URLs in the root `.env`:

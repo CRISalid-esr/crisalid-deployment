@@ -911,8 +911,11 @@ Corporate proxy — pip install may fail
 <p>If Keycloak and SoVisu+ are exposed through a <strong>reverse proxy handling TLS termination</strong> (recommended for production), use these settings in <code>keycloak/.env</code>:</p>
 <pre class="env"><code>KEYCLOAK_HTTP_ENABLED=true
 KEYCLOAK_HOSTNAME_STRICT_HTTPS=false
-KEYCLOAK_HOSTNAME_STRICT_BACKCHANNEL=false</code></pre>
+# xforwarded (default) works with most reverse proxies (nginx, Traefik, Apache)
+# Set to "forwarded" for RFC 7239-compliant proxies (e.g. HAProxy with Forwarded header)
+KEYCLOAK_PROXY_HEADERS=xforwarded</code></pre>
 <blockquote class="blockquote">
+<p><code>KEYCLOAK_HTTP_ENABLED=true</code> is required alongside <code>KEYCLOAK_PROXY_HEADERS</code>: the reverse proxy terminates TLS and forwards requests to Keycloak over plain HTTP, so Keycloak must accept HTTP connections.</p>
 <p>With this setup, server-to-server calls from SoVisu+ to Keycloak (e.g.&nbsp;<code>.well-known</code> discovery) travel over plain HTTP internally, while external traffic is secured by the reverse proxy.</p>
 </blockquote>
 <p>Set the public URLs in the root <code>.env</code>:</p>
