@@ -953,5 +953,71 @@
       "Requirements",
       "Required Infrastructure and Dependencies"
     ]
+  },
+  {
+    "objectID": "directories/structures.html",
+    "href": "directories/structures.html",
+    "title": "Structures Data",
+    "section": "",
+    "text": "Research organizations — institutions, laboratories, teams — are a key part of the research information managed by CRISalid. Getting them into the graph is often the first step, and it can involve some work: mapping your local identifiers, encoding the hierarchy, handling supervision relationships between units and institutions. This page is here to help you through it.",
+    "crumbs": [
+      "Institutional Directories",
+      "Structures Data"
+    ]
+  },
+  {
+    "objectID": "directories/structures.html#two-ingestion-paths",
+    "href": "directories/structures.html#two-ingestion-paths",
+    "title": "Structures Data",
+    "section": "Two ingestion paths",
+    "text": "Two ingestion paths\nCRISalid directory bridge offers two ways to feed structure data into the knowledge graph. Both paths produce the same AMQP message format consumed by the IKG middleware.\n\n\n\n\n\n\n\n\nSource\nDAG\nBest suited for\n\n\n\n\nLDAP directory (SUPANN 2021)\nload_ldap_structures\nInstitutions with a SUPANN-compliant directory\n\n\nSpreadsheet (CSV)\nload_spreadsheet_structure\nManual curation, institutions without LDAP, graduate schools, cross-institutional units",
+    "crumbs": [
+      "Institutional Directories",
+      "Structures Data"
+    ]
+  },
+  {
+    "objectID": "directories/structures.html#ldap-path",
+    "href": "directories/structures.html#ldap-path",
+    "title": "Structures Data",
+    "section": "LDAP path",
+    "text": "LDAP path\nThe load_ldap_structures DAG queries an LDAP directory filtered on SUPANN object classes and converts entries into IKG-compliant structure records.\nKey LDAP attributes used: supannCodeEntite (identifier), supannCodeEntiteParent (hierarchy), supannTypeEntite, supannRefId (external identifiers such as ROR, NNS), eduOrgLegalName, ou, description, businessCategory, labeledURI.\nStructures with businessCategory=organization are excluded — they do not map to any IKG structure type.",
+    "crumbs": [
+      "Institutional Directories",
+      "Structures Data"
+    ]
+  },
+  {
+    "objectID": "directories/structures.html#spreadsheet-path",
+    "href": "directories/structures.html#spreadsheet-path",
+    "title": "Structures Data",
+    "section": "Spreadsheet path",
+    "text": "Spreadsheet path\nThe load_spreadsheet_structure DAG (in crisalid-directory-bridge) reads a UTF-8 CSV file whose columns follow the CRISalid structures format. This is the recommended path for structures that are not in the institutional LDAP, or for institutions that prefer to maintain a curated file.\n\nFile format reference\nThe full column specification and annotation syntax (labels with language tags, relationship entries with supervision codes and date ranges) is documented on the wiki:\n👉 Import des données structures on the CRISalid Esup Portail wiki\n\n\nChecking and visualising your CSV before ingestion\nTwo tools are available in the crisalid-directory-bridge repository to validate and preview a structures CSV without running Airflow.\n\nAs Claude Code commands\nIf you use Claude Code, two slash commands are available from inside the repository:\n/check-structures path/to/structures.csv\n/visualize-structures path/to/structures.csv [output.html]\n\n\nAs standalone Python scripts (no dependencies)\nThe same logic is also available as plain Python scripts that require only the standard library:\n# Validate — prints all errors and warnings, exits 1 if errors found\npython .claude/commands/check_structures.py path/to/structures.csv\n\n# Generate an interactive HTML hierarchy viewer\npython .claude/commands/visualize_structures.py path/to/structures.csv [output.html]\n\n\nWhat the checker validates\n\nRequired columns and fields\nlocal_id format (max 10 chars, alphanumeric / - / _ / :)\nDuplicate local_id values\nNational type compatibility with generic_type (fetched live from the IKG model)\nMission fields (main_mission required and valid for units; warns if set on other types)\nConditional identifier requirements (UAI for institutions; NNS or ROR for research units)\nIdentifier format (bare ROR/ISNI IDs, RNSR pattern for NNS)\nReference integrity — every local-* target must exist in the file\nOrdering — a referenced structure must appear in an earlier row\nIsolation — warns on teams and unit subdivisions with no parent\nDate annotation format (YYYYMMDD)\nLabel language tags\n\n\n\nWhat the visualiser produces\nAn interactive HTML file (no server required, opens in any browser) showing:\n\nThe full structure hierarchy as a directed graph, colour-coded by type\nSolid arrows for part_of (inclusions), dashed arrows for member_of (participations)\nGhost nodes for any external targets referenced but not defined in the file\nA panel listing isolated structures that belong to no hierarchy\nClick a node to highlight its direct neighbours",
+    "crumbs": [
+      "Institutional Directories",
+      "Structures Data"
+    ]
+  },
+  {
+    "objectID": "directories/people.html",
+    "href": "directories/people.html",
+    "title": "People Data",
+    "section": "",
+    "text": "Work in Progress\n\n\n\nThis page is coming soon.",
+    "crumbs": [
+      "Institutional Directories",
+      "People Data"
+    ]
+  },
+  {
+    "objectID": "directories/structures.html#two-options-to-connect-to-institutional-directories",
+    "href": "directories/structures.html#two-options-to-connect-to-institutional-directories",
+    "title": "Structures Data",
+    "section": "Two options to connect to institutional directories",
+    "text": "Two options to connect to institutional directories\nCRISalid directory bridge offers two ways to feed structure data into the knowledge graph. Both produce the same AMQP message format consumed by the IKG middleware.\n\n\n\n\n\n\n\n\nSource\nDAG\nBest suited for\n\n\n\n\nLDAP directory (SUPANN 2021)\nload_ldap_structures\nInstitutions with a SUPANN-compliant directory\n\n\nSpreadsheet (CSV)\nload_spreadsheet_structure\nManual curation, institutions without LDAP, graduate schools, cross-institutional units",
+    "crumbs": [
+      "Institutional Directories",
+      "Structures Data"
+    ]
   }
 ]

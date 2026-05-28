@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Docker Compose – Introduction – CRISalid Deployment Documentation</title>
+<title>Structures Data – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../dev/docker-compose.html" rel="next">
-<link href="../directories/people.html" rel="prev">
+<link href="../directories/people.html" rel="next">
+<link href="../map/message_catalog.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -263,7 +297,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose – Introduction</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../directories/structures.html">Institutional Directories</a></li><li class="breadcrumb-item"><a href="../directories/structures.html">Structures Data</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -321,7 +355,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../directories/structures.html" class="sidebar-item-text sidebar-link">
+  <a href="../directories/structures.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Structures Data</span></a>
   </div>
 </li>
@@ -344,7 +378,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../dev/index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Docker Compose – Introduction</span></a>
   </div>
 </li>
@@ -440,7 +474,19 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#two-options-to-connect-to-institutional-directories" id="toc-two-options-to-connect-to-institutional-directories" class="nav-link active" data-scroll-target="#two-options-to-connect-to-institutional-directories">Two options to connect to institutional directories</a></li>
+  <li><a href="#ldap-path" id="toc-ldap-path" class="nav-link" data-scroll-target="#ldap-path">LDAP path</a></li>
+  <li><a href="#spreadsheet-path" id="toc-spreadsheet-path" class="nav-link" data-scroll-target="#spreadsheet-path">Spreadsheet path</a>
+  <ul class="collapse">
+  <li><a href="#file-format-reference" id="toc-file-format-reference" class="nav-link" data-scroll-target="#file-format-reference">File format reference</a></li>
+  <li><a href="#checking-and-visualising-your-csv-before-ingestion" id="toc-checking-and-visualising-your-csv-before-ingestion" class="nav-link" data-scroll-target="#checking-and-visualising-your-csv-before-ingestion">Checking and visualising your CSV before ingestion</a></li>
+  </ul></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -449,9 +495,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose – Introduction</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../directories/structures.html">Institutional Directories</a></li><li class="breadcrumb-item"><a href="../directories/structures.html">Structures Data</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Docker Compose – Introduction</h1>
+<h1 class="title">Structures Data</h1>
 </div>
 
 
@@ -468,21 +514,103 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Work in Progress
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
-</div>
-</div>
+<p>Research organizations — institutions, laboratories, teams — are a key part of the research information managed by CRISalid. Getting them into the graph is often the first step, and it can involve some work: mapping your local identifiers, encoding the hierarchy, handling supervision relationships between units and institutions. This page is here to help you through it.</p>
+<section id="two-options-to-connect-to-institutional-directories" class="level2">
+<h2 class="anchored" data-anchor-id="two-options-to-connect-to-institutional-directories">Two options to connect to institutional directories</h2>
+<p><a href="https://github.com/CRISalid-esr/crisalid-directory-bridge">CRISalid directory bridge</a> offers two ways to feed structure data into the knowledge graph. Both produce the same AMQP message format consumed by the IKG middleware.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>DAG</th>
+<th>Best suited for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>LDAP directory</strong> (SUPANN 2021)</td>
+<td><code>load_ldap_structures</code></td>
+<td>Institutions with a SUPANN-compliant directory</td>
+</tr>
+<tr class="even">
+<td><strong>Spreadsheet (CSV)</strong></td>
+<td><code>load_spreadsheet_structure</code></td>
+<td>Manual curation, institutions without LDAP, graduate schools, cross-institutional units</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="ldap-path" class="level2">
+<h2 class="anchored" data-anchor-id="ldap-path">LDAP path</h2>
+<p>The <code>load_ldap_structures</code> DAG queries an LDAP directory filtered on SUPANN object classes and converts entries into IKG-compliant structure records.</p>
+<p>Key LDAP attributes used: <code>supannCodeEntite</code> (identifier), <code>supannCodeEntiteParent</code> (hierarchy), <code>supannTypeEntite</code>, <code>supannRefId</code> (external identifiers such as ROR, NNS), <code>eduOrgLegalName</code>, <code>ou</code>, <code>description</code>, <code>businessCategory</code>, <code>labeledURI</code>.</p>
+<p>Structures with <code>businessCategory=organization</code> are excluded — they do not map to any IKG structure type.</p>
+<hr>
+</section>
+<section id="spreadsheet-path" class="level2">
+<h2 class="anchored" data-anchor-id="spreadsheet-path">Spreadsheet path</h2>
+<p>The <code>load_spreadsheet_structure</code> DAG (in <a href="https://github.com/CRISalid-esr/crisalid-directory-bridge">crisalid-directory-bridge</a>) reads a UTF-8 CSV file whose columns follow the CRISalid structures format. This is the recommended path for structures that are not in the institutional LDAP, or for institutions that prefer to maintain a curated file.</p>
+<section id="file-format-reference" class="level3">
+<h3 class="anchored" data-anchor-id="file-format-reference">File format reference</h3>
+<p>The full column specification and annotation syntax (labels with language tags, relationship entries with supervision codes and date ranges) is documented on the wiki:</p>
+<p>👉 <a href="https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures">Import des données structures</a> on the CRISalid Esup Portail wiki</p>
+</section>
+<section id="checking-and-visualising-your-csv-before-ingestion" class="level3">
+<h3 class="anchored" data-anchor-id="checking-and-visualising-your-csv-before-ingestion">Checking and visualising your CSV before ingestion</h3>
+<p>Two tools are available in the <a href="https://github.com/CRISalid-esr/crisalid-directory-bridge">crisalid-directory-bridge</a> repository to validate and preview a structures CSV without running Airflow.</p>
+<section id="as-claude-code-commands" class="level4">
+<h4 class="anchored" data-anchor-id="as-claude-code-commands">As Claude Code commands</h4>
+<p>If you use <a href="https://claude.ai/code">Claude Code</a>, two slash commands are available from inside the repository:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/check-structures</span> path/to/structures.csv</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/visualize-structures</span> path/to/structures.csv <span class="pp">[</span><span class="ss">output.html</span><span class="pp">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="as-standalone-python-scripts-no-dependencies" class="level4">
+<h4 class="anchored" data-anchor-id="as-standalone-python-scripts-no-dependencies">As standalone Python scripts (no dependencies)</h4>
+<p>The same logic is also available as plain Python scripts that require only the standard library:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate — prints all errors and warnings, exits 1 if errors found</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> .claude/commands/check_structures.py path/to/structures.csv</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate an interactive HTML hierarchy viewer</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> .claude/commands/visualize_structures.py path/to/structures.csv <span class="pp">[</span><span class="ss">output.html</span><span class="pp">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="what-the-checker-validates" class="level4">
+<h4 class="anchored" data-anchor-id="what-the-checker-validates">What the checker validates</h4>
+<ul>
+<li>Required columns and fields</li>
+<li><code>local_id</code> format (max 10 chars, alphanumeric / <code>-</code> / <code>_</code> / <code>:</code>)</li>
+<li>Duplicate <code>local_id</code> values</li>
+<li>National type compatibility with <code>generic_type</code> (fetched live from the IKG model)</li>
+<li>Mission fields (<code>main_mission</code> required and valid for units; warns if set on other types)</li>
+<li>Conditional identifier requirements (UAI for institutions; NNS or ROR for research units)</li>
+<li>Identifier format (bare ROR/ISNI IDs, RNSR pattern for NNS)</li>
+<li>Reference integrity — every <code>local-*</code> target must exist in the file</li>
+<li>Ordering — a referenced structure must appear in an earlier row</li>
+<li>Isolation — warns on teams and unit subdivisions with no parent</li>
+<li>Date annotation format (YYYYMMDD)</li>
+<li>Label language tags</li>
+</ul>
+</section>
+<section id="what-the-visualiser-produces" class="level4">
+<h4 class="anchored" data-anchor-id="what-the-visualiser-produces">What the visualiser produces</h4>
+<p>An interactive HTML file (no server required, opens in any browser) showing:</p>
+<ul>
+<li>The full structure hierarchy as a directed graph, colour-coded by type</li>
+<li>Solid arrows for <code>part_of</code> (inclusions), dashed arrows for <code>member_of</code> (participations)</li>
+<li>Ghost nodes for any external targets referenced but not defined in the file</li>
+<li>A panel listing isolated structures that belong to no hierarchy</li>
+<li>Click a node to highlight its direct neighbours</li>
+</ul>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -904,13 +1032,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../directories/people.html" class="pagination-link" aria-label="People Data">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">People Data</span>
+      <a href="../map/message_catalog.html" class="pagination-link" aria-label="CRISalid Bus – Exchange Map &amp; Message Catalog">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../dev/docker-compose.html" class="pagination-link" aria-label="Docker Compose - Overview">
-        <span class="nav-page-text">Docker Compose - Overview</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../directories/people.html" class="pagination-link" aria-label="People Data">
+        <span class="nav-page-text">People Data</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
