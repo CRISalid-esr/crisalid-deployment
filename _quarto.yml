@@ -44,6 +44,10 @@ website:
             - map/components.qmd
             - map/harvesting.qmd
             - map/message_catalog.qmd
+        - section: "Institutional Directories"
+          contents:
+            - directories/structures.qmd
+            - directories/people.qmd
         - section: "Docker Compose"
           contents:
             - dev/index.qmd
