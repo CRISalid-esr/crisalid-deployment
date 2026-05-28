@@ -1,0 +1,90 @@
+---
+title: "Structures Data"
+---
+
+Research organizations — institutions, laboratories, teams — are a key part of the research information managed by CRISalid.
+Getting them into the graph is often the first step, and it can involve some work: mapping your local identifiers, encoding the hierarchy, handling supervision relationships between units and institutions.
+This page is here to help you through it.
+
+## Two options to connect to institutional directories
+
+[CRISalid directory bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) offers two ways to feed structure data into the knowledge graph.
+Both produce the same AMQP message format consumed by the IKG middleware.
+
+| Source | DAG | Best suited for |
+|---|---|---|
+| **LDAP directory** (SUPANN 2021) | `load_ldap_structures` | Institutions with a SUPANN-compliant directory |
+| **Spreadsheet (CSV)** | `load_spreadsheet_structure` | Manual curation, institutions without LDAP, graduate schools, cross-institutional units |
+
+---
+
+## LDAP path
+
+The `load_ldap_structures` DAG queries an LDAP directory filtered on SUPANN object classes and converts entries into IKG-compliant structure records.
+
+Key LDAP attributes used: `supannCodeEntite` (identifier), `supannCodeEntiteParent` (hierarchy), `supannTypeEntite`, `supannRefId` (external identifiers such as ROR, NNS), `eduOrgLegalName`, `ou`, `description`, `businessCategory`, `labeledURI`.
+
+Structures with `businessCategory=organization` are excluded — they do not map to any IKG structure type.
+
+---
+
+## Spreadsheet path
+
+The `load_spreadsheet_structure` DAG (in [crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge)) reads a UTF-8 CSV file whose columns follow the CRISalid structures format.
+This is the recommended path for structures that are not in the institutional LDAP, or for institutions that prefer to maintain a curated file.
+
+### File format reference
+
+The full column specification and annotation syntax (labels with language tags, relationship entries with supervision codes and date ranges) is documented on the wiki:
+
+👉 [Import des données structures](https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures) on the CRISalid Esup Portail wiki
+
+### Checking and visualising your CSV before ingestion
+
+Two tools are available in the [crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) repository to validate and preview a structures CSV without running Airflow.
+
+#### As Claude Code commands
+
+If you use [Claude Code](https://claude.ai/code), two slash commands are available from inside the repository:
+
+```bash
+/check-structures path/to/structures.csv
+/visualize-structures path/to/structures.csv [output.html]
+```
+
+#### As standalone Python scripts (no dependencies)
+
+The same logic is also available as plain Python scripts that require only the standard library:
+
+```bash
+# Validate — prints all errors and warnings, exits 1 if errors found
+python .claude/commands/check_structures.py path/to/structures.csv
+
+# Generate an interactive HTML hierarchy viewer
+python .claude/commands/visualize_structures.py path/to/structures.csv [output.html]
+```
+
+#### What the checker validates
+
+- Required columns and fields
+- `local_id` format (max 10 chars, alphanumeric / `-` / `_` / `:`)
+- Duplicate `local_id` values
+- National type compatibility with `generic_type` (fetched live from the IKG model)
+- Mission fields (`main_mission` required and valid for units; warns if set on other types)
+- Conditional identifier requirements (UAI for institutions; NNS or ROR for research units)
+- Identifier format (bare ROR/ISNI IDs, RNSR pattern for NNS)
+- Reference integrity — every `local-*` target must exist in the file
+- Ordering — a referenced structure must appear in an earlier row
+- Isolation — warns on teams and unit subdivisions with no parent
+- Date annotation format (YYYYMMDD)
+- Label language tags
+
+#### What the visualiser produces
+
+An interactive HTML file (no server required, opens in any browser) showing:
+
+- The full structure hierarchy as a directed graph, colour-coded by type
+- Solid arrows for `part_of` (inclusions), dashed arrows for `member_of` (participations)
+- Ghost nodes for any external targets referenced but not defined in the file
+- A panel listing isolated structures that belong to no hierarchy
+- Click a node to highlight its direct neighbours
