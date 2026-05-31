@@ -26,16 +26,11 @@ Key LDAP attributes used: `supannCodeEntite` (identifier), `supannCodeEntitePare
 
 Structures with `businessCategory=organization` are excluded — they do not map to any IKG structure type.
 
-### Why combine LDAP with a CSV override
+### CSV complement
 
-LDAP directories rarely carry the full picture needed by the knowledge graph.
-Fields such as national research identifiers (NNS/RNSR, ROR, Wikidata), HAL collections, ERC research fields, or HCERES research areas are almost never stored in SUPANN directories.
-Supervision relationships between a unit and its external tutelle institutions (CNRS, other universities) are also absent.
-
-The CSV override layer lets you supply exactly those missing fields without abandoning the LDAP as your primary source.
-When `OVERRIDE_LDAP_STRUCTURE_DATA_FROM_SPREADSHEET=True` in your environment, the `load_ldap_structures` DAG fetches the CSV after combining LDAP results and merges it in: any non-empty CSV value overwrites the LDAP value for the same field; LDAP values are preserved where the CSV is blank.
-A structure listed in the CSV but absent from LDAP is added to the result set.
-A structure whose `generic_type` is set to `ignore` in the CSV is silently dropped from the result — useful for administrative sub-units that should not appear in the knowledge graph.
+When `OVERRIDE_LDAP_STRUCTURE_DATA_FROM_SPREADSHEET=True`, the DAG also reads a CSV file and merges it into the LDAP results: any non-empty CSV value overwrites the corresponding LDAP field, while LDAP values are kept where the CSV is blank.
+Use it to supply fields that LDAP does not carry: national identifiers (NNS/RNSR, ROR, Wikidata), tutelle relationships, HAL collections, research classifications.
+A CSV-only structure (absent from LDAP) is added to the result set; a structure with `generic_type=ignore` is dropped.
 
 ### Generating a CSV template from live LDAP
 
