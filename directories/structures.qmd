@@ -11,20 +11,18 @@ This page is here to help you through it.
 [CRISalid directory bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) offers two ways to feed structure data into the knowledge graph.
 Both produce the same AMQP message format consumed by the IKG middleware.
 
-| Source | DAG | Best suited for |
-|---|---|---|
-| **LDAP directory** (SUPANN 2021) | `load_ldap_structures` | Institutions with a SUPANN-compliant directory |
-| **Spreadsheet (CSV)** | `load_spreadsheet_structure` | Manual curation, institutions without LDAP, graduate schools, cross-institutional units |
+| Option | Source | DAG | Best suited for |
+|---|---|---|---|
+| **1 — LDAP + spreadsheet** | LDAP directory (SUPANN 2021) + CSV complement | `load_ldap_structures` | Institutions with a SUPANN-compliant directory |
+| **2 — Spreadsheet** | CSV spreadsheet | `load_spreadsheet_structure` | Manual curation, institutions without LDAP, graduate schools, cross-institutional units |
 
 ---
 
-## LDAP path
+## Option 1 — LDAP + spreadsheet
 
 The `load_ldap_structures` DAG queries an LDAP directory filtered on SUPANN object classes and converts entries into IKG-compliant structure records.
 
 Key LDAP attributes used: `supannCodeEntite` (identifier), `supannCodeEntiteParent` (hierarchy), `supannTypeEntite`, `supannRefId` (external identifiers such as ROR, NNS), `eduOrgLegalName`, `ou`, `description`, `businessCategory`, `labeledURI`.
-
-Structures with `businessCategory=organization` are excluded — they do not map to any IKG structure type.
 
 ### CSV complement
 
@@ -48,7 +46,7 @@ Once you have the template you can open it in a spreadsheet editor or edit it di
 
 ---
 
-## Spreadsheet path
+## Option 2 — Spreadsheet
 
 The `load_spreadsheet_structure` DAG (in [crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge)) reads a UTF-8 CSV file whose columns follow the CRISalid structures format.
 This is the recommended path for structures that are not in the institutional LDAP, or for institutions that prefer to maintain a fully curated file.
