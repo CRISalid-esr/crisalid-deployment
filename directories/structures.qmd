@@ -38,7 +38,7 @@ Rather than building the CSV from scratch, use the provided script to pre-fill i
 APP_ENV=DEV python scripts/generate_structure_template.py --output data/structures.csv
 ```
 
-The script connects to LDAP with the credentials defined in `.env.dev`, fetches all structures, and writes a CSV with one row per entry.
+The script connects to LDAP using the credentials defined in the environment file matching `APP_ENV` (`.env.dev`, `.env.staging`, `.env.prod`, …), fetches all structures, and writes a CSV with one row per entry.
 It maps the fields it can derive from LDAP (`local_id`, `short_labels`, `long_labels`, `descriptions`, `web`, `main_mission`, `inclusions`) and leaves the rest blank for you to fill in.
 Redirect to stdout by omitting `--output`.
 
