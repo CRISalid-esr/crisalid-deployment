@@ -70,7 +70,7 @@ The CSV is processed row by row, so any structure referenced in `inclusions` or 
 If you have ordering violations — for example after inserting rows manually — the sort script rewrites the file in the correct topological order:
 
 ```bash
-python .claude/commands/sort_structures.py path/to/structures.csv
+python scripts/sort_structures.py path/to/structures.csv
 ```
 
 The script uses Kahn's topological sort and preserves the original relative order of rows as much as possible.
