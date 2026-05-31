@@ -27,7 +27,7 @@ Key LDAP attributes used: `supannCodeEntite` (identifier), `supannCodeEntitePare
 ### CSV complement
 
 When `OVERRIDE_LDAP_STRUCTURE_DATA_FROM_SPREADSHEET=True`, the DAG also reads a CSV file and merges it into the LDAP results: any non-empty CSV value overwrites the corresponding LDAP field, while LDAP values are kept where the CSV is blank.
-Use it to supply fields that LDAP does not carry: national identifiers (NNS/RNSR, ROR, Wikidata), tutelle relationships, HAL collections, research classifications.
+Use it to supply fields that LDAP does not carry (national identifiers, tutelle relationships, HAL collections, research classifications) or to add structures not listed in LDAP.
 A CSV-only structure (absent from LDAP) is added to the result set; a structure with `generic_type=ignore` is dropped.
 
 ### Generating a CSV template from live LDAP
