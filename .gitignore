@@ -1,4 +1,5 @@
 /.quarto/
+etc/*
 .idea
 postgres-data
 realm-export

@@ -64,6 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../dev/export-kc-realm.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -107,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../index.css">
 </head>
 
-<body class="floating nav-fixed">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -129,48 +130,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">🏠 Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-overview" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">🗺️ Overview</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-crisalid-core" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">💠 Crisalid Core</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-overview">    
-        <li>
-    <a class="dropdown-item" href="../map/index.qmd">
- <span class="dropdown-text">System Overview</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../map/components.qmd">
- <span class="dropdown-text">Identify Relevant Components</span></a>
-  </li>  
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-crisalid-core">    
+        <li class="dropdown-header">Overview</li>
         <li>
     <a class="dropdown-item" href="../map/harvesting.html">
- <span class="dropdown-text">Configure publication harvesting</span></a>
+ <span class="dropdown-text">Harvesting Configuration</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../map/message_catalog.html">
  <span class="dropdown-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
   </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-development" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">🧪 Development</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-development">    
-        <li>
-    <a class="dropdown-item" href="../dev/index.qmd">
- <span class="dropdown-text">Introduction</span></a>
-  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Institutional Directories</li>
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Docker Compose</li>
         <li>
     <a class="dropdown-item" href="../dev/docker-compose.html">
- <span class="dropdown-text">Docker Compose deployment</span></a>
+ <span class="dropdown-text">Docker Compose - Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/step-by-step.qmd">
+ <span class="dropdown-text">Docker Compose - Step by Step</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dev/dev-backend.html">
- <span class="dropdown-text">Docker Compose for local development</span></a>
+ <span class="dropdown-text">Using Docker Compose as Backend for Local Development</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dev/local-tls.html">
- <span class="dropdown-text">Local TLS/HTTPs setup</span></a>
+ <span class="dropdown-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dev/export-kc-realm.html">
@@ -178,41 +169,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
         <li>
     <a class="dropdown-item" href="../dev/backup-restore-with-dc.html">
- <span class="dropdown-text">Backup and Restore with Docker Compose</span></a>
+ <span class="dropdown-text">Data backup and restoration with Docker Compose</span></a>
   </li>  
-        <li>
-    <a class="dropdown-item" href="../dev/manual_installation.qmd">
- <span class="dropdown-text">Manual Installation</span></a>
-  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Kubernetes</li>
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Requirements</li>
     </ul>
   </li>
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-production" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">🚀 Production</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-crisalid-ai" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">🤖 Crisalid AI</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-production">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-crisalid-ai">    
+        <li class="dropdown-header">Overview</li>
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Installation</li>
         <li>
-    <a class="dropdown-item" href="../prod/index.qmd">
- <span class="dropdown-text">Introduction</span></a>
+    <a class="dropdown-item" href="../ai/using-skills.qmd">
+ <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../prod/helm_charts.qmd">
- <span class="dropdown-text">Kubernetes deployment</span></a>
-  </li>  
-        <li>
-    <a class="dropdown-item" href="../prod/manual_installation.qmd">
- <span class="dropdown-text">Manual Installation</span></a>
-  </li>  
-    </ul>
-  </li>
-  <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-requirements" role="link" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">⚙️ Requirements</span>
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-requirements">    
-        <li>
-    <a class="dropdown-item" href="../requirements/index.qmd">
- <span class="dropdown-text">Required Infrastructure and Dependencies</span></a>
+    <a class="dropdown-item" href="../ai/embeddings.qmd">
+ <span class="dropdown-text">Semantic Embeddings</span></a>
   </li>  
     </ul>
   </li>
@@ -221,10 +200,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">🔒 Security</span>
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-security">    
-        <li>
-    <a class="dropdown-item" href="../security/index.qmd">
- <span class="dropdown-text">Security Considerations</span></a>
-  </li>  
     </ul>
   </li>
 </ul>
@@ -252,31 +227,193 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Docker Compose</li><li class="breadcrumb-item"><a href="../dev/backup-restore-with-dc.html">Data backup and restoration with Docker Compose</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Overview</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">map/index.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">map/components.qmd</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/harvesting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Harvesting Configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/message_catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Institutional Directories</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">directories/structures.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">directories/people.qmd</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Docker Compose</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">dev/index.qmd</span>
+  </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/docker-compose.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose - Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/step-by-step.qmd" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose - Step by Step</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/dev-backend.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using Docker Compose as Backend for Local Development</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/local-tls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/export-kc-realm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Export Keycloak Realm</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/backup-restore-with-dc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data backup and restoration with Docker Compose</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+ <span class="menu-text">dev/manual_installation.qmd</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Kubernetes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">prod/index.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">prod/helm_charts.qmd</span>
+  </li>
+          <li class="sidebar-item">
+ <span class="menu-text">prod/manual_installation.qmd</span>
+  </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Requirements</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+ <span class="menu-text">requirements/index.qmd</span>
+  </li>
+      </ul>
+  </li>
+    </ul>
+    </div>
     <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#neo4j" id="toc-neo4j" class="nav-link active" data-scroll-target="#neo4j">Neo4j</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a>
   <ul class="collapse">
-  <li><a href="#full-backup" id="toc-full-backup" class="nav-link" data-scroll-target="#full-backup">📦 Full backup</a></li>
-  <li><a href="#restore-from-a-backup-archive" id="toc-restore-from-a-backup-archive" class="nav-link" data-scroll-target="#restore-from-a-backup-archive">♻️ Restore from a backup archive</a></li>
+  <li><a href="#neo4j-backup-strategies" id="toc-neo4j-backup-strategies" class="nav-link" data-scroll-target="#neo4j-backup-strategies">Neo4j backup strategies</a></li>
+  <li><a href="#postgresql-deployment-modes" id="toc-postgresql-deployment-modes" class="nav-link" data-scroll-target="#postgresql-deployment-modes">PostgreSQL deployment modes</a></li>
   </ul></li>
-  <li><a href="#sovisuplus-postgresql-container-svp-db-host-port-5432" id="toc-sovisuplus-postgresql-container-svp-db-host-port-5432" class="nav-link" data-scroll-target="#sovisuplus-postgresql-container-svp-db-host-port-5432">SoVisuplus Postgresql (container: svp-db, host port 5432)</a>
+  <li><a href="#neo4j" id="toc-neo4j" class="nav-link" data-scroll-target="#neo4j">Neo4j</a>
   <ul class="collapse">
-  <li><a href="#make-a-sql-dump" id="toc-make-a-sql-dump" class="nav-link" data-scroll-target="#make-a-sql-dump">Make a SQL dump</a></li>
-  <li><a href="#restore-into-docker-same-svp-db" id="toc-restore-into-docker-same-svp-db" class="nav-link" data-scroll-target="#restore-into-docker-same-svp-db">Restore into Docker (same svp-db)</a></li>
-  <li><a href="#restore-into-local-postgres-on-your-machine" id="toc-restore-into-local-postgres-on-your-machine" class="nav-link" data-scroll-target="#restore-into-local-postgres-on-your-machine">Restore into local Postgres (on your machine)</a></li>
+  <li><a href="#quick-backup-filesystem-copy" id="toc-quick-backup-filesystem-copy" class="nav-link" data-scroll-target="#quick-backup-filesystem-copy">⚡ Quick backup (filesystem copy)</a>
+  <ul class="collapse">
+  <li><a href="#backup" id="toc-backup" class="nav-link" data-scroll-target="#backup">Backup</a></li>
+  <li><a href="#restore" id="toc-restore" class="nav-link" data-scroll-target="#restore">Restore</a></li>
   </ul></li>
-  <li><a href="#svp-harvester-postgresql-container-harvester-db-host-port-5433" id="toc-svp-harvester-postgresql-container-harvester-db-host-port-5433" class="nav-link" data-scroll-target="#svp-harvester-postgresql-container-harvester-db-host-port-5433">SVP Harvester Postgresql (container: harvester-db, host port 5433)</a>
+  <li><a href="#proper-backup-recommended" id="toc-proper-backup-recommended" class="nav-link" data-scroll-target="#proper-backup-recommended">🧱 Proper backup (recommended)</a>
   <ul class="collapse">
-  <li><a href="#make-a-sql-dump-1" id="toc-make-a-sql-dump-1" class="nav-link" data-scroll-target="#make-a-sql-dump-1">Make a SQL dump</a></li>
-  <li><a href="#restore-into-docker-harvester-db" id="toc-restore-into-docker-harvester-db" class="nav-link" data-scroll-target="#restore-into-docker-harvester-db">Restore into Docker (harvester-db)</a></li>
-  <li><a href="#restore-into-local-postgres" id="toc-restore-into-local-postgres" class="nav-link" data-scroll-target="#restore-into-local-postgres">Restore into local Postgres</a></li>
+  <li><a href="#backup-on-source-environment" id="toc-backup-on-source-environment" class="nav-link" data-scroll-target="#backup-on-source-environment">Backup (on source environment)</a></li>
+  <li><a href="#restore-on-target-environment" id="toc-restore-on-target-environment" class="nav-link" data-scroll-target="#restore-on-target-environment">Restore (on target environment)</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#postgresql" id="toc-postgresql" class="nav-link" data-scroll-target="#postgresql">PostgreSQL</a>
+  <ul class="collapse">
+  <li><a href="#case-1-postgresql-inside-docker-compose" id="toc-case-1-postgresql-inside-docker-compose" class="nav-link" data-scroll-target="#case-1-postgresql-inside-docker-compose">Case 1 — PostgreSQL inside Docker Compose</a>
+  <ul class="collapse">
+  <li><a href="#backup-1" id="toc-backup-1" class="nav-link" data-scroll-target="#backup-1">Backup</a></li>
+  <li><a href="#restore-1" id="toc-restore-1" class="nav-link" data-scroll-target="#restore-1">Restore</a></li>
+  </ul></li>
+  <li><a href="#case-2-postgresql-outside-docker-production-managed-db" id="toc-case-2-postgresql-outside-docker-production-managed-db" class="nav-link" data-scroll-target="#case-2-postgresql-outside-docker-production-managed-db">Case 2 — PostgreSQL outside Docker (production / managed DB)</a>
+  <ul class="collapse">
+  <li><a href="#backup-on-server" id="toc-backup-on-server" class="nav-link" data-scroll-target="#backup-on-server">Backup (on server)</a></li>
+  <li><a href="#transfer" id="toc-transfer" class="nav-link" data-scroll-target="#transfer">Transfer</a></li>
+  <li><a href="#restore-developer-environment" id="toc-restore-developer-environment" class="nav-link" data-scroll-target="#restore-developer-environment">Restore (developer environment)</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -288,7 +425,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Docker Compose</li><li class="breadcrumb-item"><a href="../dev/backup-restore-with-dc.html">Data backup and restoration with Docker Compose</a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title">Data backup and restoration with Docker Compose</h1>
 </div>
@@ -308,108 +445,202 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <blockquote class="blockquote">
-<p>Quick recipes to backup and restore services in the CRISalid Docker Compose stack.</p>
+<p>Backup and restore data in the CRISalid Docker Compose stack.</p>
 </blockquote>
-<section id="neo4j" class="level1">
-<h1>Neo4j</h1>
-<p>All commands are to be run <strong>from <code>docker/neo4j/</code></strong> in your <code>crisalid-deployment</code> checkout.</p>
-<section id="full-backup" class="level2">
-<h2 class="anchored" data-anchor-id="full-backup">📦 Full backup</h2>
 <blockquote class="blockquote">
-<p>Recommended: stop Neo4j before a backup to ensure a clean snapshot.</p>
+<p>Typically, backups are produced on a <strong>production server</strong> and then transferred (via SFTP) to a <strong>development environment</strong> for restoration.</p>
 </blockquote>
-<p>Create a compressed archive of the key data directories (preserve numeric ownership for container UID/GID 7474):</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> tar <span class="at">--numeric-owner</span> <span class="at">-czvf</span> neo4j-full-<span class="va">$(</span><span class="fu">date</span> +%F<span class="va">)</span>.tar.gz <span class="dt">\</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  data import backups plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>There are two database types to consider (Redis is not covered here as it is generally used for caching and can be safely cleared):</p>
+<section id="neo4j-backup-strategies" class="level2">
+<h2 class="anchored" data-anchor-id="neo4j-backup-strategies">Neo4j backup strategies</h2>
+<ul>
+<li><strong>Quick backup</strong> → copy the <code>neo4j/data</code> directory</li>
+<li><strong>Proper backup</strong> → use <code>neo4j-admin database dump</code></li>
+</ul>
 </section>
-<section id="restore-from-a-backup-archive" class="level2">
-<h2 class="anchored" data-anchor-id="restore-from-a-backup-archive">♻️ Restore from a backup archive</h2>
-<blockquote class="blockquote">
-<p><strong>Important:</strong> Stop Neo4j before restoring files.</p>
-</blockquote>
-<ol type="1">
-<li>Extract the archive to the Neo4j docker directory:</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-xzvf</span> neo4j-data-20250908.tar.gz <span class="dt">\</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-C</span> ~/.../crisalid-deployment/docker/neo4j</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Alternatively, if you have full access to the server, you can skip the previous steps and restore directly with rsync.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/your/local/crisalid-deployment/docker/neo4j</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> rsync <span class="at">-av</span> <span class="at">--delete</span> <span class="dt">\</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  myuser@myserver.myuniv.fr:/opt/crisalid/crisalid-deployment/docker/neo4j/data/ <span class="dt">\</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  ./data/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="2" type="1">
-<li>Ensure directory ownership matches the container user (UID/GID <strong>7474</strong>):</li>
-</ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /path/to/your/local/crisalid-deployment/docker/neo4j</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown <span class="at">-R</span> 7474:7474 data import backups plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="3" type="1">
-<li>Start Neo4j again (alone or with other services):</li>
-</ol>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j up <span class="at">-d</span> neo4j</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ol start="4" type="1">
-<li>(Optional) Check logs:</li>
-</ol>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose logs <span class="at">-f</span> neo4j</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="postgresql-deployment-modes" class="level2">
+<h2 class="anchored" data-anchor-id="postgresql-deployment-modes">PostgreSQL deployment modes</h2>
+<p>Only SoVisu+ and Harvester databases are covered here, as Keycloak and Airflow restoration from one environment to another are not recommended.</p>
+<ul>
+<li><strong>Inside Docker Compose</strong> (containers: <code>svp-db</code>, <code>harvester-db</code>)</li>
+<li><strong>Outside Docker</strong> (managed database server, e.g.&nbsp;production)</li>
+</ul>
 <hr>
 </section>
 </section>
-<section id="sovisuplus-postgresql-container-svp-db-host-port-5432" class="level1">
-<h1>SoVisuplus Postgresql (container: svp-db, host port 5432)</h1>
-<section id="make-a-sql-dump" class="level2">
-<h2 class="anchored" data-anchor-id="make-a-sql-dump">Make a SQL dump</h2>
-<p>With a running Docker Compose stack (svp-db container):</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># optional: export env if not already loaded</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">SVP_DB_NAME</span><span class="op">=</span><span class="va">${SVP_DB_NAME}</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">SVP_DB_USER</span><span class="op">=</span><span class="va">${SVP_DB_USER}</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec <span class="at">-T</span> svp-db <span class="dt">\</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  pg_dump <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">--format</span><span class="op">=</span>plain <span class="dt">\</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">--no-owner</span> <span class="at">--no-privileges</span> <span class="dt">\</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="dt">\</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> <span class="st">"sovisuplus-</span><span class="va">$(</span><span class="fu">date</span> +%F<span class="va">)</span><span class="st">.sql"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="neo4j" class="level1">
+<h1>Neo4j</h1>
+<p>All commands are run from:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">crisalid-deployment/docker</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="quick-backup-filesystem-copy" class="level2">
+<h2 class="anchored" data-anchor-id="quick-backup-filesystem-copy">⚡ Quick backup (filesystem copy)</h2>
+<blockquote class="blockquote">
+<p>Fast and simple. Suitable for development or emergency copies.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>⚠️ This backup method will include both <code>neo4j</code> and <code>system</code> databases, so it will overwrite users/passwords on restore.</p>
+</blockquote>
+<section id="backup" class="level3">
+<h3 class="anchored" data-anchor-id="backup">Backup</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> docker/neo4j</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> tar <span class="at">--numeric-owner</span> <span class="at">-czvf</span> neo4j-data-<span class="va">$(</span><span class="fu">date</span> +%F<span class="va">)</span>.tar.gz data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="restore-into-docker-same-svp-db" class="level2">
-<h2 class="anchored" data-anchor-id="restore-into-docker-same-svp-db">Restore into Docker (same svp-db)</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> sovisuplus-YYYY-MM-DD.sql <span class="kw">|</span> <span class="dt">\</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">docker</span> compose exec <span class="at">-T</span> svp-db psql <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="restore" class="level3">
+<h3 class="anchored" data-anchor-id="restore">Restore</h3>
+<blockquote class="blockquote">
+<p>⚠️ Neo4j must be stopped before restoring. It is highly recommended to stop all the services hat are directly speaking to Neo4j (e.g.&nbsp;<code>crisalid-ikg</code>, <code>crisalid-apollo</code>, <code>ofelia</code>, etc.) to avoid any connection issues during the restore process.</p>
+</blockquote>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> docker</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--file</span> docker-compose.yml <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--file</span> docker-compose.dev.yml <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ofelia <span class="dt">\</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  stop neo4j crisalid-ikg apollo crisalid-ofelia</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> <span class="at">-xzvf</span> neo4j-data-YYYY-MM-DD.tar.gz <span class="at">-C</span> docker/neo4j</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Fix ownership:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> docker/neo4j</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown <span class="at">-R</span> 7474:7474 data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Restart:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> neo4j up <span class="at">-d</span> neo4j</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In case you have a direct access to the source server, direct synchronization is possible:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> docker/neo4j</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> rsync <span class="at">-avz</span> <span class="at">--delete</span> <span class="dt">\</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  user@source-server:/path/to/neo4j/data/ <span class="dt">\</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  data/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
 </section>
-<section id="restore-into-local-postgres-on-your-machine" class="level2">
-<h2 class="anchored" data-anchor-id="restore-into-local-postgres-on-your-machine">Restore into local Postgres (on your machine)</h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">$SVP_DB_PASSWORD</span><span class="st">"</span> <span class="ex">psql</span> <span class="dt">\</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-h</span> localhost <span class="at">-p</span> 5432 <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> sovisuplus-YYYY-MM-DD.sql</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="proper-backup-recommended" class="level2">
+<h2 class="anchored" data-anchor-id="proper-backup-recommended">🧱 Proper backup (recommended)</h2>
+<blockquote class="blockquote">
+<p>Safe backup using <code>neo4j-admin</code>.</p>
+</blockquote>
+<p>Before running the backup script, check your NEO4J_ADMIN_IMAGE variable in <code>.env</code> to ensure you are using the correct Neo4j version for the backup.</p>
+<section id="backup-on-source-environment" class="level3">
+<h3 class="anchored" data-anchor-id="backup-on-source-environment">Backup (on source environment)</h3>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/neo4j_offline_backup.sh</span> dev</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This:</p>
+<ul>
+<li>stops Neo4j</li>
+<li>dumps databases into <code>neo4j/backups/&lt;timestamp&gt;/</code></li>
+<li>restarts services</li>
+</ul>
+<hr>
+</section>
+<section id="restore-on-target-environment" class="level3">
+<h3 class="anchored" data-anchor-id="restore-on-target-environment">Restore (on target environment)</h3>
+<blockquote class="blockquote">
+<p>case 1: restore backup on a local development environment. case 2: restore backup into a staging environment (e.g.&nbsp;<code>staging</code>)</p>
+</blockquote>
+<ol type="1">
+<li><p>Transfer backup directory from production to target machine (using SFTP or equivalent)</p></li>
+<li><p>Place it in:</p></li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker/neo4j/backups/</span><span class="op">&lt;</span>timestamp<span class="op">&gt;</span>/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Fix permission issues to allow the restore script to read the dump files:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> docker/neo4j/backups/<span class="op">&lt;</span>timestamp<span class="op">&gt;</span>/</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown <span class="at">-R</span> 7474:7474 .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>Run:</li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/neo4j_offline_restore.sh</span> dev <span class="op">&lt;</span>timestamp<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>⚠️ Only the <code>neo4j</code> database is restored (not <code>system</code>), so users/passwords are preserved.</p>
+</blockquote>
+<hr>
 </section>
 </section>
-<section id="svp-harvester-postgresql-container-harvester-db-host-port-5433" class="level1">
-<h1>SVP Harvester Postgresql (container: harvester-db, host port 5433)</h1>
-<p>With a running Docker Compose stack (harvester-db container):</p>
-<section id="make-a-sql-dump-1" class="level2">
-<h2 class="anchored" data-anchor-id="make-a-sql-dump-1">Make a SQL dump</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HARVESTER_DB_NAME</span><span class="op">=</span><span class="va">${HARVESTER_DB_NAME}</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HARVESTER_DB_USER</span><span class="op">=</span><span class="va">${HARVESTER_DB_USER}</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec <span class="at">-T</span> harvester-db <span class="dt">\</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  pg_dump <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">--format</span><span class="op">=</span>plain <span class="dt">\</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">--no-owner</span> <span class="at">--no-privileges</span> <span class="dt">\</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="dt">\</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> <span class="st">"harvester-</span><span class="va">$(</span><span class="fu">date</span> +%F<span class="va">)</span><span class="st">.sql"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="restore-into-docker-harvester-db" class="level2">
-<h2 class="anchored" data-anchor-id="restore-into-docker-harvester-db">Restore into Docker (harvester-db)</h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> harvester-YYYY-MM-DD.sql <span class="kw">|</span> <span class="dt">\</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">docker</span> compose exec <span class="at">-T</span> harvester-db psql <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="postgresql" class="level1">
+<h1>PostgreSQL</h1>
+<p>Two cases depending on where PostgreSQL runs.</p>
+<hr>
+<section id="case-1-postgresql-inside-docker-compose" class="level2">
+<h2 class="anchored" data-anchor-id="case-1-postgresql-inside-docker-compose">Case 1 — PostgreSQL inside Docker Compose</h2>
+<p>Containers:</p>
+<ul>
+<li><code>svp-db</code></li>
+<li><code>harvester-db</code></li>
+</ul>
+<section id="backup-1" class="level3">
+<h3 class="anchored" data-anchor-id="backup-1">Backup</h3>
+<p>Run sovisuplus (at least the database container) in detached mode:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">-f</span> docker-compose.local-postgres.yaml <span class="dt">\</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">--profile</span> sovisuplus-db  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then, dump the database into custom format (compressed, non-plain SQL):</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec <span class="at">-T</span> svp-db <span class="dt">\</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  pg_dump <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--format</span><span class="op">=</span>custom <span class="at">--no-owner</span> <span class="at">--no-privileges</span> <span class="dt">\</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> sovisuplus.dump</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Run the same commands for Harvester:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">-f</span> docker-compose.local-postgres.yaml <span class="dt">\</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">--profile</span> harvester-db  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec <span class="at">-T</span> harvester-db <span class="dt">\</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  pg_dump <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--format</span><span class="op">=</span>custom <span class="at">--no-owner</span> <span class="at">--no-privileges</span> <span class="dt">\</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">&gt;</span> harvester.dump</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
 </section>
-<section id="restore-into-local-postgres" class="level2">
-<h2 class="anchored" data-anchor-id="restore-into-local-postgres">Restore into local Postgres</h2>
-<p>Create target DB/user on your host if needed, then:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="va">PGPASSWORD</span><span class="op">=</span><span class="st">"</span><span class="va">$HARVESTER_DB_PASSWORD</span><span class="st">"</span> <span class="ex">psql</span> <span class="dt">\</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-h</span> localhost <span class="at">-p</span> 5432 <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> harvester-YYYY-MM-DD.sql</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="restore-1" class="level3">
+<h3 class="anchored" data-anchor-id="restore-1">Restore</h3>
+<p>For the restoration commands to works, the databases container should have be started at least once and the databases initialized by prisma or alembic migrations.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> sovisuplus.dump <span class="kw">|</span> <span class="dt">\</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">docker</span> compose exec <span class="at">-T</span> svp-db <span class="dt">\</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  pg_restore <span class="at">-U</span> <span class="st">"</span><span class="va">$SVP_DB_USER</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> <span class="st">"</span><span class="va">$SVP_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="dt">\</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">--no-owner</span> <span class="at">--no-privileges</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> harvester.dump <span class="kw">|</span> <span class="dt">\</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">docker</span> compose exec <span class="at">-T</span> harvester-db <span class="dt">\</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  pg_restore <span class="at">-U</span> <span class="st">"</span><span class="va">$HARVESTER_DB_USER</span><span class="st">"</span> <span class="at">-d</span> <span class="st">"</span><span class="va">$HARVESTER_DB_NAME</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--clean</span> <span class="at">--if-exists</span> <span class="dt">\</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">--no-owner</span> <span class="at">--no-privileges</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+</section>
+<section id="case-2-postgresql-outside-docker-production-managed-db" class="level2">
+<h2 class="anchored" data-anchor-id="case-2-postgresql-outside-docker-production-managed-db">Case 2 — PostgreSQL outside Docker (production / managed DB)</h2>
+<section id="backup-on-server" class="level3">
+<h3 class="anchored" data-anchor-id="backup-on-server">Backup (on server)</h3>
+<p>Use the dump_prod_dbs.sh script:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/dump_prod_dbs.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="transfer" class="level3">
+<h3 class="anchored" data-anchor-id="transfer">Transfer</h3>
+<p>Copy dump files from production to development machine using <strong>SFTP</strong>.</p>
+<hr>
+</section>
+<section id="restore-developer-environment" class="level3">
+<h3 class="anchored" data-anchor-id="restore-developer-environment">Restore (developer environment)</h3>
+<p>Use the restore script:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/restore_prod_dbs.sh</span> /path/to/sovisuplus.dump /path/to/harvester.dump</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>examples:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/restore_prod_dbs.sh</span>  /opt/crisalid/backups/sovisuplus_svp_prd_20260402_173929.dump /opt/crisalid/backups/harvester_p1ps_harv_db_20260402_174259.dump</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This script:</p>
+<ul>
+<li>validates dump filenames</li>
+<li>asks for confirmation</li>
+<li>stops services (<code>sovisuplus</code>, <code>harvester-worker</code>, etc.)</li>
+<li>restores databases</li>
+<li>restarts services</li>
+</ul>
+<hr>
 
 
+</section>
 </section>
 </section>
 
@@ -831,6 +1062,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../dev/export-kc-realm.html" class="pagination-link" aria-label="Export Keycloak Realm">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Export Keycloak Realm</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
 </div> <!-- /content -->
 
 
