@@ -110,26 +110,6 @@ Generates a self-contained HTML file (no server required, opens in any browser).
 `--root-institution` sets the root node used for the initial viewport centering and the default 1-level expanded view; omit it to start fully expanded.
 If `output.html` is not specified, the file is written next to the CSV with the same basename.
 
-#### What the visualiser shows
-
-- The full structure hierarchy as a directed acyclic graph, laid out with a right-to-left dagre algorithm (root institution on the right, leaf teams on the left)
-- Nodes colour-coded by `generic_type`: institution · institution subdivision · unit · unit subdivision · team
-- Solid arrows for inclusion relationships (`part_of`); dashed arrows for participation/supervision relationships, colour-coded by role (main / associated / participating supervision)
-- External institutions referenced as tutelles (identified by `uai-` prefixes in the participations column) are shown as a separate group at the top of the graph, with names looked up from the national ESR institutions reference file
-- Structures marked `generic_type=ignore` are excluded from the graph
-
-#### Interacting with the graph
-
-| Action | Effect |
-|---|---|
-| **Double-click** a node | Expand or collapse its children |
-| **Single-click** a node | Open the info panel: full name, type, mission, identifiers (NNS, ROR, UAI, ISNI, Wikidata, Scopus) |
-| **Expand all / Collapse all** | Toolbar buttons |
-| **Show/hide participation edges** | Toggle in the toolbar |
-| **Show/hide external nodes** | Toggle in the toolbar |
-| **Search** | Filter and highlight nodes by label or identifier |
-| **Fit** | Reset the viewport to show all visible nodes |
-
 #### As Claude Code slash commands
 
 If you use [Claude Code](https://claude.ai/code) inside the `crisalid-directory-bridge` repository, the same tools are available as slash commands:
