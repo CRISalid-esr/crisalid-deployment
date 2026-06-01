@@ -403,61 +403,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> .claude/commands/visualize_structures.py path/to/structures.csv <span class="pp">[</span><span class="ss">output.html</span><span class="pp">]</span> <span class="dt">\</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  [--root-institution LOCAL_ID]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Generates a self-contained HTML file (no server required, opens in any browser). <code>--root-institution</code> sets the root node used for the initial viewport centering and the default 1-level expanded view; omit it to start fully expanded. If <code>output.html</code> is not specified, the file is written next to the CSV with the same basename.</p>
-<section id="what-the-visualiser-shows" class="level4">
-<h4 class="anchored" data-anchor-id="what-the-visualiser-shows">What the visualiser shows</h4>
-<ul>
-<li>The full structure hierarchy as a directed acyclic graph, laid out with a right-to-left dagre algorithm (root institution on the right, leaf teams on the left)</li>
-<li>Nodes colour-coded by <code>generic_type</code>: institution · institution subdivision · unit · unit subdivision · team</li>
-<li>Solid arrows for inclusion relationships (<code>part_of</code>); dashed arrows for participation/supervision relationships, colour-coded by role (main / associated / participating supervision)</li>
-<li>External institutions referenced as tutelles (identified by <code>uai-</code> prefixes in the participations column) are shown as a separate group at the top of the graph, with names looked up from the national ESR institutions reference file</li>
-<li>Structures marked <code>generic_type=ignore</code> are excluded from the graph</li>
-</ul>
-</section>
-<section id="interacting-with-the-graph" class="level4">
-<h4 class="anchored" data-anchor-id="interacting-with-the-graph">Interacting with the graph</h4>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Action</th>
-<th>Effect</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong>Double-click</strong> a node</td>
-<td>Expand or collapse its children</td>
-</tr>
-<tr class="even">
-<td><strong>Single-click</strong> a node</td>
-<td>Open the info panel: full name, type, mission, identifiers (NNS, ROR, UAI, ISNI, Wikidata, Scopus)</td>
-</tr>
-<tr class="odd">
-<td><strong>Expand all / Collapse all</strong></td>
-<td>Toolbar buttons</td>
-</tr>
-<tr class="even">
-<td><strong>Show/hide participation edges</strong></td>
-<td>Toggle in the toolbar</td>
-</tr>
-<tr class="odd">
-<td><strong>Show/hide external nodes</strong></td>
-<td>Toggle in the toolbar</td>
-</tr>
-<tr class="even">
-<td><strong>Search</strong></td>
-<td>Filter and highlight nodes by label or identifier</td>
-</tr>
-<tr class="odd">
-<td><strong>Fit</strong></td>
-<td>Reset the viewport to show all visible nodes</td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="as-claude-code-slash-commands" class="level4">
 <h4 class="anchored" data-anchor-id="as-claude-code-slash-commands">As Claude Code slash commands</h4>
 <p>If you use <a href="https://claude.ai/code">Claude Code</a> inside the <code>crisalid-directory-bridge</code> repository, the same tools are available as slash commands:</p>
