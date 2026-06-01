@@ -1,9 +1,5 @@
 /.quarto/
-# Quarto per-file renders (output goes to docs/ via _quarto.yml; stray HTML next to .qmd sources)
-dev/*.html
-map/*.html
-prod/*.html
-requirements/*.html
+etc/*
 .idea
 postgres-data
 docker/ikg/data/openalex/*

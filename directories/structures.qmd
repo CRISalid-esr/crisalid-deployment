@@ -11,27 +11,45 @@ This page is here to help you through it.
 [CRISalid directory bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) offers two ways to feed structure data into the knowledge graph.
 Both produce the same AMQP message format consumed by the IKG middleware.
 
-| Source | DAG | Best suited for |
-|---|---|---|
-| **LDAP directory** (SUPANN 2021) | `load_ldap_structures` | Institutions with a SUPANN-compliant directory |
-| **Spreadsheet (CSV)** | `load_spreadsheet_structure` | Manual curation, institutions without LDAP, graduate schools, cross-institutional units |
+| Option | Source | DAG | Best suited for |
+|---|---|---|---|
+| **1 — LDAP + spreadsheet** | LDAP directory (SUPANN 2021) + CSV complement | `load_ldap_structures` | Institutions with a SUPANN-compliant directory |
+| **2 — Spreadsheet** | CSV spreadsheet | `load_spreadsheet_structure` | Manual curation, institutions without LDAP, graduate schools, cross-institutional units |
 
 ---
 
-## LDAP path
+## Option 1 — LDAP + spreadsheet
 
 The `load_ldap_structures` DAG queries an LDAP directory filtered on SUPANN object classes and converts entries into IKG-compliant structure records.
 
 Key LDAP attributes used: `supannCodeEntite` (identifier), `supannCodeEntiteParent` (hierarchy), `supannTypeEntite`, `supannRefId` (external identifiers such as ROR, NNS), `eduOrgLegalName`, `ou`, `description`, `businessCategory`, `labeledURI`.
 
-Structures with `businessCategory=organization` are excluded — they do not map to any IKG structure type.
+### CSV complement
+
+When `OVERRIDE_LDAP_STRUCTURE_DATA_FROM_SPREADSHEET=True`, the DAG also reads a CSV file and merges it into the LDAP results: any non-empty CSV value overwrites the corresponding LDAP field, while LDAP values are kept where the CSV is blank.
+Use it to supply fields that LDAP does not carry (national identifiers, tutelle relationships, HAL collections, research classifications) or to add structures not listed in LDAP.
+A CSV-only structure (absent from LDAP) is added to the result set; a structure with `generic_type=ignore` is dropped.
+
+### Generating a CSV template from live LDAP
+
+Rather than building the CSV from scratch, use the provided script to pre-fill it from your live directory:
+
+```bash
+APP_ENV=DEV python scripts/generate_structure_template.py --output data/structures.csv
+```
+
+The script connects to LDAP using the credentials defined in the environment file matching `APP_ENV` (`.env.dev`, `.env.staging`, `.env.prod`, …), fetches all structures, and writes a CSV with one row per entry.
+It maps the fields it can derive from LDAP (`local_id`, `short_labels`, `long_labels`, `descriptions`, `web`, `main_mission`, `inclusions`) and leaves the rest blank for you to fill in.
+Redirect to stdout by omitting `--output`.
+
+Once you have the template you can open it in a spreadsheet editor or edit it directly, then use the tools below to validate and sort it before ingestion.
 
 ---
 
-## Spreadsheet path
+## Option 2 — Spreadsheet
 
 The `load_spreadsheet_structure` DAG (in [crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge)) reads a UTF-8 CSV file whose columns follow the CRISalid structures format.
-This is the recommended path for structures that are not in the institutional LDAP, or for institutions that prefer to maintain a curated file.
+This is the recommended path for structures that are not in the institutional LDAP, or for institutions that prefer to maintain a fully curated file.
 
 ### File format reference
 
@@ -39,36 +57,38 @@ The full column specification and annotation syntax (labels with language tags, 
 
 👉 [Import des données structures](https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures) on the CRISalid Esup Portail wiki
 
-### Checking and visualising your CSV before ingestion
+---
 
-Two tools are available in the [crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) repository to validate and preview a structures CSV without running Airflow.
+## Tooling for CSV files
 
-#### As Claude Code commands
+Three standalone Python scripts are available in the repository to prepare and inspect a structures CSV — whether you use the LDAP+CSV combined path or the pure spreadsheet path.
+They require only the standard library (no Airflow, no virtualenv).
 
-If you use [Claude Code](https://claude.ai/code), two slash commands are available from inside the repository:
+### Fixing row ordering
+
+The CSV is processed row by row, so any structure referenced in `inclusions` or `participations` must appear in an **earlier row** than the structure that references it.
+If you have ordering violations — for example after inserting rows manually — the sort script rewrites the file in the correct topological order:
 
 ```bash
-/check-structures path/to/structures.csv
-/visualize-structures path/to/structures.csv [output.html]
+python scripts/sort_structures.py path/to/structures.csv
 ```
 
-#### As standalone Python scripts (no dependencies)
+The script uses Kahn's topological sort and preserves the original relative order of rows as much as possible.
+If a circular dependency is detected it prints a warning and leaves the file unchanged.
 
-The same logic is also available as plain Python scripts that require only the standard library:
+### Validating the CSV
 
 ```bash
-# Validate — prints all errors and warnings, exits 1 if errors found
 python .claude/commands/check_structures.py path/to/structures.csv
-
-# Generate an interactive HTML hierarchy viewer
-python .claude/commands/visualize_structures.py path/to/structures.csv [output.html]
 ```
 
-#### What the checker validates
+Prints all errors and warnings with row numbers, then exits with a non-zero status if errors are found.
+
+What it checks:
 
 - Required columns and fields
 - `local_id` format (max 10 chars, alphanumeric / `-` / `_` / `:`)
-- Duplicate `local_id` values
+- Duplicate `local_id` values; `generic_type=ignore` rows are only checked for duplicates
 - National type compatibility with `generic_type` (fetched live from the IKG model)
 - Mission fields (`main_mission` required and valid for units; warns if set on other types)
 - Conditional identifier requirements (UAI for institutions; NNS or ROR for research units)
@@ -79,12 +99,22 @@ python .claude/commands/visualize_structures.py path/to/structures.csv [output.h
 - Date annotation format (YYYYMMDD)
 - Label language tags
 
-#### What the visualiser produces
+### Visualising the hierarchy
 
-An interactive HTML file (no server required, opens in any browser) showing:
+```bash
+python .claude/commands/visualize_structures.py path/to/structures.csv [output.html] \
+  [--root-institution LOCAL_ID]
+```
 
-- The full structure hierarchy as a directed graph, colour-coded by type
-- Solid arrows for `part_of` (inclusions), dashed arrows for `member_of` (participations)
-- Ghost nodes for any external targets referenced but not defined in the file
-- A panel listing isolated structures that belong to no hierarchy
-- Click a node to highlight its direct neighbours
+Generates a self-contained HTML file (no server required, opens in any browser).
+`--root-institution` sets the root node used for the initial viewport centering and the default 1-level expanded view; omit it to start fully expanded.
+If `output.html` is not specified, the file is written next to the CSV with the same basename.
+
+#### As Claude Code slash commands
+
+If you use [Claude Code](https://claude.ai/code) inside the `crisalid-directory-bridge` repository, the same tools are available as slash commands:
+
+```bash
+/check-structures path/to/structures.csv
+/visualize-structures path/to/structures.csv [output.html]
+```
