@@ -5,8 +5,28 @@
     <lastmod>2026-05-31T12:56:11.632Z</lastmod>
   </url>
   <url>
-    <loc>https://docs.crisalid.org/index.html</loc>
-    <lastmod>2025-06-11T07:44:56.157Z</lastmod>
+    <loc>https://docs.crisalid.org/prod/manual_installation.html</loc>
+    <lastmod>2026-04-15T09:39:20.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/prod/helm_charts.html</loc>
+    <lastmod>2026-04-15T09:39:20.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/map/index.html</loc>
+    <lastmod>2026-04-15T09:39:20.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/map/components.html</loc>
+    <lastmod>2026-04-15T09:39:20.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/dev/step-by-step.html</loc>
+    <lastmod>2026-05-25T05:20:30.078Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
+    <lastmod>2026-05-16T08:40:02.714Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
@@ -15,6 +35,34 @@
   <url>
     <loc>https://docs.crisalid.org/dev/dev-backend.html</loc>
     <lastmod>2026-02-28T09:08:08.279Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/using-skills.html</loc>
+    <lastmod>2026-04-19T07:26:35.435Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/local-workstation.html</loc>
+    <lastmod>2026-05-16T08:40:02.713Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/embeddings.html</loc>
+    <lastmod>2026-05-24T06:30:37.920Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/configuring-openwebui.html</loc>
+    <lastmod>2026-05-16T08:40:02.712Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
+    <lastmod>2026-05-16T08:40:02.712Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/index.html</loc>
+    <lastmod>2026-05-16T08:40:02.713Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/ai/security.html</loc>
+    <lastmod>2026-05-16T08:40:02.713Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>

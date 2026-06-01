@@ -1,0 +1,36 @@
+services:
+  openwebui:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    ports:
+      - "${OPENWEBUI_PORT}:8080"
+    volumes:
+      - ./data:/app/backend/data
+    environment:
+      # Locale
+      - DEFAULT_LOCALE=fr
+      # Registration — disabled until Keycloak SSO is wired
+      - ENABLE_SIGNUP=false
+      - DEFAULT_USER_ROLE=pending
+      # Admin account seeding (applied on first run only, before any admin exists)
+      - WEBUI_ADMIN_NAME=${OPENWEBUI_ADMIN_NAME}
+      - WEBUI_ADMIN_EMAIL=${OPENWEBUI_ADMIN_EMAIL}
+      - WEBUI_ADMIN_PASSWORD=${OPENWEBUI_ADMIN_PASSWORD}
+      # Disabled features
+      - ENABLE_CALENDAR=false
+      - ENABLE_MEMORIES=false
+      - ENABLE_NOTES=false
+      - ENABLE_AUTOMATIONS=false
+      - ENABLE_CHANNELS=false
+      - ENABLE_COMMUNITY_SHARING=false
+      - ENABLE_EVALUATION_ARENA_MODELS=false
+    depends_on:
+      crisalid-agents:
+        condition: service_healthy
+    networks:
+      - agents-network
+    profiles:
+      - openwebui
+networks:
+  agents-network:
+    driver: bridge

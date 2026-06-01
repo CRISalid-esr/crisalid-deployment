@@ -195,7 +195,7 @@ no
           "end_date": "YYYY-MM-DD|null"
         },
         {
-          "type": "is_part_of",
+          "type": "part_of",
           "target": "<string>",
           "start_date": "YYYY-MM-DD|null",
           "end_date": "YYYY-MM-DD|null"
@@ -216,7 +216,7 @@ no
 ```json
 {
   "structures_event": {
-    "type": "unchanged",
+    "type": "created",
     "data": {
       "generic_type": "unit",
       "type": "UMR",
@@ -307,9 +307,1086 @@ no
 
 * A research structure must have a generic type **and** at least one type or local type.
 * Relationships of type "member_of" can have a subtype _only_ when characterizing the supervision of a research unit.
-  Inclusion relationships ("is_part_of") do not have subtypes.
+  Inclusion relationships ("part_of") do not have subtypes.
 * The targets of relationships must be the tracking ids of structures already created in previous messages, except for
   external institutions that you do not manage: in this case,
   simply indicate "uai-1234" or "ror-ABCD" according to the type of identifier you have for the external institution.
 * For details on typologies, see the CRISalid
   Wiki: https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1673035787/Import+des+donn%C3%A9es+structures+v2
+
+---
+
+###### Additional example: Institution subdivision with temporal relationships (Faculty)
+
+<details>
+<summary>Example of a "created" event for a faculty with temporal inclusion relationship</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "institution_subdivision",
+      "type": "FAC",
+      "local_types": [],
+      "long_labels": [
+        {
+          "value": "Example Faculty of Sciences",
+          "language": "en"
+        },
+        {
+          "value": "Faculté des Sciences Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Faculty Sciences",
+          "language": "en"
+        },
+        {
+          "value": "Fac Sciences",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example Faculty dedicated to scientific education and research.",
+          "language": "en"
+        },
+        {
+          "value": "Faculté exemple dédiée à l'enseignement et la recherche scientifique.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "FAC-EXAMPLE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "part_of",
+          "target": "local-EXAMPLE-UNIV-001",
+          "start_date": "2010-01-01",
+          "end_date": "2030-12-31"
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example demonstrates `part_of` relationship with both `start_date` and `end_date` defined, showing a bounded temporal relationship.
+
+</details>
+
+###### Additional example: Institution subdivision with open-ended temporal relationship (UFR)
+
+<details>
+<summary>Example of a "created" event for a UFR (Unité de Formation et Recherche) with temporal inclusion</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "institution_subdivision",
+      "type": "UFR",
+      "local_types": [],
+      "long_labels": [
+        {
+          "value": "Example School of Medicine",
+          "language": "en"
+        },
+        {
+          "value": "UFR de Médecine Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Medicine School",
+          "language": "en"
+        },
+        {
+          "value": "UFR Médecine",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example School of Medicine providing medical education and research.",
+          "language": "en"
+        },
+        {
+          "value": "Unité de Formation et de Recherche en Médecine Exemple.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "UFR-MEDICINE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "part_of",
+          "target": "local-FAC-EXAMPLE-001",
+          "start_date": "2010-01-01",
+          "end_date": null
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example shows `end_date: null`, indicating an open-ended relationship (still active).
+
+</details>
+
+###### Additional example: Research unit with both member_of and part_of relationships
+
+<details>
+<summary>Example of a "created" event for a research unit with multiple relationship types</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "unit",
+      "type": "UMR",
+      "local_types": [],
+      "main_mission": "research",
+      "secondary_missions": [],
+      "long_labels": [
+        {
+          "value": "Example Research Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité de Recherche Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "ERU",
+          "language": "en"
+        },
+        {
+          "value": "URE",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example research unit specializing in biomedical research.",
+          "language": "en"
+        },
+        {
+          "value": "Unité de recherche exemple spécialisée en recherche biomédicale.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "UMR-EXAMPLE-001"
+        },
+        {
+          "type": "nns",
+          "value": "000012345"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "part_of",
+          "target": "local-PLATFORM-EXAMPLE-001",
+          "start_date": null,
+          "end_date": null
+        },
+        {
+          "type": "part_of",
+          "target": "local-UFR-MEDICINE-001",
+          "start_date": null,
+          "end_date": null
+        },
+        {
+          "type": "member_of",
+          "subtype": "main_supervision",
+          "target": "local-EXAMPLE-UNIV-001",
+          "start_date": "2000-01-01",
+          "end_date": null
+        },
+        {
+          "type": "member_of",
+          "subtype": "associated_supervision",
+          "target": "ror-RESEARCH-ORG-EXAMPLE",
+          "start_date": "2005-06-15",
+          "end_date": null
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example demonstrates the difference between:
+- **`part_of`**: Structural inclusion relationships (without subtypes)
+- **`member_of`**: Supervision relationships (with subtypes like `main_supervision` or `associated_supervision`)
+
+</details>
+
+###### Additional example: Service unit with limited temporal relationship (USM)
+
+<details>
+<summary>Example of a "created" event for a service unit with bounded temporal relationship</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "unit",
+      "type": "USM",
+      "local_types": [],
+      "main_mission": "scientific_services",
+      "secondary_missions": [],
+      "long_labels": [
+        {
+          "value": "Example Service and Technology Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité de Service et Technologie Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Service Unit",
+          "language": "en"
+        },
+        {
+          "value": "Unité Service",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example service unit providing technical support and services.",
+          "language": "en"
+        },
+        {
+          "value": "Unité de service exemple fournissant un support technique.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "USM-EXAMPLE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "part_of",
+          "target": "FACILITY-EXAMPLE-001",
+          "start_date": "2015-06-01",
+          "end_date": "2025-12-31"
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** This example shows a service unit with a bounded temporal relationship (limited existence period).
+
+</details>
+
+###### Additional example: Team within a research unit
+
+<details>
+<summary>Example of a "created" event for a research team</summary>
+
+```json
+{
+  "structures_event": {
+    "type": "created",
+    "data": {
+      "generic_type": "team",
+      "type": "TEAM",
+      "local_types": [],
+      "long_labels": [
+        {
+          "value": "Example Research Team",
+          "language": "en"
+        },
+        {
+          "value": "Équipe de Recherche Exemple",
+          "language": "fr"
+        }
+      ],
+      "short_labels": [
+        {
+          "value": "Team Example",
+          "language": "en"
+        },
+        {
+          "value": "Équipe Ex",
+          "language": "fr"
+        }
+      ],
+      "descriptions": [
+        {
+          "value": "Example research team focused on biomedical research.",
+          "language": "en"
+        },
+        {
+          "value": "Équipe de recherche exemple axée sur la recherche biomédicale.",
+          "language": "fr"
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "TEAM-EXAMPLE-001"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "part_of",
+          "target": "UMR-EXAMPLE-001"
+        }
+      ],
+      "contacts": []
+    }
+  }
+}
+```
+
+**Note:** Teams are typically sub-units within research units and have `part_of` relationships without temporal boundaries.
+
+</details>
+
+---
+
+#### People events (`directory` exchange)
+
+##### Routing keys
+
+Pattern:
+
+```text
+event.people.person.<action>
+```
+
+<details>
+<summary>Full list of routing keys for people events</summary>
+```text
+event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged
+```
+</details>
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+<details>
+<summary>JSON schema for people events</summary>
+
+```json
+{
+  "people_event": {
+    "type": "created|updated|deleted|unchanged",
+    "data": {
+      "display_name": "<string>",
+      "display_name_variants": [
+        "<string>"
+      ],
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "<string>",
+              "language": "<language code>"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "<string>",
+              "language": "<language code>"
+            }
+          ],
+          "other_names": [
+            {
+              "value": "<string>",
+              "language": "<language code>"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "orcid|idref|idhals|idhali|local|scopus",
+          "value": "<string>"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "<string>",
+          "start_date": "YYYY-MM-DD|null",
+          "end_date": "YYYY-MM-DD|null",
+          "past": false,
+          "future": false
+        }
+      ],
+      "employments": [
+        {
+          "entity_uid": "<string>",
+          "position": {
+            "code": "<string>"
+          },
+          "start_date": "YYYY-MM-DD|null",
+          "end_date": "YYYY-MM-DD|null",
+          "past": false,
+          "future": false
+        }
+      ],
+      "external": false
+    }
+  }
+}
+```
+
+</details>
+
+###### Example payloads
+
+<details>
+<summary>Example of a "created" event for a researcher with ORCID, IdRef, membership and employment</summary>
+
+```json
+{
+  "people_event": {
+    "type": "created",
+    "data": {
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Marie",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Lefebvre",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "mlefebvre@univ-example.fr"
+        },
+        {
+          "type": "orcid",
+          "value": "0000-0002-1234-5678"
+        },
+        {
+          "type": "idref",
+          "value": "123456789"
+        },
+        {
+          "type": "idhals",
+          "value": "marie-lefebvre"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "local-U123",
+          "start_date": "2018-09-01",
+          "end_date": null
+        }
+      ],
+      "employments": [
+        {
+          "entity_uid": "uai-0751818J",
+          "position": {
+            "code": "MCF"
+          },
+          "start_date": "2018-09-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "updated" event for a researcher with two names (birth and married) and HAL numeric identifier</summary>
+
+```json
+{
+  "people_event": {
+    "type": "updated",
+    "data": {
+      "display_name": "Sophie Martin",
+      "display_name_variants": [
+        "Sophie Durand",
+        "S. Martin"
+      ],
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Sophie",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Martin",
+              "language": "fr"
+            }
+          ]
+        },
+        {
+          "first_names": [
+            {
+              "value": "Sophie",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Durand",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "smartin@univ-example.fr"
+        },
+        {
+          "type": "orcid",
+          "value": "0000-0003-9876-5432"
+        },
+        {
+          "type": "idhali",
+          "value": "987654"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "local-U123",
+          "start_date": "2015-01-01",
+          "end_date": null
+        }
+      ],
+      "employments": [
+        {
+          "entity_uid": "uai-0751818J",
+          "position": {
+            "code": "PR"
+          },
+          "start_date": "2015-01-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "unchanged" event for a researcher with membership only (no employment)</summary>
+
+```json
+{
+  "people_event": {
+    "type": "unchanged",
+    "data": {
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Jeanne",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Dupont",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "jdupont@univ-example.fr"
+        },
+        {
+          "type": "idref",
+          "value": "012345678"
+        }
+      ],
+      "memberships": [
+        {
+          "entity_uid": "local-U123",
+          "start_date": "2020-09-01",
+          "end_date": null
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of a "deleted" event</summary>
+
+```json
+{
+  "people_event": {
+    "type": "deleted",
+    "data": {
+      "names": [
+        {
+          "first_names": [
+            {
+              "value": "Paul",
+              "language": "fr"
+            }
+          ],
+          "last_names": [
+            {
+              "value": "Bernard",
+              "language": "fr"
+            }
+          ]
+        }
+      ],
+      "identifiers": [
+        {
+          "type": "local",
+          "value": "pbernard@univ-example.fr"
+        }
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+##### Additional considerations
+
+* Either `display_name` or at least one entry in `names` must be provided. If `display_name` is absent, it is
+  computed automatically from the first available name.
+* `display_name_variants` is optional. Use it when the person is known under multiple forms of their name
+  (e.g. birth name alongside married name, or initials).
+* A person may have multiple `names` entries — use one entry per distinct name form (birth name, married name, pseudonym).
+* Identifier types: `local` (institutional login or employee id), `orcid`, `idref`, `idhals` (HAL login),
+  `idhali` (HAL numeric id), `scopus`.
+* `memberships.entity_uid` must reference a research structure already known to IKG, using either the `local-<id>`
+  format or an external identifier prefix such as `uai-<code>`.
+* `employments.entity_uid` references an institution. The `position.code` must be a valid HCERES position code
+  (e.g. `PR`, `MCF`, `DR`, `CR`, `IR`, `Post-doc`).
+* `external: true` marks people who are not managed by the institution (e.g. co-authors discovered through
+  publication harvesting). External people carry no `memberships` or `employments`.
+
+---
+
+## Exchange : `graph`
+
+### Purpose
+
+Outgoing lifecycle events published by crisalid-ikg to downstream consumers. Each event signals that an entity in
+the knowledge graph has been created, updated, deleted, or confirmed unchanged following inbound directory or
+harvesting messages.
+
+### Exchange Type
+
+```text
+topic
+```
+
+### Delivery Strategy
+
+```text
+at-least-once
+```
+
+### Topic and Routing Key Patterns
+
+```text
+event.structures.structure.<action>
+event.people.person.<action>
+```
+
+<details>
+<summary>Full list of actions for each entity type</summary>
+```text
+event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+event.people.person.created
+event.people.person.updated
+event.people.person.deleted
+event.people.person.unchanged
+```
+</details>
+
+### Message Catalog for `graph` exchange
+
+---
+
+#### Structure events (`graph` exchange)
+
+##### Routing keys
+
+Pattern:
+
+```text
+event.structures.structure.<action>
+```
+
+<details>
+<summary>Full list of routing keys for structure events</summary>
+```text
+event.structures.structure.created
+event.structures.structure.updated
+event.structures.structure.deleted
+event.structures.structure.unchanged
+```
+</details>
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+The payload is a flat object with three top-level keys. The `fields` section contains all data available for
+the structure in the IKG graph. `main_mission` and `secondary_missions` are only present for `unit` type
+structures (research units, support units, administrative units).
+
+<details>
+<summary>JSON schema for structure events</summary>
+
+```json
+{
+  "type": "unit|institution|institution_subdivision|unit_subdivision|team",
+  "event": "created|updated|deleted|unchanged",
+  "fields": {
+    "uid": "<string>",
+    "national_type": "UMR|UAR|UR|IRL|UNIV|EPE|EPST|GE|COMUE|UFR|FAC|TEAM|THEME|null",
+    "local_types": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "local|uai|nns|ror|wikidata|scopus",
+        "value": "<string>"
+      }
+    ],
+    "long_labels": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
+    "short_labels": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
+    "descriptions": [
+      {
+        "value": "<string>",
+        "language": "<language code>"
+      }
+    ],
+    "memberships": [
+      {
+        "target": "<uid of the supervising or member-of organisation>",
+        "position": "main_supervision|associated_supervision|participating_supervision|null",
+        "start_date": "YYYY-MM-DD|null",
+        "end_date": "YYYY-MM-DD|null"
+      }
+    ],
+    "parents": [
+      {
+        "target": "<uid of the structurally containing organisation>",
+        "start_date": "YYYY-MM-DD|null",
+        "end_date": "YYYY-MM-DD|null"
+      }
+    ],
+    "addresses": [
+      {
+        "street": [{"value": "<string>", "language": "<language code>"}],
+        "city": [{"value": "<string>", "language": "<language code>"}],
+        "zip_code": [{"value": "<string>", "language": "<language code>"}],
+        "country": [{"value": "<string>", "language": "<language code>"}]
+      }
+    ],
+    "electronical_addresses": [
+      {
+        "uri": "<string>"
+      }
+    ],
+    "main_mission": "research|scientific_services|administrative_services|teaching",
+    "secondary_missions": [
+      "research|scientific_services|administrative_services|teaching"
+    ],
+    "external": false
+  }
+}
+```
+
+> `main_mission` and `secondary_missions` are only present when `type` is `unit`.
+> `external` is `false` for structures sourced from the institutional directory, and `true` for structures
+> auto-created by IKG from the national registry (e.g. a supervising institution referenced by uid but not
+> directly sent by the directory).
+
+</details>
+
+###### Example payloads
+
+<details>
+<summary>Example of a "created" event for a research unit with supervisions</summary>
+
+```json
+{
+  "type": "unit",
+  "event": "created",
+  "fields": {
+    "uid": "local-123456",
+    "national_type": "UMR",
+    "local_types": [],
+    "identifiers": [
+      {"type": "local", "value": "123456"},
+      {"type": "nns", "value": "200012123S"},
+      {"type": "ror", "value": "02feahw73"}
+    ],
+    "long_labels": [
+      {"value": "Laboratoire de recherche en astrophysique", "language": "fr"},
+      {"value": "Laboratory for Astrophysics Research", "language": "en"}
+    ],
+    "short_labels": [
+      {"value": "LRA", "language": "fr"}
+    ],
+    "descriptions": [
+      {"value": "Unité mixte de recherche en astrophysique sous tutelle de l'université et du CNRS.", "language": "fr"},
+      {"value": "Joint research unit in astrophysics under joint supervision of the university and CNRS.", "language": "en"}
+    ],
+    "memberships": [
+      {
+        "target": "uai-0751818J",
+        "position": "main_supervision",
+        "start_date": "2000-01-01",
+        "end_date": null
+      },
+      {
+        "target": "uai-0757581P",
+        "position": "associated_supervision",
+        "start_date": "2000-01-01",
+        "end_date": null
+      }
+    ],
+    "parents": [
+      {
+        "target": "local-FAC-SCI-001",
+        "start_date": "2000-01-01",
+        "end_date": null
+      }
+    ],
+    "addresses": [],
+    "electronical_addresses": [],
+    "main_mission": "research",
+    "secondary_missions": [],
+    "external": false
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "updated" event for an institution</summary>
+
+```json
+{
+  "type": "institution",
+  "event": "updated",
+  "fields": {
+    "uid": "uai-0751818J",
+    "national_type": "UNIV",
+    "local_types": [],
+    "identifiers": [
+      {"type": "uai", "value": "0751818J"},
+      {"type": "ror", "value": "05ykr0d48"}
+    ],
+    "long_labels": [
+      {"value": "Université Étienne Dupond", "language": "fr"}
+    ],
+    "short_labels": [
+      {"value": "UniED", "language": "fr"}
+    ],
+    "descriptions": [],
+    "memberships": [],
+    "parents": [],
+    "addresses": [],
+    "electronical_addresses": [],
+    "external": false
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of a "deleted" event for an institution subdivision</summary>
+
+```json
+{
+  "type": "institution_subdivision",
+  "event": "deleted",
+  "fields": {
+    "uid": "local-FAC-SCI-001",
+    "national_type": "FAC",
+    "local_types": [],
+    "identifiers": [
+      {"type": "local", "value": "FAC-SCI-001"}
+    ],
+    "long_labels": [
+      {"value": "Faculté des sciences", "language": "fr"}
+    ],
+    "short_labels": [],
+    "descriptions": [],
+    "memberships": [],
+    "parents": [
+      {
+        "target": "uai-0751818J",
+        "start_date": "1995-01-01",
+        "end_date": null
+      }
+    ],
+    "addresses": [],
+    "electronical_addresses": [],
+    "external": false
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of an "unchanged" event for a team with axis membership</summary>
+
+```json
+{
+  "type": "team",
+  "event": "unchanged",
+  "fields": {
+    "uid": "local-TEAM-ASTRO-001",
+    "national_type": "TEAM",
+    "local_types": [],
+    "identifiers": [
+      {"type": "local", "value": "TEAM-ASTRO-001"}
+    ],
+    "long_labels": [
+      {"value": "Équipe astrophysique théorique", "language": "fr"},
+      {"value": "Theoretical Astrophysics Team", "language": "en"}
+    ],
+    "short_labels": [],
+    "descriptions": [],
+    "memberships": [
+      {
+        "target": "local-AXIS-OBS-001",
+        "position": null,
+        "start_date": "2010-01-01",
+        "end_date": null
+      }
+    ],
+    "parents": [
+      {
+        "target": "local-123456",
+        "start_date": "2010-01-01",
+        "end_date": null
+      }
+    ],
+    "addresses": [],
+    "electronical_addresses": [],
+    "external": false
+  }
+}
+```
+
+</details>
+
+##### Additional considerations
+
+* The `type` field reflects the structure's `generic_type`: `unit` (research and support units), `institution`,
+  `institution_subdivision`, `unit_subdivision`, `team`.
+* `main_mission` and `secondary_missions` are only present when `type` is `unit`. They are absent for
+  institutions, institution subdivisions, unit subdivisions, and teams.
+* `memberships` carries `MEMBER_OF` relationships (supervision chains for research units; org-level membership
+  for teams and subdivisions). The `position` field is only set for supervision relationships
+  (`main_supervision`, `associated_supervision`, `participating_supervision`).
+* `parents` carries `PART_OF` relationships (structural inclusion — e.g. a faculty inside a university,
+  a team inside a research unit).
+* `addresses` and `electronical_addresses` are included in the schema for completeness but are currently
+  empty in all events — contact data is not yet persisted in the graph.
+* The `uid` is the IKG-computed primary key (e.g. `local-123456`, `uai-0751818J`). It is stable for the
+  lifetime of the structure and can be used as a join key across events.
+* `external: false` means the structure was sourced from the institution's own directory. `external: true`
+  means the structure was auto-created by IKG from the national registry because it appeared as a relationship
+  target (e.g. a supervising institution referenced by a UAI or ROR identifier but never sent directly by the
+  directory). Registry-created structures carry only a limited set of fields (labels, identifiers, address).
+* An `unchanged` event is published when the inbound directory message produced no changes in the graph.
+  Consumers implementing reconciliation logic can use it to confirm that the structure is still active.
+* A `deleted` event signals that the structure has been removed from the graph. Consumers should treat
+  subsequent references to its `uid` as invalid.
+
+---

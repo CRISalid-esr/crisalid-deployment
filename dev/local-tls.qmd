@@ -158,7 +158,18 @@ Ensure all the environment variables are set correctly before running the script
 ./configure_keycloak.sh
 ```
 
-3.  **Launch Docker Compose with the TLS Profile:** 
+3.  **Update `KEYCLOAK_INTERNAL_HOST` in `docker/.env`:**
+
+Services that call Keycloak internally (neo4j-mcp, crisalid-agents, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:
+
+```bash
+# docker/.env
+KEYCLOAK_INTERNAL_HOST=keycloak-tls
+```
+
+The default value is `keycloak` (plain HTTP profile). Forgetting this change will cause internal token requests to fail with a connection error.
+
+4.  **Launch Docker Compose with the TLS Profile:**
 
 Replace `--profile keycloak` with the dedicated `--profile keycloak-tls` when starting Docker Compose.
 

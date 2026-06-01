@@ -1,0 +1,79 @@
+---
+title: "Security"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+::: {.callout-warning}
+## Exposure risk
+Exposing Crisalid AI on the web without proper security puts you at risk of:
+
+- **Data leaks** — institutional or personal data from the knowledge graph accessible to unauthorised users
+- **LLM exhaustion** — uncontrolled consumption of tokens, which is critical with pay-per-token or quota-limited providers
+:::
+
+Crisalid AI's [four-layer architecture](index.qmd#architecture) means that security must be configured at each layer independently. The sections below cover each layer from the graph up.
+
+---
+
+## 🕸️ The graph layer — Neo4j
+
+Neo4j is secured by a **username and password**, configured in `docker/neo4j/.env`.
+
+::: {.callout-important}
+## No RBAC in Neo4j Community Edition
+Neo4j Community Edition does not support role-based access control (RBAC). All authenticated users have the same level of access to the graph. For fine-grained access control, the Enterprise Edition is required.
+
+In a Community Edition deployment, the choice of toolset (`crisalid-restricted` vs `crisalid-unrestricted`) is the primary access control mechanism — see [the tools layer](#the-tools-layer-neo4j-mcp) below.
+:::
+
+In production, avoid storing the Neo4j password in plain-text `.env` files. Use a sovereign secret management solution such as [HashiCorp Vault](https://www.vaultproject.io/).
+
+---
+
+## 🛠️ The tools layer — Neo4j MCP
+
+The [Neo4j MCP Toolbox](https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/) does **not** support passwords or API keys. Authentication relies exclusively on **JWT tokens** issued by an OIDC provider — in the Crisalid stack, this is **Keycloak**.
+
+Each client application (such as `crisalid-agents`) must be provisioned with a **Keycloak service account** to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.
+
+::: {.callout-note}
+## Local workstation
+The Keycloak requirement makes MCP toolbox authentication impractical on a local workstation. For local development, leave `KEYCLOAK_CLIENT_ID` and `KEYCLOAK_CLIENT_SECRET` empty in `docker/crisalid-agents/.env` — the toolbox client will then connect without authentication (suitable for a trusted local environment only).
+:::
+
+Port 5000 is **not exposed on the host** — it is only reachable inside the Docker network. See the [local workstation](local-workstation.qmd) page if you need to access it from outside the stack.
+
+For the full Keycloak service account setup procedure, see [Using CRISalid AI Skills](using-skills.qmd).
+
+---
+
+## 🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)
+
+[OpenWebUI Pipelines](https://github.com/open-webui/pipelines) exposes a FastAPI server on port 9099. This endpoint is secured by a **shared API key** (`PIPELINES_API_KEY`).
+
+The key is set once and must be provided by any client connecting to the pipelines server — in the Crisalid stack, this client is OpenWebUI itself.
+
+**In the Docker deployment**, the key is configured in the shared `docker/.env`:
+
+```bash
+CRISALID_AGENTS_PIPELINES_API_KEY=<your-secret-key>
+```
+
+It is injected into `crisalid-agents` as `PIPELINES_API_KEY` — the server uses it to authenticate incoming requests.
+
+When adding the pipelines connection in OpenWebUI (**Admin panel → Settings → Connections**, URL `http://crisalid-agents:9099`), enter this key by hand in the API key field.
+
+Port 9099 is **not exposed on the host** — it is only reachable inside the Docker network (`agents-network`).
+
+---
+
+## 🖥️ The interface layer — OpenWebUI
+
+OpenWebUI is the only layer directly exposed to end users.
+
+- **User registration is disabled** (`ENABLE_SIGNUP=false`) — accounts must be created manually by an administrator.
+- An **admin account is seeded** on first run via `OPENWEBUI_ADMIN_EMAIL` and `OPENWEBUI_ADMIN_PASSWORD` in `docker/openwebui/.env`.
+- **Keycloak SSO** integration is planned for a future release.

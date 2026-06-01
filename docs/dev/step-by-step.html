@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Docker Compose - Step by Step – CRISalid Deployment Documentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../dev/dev-backend.html" rel="next">
+<link href="../dev/docker-compose.html" rel="prev">
+<link href="../assets/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5ee27db05bd2414c0f08240d6e3b5eef.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../index.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">CRISalid Deployment Documentation</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">🏠 Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-crisalid-core" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">💠 Crisalid Core</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-crisalid-core">    
+        <li class="dropdown-header">Overview</li>
+        <li>
+    <a class="dropdown-item" href="../map/index.html">
+ <span class="dropdown-text">System Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../map/components.html">
+ <span class="dropdown-text">Identify Relevant Components</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../map/harvesting.html">
+ <span class="dropdown-text">Harvesting Configuration</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../map/message_catalog.html">
+ <span class="dropdown-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Docker Compose</li>
+        <li>
+    <a class="dropdown-item" href="../dev/index.html">
+ <span class="dropdown-text">Docker Compose – Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/docker-compose.html">
+ <span class="dropdown-text">Docker Compose - Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/step-by-step.html">
+ <span class="dropdown-text">Docker Compose - Step by Step</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/dev-backend.html">
+ <span class="dropdown-text">Using Docker Compose as Backend for Local Development</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/local-tls.html">
+ <span class="dropdown-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/export-kc-realm.html">
+ <span class="dropdown-text">Export Keycloak Realm</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/backup-restore-with-dc.html">
+ <span class="dropdown-text">Data backup and restoration with Docker Compose</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/manual_installation.html">
+ <span class="dropdown-text">Manual Installation</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Kubernetes</li>
+        <li>
+    <a class="dropdown-item" href="../prod/index.html">
+ <span class="dropdown-text">Kubernetes – Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../prod/helm_charts.html">
+ <span class="dropdown-text">Kubernetes Deployment</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../prod/manual_installation.html">
+ <span class="dropdown-text">Manual Installation</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Requirements</li>
+        <li>
+    <a class="dropdown-item" href="../requirements/index.html">
+ <span class="dropdown-text">Required Infrastructure and Dependencies</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-crisalid-ai" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">🤖 Crisalid AI</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-crisalid-ai">    
+        <li class="dropdown-header">Overview</li>
+        <li>
+    <a class="dropdown-item" href="../ai/index.html">
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/security.html">
+ <span class="dropdown-text">Security</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Installation</li>
+        <li>
+    <a class="dropdown-item" href="../ai/local-workstation.html">
+ <span class="dropdown-text">Local Workstation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/docker-compose.html">
+ <span class="dropdown-text">Docker Compose</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/using-skills.html">
+ <span class="dropdown-text">Using CRISalid AI Skills</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/embeddings.html">
+ <span class="dropdown-text">Semantic Embeddings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-security" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">🔒 Security</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-security">    
+        <li>
+    <a class="dropdown-item" href="../security/index.html">
+ <span class="dropdown-text">Security Considerations</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://crisalid.org/"> 
+<span class="menu-text">🌐 Website</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/overview"> 
+<span class="menu-text">🧭 Wiki</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://hub.docker.com/repositories/crisalidesr"> 
+<span class="menu-text">🐳 DockerHub</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/orgs/CRISalid-esr/repositories"> <i class="bi bi-file-code" role="img">
+</i> 
+<span class="menu-text">GitHub</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/step-by-step.html">Docker Compose - Step by Step</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Overview</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">System Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/components.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Identify Relevant Components</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/harvesting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Harvesting Configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/message_catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Docker Compose</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose – Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/docker-compose.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose - Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/step-by-step.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Docker Compose - Step by Step</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/dev-backend.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using Docker Compose as Backend for Local Development</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/local-tls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/export-kc-realm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Export Keycloak Realm</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/backup-restore-with-dc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data backup and restoration with Docker Compose</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manual Installation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Kubernetes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prod/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kubernetes – Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prod/helm_charts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kubernetes Deployment</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prod/manual_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manual Installation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Requirements</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../requirements/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Required Infrastructure and Dependencies</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link active" data-scroll-target="#prerequisites">1. 🖥️ Prerequisites</a></li>
+  <li><a href="#create-a-dedicated-application-user" id="toc-create-a-dedicated-application-user" class="nav-link" data-scroll-target="#create-a-dedicated-application-user">2. 👤 Create a Dedicated Application User</a></li>
+  <li><a href="#clone-the-repository" id="toc-clone-the-repository" class="nav-link" data-scroll-target="#clone-the-repository">3. 📥 Clone the Repository</a>
+  <ul class="collapse">
+  <li><a href="#choose-what-to-deploy" id="toc-choose-what-to-deploy" class="nav-link" data-scroll-target="#choose-what-to-deploy">Choose what to deploy</a></li>
+  </ul></li>
+  <li><a href="#multi-server-deployment-optional" id="toc-multi-server-deployment-optional" class="nav-link" data-scroll-target="#multi-server-deployment-optional">4. 🗺️ Multi-Server Deployment (optional)</a>
+  <ul class="collapse">
+  <li><a href="#service-co-location-constraints" id="toc-service-co-location-constraints" class="nav-link" data-scroll-target="#service-co-location-constraints">Service co-location constraints</a></li>
+  <li><a href="#exposing-ports-between-servers" id="toc-exposing-ports-between-servers" class="nav-link" data-scroll-target="#exposing-ports-between-servers">Exposing ports between servers</a></li>
+  <li><a href="#preserving-local-yaml-changes-across-updates" id="toc-preserving-local-yaml-changes-across-updates" class="nav-link" data-scroll-target="#preserving-local-yaml-changes-across-updates">Preserving local YAML changes across updates</a></li>
+  </ul></li>
+  <li><a href="#create-.env-files" id="toc-create-.env-files" class="nav-link" data-scroll-target="#create-.env-files">5. 📄 Create <code>.env</code> Files</a></li>
+  <li><a href="#start-crisalid-bus-rabbitmq" id="toc-start-crisalid-bus-rabbitmq" class="nav-link" data-scroll-target="#start-crisalid-bus-rabbitmq">6. 🐰 Start CRISalid Bus (RabbitMQ)</a>
+  <ul class="collapse">
+  <li><a href="#configure-rabbitmq-credentials" id="toc-configure-rabbitmq-credentials" class="nav-link" data-scroll-target="#configure-rabbitmq-credentials">Configure RabbitMQ credentials</a></li>
+  <li><a href="#generate-the-rabbitmq-configuration" id="toc-generate-the-rabbitmq-configuration" class="nav-link" data-scroll-target="#generate-the-rabbitmq-configuration">Generate the RabbitMQ configuration</a></li>
+  <li><a href="#start-the-bus" id="toc-start-the-bus" class="nav-link" data-scroll-target="#start-the-bus">Start the bus</a></li>
+  <li><a href="#verify" id="toc-verify" class="nav-link" data-scroll-target="#verify">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-svp-harvester" id="toc-start-svp-harvester" class="nav-link" data-scroll-target="#start-svp-harvester">7. 🌾 Start SVP Harvester</a>
+  <ul class="collapse">
+  <li><a href="#configure-credentials" id="toc-configure-credentials" class="nav-link" data-scroll-target="#configure-credentials">Configure credentials</a></li>
+  <li><a href="#initialize-the-authentication-file" id="toc-initialize-the-authentication-file" class="nav-link" data-scroll-target="#initialize-the-authentication-file">Initialize the authentication file</a></li>
+  <li><a href="#start" id="toc-start" class="nav-link" data-scroll-target="#start">Start</a></li>
+  <li><a href="#create-the-first-user" id="toc-create-the-first-user" class="nav-link" data-scroll-target="#create-the-first-user">Create the first user</a></li>
+  <li><a href="#verify-1" id="toc-verify-1" class="nav-link" data-scroll-target="#verify-1">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-neo4j" id="toc-start-neo4j" class="nav-link" data-scroll-target="#start-neo4j">8. 🗄️ Start Neo4j</a>
+  <ul class="collapse">
+  <li><a href="#configure-credentials-and-memory" id="toc-configure-credentials-and-memory" class="nav-link" data-scroll-target="#configure-credentials-and-memory">Configure credentials and memory</a></li>
+  <li><a href="#start-1" id="toc-start-1" class="nav-link" data-scroll-target="#start-1">Start</a></li>
+  <li><a href="#verify-2" id="toc-verify-2" class="nav-link" data-scroll-target="#verify-2">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-ikg" id="toc-start-ikg" class="nav-link" data-scroll-target="#start-ikg">9. 🔗 Start IKG</a>
+  <ul class="collapse">
+  <li><a href="#configure" id="toc-configure" class="nav-link" data-scroll-target="#configure">Configure</a></li>
+  <li><a href="#before-the-first-start" id="toc-before-the-first-start" class="nav-link" data-scroll-target="#before-the-first-start">Before the first start</a></li>
+  <li><a href="#start-2" id="toc-start-2" class="nav-link" data-scroll-target="#start-2">Start</a></li>
+  <li><a href="#verify-3" id="toc-verify-3" class="nav-link" data-scroll-target="#verify-3">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-cdb-airflow-crisalid-directory-bridge" id="toc-start-cdb-airflow-crisalid-directory-bridge" class="nav-link" data-scroll-target="#start-cdb-airflow-crisalid-directory-bridge">10. 🌬️ Start CDB (Airflow — CRISalid Directory Bridge)</a>
+  <ul class="collapse">
+  <li><a href="#configure-1" id="toc-configure-1" class="nav-link" data-scroll-target="#configure-1">Configure</a></li>
+  <li><a href="#add-data-files" id="toc-add-data-files" class="nav-link" data-scroll-target="#add-data-files">Add data files</a></li>
+  <li><a href="#generate-the-airflow-configuration" id="toc-generate-the-airflow-configuration" class="nav-link" data-scroll-target="#generate-the-airflow-configuration">Generate the Airflow configuration</a></li>
+  <li><a href="#start-3" id="toc-start-3" class="nav-link" data-scroll-target="#start-3">Start</a></li>
+  <li><a href="#verify-4" id="toc-verify-4" class="nav-link" data-scroll-target="#verify-4">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-apollo-graphql-api" id="toc-start-apollo-graphql-api" class="nav-link" data-scroll-target="#start-apollo-graphql-api">11. 🚀 Start Apollo (GraphQL API)</a>
+  <ul class="collapse">
+  <li><a href="#configure-2" id="toc-configure-2" class="nav-link" data-scroll-target="#configure-2">Configure</a></li>
+  <li><a href="#start-4" id="toc-start-4" class="nav-link" data-scroll-target="#start-4">Start</a></li>
+  <li><a href="#verify-5" id="toc-verify-5" class="nav-link" data-scroll-target="#verify-5">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-keycloak-and-sovisu" id="toc-start-keycloak-and-sovisu" class="nav-link" data-scroll-target="#start-keycloak-and-sovisu">12. 🔐 Start Keycloak and SoVisu+</a>
+  <ul class="collapse">
+  <li><a href="#configure-3" id="toc-configure-3" class="nav-link" data-scroll-target="#configure-3">Configure</a></li>
+  <li><a href="#generate-keycloak-configuration" id="toc-generate-keycloak-configuration" class="nav-link" data-scroll-target="#generate-keycloak-configuration">Generate Keycloak configuration</a></li>
+  <li><a href="#start-5" id="toc-start-5" class="nav-link" data-scroll-target="#start-5">Start</a></li>
+  <li><a href="#verify-6" id="toc-verify-6" class="nav-link" data-scroll-target="#verify-6">Verify</a></li>
+  </ul></li>
+  <li><a href="#start-neo4j-mcp-toolbox" id="toc-start-neo4j-mcp-toolbox" class="nav-link" data-scroll-target="#start-neo4j-mcp-toolbox">13. 🔌 Start Neo4j MCP Toolbox</a>
+  <ul class="collapse">
+  <li><a href="#start-6" id="toc-start-6" class="nav-link" data-scroll-target="#start-6">Start</a></li>
+  </ul></li>
+  <li><a href="#configure-ofelia-scheduler" id="toc-configure-ofelia-scheduler" class="nav-link" data-scroll-target="#configure-ofelia-scheduler">14. ⏰ Configure Ofelia (Scheduler)</a></li>
+  <li><a href="#updating-to-a-new-version" id="toc-updating-to-a-new-version" class="nav-link" data-scroll-target="#updating-to-a-new-version">15. 🔄 Updating to a New Version</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/step-by-step.html">Docker Compose - Step by Step</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Docker Compose - Step by Step</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>This guide covers a <strong>server deployment</strong> (test, staging or production environment) using Docker Compose. For local development on your workstation, refer to <a href="../dev/docker-compose.html">Docker Compose - Overview</a>.</p>
+</blockquote>
+<hr>
+<section id="prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="prerequisites">1. 🖥️ Prerequisites</h2>
+<p>This guide assumes <strong>Git</strong> and <strong>Docker</strong> (with the Compose plugin) are already installed on the target server.</p>
+<hr>
+</section>
+<section id="create-a-dedicated-application-user" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-dedicated-application-user">2. 👤 Create a Dedicated Application User</h2>
+<p>Running the stack under a dedicated unprivileged user is strongly recommended.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the user (no login, no password)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> adduser <span class="at">--disabled-password</span> <span class="at">--gecos</span> <span class="st">""</span> crisalid</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Allow it to run Docker commands without sudo</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> usermod <span class="at">-aG</span> docker crisalid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create the installation directory and assign ownership:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir <span class="at">-p</span> /opt/crisalid</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown <span class="at">-R</span> crisalid:crisalid /opt/crisalid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Switch to the application user for all subsequent steps:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> su crisalid</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /opt/crisalid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="clone-the-repository" class="level2">
+<h2 class="anchored" data-anchor-id="clone-the-repository">3. 📥 Clone the Repository</h2>
+<p>The repository is public — a simple HTTPS clone is sufficient:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/CRISalid-esr/crisalid-deployment.git</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> crisalid-deployment</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="choose-what-to-deploy" class="level3">
+<h3 class="anchored" data-anchor-id="choose-what-to-deploy">Choose what to deploy</h3>
+<p>Depending on your context:</p>
+<ul>
+<li><p><strong>Production</strong> — deploy from a <strong>release tag</strong> for a stable, reproducible deployment:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z      <span class="co"># e.g. prod/1.5 v1.5.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Staging / test (stable)</strong> — a release tag is also a safe choice here.</p></li>
+<li><p><strong>Staging / test (latest)</strong> — you may prefer to track a branch such as <code>dev-main</code> or a feature branch if you want to follow ongoing development:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout dev-main</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull origin dev-main</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="multi-server-deployment-optional" class="level2">
+<h2 class="anchored" data-anchor-id="multi-server-deployment-optional">4. 🗺️ Multi-Server Deployment (optional)</h2>
+<p>The stack can be split across <strong>two or more servers</strong>. A typical split is one server for the data layer and one for the application layer.</p>
+<section id="service-co-location-constraints" class="level3">
+<h3 class="anchored" data-anchor-id="service-co-location-constraints">Service co-location constraints</h3>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Keep Neo4j, IKG, Apollo and Ofelia on the same server
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Ofelia</strong> schedules tasks using <code>job-exec</code>, which executes commands <em>inside running containers via the Docker daemon</em>. It must share the same Docker host as the containers it targets — in particular <strong>IKG</strong>.</li>
+<li><strong>IKG</strong> must be on the same server as <strong>Neo4j</strong> because offline backups require stopping both services together (see <a href="../dev/backup-restore-with-dc.html">Backup and Restore</a>).</li>
+<li><strong>Apollo</strong> connects directly to Neo4j and benefits from co-location for latency and simplicity.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="exposing-ports-between-servers" class="level3">
+<h3 class="anchored" data-anchor-id="exposing-ports-between-servers">Exposing ports between servers</h3>
+<p>By default, most services only expose ports <em>within</em> the Docker network. When a service on server A needs to reach a service on server B, you must uncomment the relevant <code>ports:</code> section in the corresponding YAML file (e.g.&nbsp;<code>crisalid-bus/crisalid-bus.yaml</code>, <code>neo4j/neo4j.yaml</code>).</p>
+<blockquote class="blockquote">
+<p>Make sure your firewall restricts access to those ports to the other server(s) only.</p>
+</blockquote>
+</section>
+<section id="preserving-local-yaml-changes-across-updates" class="level3">
+<h3 class="anchored" data-anchor-id="preserving-local-yaml-changes-across-updates">Preserving local YAML changes across updates</h3>
+<p>If you have uncommitted changes to compose YAML files (e.g.&nbsp;uncommented <code>ports:</code> sections), use <code>git stash</code> to preserve them when pulling a new version:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Resolve any conflicts that arise after the <code>stash pop</code> before restarting the stack.</p>
+<hr>
+</section>
+</section>
+<section id="create-.env-files" class="level2">
+<h2 class="anchored" data-anchor-id="create-.env-files">5. 📄 Create <code>.env</code> Files</h2>
+<p>All configuration is done through <code>.env</code> files. Each component directory under <code>docker/</code> has a <code>.env.sample</code> to start from.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /opt/crisalid/crisalid-deployment/docker/</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.sample .env</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> crisalid-bus/.env.sample  crisalid-bus/.env</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> neo4j/.env.sample         neo4j/.env</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> apollo/.env.sample        apollo/.env</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> cdb/.env.sample           cdb/.env</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> harvester/.env.sample     harvester/.env</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ikg/.env.sample           ikg/.env</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/.env.sample    sovisuplus/.env</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> keycloak/.env.sample      keycloak/.env</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ofelia/.env.sample        ofelia/.env</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> cvs/.env.sample           cvs/.env</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> neo4j-mcp/.env.sample     neo4j-mcp/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>⚠️ All <code>.env</code> files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.</p>
+</blockquote>
+<p>The root <code>docker/.env</code> holds <strong>shared credentials</strong> used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.</p>
+<p>Also copy the RBAC roles sample for SoVisu+:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>All subsequent <code>docker compose</code> commands in this guide assume you are in the <code>docker/</code> directory.</p>
+</blockquote>
+<hr>
+</section>
+<section id="start-crisalid-bus-rabbitmq" class="level2">
+<h2 class="anchored" data-anchor-id="start-crisalid-bus-rabbitmq">6. 🐰 Start CRISalid Bus (RabbitMQ)</h2>
+<p>Almost all services depend on the message bus — start it first.</p>
+<section id="configure-rabbitmq-credentials" class="level3">
+<h3 class="anchored" data-anchor-id="configure-rabbitmq-credentials">Configure RabbitMQ credentials</h3>
+<p>Edit the shared <code>.env</code> and set your RabbitMQ username and password:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>All services currently share a single RabbitMQ user. Consider using per-service users in production.</p>
+</blockquote>
+</section>
+<section id="generate-the-rabbitmq-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="generate-the-rabbitmq-configuration">Generate the RabbitMQ configuration</h3>
+<p>This script creates the <code>definitions.json</code> file (exchanges, queues, users) embedded into the container at startup:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_crisalid_bus.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="start-the-bus" class="level3">
+<h3 class="anchored" data-anchor-id="start-the-bus">Start the bus</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify" class="level3">
+<h3 class="anchored" data-anchor-id="verify">Verify</h3>
+<p>Open an SSH tunnel from your local machine:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 15672:127.0.0.1:15672 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then access the RabbitMQ management UI at <a href="http://localhost:15672">http://localhost:15672</a>. All exchanges, queues and bindings should be pre-declared.</p>
+<hr>
+</section>
+</section>
+<section id="start-svp-harvester" class="level2">
+<h2 class="anchored" data-anchor-id="start-svp-harvester">7. 🌾 Start SVP Harvester</h2>
+<section id="configure-credentials" class="level3">
+<h3 class="anchored" data-anchor-id="configure-credentials">Configure credentials</h3>
+<p>Edit the harvester <code>.env</code> to set database credentials and external API keys (e.g.&nbsp;Scanr):</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> harvester/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="initialize-the-authentication-file" class="level3">
+<h3 class="anchored" data-anchor-id="initialize-the-authentication-file">Initialize the authentication file</h3>
+<p>If Basic Auth is enabled (default), create the credentials file before the first start:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> harvester/auth</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">'{}'</span> <span class="op">&gt;</span> harvester/auth/users.json</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> a+wr harvester/auth/users.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="start" class="level3">
+<h3 class="anchored" data-anchor-id="start">Start</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-the-first-user" class="level3">
+<h3 class="anchored" data-anchor-id="create-the-first-user">Create the first user</h3>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="at">-it</span> harvester-ui python scripts/add_basic_user.py admin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify-1" class="level3">
+<h3 class="anchored" data-anchor-id="verify-1">Verify</h3>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8000:127.0.0.1:8000 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>UI: <a href="http://localhost:8000/admin">http://localhost:8000/admin</a></li>
+<li>Swagger: <a href="http://localhost:8000/docs">http://localhost:8000/docs</a></li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="start-neo4j" class="level2">
+<h2 class="anchored" data-anchor-id="start-neo4j">8. 🗄️ Start Neo4j</h2>
+<section id="configure-credentials-and-memory" class="level3">
+<h3 class="anchored" data-anchor-id="configure-credentials-and-memory">Configure credentials and memory</h3>
+<p>Edit the root <code>.env</code> to set Neo4j credentials and, if needed, memory allocation parameters:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>Check <code>docker/neo4j/neo4j.yaml</code> for options to enable/disable authentication and to expose (or not) the HTTP (7474) and Bolt (7687) ports on the host. Note that the Neo4j UI needs <strong>both</strong> ports — exposing only HTTP (7474) without Bolt (7687) will show the interface but prevent any query from running.</p>
+</blockquote>
+</section>
+<section id="start-1" class="level3">
+<h3 class="anchored" data-anchor-id="start-1">Start</h3>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify-2" class="level3">
+<h3 class="anchored" data-anchor-id="verify-2">Verify</h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 7474:127.0.0.1:7474 youruser@yourserver</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 7687:127.0.0.1:7687 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Access the Neo4j Browser at <a href="http://localhost:7474">http://localhost:7474</a>.</p>
+<hr>
+</section>
+</section>
+<section id="start-ikg" class="level2">
+<h2 class="anchored" data-anchor-id="start-ikg">9. 🔗 Start IKG</h2>
+<p>IKG is the Python microservice that manages the knowledge graph.</p>
+<section id="configure" class="level3">
+<h3 class="anchored" data-anchor-id="configure">Configure</h3>
+<p>Edit <code>ikg/.env</code> — the two main variables are:</p>
+<ul>
+<li><code>REFRESH_ORG_REGISTRY</code>: if <code>true</code>, the organizational registry is reloaded from the open data source at every startup (slow). Set to <code>false</code> after the first run and re-enable periodically.</li>
+<li><code>HARVESTERS</code>: the list of harvesters IKG may query. Remove <code>scopus</code> if your institution has no subscription.</li>
+</ul>
+<p>You can also choose to not expose port 8001 on the host (it only serves the Swagger UI and a health-check REST endpoint; actual data flows through RabbitMQ or Apollo/GraphQL).</p>
+</section>
+<section id="before-the-first-start" class="level3">
+<h3 class="anchored" data-anchor-id="before-the-first-start">Before the first start</h3>
+<p>Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a> for full details.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="start-2" class="level3">
+<h3 class="anchored" data-anchor-id="start-2">Start</h3>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify-3" class="level3">
+<h3 class="anchored" data-anchor-id="verify-3">Verify</h3>
+<p>If port 8001 is exposed:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8001:127.0.0.1:8001 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Test the health route in the Swagger at <a href="http://localhost:8001/docs">http://localhost:8001/docs</a>.</p>
+<hr>
+</section>
+</section>
+<section id="start-cdb-airflow-crisalid-directory-bridge" class="level2">
+<h2 class="anchored" data-anchor-id="start-cdb-airflow-crisalid-directory-bridge">10. 🌬️ Start CDB (Airflow — CRISalid Directory Bridge)</h2>
+<section id="configure-1" class="level3">
+<h3 class="anchored" data-anchor-id="configure-1">Configure</h3>
+<p>Edit the root <code>.env</code> to set LDAP parameters (if applicable) and Airflow admin credentials:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="add-data-files" class="level3">
+<h3 class="anchored" data-anchor-id="add-data-files">Add data files</h3>
+<p>Place your institution’s data files in the CDB data directory:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /opt/crisalid/crisalid-deployment/docker/cdb/data</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># copy your files, e.g.:</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cp structures.csv /opt/crisalid/crisalid-deployment/docker/cdb/data/</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># cp people.csv     /opt/crisalid/crisalid-deployment/docker/cdb/data/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Data format documentation (French):</p>
+<ul>
+<li><a href="https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1478328327/Import+des+donn%C3%A9es+structures">Structures</a></li>
+<li><a href="https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/pages/1478328329/Import+des+donn%C3%A9es+chercheurs">Researchers</a></li>
+</ul>
+</section>
+<section id="generate-the-airflow-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="generate-the-airflow-configuration">Generate the Airflow configuration</h3>
+<div class="sourceCode" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_cdb.sh</span> prod</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>This script overwrites the Airflow <code>.env</code> file. Re-run it whenever the root <code>.env</code> changes.</p>
+</blockquote>
+</section>
+<section id="start-3" class="level3">
+<h3 class="anchored" data-anchor-id="start-3">Start</h3>
+<div class="sourceCode" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>If you are using local PostgreSQL containers for CDB, add <code>-f docker-compose.local-postgres.yaml</code> and <code>--profile cdb-db</code>. See <a href="../dev/docker-compose.html">Docker Compose - Overview</a> for details.</p>
+</blockquote>
+</section>
+<section id="verify-4" class="level3">
+<h3 class="anchored" data-anchor-id="verify-4">Verify</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8081:127.0.0.1:8081 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Access the Airflow UI at <a href="http://localhost:8081">http://localhost:8081</a>.</p>
+<ol type="1">
+<li>Enable the <code>broadcast_entities</code> DAG (toggle the on/off switch).</li>
+<li>Then enable either <code>load_ldap_structures</code> or <code>load_spreadsheet_structures</code> depending on your setup.</li>
+</ol>
+<blockquote class="blockquote">
+<p>Start with structures only at this stage — loading people triggers publication harvesting and has cascading effects on downstream services.</p>
+</blockquote>
+<section id="troubleshooting-proxy-related-pip-failures" class="level4">
+<h4 class="anchored" data-anchor-id="troubleshooting-proxy-related-pip-failures">Troubleshooting: proxy-related pip failures</h4>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Corporate proxy — pip install may fail
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On servers behind a corporate HTTP proxy, Airflow containers may fail to install their additional Python dependencies at startup with errors such as:</p>
+<pre><code>ERROR: Could not find a version that satisfies the requirement pika==1.3.2</code></pre>
+<p>You may encounter other undocumented proxy-related issues not covered here.</p>
+<p><strong>Workaround:</strong> pre-download the wheels on a machine with direct internet access and serve them as a local directory:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> vendor</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> download <span class="at">-d</span> vendor <span class="at">--only-binary</span><span class="op">=</span>:all: pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then in <code>cdb/.env</code>, switch to offline install:</p>
+<pre class="env"><code>ADDITIONAL_LIBRARIES=--no-index --find-links /opt/vendor pika==1.3.2 deepdiff==7.0.1 ldap3==2.9.1</code></pre>
+<p>And in <code>cdb/cdb.yaml</code>, add the vendor directory as a read-only volume:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> ${AIRFLOW_PROJ_DIR:-.}/vendor:/opt/vendor:ro</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+</section>
+<section id="start-apollo-graphql-api" class="level2">
+<h2 class="anchored" data-anchor-id="start-apollo-graphql-api">11. 🚀 Start Apollo (GraphQL API)</h2>
+<section id="configure-2" class="level3">
+<h3 class="anchored" data-anchor-id="configure-2">Configure</h3>
+<p>Set an API key for SoVisu+ in the root <code>.env</code>:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env   <span class="co"># set SOVISUPLUS_GRAPHQL_API_KEY</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="start-4" class="level3">
+<h3 class="anchored" data-anchor-id="start-4">Start</h3>
+<div class="sourceCode" id="cb35"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify-5" class="level3">
+<h3 class="anchored" data-anchor-id="verify-5">Verify</h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 4000:127.0.0.1:4000 youruser@yourserver</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Access the Apollo Sandbox at <a href="http://localhost:4000/graphql">http://localhost:4000/graphql</a>.</p>
+<hr>
+</section>
+</section>
+<section id="start-keycloak-and-sovisu" class="level2">
+<h2 class="anchored" data-anchor-id="start-keycloak-and-sovisu">12. 🔐 Start Keycloak and SoVisu+</h2>
+<section id="configure-3" class="level3">
+<h3 class="anchored" data-anchor-id="configure-3">Configure</h3>
+<p>Edit the relevant <code>.env</code> files:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env             <span class="co"># shared: KEYCLOAK_*, SOVISUPLUS_*, NextAuth secret</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> sovisuplus/.env  <span class="co"># SoVisu+-specific settings</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> keycloak/.env    <span class="co"># Keycloak admin credentials and DB config</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="https-via-reverse-proxy-recommended" class="level4">
+<h4 class="anchored" data-anchor-id="https-via-reverse-proxy-recommended">HTTPS via reverse proxy (recommended)</h4>
+<p>If Keycloak and SoVisu+ are exposed through a <strong>reverse proxy handling TLS termination</strong> (recommended for production), use these settings in <code>keycloak/.env</code>:</p>
+<pre class="env"><code>KEYCLOAK_HTTP_ENABLED=true
+KEYCLOAK_HOSTNAME_STRICT_HTTPS=false
+# xforwarded (default) works with most reverse proxies (nginx, Traefik, Apache)
+# Set to "forwarded" for RFC 7239-compliant proxies (e.g. HAProxy with Forwarded header)
+KEYCLOAK_PROXY_HEADERS=xforwarded</code></pre>
+<blockquote class="blockquote">
+<p><code>KEYCLOAK_HTTP_ENABLED=true</code> is required alongside <code>KEYCLOAK_PROXY_HEADERS</code>: the reverse proxy terminates TLS and forwards requests to Keycloak over plain HTTP, so Keycloak must accept HTTP connections.</p>
+<p>With this setup, server-to-server calls from SoVisu+ to Keycloak (e.g.&nbsp;<code>.well-known</code> discovery) travel over plain HTTP internally, while external traffic is secured by the reverse proxy.</p>
+</blockquote>
+<p>Set the public URLs in the root <code>.env</code>:</p>
+<pre class="env"><code>KEYCLOAK_SCHEME=https
+KEYCLOAK_PORT=443
+KEYCLOAK_HOST=your-keycloak-hostname.example.org
+KEYCLOAK_REALM=crisalid-inst
+
+SOVISUPLUS_SCHEME=https
+SOVISUPLUS_HOST=your-sovisuplus-hostname.example.org
+SOVISUPLUS_PORT=443
+
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=&lt;your-client-secret&gt;</code></pre>
+<p>To generate a NextAuth secret:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openssl</span> rand <span class="at">-base64</span> 32</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="custom-sovisu-theme" class="level4">
+<h4 class="anchored" data-anchor-id="custom-sovisu-theme">Custom SoVisu+ theme</h4>
+<p>Copy and customise the sample theme:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> sovisuplus/theme-sample sovisuplus/theme</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># edit theme files to match your institution's branding</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="generate-keycloak-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="generate-keycloak-configuration">Generate Keycloak configuration</h3>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_keycloak.sh</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="start-5" class="level3">
+<h3 class="anchored" data-anchor-id="start-5">Start</h3>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>If using local PostgreSQL containers, add <code>-f docker-compose.local-postgres.yaml</code> and the relevant <code>--profile *-db</code> flags.</p>
+</blockquote>
+</section>
+<section id="verify-6" class="level3">
+<h3 class="anchored" data-anchor-id="verify-6">Verify</h3>
+<p>Once running, SoVisu+ should be accessible at your configured public URL (via the reverse proxy).</p>
+<hr>
+</section>
+</section>
+<section id="start-neo4j-mcp-toolbox" class="level2">
+<h2 class="anchored" data-anchor-id="start-neo4j-mcp-toolbox">13. 🔌 Start Neo4j MCP Toolbox</h2>
+<p>The Neo4j MCP Toolbox exposes curated Cypher queries as MCP tools, allowing AI agents and LLM-based clients to query the CRISalid knowledge graph in a structured and authenticated way.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Keycloak service accounts required for authenticated access
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The toolbox validates incoming JWTs against Keycloak. Each client application that needs access must have a dedicated Keycloak service account. Service account setup is documented in <a href="../ai/using-skills.html">Using CRISalid AI Skills</a>.</p>
+</div>
+</div>
+<section id="start-6" class="level3">
+<h3 class="anchored" data-anchor-id="start-6">Start</h3>
+<p>The Neo4j MCP Toolbox requires Neo4j and Keycloak to be running.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The toolbox listens on port <code>5000</code> inside the Docker network and is reachable by other containers at <code>http://neo4j-mcp:5000</code>. It is not published to the host by default.</p>
+<hr>
+</section>
+</section>
+<section id="configure-ofelia-scheduler" class="level2">
+<h2 class="anchored" data-anchor-id="configure-ofelia-scheduler">14. ⏰ Configure Ofelia (Scheduler)</h2>
+<p>Add <code>--profile ofelia</code> to the startup command. See <a href="../dev/docker-compose.html#configure-ofelia-system-wide-scheduler">Docker Compose - Overview</a> for full configuration details.</p>
+<hr>
+</section>
+<section id="updating-to-a-new-version" class="level2">
+<h2 class="anchored" data-anchor-id="updating-to-a-new-version">15. 🔄 Updating to a New Version</h2>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To force-recreate a single container without restarting the others:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+<p>🧭 Back to <a href="../dev/docker-compose.html">Docker Compose - Overview</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/docs\.crisalid\.org");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../dev/docker-compose.html" class="pagination-link" aria-label="Docker Compose - Overview">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Docker Compose - Overview</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../dev/dev-backend.html" class="pagination-link" aria-label="Using Docker Compose as Backend for Local Development">
+        <span class="nav-page-text">Using Docker Compose as Backend for Local Development</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

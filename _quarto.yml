@@ -19,51 +19,9 @@ website:
     left:
       - href: index.qmd
         text: 🏠 Home
-      - text: 🗺️ Overview
-        menu:
-          - href: map/index.qmd
-            text: System Overview
-          - href: map/components.qmd
-            text: Identify Relevant Components
-          - href: map/harvesting.qmd
-            text: Configure publication harvesting
-          - href: map/message_catalog.qmd
-            text: CRISalid Bus – Exchange Map & Message Catalog
-      - text: 🧪 Development
-        menu:
-          - href: dev/index.qmd
-            text: Introduction
-          - href: dev/docker-compose.qmd
-            text: Docker Compose deployment
-          - href: dev/dev-backend.qmd
-            text: Docker Compose for local development
-          - href: dev/local-tls.qmd
-            text: Local TLS/HTTPs setup
-          - href: dev/export-kc-realm.qmd
-            text: Export Keycloak Realm
-          - href: dev/backup-restore-with-dc.qmd
-            text: Backup and Restore with Docker Compose
-          - href: dev/manual_installation.qmd
-            text: Manual Installation
-      - text: 🚀 Production
-        menu:
-          - href: prod/index.qmd
-            text: Introduction
-          - href: prod/helm_charts.qmd
-            text: Kubernetes deployment
-          - href: prod/manual_installation.qmd
-            text: Manual Installation
-      - text: ⚙️ Requirements
-        menu:
-          - href: requirements/index.qmd
-            text: Required Infrastructure and Dependencies
-          # Security considerations
-      - text: 🔒 Security
-        menu:
-          - href: security/index.qmd
-            text: Security Considerations
-
-
+      - sidebar:crisalid-core
+      - sidebar:crisalid-ai
+      - sidebar:security
     right:
       - text: 🌐 Website
         href: https://crisalid.org/
@@ -74,6 +32,64 @@ website:
       - text: GitHub
         icon: file-code
         href: https://github.com/orgs/CRISalid-esr/repositories
+
+  sidebar:
+    - id: crisalid-core
+      title: "💠 Crisalid Core"
+
+      contents:
+        - section: "Overview"
+          contents:
+            - map/index.qmd
+            - map/components.qmd
+            - map/harvesting.qmd
+            - map/message_catalog.qmd
+        - section: "Institutional Directories"
+          contents:
+            - directories/structures.qmd
+            - directories/people.qmd
+        - section: "Docker Compose"
+          contents:
+            - dev/index.qmd
+            - href: dev/docker-compose.qmd
+              text: "Docker Compose - Overview"
+            - href: dev/step-by-step.qmd
+              text: "Docker Compose - Step by Step"
+            - dev/dev-backend.qmd
+            - dev/local-tls.qmd
+            - dev/export-kc-realm.qmd
+            - dev/backup-restore-with-dc.qmd
+            - dev/manual_installation.qmd
+        - section: "Kubernetes"
+          contents:
+            - prod/index.qmd
+            - prod/helm_charts.qmd
+            - prod/manual_installation.qmd
+        - section: "Requirements"
+          contents:
+            - requirements/index.qmd
+    - id: crisalid-ai
+      title: "🤖 Crisalid AI"
+
+      contents:
+        - section: "Overview"
+          contents:
+            - ai/index.qmd
+            - ai/security.qmd
+        - section: "Installation"
+          contents:
+            - ai/local-workstation.qmd
+            - ai/docker-compose.qmd
+            - href: ai/using-skills.qmd
+              text: "Using CRISalid AI Skills"
+            - ai/configuring-openwebui.qmd
+            - href: ai/embeddings.qmd
+              text: "Semantic Embeddings"
+    - id: security
+      title: "🔒 Security"
+
+      contents:
+        - security/index.qmd
 
 format:
   html:

@@ -2,7 +2,6 @@ services:
   os-jel:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-jel-latest
-    container_name: cvs-os-jel
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -15,7 +14,6 @@ services:
   os-acm:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-acm-latest
-    container_name: cvs-os-acm
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -28,7 +26,6 @@ services:
   os-aat:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-aat-latest
-    container_name: cvs-os-aat
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -41,7 +38,6 @@ services:
   os-elsst:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-elsst-latest
-    container_name: cvs-os-elsst
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -54,7 +50,6 @@ services:
   os-pactols:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-pactols-latest
-    container_name: cvs-os-pactols
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -67,7 +62,6 @@ services:
   os-euroscivoc:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-euroscivoc-latest
-    container_name: cvs-os-euroscivoc
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -80,7 +74,6 @@ services:
   cvs-api:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:api-1.0
-    container_name: cvs-api
     ports: [ "${CVS_API_PORT:-8000}:8000" ]
     environment:
       API_VERSION: ${API_VERSION:-v1}
