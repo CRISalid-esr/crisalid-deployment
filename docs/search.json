@@ -531,7 +531,7 @@
     "href": "ai/configuring-openwebui.html",
     "title": "Configuring OpenWebUI",
     "section": "",
-    "text": "OpenWebUI is the end-user interface of the CRISalid AI stack. This page covers two configuration steps that require attention after the initial deployment:",
+    "text": "This page covers the manual configuration steps required in OpenWebUI after the initial deployment:",
     "crumbs": [
       "Installation",
       "Configuring OpenWebUI"
@@ -542,18 +542,51 @@
     "href": "ai/configuring-openwebui.html#authentication-keycloak-sso",
     "title": "Configuring OpenWebUI",
     "section": "Authentication — Keycloak SSO",
-    "text": "Authentication — Keycloak SSO\nBy default, OpenWebUI ships with local account creation disabled (ENABLE_SIGNUP=false). Enabling Keycloak SSO lets users log in with their institutional credentials via OAuth2/OIDC, without requiring a separate OpenWebUI password.\n\nKeycloak client setup\nBefore configuring OpenWebUI, create a dedicated OIDC client in your Keycloak realm:\n\nIn the Keycloak admin console, go to Clients → Create client.\nSet the Client ID (e.g. openwebui).\nEnable Client authentication (confidential client).\nUnder Valid redirect URIs, add: https://&lt;openwebui-public-host&gt;/oauth/oidc/callback\nSave, then copy the Client secret from the Credentials tab.\n\n\n\n\n\n\n\nNote\n\n\n\nThe OpenWebUI Keycloak SSO guide provides step-by-step screenshots for the Keycloak side of this setup.\n\n\n\n\nEnvironment variables\nSet the following variables in docker/openwebui/.env:\n# Allow new users to be created on first SSO login\nOPENWEBUI_ENABLE_OAUTH_SIGNUP=true\n\n# Keycloak client credentials\nOPENWEBUI_OAUTH_CLIENT_ID=&lt;client-id&gt;\nOPENWEBUI_OAUTH_CLIENT_SECRET=&lt;client-secret&gt;\n\n# OIDC discovery document URL\n# Internal (OpenWebUI and Keycloak on the same Docker network, TLS terminated at reverse proxy):\nOPENWEBUI_OPENID_PROVIDER_URL=http://keycloak:8080/realms/&lt;realm-name&gt;/.well-known/openid-configuration\n# External (Keycloak behind a public hostname):\n# OPENWEBUI_OPENID_PROVIDER_URL=https://&lt;keycloak-host&gt;/realms/&lt;realm-name&gt;/.well-known/openid-configuration\n\n# Label shown on the SSO login button\nOPENWEBUI_OAUTH_PROVIDER_NAME=Institutional login\n\n# Callback URL — must match the redirect URI registered in Keycloak\nOPENWEBUI_OPENID_REDIRECT_URI=https://&lt;openwebui-public-host&gt;/oauth/oidc/callback\n\n\n\n\n\n\nInternal vs. public provider URL\n\n\n\nUse the internal Docker hostname (http://keycloak:8080/…) when OpenWebUI and Keycloak are in the same Docker network and TLS is terminated at the reverse proxy. This avoids an unnecessary round-trip through the public internet for token exchanges.\nUse the public hostname (https://…) when Keycloak is deployed separately or when TLS must be validated end-to-end inside the container.\n\n\n\n\n\n\n\n\nENABLE_SIGNUP and SSO\n\n\n\nENABLE_SIGNUP=false blocks local account creation but does not prevent SSO-based registration. The OPENWEBUI_ENABLE_OAUTH_SIGNUP variable controls whether new accounts can be created on first SSO login. Keep ENABLE_SIGNUP=false and set OPENWEBUI_ENABLE_OAUTH_SIGNUP=true to allow SSO users while blocking direct sign-ups.\n\n\n\n\nRestart\nAfter editing .env, restart OpenWebUI:\ndocker compose --profile openwebui up -d openwebui\nThe login page will now show an SSO button alongside (or instead of) the password form.",
+    "text": "Authentication — Keycloak SSO\nBy default, OpenWebUI ships with local account creation disabled (ENABLE_SIGNUP=false). Keycloak acts as a single OIDC endpoint that can broker any identity provider — institutional CAS SSO, SAML2 federation (e.g. Renater), ORCID, or any other — without requiring a separate OpenWebUI password.\n\nKeycloak client setup\nBefore configuring OpenWebUI, create a dedicated OIDC client in your Keycloak realm:\n\nIn the Keycloak admin console, go to Clients → Create client.\nSet the Client ID (e.g. openwebui).\nEnable Client authentication (confidential client).\nUnder Valid redirect URIs, add: https://&lt;openwebui-public-host&gt;/oauth/oidc/callback\nSave, then copy the Client secret from the Credentials tab.\n\n\n\n\n\n\n\nNote\n\n\n\nThe OpenWebUI Keycloak SSO guide provides step-by-step screenshots for the Keycloak side of this setup.\n\n\n\n\nEnvironment variables\nSet the following variables in docker/openwebui/.env:\n# Allow new users to be created on first SSO login\nOPENWEBUI_ENABLE_OAUTH_SIGNUP=true\n\n# Keycloak client credentials\nOPENWEBUI_OAUTH_CLIENT_ID=&lt;client-id&gt;\nOPENWEBUI_OAUTH_CLIENT_SECRET=&lt;client-secret&gt;\n\n# OIDC discovery document URL\n# Internal (OpenWebUI and Keycloak on the same Docker network, TLS terminated at reverse proxy):\nOPENWEBUI_OPENID_PROVIDER_URL=http://keycloak:8080/realms/&lt;realm-name&gt;/.well-known/openid-configuration\n# External (Keycloak behind a public hostname):\n# OPENWEBUI_OPENID_PROVIDER_URL=https://&lt;keycloak-host&gt;/realms/&lt;realm-name&gt;/.well-known/openid-configuration\n\n# Label shown on the SSO login button\nOPENWEBUI_OAUTH_PROVIDER_NAME=Institutional login\n\n# Callback URL — must match the redirect URI registered in Keycloak\nOPENWEBUI_OPENID_REDIRECT_URI=https://&lt;openwebui-public-host&gt;/oauth/oidc/callback\n\n\n\n\n\n\nInternal vs. public provider URL\n\n\n\nUse the internal Docker hostname (http://keycloak:8080/…) when OpenWebUI and Keycloak are in the same Docker network and TLS is terminated at the reverse proxy. This avoids an unnecessary round-trip through the public internet for token exchanges.\nUse the public hostname (https://…) when Keycloak is deployed separately or when TLS must be validated end-to-end inside the container.\n\n\n\n\n\n\n\n\nENABLE_SIGNUP and SSO\n\n\n\nENABLE_SIGNUP=false blocks local account creation but does not prevent SSO-based registration. The OPENWEBUI_ENABLE_OAUTH_SIGNUP variable controls whether new accounts can be created on first SSO login. Keep ENABLE_SIGNUP=false and set OPENWEBUI_ENABLE_OAUTH_SIGNUP=true to allow SSO users while blocking direct sign-ups.\n\n\n\n\nRestart\nAfter editing .env, restart OpenWebUI:\ndocker compose --profile openwebui up -d openwebui\nThe login page will now show an SSO button alongside (or instead of) the password form.",
     "crumbs": [
       "Installation",
       "Configuring OpenWebUI"
     ]
   },
   {
-    "objectID": "ai/configuring-openwebui.html#pipeline-connection",
-    "href": "ai/configuring-openwebui.html#pipeline-connection",
+    "objectID": "ai/configuring-openwebui.html#connections",
+    "href": "ai/configuring-openwebui.html#connections",
     "title": "Configuring OpenWebUI",
-    "section": "Pipeline connection",
-    "text": "Pipeline connection\nThe CRISalid Agents pipeline server is not configured automatically — it must be added once in the OpenWebUI admin panel after the first deployment.\nSee the agent layer security notes for the API key setup, then:\n\nLog in to OpenWebUI as an administrator.\nGo to Admin panel → Settings → Connections.\nAdd a new OpenAI-compatible connection:\n\nURL: http://crisalid-agents:9099\nAPI key: the value of CRISALID_AGENTS_PIPELINES_API_KEY from docker/.env\n\nSave. The CRISalid AI models will appear in the model selector.\n\n\n\n\n\n\n\nNote\n\n\n\nThe pipeline server is only reachable inside the agents-network Docker network — it is not exposed on the host. The URL http://crisalid-agents:9099 is only valid from within the OpenWebUI container.",
+    "section": "Connections",
+    "text": "Connections\nAll model connections are configured in Admin panel → Settings → Connections.\n\nDirect LLM connection\nAdd a direct OpenAI-compatible connection to your LLM provider (e.g. ILaaS):\n\nURL: your LLM API base URL (e.g. https://llm.ilaas.fr/v1)\nAPI key: your LLM provider API key\n\n\n\n\n\n\n\nKeep all models private\n\n\n\nAfter adding the connection, go to Admin panel → Settings → Models and set every model to private (visible to admins only). Direct LLM models should not be available to end users — they bypass CRISalid Agents entirely and have no access to the knowledge graph.\n\n\nThis connection is used by OpenWebUI’s built-in UI features only (see User interface config below).\n\n\nCRISalid Agents pipeline connection\nAdd a second OpenAI-compatible connection for the pipeline server:\n\nURL: http://crisalid-agents:9099\nAPI key: the value of CRISALID_AGENTS_PIPELINES_API_KEY from docker/.env\n\nSee the agent layer security notes for how this key is configured.\n\n\n\n\n\n\nNote\n\n\n\nThe pipeline server is only reachable inside the agents-network Docker network — not exposed on the host. The URL http://crisalid-agents:9099 is only valid from within the OpenWebUI container.",
+    "crumbs": [
+      "Installation",
+      "Configuring OpenWebUI"
+    ]
+  },
+  {
+    "objectID": "ai/configuring-openwebui.html#user-interface-config",
+    "href": "ai/configuring-openwebui.html#user-interface-config",
+    "title": "Configuring OpenWebUI",
+    "section": "User interface config",
+    "text": "User interface config\nOpenWebUI uses a dedicated model for built-in UI tasks (chat title generation, follow-up question suggestions, etc.). This must be set to a private direct LLM model, not a pipeline.\nGo to Admin panel → Settings → Interface and configure:\n\nTask model (or equivalent): select one of the private direct LLM models added above.\n\nThis separates UI housekeeping from the CRISalid agent pipeline calls, and avoids charging pipeline calls for background UI tasks.",
+    "crumbs": [
+      "Installation",
+      "Configuring OpenWebUI"
+    ]
+  },
+  {
+    "objectID": "ai/configuring-openwebui.html#pipeline-model-configuration",
+    "href": "ai/configuring-openwebui.html#pipeline-model-configuration",
+    "title": "Configuring OpenWebUI",
+    "section": "Pipeline model configuration",
+    "text": "Pipeline model configuration\nEach CRISalid agent exposed by the pipeline server appears as a model in OpenWebUI. Each one must be configured to disable capabilities that are irrelevant or incompatible with the pipeline workflow.\nFor each pipeline model, go to Admin panel → Models, open the model, and apply the settings below.\n\nDisable all capabilities\nUnder Capabilities, disable everything:\n\nVision\nFile Upload\nWeb Search\nImage Generation\nCode Interpreter\nTerminal\nUsage\nCitations\nStatus Updates\nBuiltin Tools\n\nThe pipeline already handles tool calls internally — these OpenWebUI-level capabilities are redundant and may interfere.\n\n\nNo system prompt\nLeave the System prompt field empty. CRISalid Agents already defines its own system prompt; adding one here would override or conflict with it.\n\n\nDisable evaluations\nIn Admin panel → Settings → Evaluations, disable Arena Models to prevent pipeline models from appearing in the comparison arena.",
+    "crumbs": [
+      "Installation",
+      "Configuring OpenWebUI"
+    ]
+  },
+  {
+    "objectID": "ai/configuring-openwebui.html#global-feature-flags",
+    "href": "ai/configuring-openwebui.html#global-feature-flags",
+    "title": "Configuring OpenWebUI",
+    "section": "Global feature flags",
+    "text": "Global feature flags\nIn Admin panel → Settings, also disable the following globally:\n\nCode execution\nImage generation\nWeb search\n\nThese features do not apply to the CRISalid AI use case and add unnecessary surface area.",
     "crumbs": [
       "Installation",
       "Configuring OpenWebUI"

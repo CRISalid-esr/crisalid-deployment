@@ -6,16 +6,17 @@ format:
     toc-location: left
 ---
 
-OpenWebUI is the end-user interface of the CRISalid AI stack. This page covers two configuration steps that require attention after the initial deployment:
+This page covers the manual configuration steps required in OpenWebUI after the initial deployment:
 
-1. **Authentication** — wiring Keycloak SSO so users log in with their institutional account.
-2. **Pipeline connection** — linking OpenWebUI to the CRISalid Agents pipeline server.
+1. **Authentication** — wiring Keycloak SSO.
+2. **Connections** — adding the direct LLM endpoint and the CRISalid Agents pipeline server.
+3. **Model configuration** — setting up each pipeline model for the CRISalid AI use case.
 
 ---
 
 ## Authentication — Keycloak SSO
 
-By default, OpenWebUI ships with local account creation disabled (`ENABLE_SIGNUP=false`). Enabling Keycloak SSO lets users log in with their institutional credentials via OAuth2/OIDC, without requiring a separate OpenWebUI password.
+By default, OpenWebUI ships with local account creation disabled (`ENABLE_SIGNUP=false`). Keycloak acts as a single OIDC endpoint that can broker any identity provider — institutional CAS SSO, SAML2 federation (e.g. Renater), ORCID, or any other — without requiring a separate OpenWebUI password.
 
 ### Keycloak client setup
 
@@ -82,19 +83,91 @@ The login page will now show an SSO button alongside (or instead of) the passwor
 
 ---
 
-## Pipeline connection
+## Connections
 
-The CRISalid Agents pipeline server is not configured automatically — it must be added once in the OpenWebUI admin panel after the first deployment.
+All model connections are configured in **Admin panel → Settings → Connections**.
 
-See [the agent layer security notes](security.qmd#the-agent-layer-crisalid-agents-openwebui-pipelines) for the API key setup, then:
+### Direct LLM connection
 
-1. Log in to OpenWebUI as an administrator.
-2. Go to **Admin panel → Settings → Connections**.
-3. Add a new OpenAI-compatible connection:
-   - **URL**: `http://crisalid-agents:9099`
-   - **API key**: the value of `CRISALID_AGENTS_PIPELINES_API_KEY` from `docker/.env`
-4. Save. The CRISalid AI models will appear in the model selector.
+Add a direct OpenAI-compatible connection to your LLM provider (e.g. [ILaaS](https://www.ilaas.fr/rag-ilaas/)):
+
+- **URL**: your LLM API base URL (e.g. `https://llm.ilaas.fr/v1`)
+- **API key**: your LLM provider API key
+
+::: {.callout-important}
+## Keep all models private
+
+After adding the connection, go to **Admin panel → Settings → Models** and set every model to **private** (visible to admins only). Direct LLM models should not be available to end users — they bypass CRISalid Agents entirely and have no access to the knowledge graph.
+:::
+
+This connection is used by OpenWebUI's built-in UI features only (see [User interface config](#user-interface-config) below).
+
+### CRISalid Agents pipeline connection
+
+Add a second OpenAI-compatible connection for the pipeline server:
+
+- **URL**: `http://crisalid-agents:9099`
+- **API key**: the value of `CRISALID_AGENTS_PIPELINES_API_KEY` from `docker/.env`
+
+See [the agent layer security notes](security.qmd#the-agent-layer-crisalid-agents-openwebui-pipelines) for how this key is configured.
 
 ::: {.callout-note}
-The pipeline server is only reachable inside the `agents-network` Docker network — it is not exposed on the host. The URL `http://crisalid-agents:9099` is only valid from within the OpenWebUI container.
+The pipeline server is only reachable inside the `agents-network` Docker network — not exposed on the host. The URL `http://crisalid-agents:9099` is only valid from within the OpenWebUI container.
 :::
+
+---
+
+## User interface config
+
+OpenWebUI uses a dedicated model for built-in UI tasks (chat title generation, follow-up question suggestions, etc.). This must be set to a **private** direct LLM model, not a pipeline.
+
+Go to **Admin panel → Settings → Interface** and configure:
+
+- **Task model** (or equivalent): select one of the private direct LLM models added above.
+
+This separates UI housekeeping from the CRISalid agent pipeline calls, and avoids charging pipeline calls for background UI tasks.
+
+---
+
+## Pipeline model configuration
+
+Each CRISalid agent exposed by the pipeline server appears as a model in OpenWebUI. Each one must be configured to disable capabilities that are irrelevant or incompatible with the pipeline workflow.
+
+For each pipeline model, go to **Admin panel → Models**, open the model, and apply the settings below.
+
+### Disable all capabilities
+
+Under **Capabilities**, disable everything:
+
+- Vision
+- File Upload
+- Web Search
+- Image Generation
+- Code Interpreter
+- Terminal
+- Usage
+- Citations
+- Status Updates
+- Builtin Tools
+
+The pipeline already handles tool calls internally — these OpenWebUI-level capabilities are redundant and may interfere.
+
+### No system prompt
+
+Leave the **System prompt** field empty. CRISalid Agents already defines its own system prompt; adding one here would override or conflict with it.
+
+### Disable evaluations
+
+In **Admin panel → Settings → Evaluations**, disable **Arena Models** to prevent pipeline models from appearing in the comparison arena.
+
+---
+
+## Global feature flags
+
+In **Admin panel → Settings**, also disable the following globally:
+
+- **Code execution**
+- **Image generation**
+- **Web search**
+
+These features do not apply to the CRISalid AI use case and add unnecessary surface area.
