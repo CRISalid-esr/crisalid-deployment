@@ -16,13 +16,6 @@ services:
       - WEBUI_ADMIN_NAME=${OPENWEBUI_ADMIN_NAME}
       - WEBUI_ADMIN_EMAIL=${OPENWEBUI_ADMIN_EMAIL}
       - WEBUI_ADMIN_PASSWORD=${OPENWEBUI_ADMIN_PASSWORD}
-      # OAuth2/OIDC (Keycloak SSO) — leave unset to disable SSO
-      - ENABLE_OAUTH_SIGNUP=${OPENWEBUI_ENABLE_OAUTH_SIGNUP:-false}
-      - OAUTH_CLIENT_ID=${OPENWEBUI_OAUTH_CLIENT_ID:-}
-      - OAUTH_CLIENT_SECRET=${OPENWEBUI_OAUTH_CLIENT_SECRET:-}
-      - OPENID_PROVIDER_URL=${OPENWEBUI_OPENID_PROVIDER_URL:-}
-      - OAUTH_PROVIDER_NAME=${OPENWEBUI_OAUTH_PROVIDER_NAME:-SSO}
-      - OPENID_REDIRECT_URI=${OPENWEBUI_OPENID_REDIRECT_URI:-}
       # Disabled features
       - ENABLE_CALENDAR=false
       - ENABLE_MEMORIES=false
@@ -31,13 +24,23 @@ services:
       - ENABLE_CHANNELS=false
       - ENABLE_COMMUNITY_SHARING=false
       - ENABLE_EVALUATION_ARENA_MODELS=false
+      # OAuth2/OIDC (Keycloak SSO) — leave unset to disable SSO
+      - ENABLE_OAUTH_SIGNUP=${OPENWEBUI_ENABLE_OAUTH_SIGNUP}
+      - OAUTH_CLIENT_ID=${OPENWEBUI_OAUTH_CLIENT_ID}
+      - OAUTH_CLIENT_SECRET=${OPENWEBUI_OAUTH_CLIENT_SECRET}
+      - OPENID_PROVIDER_URL=${OPENWEBUI_OPENID_PROVIDER_URL}
+      - OAUTH_PROVIDER_NAME=${OPENWEBUI_OAUTH_PROVIDER_NAME}
+      - OPENID_REDIRECT_URI=${OPENWEBUI_OPENID_REDIRECT_URI}
     depends_on:
       crisalid-agents:
         condition: service_healthy
     networks:
       - agents-network
+      - keycloak-network
     profiles:
       - openwebui
 networks:
   agents-network:
     driver: bridge
+  keycloak-network:
+    external: true
