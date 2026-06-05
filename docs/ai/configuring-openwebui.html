@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -117,6 +151,16 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="../map/message_catalog.html">
  <span class="dropdown-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Institutional Directories</li>
+        <li>
+    <a class="dropdown-item" href="../directories/structures.html">
+ <span class="dropdown-text">Structures Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../directories/people.html">
+ <span class="dropdown-text">People Data</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
         <li class="dropdown-header">Docker Compose</li>
@@ -331,7 +375,31 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#authentication-keycloak-sso" id="toc-authentication-keycloak-sso" class="nav-link active" data-scroll-target="#authentication-keycloak-sso">Authentication — Keycloak SSO</a>
+  <ul class="collapse">
+  <li><a href="#keycloak-client-setup" id="toc-keycloak-client-setup" class="nav-link" data-scroll-target="#keycloak-client-setup">Keycloak client setup</a></li>
+  <li><a href="#environment-variables" id="toc-environment-variables" class="nav-link" data-scroll-target="#environment-variables">Environment variables</a></li>
+  <li><a href="#restart" id="toc-restart" class="nav-link" data-scroll-target="#restart">Restart</a></li>
+  </ul></li>
+  <li><a href="#connections" id="toc-connections" class="nav-link" data-scroll-target="#connections">Connections</a>
+  <ul class="collapse">
+  <li><a href="#direct-llm-connection" id="toc-direct-llm-connection" class="nav-link" data-scroll-target="#direct-llm-connection">Direct LLM connection</a></li>
+  <li><a href="#crisalid-agents-pipeline-connection" id="toc-crisalid-agents-pipeline-connection" class="nav-link" data-scroll-target="#crisalid-agents-pipeline-connection">CRISalid Agents pipeline connection</a></li>
+  </ul></li>
+  <li><a href="#user-interface-config" id="toc-user-interface-config" class="nav-link" data-scroll-target="#user-interface-config">User interface config</a></li>
+  <li><a href="#pipeline-model-configuration" id="toc-pipeline-model-configuration" class="nav-link" data-scroll-target="#pipeline-model-configuration">Pipeline model configuration</a>
+  <ul class="collapse">
+  <li><a href="#disable-all-capabilities" id="toc-disable-all-capabilities" class="nav-link" data-scroll-target="#disable-all-capabilities">Disable all capabilities</a></li>
+  <li><a href="#no-system-prompt" id="toc-no-system-prompt" class="nav-link" data-scroll-target="#no-system-prompt">No system prompt</a></li>
+  <li><a href="#disable-evaluations" id="toc-disable-evaluations" class="nav-link" data-scroll-target="#disable-evaluations">Disable evaluations</a></li>
+  </ul></li>
+  <li><a href="#global-feature-flags" id="toc-global-feature-flags" class="nav-link" data-scroll-target="#global-feature-flags">Global feature flags</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -359,21 +427,199 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
+<p>This page covers the manual configuration steps required in OpenWebUI after the initial deployment:</p>
+<ol type="1">
+<li><strong>Authentication</strong> — wiring Keycloak SSO.</li>
+<li><strong>Connections</strong> — adding the direct LLM endpoint and the CRISalid Agents pipeline server.</li>
+<li><strong>Model configuration</strong> — setting up each pipeline model for the CRISalid AI use case.</li>
+</ol>
+<hr>
+<section id="authentication-keycloak-sso" class="level2">
+<h2 class="anchored" data-anchor-id="authentication-keycloak-sso">Authentication — Keycloak SSO</h2>
+<p>By default, OpenWebUI ships with local account creation disabled (<code>ENABLE_SIGNUP=false</code>). Keycloak acts as a single OIDC endpoint that can broker any identity provider — institutional CAS SSO, SAML2 federation (e.g.&nbsp;Renater), ORCID, or any other — without requiring a separate OpenWebUI password.</p>
+<section id="keycloak-client-setup" class="level3">
+<h3 class="anchored" data-anchor-id="keycloak-client-setup">Keycloak client setup</h3>
+<p>Before configuring OpenWebUI, create a dedicated OIDC client in your Keycloak realm:</p>
+<ol type="1">
+<li>In the Keycloak admin console, go to <strong>Clients → Create client</strong>.</li>
+<li>Set the <strong>Client ID</strong> (e.g.&nbsp;<code>openwebui</code>).</li>
+<li>Enable <strong>Client authentication</strong> (confidential client).</li>
+<li>Under <strong>Valid redirect URIs</strong>, add: <code>https://&lt;openwebui-public-host&gt;/oauth/oidc/callback</code></li>
+<li>Save, then copy the <strong>Client secret</strong> from the <strong>Credentials</strong> tab.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Work in Progress
+Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
+<p>The <a href="https://docs.openwebui.com/features/authentication-access/auth/sso/keycloak/">OpenWebUI Keycloak SSO guide</a> provides step-by-step screenshots for the Keycloak side of this setup.</p>
 </div>
 </div>
+</section>
+<section id="environment-variables" class="level3">
+<h3 class="anchored" data-anchor-id="environment-variables">Environment variables</h3>
+<p>Set the following variables in <code>docker/openwebui/.env</code>:</p>
+<pre class="env"><code># Allow new users to be created on first SSO login
+OPENWEBUI_ENABLE_OAUTH_SIGNUP=true
+
+# Keycloak client credentials
+OPENWEBUI_OAUTH_CLIENT_ID=&lt;client-id&gt;
+OPENWEBUI_OAUTH_CLIENT_SECRET=&lt;client-secret&gt;
+
+# OIDC discovery document URL
+# Internal (OpenWebUI and Keycloak on the same Docker network, TLS terminated at reverse proxy):
+OPENWEBUI_OPENID_PROVIDER_URL=http://keycloak:8080/realms/&lt;realm-name&gt;/.well-known/openid-configuration
+# External (Keycloak behind a public hostname):
+# OPENWEBUI_OPENID_PROVIDER_URL=https://&lt;keycloak-host&gt;/realms/&lt;realm-name&gt;/.well-known/openid-configuration
+
+# Label shown on the SSO login button
+OPENWEBUI_OAUTH_PROVIDER_NAME=Institutional login
+
+# Callback URL — must match the redirect URI registered in Keycloak
+OPENWEBUI_OPENID_REDIRECT_URI=https://&lt;openwebui-public-host&gt;/oauth/oidc/callback</code></pre>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Internal vs.&nbsp;public provider URL
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use the <strong>internal Docker hostname</strong> (<code>http://keycloak:8080/…</code>) when OpenWebUI and Keycloak are in the same Docker network and TLS is terminated at the reverse proxy. This avoids an unnecessary round-trip through the public internet for token exchanges.</p>
+<p>Use the <strong>public hostname</strong> (<code>https://…</code>) when Keycloak is deployed separately or when TLS must be validated end-to-end inside the container.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<code>ENABLE_SIGNUP</code> and SSO
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>ENABLE_SIGNUP=false</code> blocks <strong>local</strong> account creation but does <strong>not</strong> prevent SSO-based registration. The <code>OPENWEBUI_ENABLE_OAUTH_SIGNUP</code> variable controls whether new accounts can be created on first SSO login. Keep <code>ENABLE_SIGNUP=false</code> and set <code>OPENWEBUI_ENABLE_OAUTH_SIGNUP=true</code> to allow SSO users while blocking direct sign-ups.</p>
+</div>
+</div>
+</section>
+<section id="restart" class="level3">
+<h3 class="anchored" data-anchor-id="restart">Restart</h3>
+<p>After editing <code>.env</code>, restart OpenWebUI:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">--profile</span> openwebui up <span class="at">-d</span> openwebui</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The login page will now show an SSO button alongside (or instead of) the password form.</p>
+<hr>
+</section>
+</section>
+<section id="connections" class="level2">
+<h2 class="anchored" data-anchor-id="connections">Connections</h2>
+<p>All model connections are configured in <strong>Admin panel → Settings → Connections</strong>.</p>
+<section id="direct-llm-connection" class="level3">
+<h3 class="anchored" data-anchor-id="direct-llm-connection">Direct LLM connection</h3>
+<p>Add a direct OpenAI-compatible connection to your LLM provider (e.g.&nbsp;<a href="https://www.ilaas.fr/rag-ilaas/">ILaaS</a>):</p>
+<ul>
+<li><strong>URL</strong>: your LLM API base URL (e.g.&nbsp;<code>https://llm.ilaas.fr/v1</code>)</li>
+<li><strong>API key</strong>: your LLM provider API key</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Keep all models private
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>After adding the connection, go to <strong>Admin panel → Settings → Models</strong> and set every model to <strong>private</strong> (visible to admins only). Direct LLM models should not be available to end users — they bypass CRISalid Agents entirely and have no access to the knowledge graph.</p>
+</div>
+</div>
+<p>This connection is used by OpenWebUI’s built-in UI features only (see <a href="#user-interface-config">User interface config</a> below).</p>
+</section>
+<section id="crisalid-agents-pipeline-connection" class="level3">
+<h3 class="anchored" data-anchor-id="crisalid-agents-pipeline-connection">CRISalid Agents pipeline connection</h3>
+<p>Add a second OpenAI-compatible connection for the pipeline server:</p>
+<ul>
+<li><strong>URL</strong>: <code>http://crisalid-agents:9099</code></li>
+<li><strong>API key</strong>: the value of <code>CRISALID_AGENTS_PIPELINES_API_KEY</code> from <code>docker/.env</code></li>
+</ul>
+<p>See <a href="../ai/security.html#the-agent-layer-crisalid-agents-openwebui-pipelines">the agent layer security notes</a> for how this key is configured.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The pipeline server is only reachable inside the <code>agents-network</code> Docker network — not exposed on the host. The URL <code>http://crisalid-agents:9099</code> is only valid from within the OpenWebUI container.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="user-interface-config" class="level2">
+<h2 class="anchored" data-anchor-id="user-interface-config">User interface config</h2>
+<p>OpenWebUI uses a dedicated model for built-in UI tasks (chat title generation, follow-up question suggestions, etc.). This must be set to a <strong>private</strong> direct LLM model, not a pipeline.</p>
+<p>Go to <strong>Admin panel → Settings → Interface</strong> and configure:</p>
+<ul>
+<li><strong>Task model</strong> (or equivalent): select one of the private direct LLM models added above.</li>
+</ul>
+<p>This separates UI housekeeping from the CRISalid agent pipeline calls, and avoids charging pipeline calls for background UI tasks.</p>
+<hr>
+</section>
+<section id="pipeline-model-configuration" class="level2">
+<h2 class="anchored" data-anchor-id="pipeline-model-configuration">Pipeline model configuration</h2>
+<p>Each CRISalid agent exposed by the pipeline server appears as a model in OpenWebUI. Each one must be configured to disable capabilities that are irrelevant or incompatible with the pipeline workflow.</p>
+<p>For each pipeline model, go to <strong>Admin panel → Models</strong>, open the model, and apply the settings below.</p>
+<section id="disable-all-capabilities" class="level3">
+<h3 class="anchored" data-anchor-id="disable-all-capabilities">Disable all capabilities</h3>
+<p>Under <strong>Capabilities</strong>, disable everything:</p>
+<ul>
+<li>Vision</li>
+<li>File Upload</li>
+<li>Web Search</li>
+<li>Image Generation</li>
+<li>Code Interpreter</li>
+<li>Terminal</li>
+<li>Usage</li>
+<li>Citations</li>
+<li>Status Updates</li>
+<li>Builtin Tools</li>
+</ul>
+<p>The pipeline already handles tool calls internally — these OpenWebUI-level capabilities are redundant and may interfere.</p>
+</section>
+<section id="no-system-prompt" class="level3">
+<h3 class="anchored" data-anchor-id="no-system-prompt">No system prompt</h3>
+<p>Leave the <strong>System prompt</strong> field empty. CRISalid Agents already defines its own system prompt; adding one here would override or conflict with it.</p>
+</section>
+<section id="disable-evaluations" class="level3">
+<h3 class="anchored" data-anchor-id="disable-evaluations">Disable evaluations</h3>
+<p>In <strong>Admin panel → Settings → Evaluations</strong>, disable <strong>Arena Models</strong> to prevent pipeline models from appearing in the comparison arena.</p>
+<hr>
+</section>
+</section>
+<section id="global-feature-flags" class="level2">
+<h2 class="anchored" data-anchor-id="global-feature-flags">Global feature flags</h2>
+<p>In <strong>Admin panel → Settings</strong>, also disable the following globally:</p>
+<ul>
+<li><strong>Code execution</strong></li>
+<li><strong>Image generation</strong></li>
+<li><strong>Web search</strong></li>
+</ul>
+<p>These features do not apply to the CRISalid AI use case and add unnecessary surface area.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

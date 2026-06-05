@@ -74,6 +74,6 @@ Port 9099 is **not exposed on the host** — it is only reachable inside the Doc
 
 OpenWebUI is the only layer directly exposed to end users.
 
-- **User registration is disabled** (`ENABLE_SIGNUP=false`) — accounts must be created manually by an administrator.
+- **User registration is disabled** by default (`ENABLE_SIGNUP=false`) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO.
 - An **admin account is seeded** on first run via `OPENWEBUI_ADMIN_EMAIL` and `OPENWEBUI_ADMIN_PASSWORD` in `docker/openwebui/.env`.
-- **Keycloak SSO** integration is planned for a future release.
+- **Keycloak SSO** can be enabled via OAuth2/OIDC — see [Configuring OpenWebUI](configuring-openwebui.qmd).

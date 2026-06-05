@@ -153,6 +153,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
   </li>  
         <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Institutional Directories</li>
+        <li>
+    <a class="dropdown-item" href="../directories/structures.html">
+ <span class="dropdown-text">Structures Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../directories/people.html">
+ <span class="dropdown-text">People Data</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
         <li class="dropdown-header">Docker Compose</li>
         <li>
     <a class="dropdown-item" href="../dev/index.html">
@@ -477,9 +487,9 @@ Local workstation
 <h2 class="anchored" data-anchor-id="the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</h2>
 <p>OpenWebUI is the only layer directly exposed to end users.</p>
 <ul>
-<li><strong>User registration is disabled</strong> (<code>ENABLE_SIGNUP=false</code>) — accounts must be created manually by an administrator.</li>
+<li><strong>User registration is disabled</strong> by default (<code>ENABLE_SIGNUP=false</code>) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO.</li>
 <li>An <strong>admin account is seeded</strong> on first run via <code>OPENWEBUI_ADMIN_EMAIL</code> and <code>OPENWEBUI_ADMIN_PASSWORD</code> in <code>docker/openwebui/.env</code>.</li>
-<li><strong>Keycloak SSO</strong> integration is planned for a future release.</li>
+<li><strong>Keycloak SSO</strong> can be enabled via OAuth2/OIDC — see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
 </ul>
 
 

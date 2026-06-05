@@ -1,8 +1,173 @@
 ---
 title: "Configuring OpenWebUI"
+format:
+  html:
+    toc: true
+    toc-location: left
 ---
 
-::: {.callout-note appearance="simple"}
-## Work in Progress
-This page is coming soon.
+This page covers the manual configuration steps required in OpenWebUI after the initial deployment:
+
+1. **Authentication** — wiring Keycloak SSO.
+2. **Connections** — adding the direct LLM endpoint and the CRISalid Agents pipeline server.
+3. **Model configuration** — setting up each pipeline model for the CRISalid AI use case.
+
+---
+
+## Authentication — Keycloak SSO
+
+By default, OpenWebUI ships with local account creation disabled (`ENABLE_SIGNUP=false`). Keycloak acts as a single OIDC endpoint that can broker any identity provider — institutional CAS SSO, SAML2 federation (e.g. Renater), ORCID, or any other — without requiring a separate OpenWebUI password.
+
+### Keycloak client setup
+
+Before configuring OpenWebUI, create a dedicated OIDC client in your Keycloak realm:
+
+1. In the Keycloak admin console, go to **Clients → Create client**.
+2. Set the **Client ID** (e.g. `openwebui`).
+3. Enable **Client authentication** (confidential client).
+4. Under **Valid redirect URIs**, add: `https://<openwebui-public-host>/oauth/oidc/callback`
+5. Save, then copy the **Client secret** from the **Credentials** tab.
+
+::: {.callout-note}
+The [OpenWebUI Keycloak SSO guide](https://docs.openwebui.com/features/authentication-access/auth/sso/keycloak/) provides step-by-step screenshots for the Keycloak side of this setup.
 :::
+
+### Environment variables
+
+Set the following variables in `docker/openwebui/.env`:
+
+```env
+# Allow new users to be created on first SSO login
+OPENWEBUI_ENABLE_OAUTH_SIGNUP=true
+
+# Keycloak client credentials
+OPENWEBUI_OAUTH_CLIENT_ID=<client-id>
+OPENWEBUI_OAUTH_CLIENT_SECRET=<client-secret>
+
+# OIDC discovery document URL
+# Internal (OpenWebUI and Keycloak on the same Docker network, TLS terminated at reverse proxy):
+OPENWEBUI_OPENID_PROVIDER_URL=http://keycloak:8080/realms/<realm-name>/.well-known/openid-configuration
+# External (Keycloak behind a public hostname):
+# OPENWEBUI_OPENID_PROVIDER_URL=https://<keycloak-host>/realms/<realm-name>/.well-known/openid-configuration
+
+# Label shown on the SSO login button
+OPENWEBUI_OAUTH_PROVIDER_NAME=Institutional login
+
+# Callback URL — must match the redirect URI registered in Keycloak
+OPENWEBUI_OPENID_REDIRECT_URI=https://<openwebui-public-host>/oauth/oidc/callback
+```
+
+::: {.callout-tip}
+## Internal vs. public provider URL
+
+Use the **internal Docker hostname** (`http://keycloak:8080/…`) when OpenWebUI and Keycloak are in the same Docker network and TLS is terminated at the reverse proxy. This avoids an unnecessary round-trip through the public internet for token exchanges.
+
+Use the **public hostname** (`https://…`) when Keycloak is deployed separately or when TLS must be validated end-to-end inside the container.
+:::
+
+::: {.callout-warning}
+## `ENABLE_SIGNUP` and SSO
+
+`ENABLE_SIGNUP=false` blocks **local** account creation but does **not** prevent SSO-based registration. The `OPENWEBUI_ENABLE_OAUTH_SIGNUP` variable controls whether new accounts can be created on first SSO login. Keep `ENABLE_SIGNUP=false` and set `OPENWEBUI_ENABLE_OAUTH_SIGNUP=true` to allow SSO users while blocking direct sign-ups.
+:::
+
+### Restart
+
+After editing `.env`, restart OpenWebUI:
+
+```bash
+docker compose --profile openwebui up -d openwebui
+```
+
+The login page will now show an SSO button alongside (or instead of) the password form.
+
+---
+
+## Connections
+
+All model connections are configured in **Admin panel → Settings → Connections**.
+
+### Direct LLM connection
+
+Add a direct OpenAI-compatible connection to your LLM provider (e.g. [ILaaS](https://www.ilaas.fr/rag-ilaas/)):
+
+- **URL**: your LLM API base URL (e.g. `https://llm.ilaas.fr/v1`)
+- **API key**: your LLM provider API key
+
+::: {.callout-important}
+## Keep all models private
+
+After adding the connection, go to **Admin panel → Settings → Models** and set every model to **private** (visible to admins only). Direct LLM models should not be available to end users — they bypass CRISalid Agents entirely and have no access to the knowledge graph.
+:::
+
+This connection is used by OpenWebUI's built-in UI features only (see [User interface config](#user-interface-config) below).
+
+### CRISalid Agents pipeline connection
+
+Add a second OpenAI-compatible connection for the pipeline server:
+
+- **URL**: `http://crisalid-agents:9099`
+- **API key**: the value of `CRISALID_AGENTS_PIPELINES_API_KEY` from `docker/.env`
+
+See [the agent layer security notes](security.qmd#the-agent-layer-crisalid-agents-openwebui-pipelines) for how this key is configured.
+
+::: {.callout-note}
+The pipeline server is only reachable inside the `agents-network` Docker network — not exposed on the host. The URL `http://crisalid-agents:9099` is only valid from within the OpenWebUI container.
+:::
+
+---
+
+## User interface config
+
+OpenWebUI uses a dedicated model for built-in UI tasks (chat title generation, follow-up question suggestions, etc.). This must be set to a **private** direct LLM model, not a pipeline.
+
+Go to **Admin panel → Settings → Interface** and configure:
+
+- **Task model** (or equivalent): select one of the private direct LLM models added above.
+
+This separates UI housekeeping from the CRISalid agent pipeline calls, and avoids charging pipeline calls for background UI tasks.
+
+---
+
+## Pipeline model configuration
+
+Each CRISalid agent exposed by the pipeline server appears as a model in OpenWebUI. Each one must be configured to disable capabilities that are irrelevant or incompatible with the pipeline workflow.
+
+For each pipeline model, go to **Admin panel → Models**, open the model, and apply the settings below.
+
+### Disable all capabilities
+
+Under **Capabilities**, disable everything:
+
+- Vision
+- File Upload
+- Web Search
+- Image Generation
+- Code Interpreter
+- Terminal
+- Usage
+- Citations
+- Status Updates
+- Builtin Tools
+
+The pipeline already handles tool calls internally — these OpenWebUI-level capabilities are redundant and may interfere.
+
+### No system prompt
+
+Leave the **System prompt** field empty. CRISalid Agents already defines its own system prompt; adding one here would override or conflict with it.
+
+### Disable evaluations
+
+In **Admin panel → Settings → Evaluations**, disable **Arena Models** to prevent pipeline models from appearing in the comparison arena.
+
+---
+
+## Global feature flags
+
+In **Admin panel → Settings**, also disable the following globally:
+
+- **Code execution**
+- **Image generation**
+- **Web search**
+
+These features do not apply to the CRISalid AI use case and add unnecessary surface area.
