@@ -94,4 +94,4 @@ services:
     image: crisalid-agents
   # openwebui (user-facing chat UI)
   openwebui:
-    image: ghcr.io/open-webui/open-webui:main-slim
+    image: ghcr.io/open-webui/open-webui:0.9.5-slim
