@@ -1486,7 +1486,8 @@ in `definitions.sample.json`).
 | `sovisuplus-batch` | `event.*.*.*.batch` | 20 | `AMQP_BATCH_QUEUE_NAME` |
 
 Each queue has a corresponding dead-letter queue (`dlq.sovisuplus-interactive`, `dlq.sovisuplus-batch`) bound to
-`dlx.graph` with routing key `#`. Failed messages (handler throws) are nacked without requeue and routed to the DLQ.
+`dlx.graph` with the source queue name as routing key (e.g. `sovisuplus-interactive` for `dlq.sovisuplus-interactive`).
+Failed messages (handler throws) are nacked without requeue and routed to the DLQ.
 
 sovisuplus also **publishes** task messages to the `graph` exchange. These are consumed by `crisalid-ikg-actions-interactive`.
 
@@ -1512,40 +1513,27 @@ Routing key pattern: `event.people.person.<action>.<mode>`
   "event": "created|updated|deleted|unchanged",
   "fields": {
     "uid": "<string>",
-    "names": [
-      {
-        "first_names": ["<string>"],
-        "last_names": ["<string>"],
-        "display_name": "<string>",
-        "display_name_variants": ["<string>"]
-      }
-    ],
     "identifiers": [
       {
         "type": "local|orcid|idref|idhals|idhali|scopus",
         "value": "<string>"
       }
     ],
+    "display_name": "<string>",
+    "first_name": "<string>",
+    "last_name": "<string>",
+    "external": true,
     "memberships": [
       {
         "entity_uid": "<string>",
-        "entity_type": "unit|team|institution|institution_subdivision",
-        "start_date": "<ISO date|null>",
-        "end_date": "<ISO date|null>"
-      }
-    ],
-    "employments": [
-      {
-        "entity_uid": "<string>",
-        "position": {
-          "code": "<string>",
-          "rank": "<integer|null>"
+        "research_unit": {
+          "names": ["<string>"],
+          "identifiers": [{ "type": "<string>", "value": "<string>" }]
         },
         "start_date": "<ISO date|null>",
         "end_date": "<ISO date|null>"
       }
-    ],
-    "external": false
+    ]
   }
 }
 ```
@@ -1566,19 +1554,8 @@ Routing key pattern: `event.documents.document.<action>.<mode>`
   "event": "created|updated|deleted|unchanged",
   "fields": {
     "uid": "<string>",
-    "titles": [{"value": "<string>", "language": "<string>"}],
-    "subtitles": [{"value": "<string>", "language": "<string>"}],
-    "abstracts": [{"value": "<string>", "language": "<string>"}],
-    "document_type": "<string|null>",
-    "issued": "<ISO date|null>",
-    "identifiers": [{"type": "<string>", "value": "<string>"}],
-    "contributions": [
-      {
-        "person_uid": "<string>",
-        "role": "<string>",
-        "rank": "<integer|null>"
-      }
-    ]
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "titles": [{ "value": "<string>", "language": "<string>" }]
   }
 }
 ```
@@ -1594,12 +1571,15 @@ There are two subtypes:
 ```json
 {
   "type": "harvesting_state_event",
-  "event": "<string>",
+  "event": "started|running|completed|error",
   "fields": {
-    "person_uid": "<string>",
-    "platform": "<string>",
-    "state": "pending|running|completed|failed",
-    "timestamp": "<ISO datetime>"
+    "harvester": "<string>",
+    "state": "running|completed|error",
+    "error": ["<string>"],
+    "entity": {
+      "identifiers": [{ "type": "<string>", "value": "<string>" }],
+      "name": "<string>"
+    }
   }
 }
 ```
@@ -1609,13 +1589,41 @@ There are two subtypes:
 ```json
 {
   "type": "harvesting_result_event",
-  "event": "<string>",
+  "event": "created|updated|unchanged|deleted",
   "fields": {
-    "person_uid": "<string>",
-    "platform": "<string>",
-    "document_uid": "<string>",
-    "result": "created|updated|unchanged|deleted",
-    "timestamp": "<ISO datetime>"
+    "reference_event": {
+      "type": "created|updated|unchanged|deleted",
+      "reference": {
+        "source_identifier": "<string>",
+        "harvester": "<string>",
+        "harvester_version": "<string>",
+        "identifiers": [{ "type": "<string>", "value": "<string>" }],
+        "titles": [{ "value": "<string>", "language": "<string>" }],
+        "subtitles": [{ "value": "<string>", "language": "<string>" }],
+        "abstracts": [{ "value": "<string>", "language": "<string|null>" }],
+        "document_type": [{ "uri": "<string>", "label": "<string>" }],
+        "contributions": [
+          {
+            "rank": "<integer|null>",
+            "role": "<string|null>",
+            "contributor": {
+              "name": "<string|null>",
+              "first_name": "<string|null>",
+              "last_name": "<string|null>",
+              "identifiers": [{ "type": "<string>", "value": "<string>" }]
+            }
+          }
+        ],
+        "issued": "<ISO date|null>",
+        "raw_issued": "<string|null>",
+        "version": "<integer>"
+      },
+      "enhanced": true
+    },
+    "entity": {
+      "identifiers": [{ "type": "<string>", "value": "<string>" }],
+      "name": "<string>"
+    }
   }
 }
 ```
@@ -1631,8 +1639,8 @@ The queue `crisalid-ikg-actions-interactive` is bound to receive all `task.*.*.*
 ```json
 {
   "id": "<uuid>",
-  "actionType": "merge|unmerge|update|fetch_documents",
-  "targetType": "document|person",
+  "actionType": "ADD|REMOVE|UPDATE|FETCH|MERGE",
+  "targetType": "DOCUMENT|PERSON|HARVESTING",
   "targetUid": "<string>",
   "path": "<string|null>",
   "parameters": { ... },
@@ -1642,11 +1650,14 @@ The queue `crisalid-ikg-actions-interactive` is bound to receive all `task.*.*.*
 }
 ```
 
-| `actionType` | Routing key | `targetType` |
+`actionType` and `targetType` are Prisma enum values serialized as uppercase strings.
+
+| `actionType` | `targetType` | Routing key |
 |---|---|---|
-| `merge` | `task.documents.document.merge.interactive` | `document` |
-| `unmerge` | `task.documents.document.unmerge.interactive` | `document` |
-| `update` | `task.people.person.update.interactive` | `person` |
-| `fetch_documents` | `task.people.documents.fetch.interactive` | `person` |
+| `MERGE` | `DOCUMENT` | `task.documents.document.merge.interactive` |
+| `REMOVE` | `DOCUMENT` | `task.documents.document.remove.interactive` |
+| `ADD` | `DOCUMENT` | `task.documents.document.add.interactive` |
+| `UPDATE` | `PERSON` | `task.people.person.update.interactive` |
+| `FETCH` | `HARVESTING` | `task.people.documents.fetch.interactive` |
 
 ---
