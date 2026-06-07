@@ -1086,20 +1086,20 @@ at-least-once
 
 ### Topic and Routing Key Patterns
 
-All routing keys on the `graph` exchange have **5 segments**, where the last segment is the **priority class**
+All routing keys on the `graph` exchange have **5 segments**, where the last segment is the **queue mode**
 (see [Routing key convention — interactive vs batch](#routing-key-convention-interactive-vs-batch)):
 
 ```text
-event.structures.structure.<action>.<priority>
-event.people.person.<action>.<priority>
-event.documents.document.<action>.<priority>
-event.harvestings.<event_type>.<action>.<priority>
-task.documents.document.<action>.<priority>
-task.people.person.<action>.<priority>
-task.people.documents.fetch.<priority>
+event.structures.structure.<action>.<mode>
+event.people.person.<action>.<mode>
+event.documents.document.<action>.<mode>
+event.harvestings.<event_type>.<action>.<mode>
+task.documents.document.<action>.<mode>
+task.people.person.<action>.<mode>
+task.people.documents.fetch.<mode>
 ```
 
-Where `<priority>` is `interactive` or `batch`.
+Where `<mode>` is `interactive` or `batch`.
 
 <details>
 <summary>Full list of event routing keys</summary>
@@ -1159,7 +1159,7 @@ task.people.documents.fetch.interactive
 Pattern:
 
 ```text
-event.structures.structure.<action>.<priority>
+event.structures.structure.<action>.<mode>
 ```
 
 <details>
@@ -1504,7 +1504,7 @@ All inbound messages share the same top-level envelope:
 
 #### Person events
 
-Routing key pattern: `event.people.person.<action>.<priority>`
+Routing key pattern: `event.people.person.<action>.<mode>`
 
 ```json
 {
@@ -1552,13 +1552,13 @@ Routing key pattern: `event.people.person.<action>.<priority>`
 
 #### Research unit events
 
-Routing key pattern: `event.structures.structure.<action>.<priority>`
+Routing key pattern: `event.structures.structure.<action>.<mode>`
 
 The payload schema is identical to structure events documented in [Structure events (`graph` exchange)](#structure-events-graph-exchange).
 
 #### Document events
 
-Routing key pattern: `event.documents.document.<action>.<priority>`
+Routing key pattern: `event.documents.document.<action>.<mode>`
 
 ```json
 {
@@ -1585,7 +1585,7 @@ Routing key pattern: `event.documents.document.<action>.<priority>`
 
 #### Harvesting events
 
-Routing key pattern: `event.harvestings.<event_type>.<action>.<priority>`
+Routing key pattern: `event.harvestings.<event_type>.<action>.<mode>`
 
 There are two subtypes:
 
