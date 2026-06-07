@@ -43,4 +43,4 @@ networks:
   agents-network:
     driver: bridge
   keycloak-network:
-    external: true
+    driver: bridge
