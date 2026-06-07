@@ -18,9 +18,17 @@
     },
     {
       "arguments": {},
-      "destination": "crisalid-ikg-publications",
+      "destination": "crisalid-ikg-publications-batch",
       "destination_type": "queue",
-      "routing_key": "event.references.reference.*.*",
+      "routing_key": "event.references.reference.*.batch",
+      "source": "publications",
+      "vhost": "/"
+    },
+    {
+      "arguments": {},
+      "destination": "crisalid-ikg-publications-interactive",
+      "destination_type": "queue",
+      "routing_key": "event.references.reference.*.interactive",
       "source": "publications",
       "vhost": "/"
     },
@@ -306,7 +314,17 @@
       },
       "auto_delete": false,
       "durable": true,
-      "name": "crisalid-ikg-publications",
+      "name": "crisalid-ikg-publications-batch",
+      "type": "classic",
+      "vhost": "/"
+    },
+    {
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      },
+      "auto_delete": false,
+      "durable": true,
+      "name": "crisalid-ikg-publications-interactive",
       "type": "classic",
       "vhost": "/"
     },

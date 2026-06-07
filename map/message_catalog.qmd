@@ -58,7 +58,7 @@ Each split queue has its own channel and prefetch count, its own semaphore, and 
 | sovisuplus | ✅ | `sovisuplus-interactive`, `sovisuplus-batch` |
 | crisalid-ikg (inbound actions) | ✅ | `crisalid-ikg-actions-interactive` |
 | crisalid-ikg (inbound directory) | ✅ | `crisalid-ikg-people-batch`, `crisalid-ikg-structures-batch` |
-| crisalid-ikg (publications) | ✅ | `crisalid-ikg-publications`, `crisalid-ikg-harvesting-events` |
+| crisalid-ikg (publications) | ✅ | `crisalid-ikg-publications-batch`, `crisalid-ikg-publications-interactive` |
 | svp-harvester | ✅ | `svp-harvester-interactive`, `svp-harvester-batch` |
 
 ---
@@ -77,7 +77,8 @@ Each split queue has its own channel and prefetch count, its own semaphore, and 
 | `sovisuplus-batch` | `graph` | `event.*.*.*.batch` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
 | `dlq.sovisuplus-interactive` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
 | `dlq.sovisuplus-batch` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
-| `crisalid-ikg-publications` | `publications` | `event.references.reference.*.*` | svp-harvester | crisalid-ikg | |
+| `crisalid-ikg-publications-batch` | `publications` | `event.references.reference.*.batch` | svp-harvester | crisalid-ikg | |
+| `crisalid-ikg-publications-interactive` | `publications` | `event.references.reference.*.interactive` | svp-harvester | crisalid-ikg | |
 | `crisalid-ikg-harvesting-events` | `publications` | `event.references.*.*.*` | svp-harvester | crisalid-ikg | |
 | `svp-harvester-interactive` | `publications` | `task.entity.references.retrieval.interactive` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
 | `svp-harvester-batch` | `publications` | `task.entity.references.retrieval.batch` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
