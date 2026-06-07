@@ -54,7 +54,7 @@
       "vhost": "/",
       "destination": "dlq.crisalid-ikg-actions-interactive",
       "destination_type": "queue",
-      "routing_key": "#"
+      "routing_key": "crisalid-ikg-actions-interactive"
     },
     {
       "arguments": {},
@@ -150,7 +150,7 @@
       "vhost": "/",
       "destination": "dlq.sovisuplus-interactive",
       "destination_type": "queue",
-      "routing_key": "#"
+      "routing_key": "sovisuplus-interactive"
     },
     {
       "arguments": {},
@@ -158,7 +158,7 @@
       "vhost": "/",
       "destination": "dlq.sovisuplus-batch",
       "destination_type": "queue",
-      "routing_key": "#"
+      "routing_key": "sovisuplus-batch"
     }
   ],
   "exchanges": [
