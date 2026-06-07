@@ -48,8 +48,9 @@ When a queue has been split, every message routed to it gains a **5th routing ke
   operator editing a person record). Processing must be fast and must not be starved by bulk loads.
 - **`.batch`** — message produced by an ETL pipeline or mass-import job. Processing can tolerate higher latency.
 
-Each split queue has its own channel and prefetch count, its own semaphore, and its own dead-letter queue on
-`dlx.graph` so failures in one traffic class do not affect the other.
+Each split queue has its own channel and prefetch count, its own semaphore, and its own dead-letter queue on the
+exchange-specific dead-letter exchange (`dlx.graph` for graph-exchange queues, `dlx.publications` for
+publications-exchange queues) so failures in one traffic class do not affect the other.
 
 **Current status:**
 
@@ -72,17 +73,19 @@ Each split queue has its own channel and prefetch count, its own semaphore, and 
 | `crisalid-ikg-people-batch` | `directory` | `event.people.person.*.batch` | ETL pipelines | crisalid-ikg | |
 | `crisalid-ikg-structures-batch` | `directory` | `event.structures.structure.*.batch` | ETL pipelines | crisalid-ikg | |
 | `crisalid-ikg-actions-interactive` | `graph` | `task.*.*.*.interactive` | sovisuplus | crisalid-ikg | DLQ on `dlx.graph` |
-| `dlq.crisalid-ikg-actions-interactive` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
+| `dlq.crisalid-ikg-actions-interactive` | `dlx.graph` | `crisalid-ikg-actions-interactive` | dead-letter | manual | Dead-letter queue |
 | `sovisuplus-interactive` | `graph` | `event.*.*.*.interactive` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
 | `sovisuplus-batch` | `graph` | `event.*.*.*.batch` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
-| `dlq.sovisuplus-interactive` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
-| `dlq.sovisuplus-batch` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
+| `dlq.sovisuplus-interactive` | `dlx.graph` | `sovisuplus-interactive` | dead-letter | manual | Dead-letter queue |
+| `dlq.sovisuplus-batch` | `dlx.graph` | `sovisuplus-batch` | dead-letter | manual | Dead-letter queue |
 | `crisalid-ikg-publications-batch` | `publications` | `event.references.reference.*.batch` | svp-harvester | crisalid-ikg | |
 | `crisalid-ikg-publications-interactive` | `publications` | `event.references.reference.*.interactive` | svp-harvester | crisalid-ikg | |
 | `crisalid-ikg-harvesting-events-batch` | `publications` | `event.references.*.*.batch` | svp-harvester | crisalid-ikg | |
 | `crisalid-ikg-harvesting-events-interactive` | `publications` | `event.references.*.*.interactive` | svp-harvester | crisalid-ikg | |
 | `svp-harvester-interactive` | `publications` | `task.entity.references.retrieval.interactive` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
 | `svp-harvester-batch` | `publications` | `task.entity.references.retrieval.batch` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
+| `dlq.svp-harvester-interactive` | `dlx.publications` | `svp-harvester-interactive` | dead-letter | manual | Dead-letter queue |
+| `dlq.svp-harvester-batch` | `dlx.publications` | `svp-harvester-batch` | dead-letter | manual | Dead-letter queue |
 | `ctd-publications` | `publications` | `event.references.reference.*.*` | svp-harvester | CTD | |
 
 ---
@@ -111,24 +114,25 @@ at-least-once
 
 ### Topic and Routing Key Patterns
 
-There are two main patterns for routing keys in the `directory` exchange:
+There are two main patterns for routing keys in the `directory` exchange. All directory messages are ETL-sourced
+and carry the `.batch` mode segment:
 
 ```text
-event.structures.structure.<action>
-event.people.person.<action>
+event.structures.structure.<action>.batch
+event.people.person.<action>.batch
 ```
 
 <details>
-<summary>Full list of actions for each entity type</summary>
+<summary>Full list of routing keys for each entity type</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
-event.people.person.created
-event.people.person.updated
-event.people.person.deleted
-event.people.person.unchanged
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
+event.people.person.created.batch
+event.people.person.updated.batch
+event.people.person.deleted.batch
+event.people.person.unchanged.batch
 ```
 </details>
 
@@ -143,16 +147,16 @@ event.people.person.unchanged
 Pattern:
 
 ```text
-event.structures.structure.<action>
+event.structures.structure.<action>.batch
 ```
 
 <details>
 <summary>Full list of routing keys for structure events</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
 ```
 </details>
 
@@ -724,16 +728,16 @@ no
 Pattern:
 
 ```text
-event.people.person.<action>
+event.people.person.<action>.batch
 ```
 
 <details>
 <summary>Full list of routing keys for people events</summary>
 ```text
-event.people.person.created
-event.people.person.updated
-event.people.person.deleted
-event.people.person.unchanged
+event.people.person.created.batch
+event.people.person.updated.batch
+event.people.person.deleted.batch
+event.people.person.unchanged.batch
 ```
 </details>
 
