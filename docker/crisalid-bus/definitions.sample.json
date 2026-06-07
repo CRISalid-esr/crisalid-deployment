@@ -52,7 +52,7 @@
       "arguments": {},
       "source": "dlx.graph",
       "vhost": "/",
-      "destination": "dlq.crisalid-ikg-user-actions",
+      "destination": "dlq.crisalid-ikg-actions-interactive",
       "destination_type": "queue",
       "routing_key": "#"
     },
@@ -60,7 +60,7 @@
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-user-actions",
+      "destination": "crisalid-ikg-actions-interactive",
       "destination_type": "queue",
       "routing_key": "task.documents.document.*.interactive"
     },
@@ -68,7 +68,7 @@
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-user-actions",
+      "destination": "crisalid-ikg-actions-interactive",
       "destination_type": "queue",
       "routing_key": "task.people.person.*.interactive"
     },
@@ -76,7 +76,7 @@
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-user-actions",
+      "destination": "crisalid-ikg-actions-interactive",
       "destination_type": "queue",
       "routing_key": "task.people.documents.fetch.interactive"
     },
@@ -245,7 +245,7 @@
       "vhost": "/"
     },
     {
-      "name": "crisalid-ikg-user-actions",
+      "name": "crisalid-ikg-actions-interactive",
       "vhost": "/",
       "type": "classic",
       "durable": true,
@@ -253,11 +253,11 @@
       "arguments": {
         "x-consumer-timeout": 43200000,
         "x-dead-letter-exchange": "dlx.graph",
-        "x-dead-letter-routing-key": "user_actions"
+        "x-dead-letter-routing-key": "crisalid-ikg-actions-interactive"
       }
     },
     {
-      "name": "dlq.crisalid-ikg-user-actions",
+      "name": "dlq.crisalid-ikg-actions-interactive",
       "vhost": "/",
       "type": "classic",
       "durable": true,
