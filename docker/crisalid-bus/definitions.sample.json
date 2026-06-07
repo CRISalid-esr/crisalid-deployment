@@ -60,9 +60,17 @@
       "arguments": {},
       "source": "publications",
       "vhost": "/",
-      "destination": "crisalid-ikg-harvesting-events",
+      "destination": "crisalid-ikg-harvesting-events-batch",
       "destination_type": "queue",
-      "routing_key": "event.references.*.*.*"
+      "routing_key": "event.references.*.*.batch"
+    },
+    {
+      "arguments": {},
+      "source": "publications",
+      "vhost": "/",
+      "destination": "crisalid-ikg-harvesting-events-interactive",
+      "destination_type": "queue",
+      "routing_key": "event.references.*.*.interactive"
     },
     {
       "arguments": {},
@@ -351,7 +359,17 @@
       }
     },
     {
-      "name": "crisalid-ikg-harvesting-events",
+      "name": "crisalid-ikg-harvesting-events-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "crisalid-ikg-harvesting-events-interactive",
       "vhost": "/",
       "type": "classic",
       "durable": true,
