@@ -2,17 +2,17 @@
   "bindings": [
     {
       "arguments": {},
-      "destination": "crisalid-ikg-people",
+      "destination": "crisalid-ikg-people-batch",
       "destination_type": "queue",
-      "routing_key": "event.people.person.*",
+      "routing_key": "event.people.person.*.batch",
       "source": "directory",
       "vhost": "/"
     },
     {
       "arguments": {},
-      "destination": "crisalid-ikg-structures",
+      "destination": "crisalid-ikg-structures-batch",
       "destination_type": "queue",
-      "routing_key": "event.structures.structure.*",
+      "routing_key": "event.structures.structure.*.batch",
       "source": "directory",
       "vhost": "/"
     },
@@ -20,7 +20,7 @@
       "arguments": {},
       "destination": "crisalid-ikg-publications",
       "destination_type": "queue",
-      "routing_key": "event.references.reference.*",
+      "routing_key": "event.references.reference.*.*",
       "source": "publications",
       "vhost": "/"
     },
@@ -28,15 +28,23 @@
       "arguments": {},
       "destination": "ctd-publications",
       "destination_type": "queue",
-      "routing_key": "event.references.reference.*",
+      "routing_key": "event.references.reference.*.*",
       "source": "publications",
       "vhost": "/"
     },
     {
       "arguments": {},
-      "destination": "svp-harvester",
+      "destination": "svp-harvester-interactive",
       "destination_type": "queue",
-      "routing_key": "task.entity.references.retrieval",
+      "routing_key": "task.entity.references.retrieval.interactive",
+      "source": "publications",
+      "vhost": "/"
+    },
+    {
+      "arguments": {},
+      "destination": "svp-harvester-batch",
+      "destination_type": "queue",
+      "routing_key": "task.entity.references.retrieval.batch",
       "source": "publications",
       "vhost": "/"
     },
@@ -46,7 +54,23 @@
       "vhost": "/",
       "destination": "crisalid-ikg-harvesting-events",
       "destination_type": "queue",
-      "routing_key": "event.references.*.*"
+      "routing_key": "event.references.*.*.*"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.svp-harvester-interactive",
+      "destination_type": "queue",
+      "routing_key": "svp-harvester-interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.svp-harvester-batch",
+      "destination_type": "queue",
+      "routing_key": "svp-harvester-batch"
     },
     {
       "arguments": {},
@@ -187,6 +211,14 @@
       "vhost": "/"
     },
     {
+      "name": "dlx.publications",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
       "arguments": {},
       "auto_delete": false,
       "durable": true,
@@ -210,9 +242,53 @@
       },
       "auto_delete": false,
       "durable": true,
-      "name": "crisalid-ikg-structures",
+      "name": "crisalid-ikg-structures-batch",
       "type": "classic",
       "vhost": "/"
+    },
+    {
+      "name": "svp-harvester-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "svp-harvester-interactive"
+      }
+    },
+    {
+      "name": "svp-harvester-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "svp-harvester-batch"
+      }
+    },
+    {
+      "name": "dlq.svp-harvester-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "dlq.svp-harvester-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
     },
     {
       "arguments": {
@@ -220,17 +296,7 @@
       },
       "auto_delete": false,
       "durable": true,
-      "name": "svp-harvester",
-      "type": "classic",
-      "vhost": "/"
-    },
-    {
-      "arguments": {
-        "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "crisalid-ikg-people",
+      "name": "crisalid-ikg-people-batch",
       "type": "classic",
       "vhost": "/"
     },

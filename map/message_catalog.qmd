@@ -57,7 +57,7 @@ Each split queue has its own channel and prefetch count, its own semaphore, and 
 |---|---|---|
 | sovisuplus | ✅ | `sovisuplus-interactive`, `sovisuplus-batch` |
 | crisalid-ikg (inbound actions) | ✅ | `crisalid-ikg-actions-interactive` |
-| crisalid-ikg (inbound directory) | ⏳ pending | `crisalid-ikg-people`, `crisalid-ikg-structures` |
+| crisalid-ikg (inbound directory) | ✅ | `crisalid-ikg-people-batch`, `crisalid-ikg-structures-batch` |
 | crisalid-ikg (publications) | ⏳ pending | `crisalid-ikg-publications`, `crisalid-ikg-harvesting-events` |
 
 ---
@@ -68,8 +68,8 @@ Each split queue has its own channel and prefetch count, its own semaphore, and 
 
 | Queue | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
 |---|---|---|---|---|---|
-| `crisalid-ikg-people` | `directory` | `event.people.person.*` | ETL pipelines | crisalid-ikg | |
-| `crisalid-ikg-structures` | `directory` | `event.structures.structure.*` | ETL pipelines | crisalid-ikg | |
+| `crisalid-ikg-people-batch` | `directory` | `event.people.person.*.batch` | ETL pipelines | crisalid-ikg | |
+| `crisalid-ikg-structures-batch` | `directory` | `event.structures.structure.*.batch` | ETL pipelines | crisalid-ikg | |
 | `crisalid-ikg-actions-interactive` | `graph` | `task.*.*.*.interactive` | sovisuplus | crisalid-ikg | DLQ on `dlx.graph` |
 | `dlq.crisalid-ikg-actions-interactive` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
 | `sovisuplus-interactive` | `graph` | `event.*.*.*.interactive` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
