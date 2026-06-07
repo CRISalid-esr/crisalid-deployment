@@ -39,15 +39,47 @@ Messages are primarily of two types: **events** and **tasks**.
 
 ---
 
-## 🗺️ Existing Queues
+## 🔀 Routing key convention — interactive vs batch
 
-> > TODO queues currently bound to each exchange.
+All queues in the CRISalid bus will progressively be split into two queues suffixed **`-interactive`** and **`-batch`**.
+When a queue has been split, every message routed to it gains a **5th routing key segment**: `.interactive` or `.batch`.
+
+- **`.interactive`** — message triggered by a real-time user action (e.g. a user requesting a document harvest, an
+  operator editing a person record). Processing must be fast and must not be starved by bulk loads.
+- **`.batch`** — message produced by an ETL pipeline or mass-import job. Processing can tolerate higher latency.
+
+Each split queue has its own channel and prefetch count, its own semaphore, and its own dead-letter queue on
+`dlx.graph` so failures in one traffic class do not affect the other.
+
+**Current status:**
+
+| Service | Split done? | Queue names |
+|---|---|---|
+| sovisuplus | ✅ | `sovisuplus-interactive`, `sovisuplus-batch` |
+| crisalid-ikg (inbound actions) | ✅ | `crisalid-ikg-actions-interactive` |
+| crisalid-ikg (inbound directory) | ⏳ pending | `crisalid-ikg-people`, `crisalid-ikg-structures` |
+| crisalid-ikg (publications) | ⏳ pending | `crisalid-ikg-publications`, `crisalid-ikg-harvesting-events` |
+
+---
+
+## 🗺️ Existing Queues
 
 ### Queue Inventory
 
-| Queue           | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
-|-----------------|----------|--------------|-------------|-------------|-------|
-| To be completed |          |              |             |             |       |
+| Queue | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
+|---|---|---|---|---|---|
+| `crisalid-ikg-people` | `directory` | `event.people.person.*` | ETL pipelines | crisalid-ikg | |
+| `crisalid-ikg-structures` | `directory` | `event.structures.structure.*` | ETL pipelines | crisalid-ikg | |
+| `crisalid-ikg-actions-interactive` | `graph` | `task.*.*.*.interactive` | sovisuplus | crisalid-ikg | DLQ on `dlx.graph` |
+| `dlq.crisalid-ikg-actions-interactive` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
+| `sovisuplus-interactive` | `graph` | `event.*.*.*.interactive` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
+| `sovisuplus-batch` | `graph` | `event.*.*.*.batch` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
+| `dlq.sovisuplus-interactive` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
+| `dlq.sovisuplus-batch` | `dlx.graph` | `#` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-publications` | `publications` | `event.references.reference.*` | svp-harvester | crisalid-ikg | |
+| `crisalid-ikg-harvesting-events` | `publications` | `event.references.*.*` | svp-harvester | crisalid-ikg | |
+| `svp-harvester` | `publications` | `task.entity.references.retrieval` | crisalid-ikg | svp-harvester | |
+| `ctd-publications` | `publications` | `event.references.reference.*` | svp-harvester | CTD | |
 
 ---
 
@@ -1034,9 +1066,11 @@ no
 
 ### Purpose
 
-Outgoing lifecycle events published by crisalid-ikg to downstream consumers. Each event signals that an entity in
-the knowledge graph has been created, updated, deleted, or confirmed unchanged following inbound directory or
-harvesting messages.
+Bidirectional exchange between crisalid-ikg and downstream consumers (primarily sovisuplus).
+
+- **crisalid-ikg → sovisuplus**: lifecycle events for people, research units, documents, and harvesting state/results.
+- **sovisuplus → crisalid-ikg**: task messages representing user-initiated graph operations (merge documents, fetch
+  publications, update a person, etc.).
 
 ### Exchange Type
 
@@ -1052,22 +1086,65 @@ at-least-once
 
 ### Topic and Routing Key Patterns
 
+All routing keys on the `graph` exchange have **5 segments**, where the last segment is the **priority class**
+(see [Routing key convention — interactive vs batch](#routing-key-convention-interactive-vs-batch)):
+
 ```text
-event.structures.structure.<action>
-event.people.person.<action>
+event.structures.structure.<action>.<priority>
+event.people.person.<action>.<priority>
+event.documents.document.<action>.<priority>
+event.harvestings.<event_type>.<action>.<priority>
+task.documents.document.<action>.<priority>
+task.people.person.<action>.<priority>
+task.people.documents.fetch.<priority>
 ```
 
+Where `<priority>` is `interactive` or `batch`.
+
 <details>
-<summary>Full list of actions for each entity type</summary>
+<summary>Full list of event routing keys</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
-event.people.person.created
-event.people.person.updated
-event.people.person.deleted
-event.people.person.unchanged
+event.structures.structure.created.interactive
+event.structures.structure.updated.interactive
+event.structures.structure.deleted.interactive
+event.structures.structure.unchanged.interactive
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
+
+event.people.person.created.interactive
+event.people.person.updated.interactive
+event.people.person.deleted.interactive
+event.people.person.unchanged.interactive
+event.people.person.created.batch
+event.people.person.updated.batch
+event.people.person.deleted.batch
+event.people.person.unchanged.batch
+
+event.documents.document.created.interactive
+event.documents.document.updated.interactive
+event.documents.document.deleted.interactive
+event.documents.document.unchanged.interactive
+event.documents.document.created.batch
+event.documents.document.updated.batch
+event.documents.document.deleted.batch
+event.documents.document.unchanged.batch
+
+event.harvestings.harvesting_state_event.*.interactive
+event.harvestings.harvesting_result_event.*.interactive
+event.harvestings.harvesting_state_event.*.batch
+event.harvestings.harvesting_result_event.*.batch
+```
+</details>
+
+<details>
+<summary>Full list of task routing keys (sovisuplus → crisalid-ikg)</summary>
+```text
+task.documents.document.merge.interactive
+task.documents.document.unmerge.interactive
+task.people.person.update.interactive
+task.people.documents.fetch.interactive
 ```
 </details>
 
@@ -1082,16 +1159,20 @@ event.people.person.unchanged
 Pattern:
 
 ```text
-event.structures.structure.<action>
+event.structures.structure.<action>.<priority>
 ```
 
 <details>
 <summary>Full list of routing keys for structure events</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
+event.structures.structure.created.interactive
+event.structures.structure.updated.interactive
+event.structures.structure.deleted.interactive
+event.structures.structure.unchanged.interactive
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
 ```
 </details>
 
@@ -1388,5 +1469,184 @@ structures (research units, support units, administrative units).
   Consumers implementing reconciliation logic can use it to confirm that the structure is still active.
 * A `deleted` event signals that the structure has been removed from the graph. Consumers should treat
   subsequent references to its `uid` as invalid.
+
+---
+
+## Queues: `sovisuplus-interactive` and `sovisuplus-batch`
+
+### Overview
+
+sovisuplus subscribes to two queues on the `graph` exchange. Both queues are asserted by sovisuplus at startup —
+no manual pre-creation is required, but the `dlx.graph` dead-letter exchange must exist beforehand (it is declared
+in `definitions.sample.json`).
+
+| Queue | Binding keys | Prefetch | Env var |
+|---|---|---|---|
+| `sovisuplus-interactive` | `event.*.*.*.interactive` | 5 | `AMQP_INTERACTIVE_QUEUE_NAME` |
+| `sovisuplus-batch` | `event.*.*.*.batch` | 20 | `AMQP_BATCH_QUEUE_NAME` |
+
+Each queue has a corresponding dead-letter queue (`dlq.sovisuplus-interactive`, `dlq.sovisuplus-batch`) bound to
+`dlx.graph` with routing key `#`. Failed messages (handler throws) are nacked without requeue and routed to the DLQ.
+
+sovisuplus also **publishes** task messages to the `graph` exchange. These are consumed by `crisalid-ikg-actions-interactive`.
+
+### Inbound messages
+
+All inbound messages share the same top-level envelope:
+
+```json
+{
+  "type": "<entity type>",
+  "event": "<action>",
+  "fields": { ... }
+}
+```
+
+#### Person events
+
+Routing key pattern: `event.people.person.<action>.<priority>`
+
+```json
+{
+  "type": "person",
+  "event": "created|updated|deleted|unchanged",
+  "fields": {
+    "uid": "<string>",
+    "names": [
+      {
+        "first_names": ["<string>"],
+        "last_names": ["<string>"],
+        "display_name": "<string>",
+        "display_name_variants": ["<string>"]
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "local|orcid|idref|idhals|idhali|scopus",
+        "value": "<string>"
+      }
+    ],
+    "memberships": [
+      {
+        "entity_uid": "<string>",
+        "entity_type": "unit|team|institution|institution_subdivision",
+        "start_date": "<ISO date|null>",
+        "end_date": "<ISO date|null>"
+      }
+    ],
+    "employments": [
+      {
+        "entity_uid": "<string>",
+        "position": {
+          "code": "<string>",
+          "rank": "<integer|null>"
+        },
+        "start_date": "<ISO date|null>",
+        "end_date": "<ISO date|null>"
+      }
+    ],
+    "external": false
+  }
+}
+```
+
+#### Research unit events
+
+Routing key pattern: `event.structures.structure.<action>.<priority>`
+
+The payload schema is identical to structure events documented in [Structure events (`graph` exchange)](#structure-events-graph-exchange).
+
+#### Document events
+
+Routing key pattern: `event.documents.document.<action>.<priority>`
+
+```json
+{
+  "type": "document",
+  "event": "created|updated|deleted|unchanged",
+  "fields": {
+    "uid": "<string>",
+    "titles": [{"value": "<string>", "language": "<string>"}],
+    "subtitles": [{"value": "<string>", "language": "<string>"}],
+    "abstracts": [{"value": "<string>", "language": "<string>"}],
+    "document_type": "<string|null>",
+    "issued": "<ISO date|null>",
+    "identifiers": [{"type": "<string>", "value": "<string>"}],
+    "contributions": [
+      {
+        "person_uid": "<string>",
+        "role": "<string>",
+        "rank": "<integer|null>"
+      }
+    ]
+  }
+}
+```
+
+#### Harvesting events
+
+Routing key pattern: `event.harvestings.<event_type>.<action>.<priority>`
+
+There are two subtypes:
+
+**Harvesting state event** (`event_type = harvesting_state_event`):
+
+```json
+{
+  "type": "harvesting_state_event",
+  "event": "<string>",
+  "fields": {
+    "person_uid": "<string>",
+    "platform": "<string>",
+    "state": "pending|running|completed|failed",
+    "timestamp": "<ISO datetime>"
+  }
+}
+```
+
+**Harvesting result event** (`event_type = harvesting_result_event`):
+
+```json
+{
+  "type": "harvesting_result_event",
+  "event": "<string>",
+  "fields": {
+    "person_uid": "<string>",
+    "platform": "<string>",
+    "document_uid": "<string>",
+    "result": "created|updated|unchanged|deleted",
+    "timestamp": "<ISO datetime>"
+  }
+}
+```
+
+### Outbound messages (sovisuplus → `crisalid-ikg-actions-interactive`)
+
+sovisuplus publishes task messages to the `graph` exchange with routing keys of the form
+`task.<domain>.<entity>.<action>.interactive`. All outbound messages from sovisuplus carry the `.interactive`
+suffix — batch task publishing is not implemented.
+
+The queue `crisalid-ikg-actions-interactive` is bound to receive all `task.*.*.*.interactive` keys.
+
+```json
+{
+  "id": "<uuid>",
+  "actionType": "merge|unmerge|update|fetch_documents",
+  "targetType": "document|person",
+  "targetUid": "<string>",
+  "path": "<string|null>",
+  "parameters": { ... },
+  "timestamp": "<ISO datetime>",
+  "personUid": "<string>",
+  "application": "sovisuplus"
+}
+```
+
+| `actionType` | Routing key | `targetType` |
+|---|---|---|
+| `merge` | `task.documents.document.merge.interactive` | `document` |
+| `unmerge` | `task.documents.document.unmerge.interactive` | `document` |
+| `update` | `task.people.person.update.interactive` | `person` |
+| `fetch_documents` | `task.people.documents.fetch.interactive` | `person` |
 
 ---
