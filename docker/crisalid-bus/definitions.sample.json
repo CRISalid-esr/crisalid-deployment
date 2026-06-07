@@ -18,6 +18,22 @@
     },
     {
       "arguments": {},
+      "source": "dlx.directory",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-people-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-people-batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.directory",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-structures-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-structures-batch"
+    },
+    {
+      "arguments": {},
       "destination": "crisalid-ikg-publications-batch",
       "destination_type": "queue",
       "routing_key": "event.references.reference.*.batch",
@@ -71,6 +87,38 @@
       "destination": "crisalid-ikg-harvesting-events-interactive",
       "destination_type": "queue",
       "routing_key": "event.references.*.*.interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-publications-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-publications-batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-publications-interactive",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-publications-interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-harvesting-events-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-harvesting-events-batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-harvesting-events-interactive",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-harvesting-events-interactive"
     },
     {
       "arguments": {},
@@ -241,6 +289,14 @@
       "name": "directory",
       "type": "topic",
       "vhost": "/"
+    },
+    {
+      "name": "dlx.directory",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
     }
   ],
   "queues": [
@@ -253,14 +309,48 @@
       "vhost": "/"
     },
     {
+      "name": "crisalid-ikg-people-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.directory",
+        "x-dead-letter-routing-key": "crisalid-ikg-people-batch"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-people-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
+      }
+    },
+    {
       "name": "crisalid-ikg-structures-batch",
+      "vhost": "/",
       "type": "classic",
-      "vhost": "/"
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.directory",
+        "x-dead-letter-routing-key": "crisalid-ikg-structures-batch"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-structures-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
     },
     {
       "name": "svp-harvester-interactive",
@@ -307,34 +397,48 @@
       }
     },
     {
-      "arguments": {
-        "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "crisalid-ikg-people-batch",
-      "type": "classic",
-      "vhost": "/"
-    },
-    {
-      "arguments": {
-        "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
       "name": "crisalid-ikg-publications-batch",
+      "vhost": "/",
       "type": "classic",
-      "vhost": "/"
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-publications-batch"
+      }
     },
     {
+      "name": "dlq.crisalid-ikg-publications-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
+      }
+    },
+    {
       "name": "crisalid-ikg-publications-interactive",
+      "vhost": "/",
       "type": "classic",
-      "vhost": "/"
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-publications-interactive"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-publications-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
     },
     {
       "name": "crisalid-ikg-actions-interactive",
@@ -365,11 +469,35 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-harvesting-events-batch"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-harvesting-events-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
         "x-consumer-timeout": 43200000
       }
     },
     {
       "name": "crisalid-ikg-harvesting-events-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-harvesting-events-interactive"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-harvesting-events-interactive",
       "vhost": "/",
       "type": "classic",
       "durable": true,

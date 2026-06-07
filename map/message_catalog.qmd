@@ -50,7 +50,8 @@ When a queue has been split, every message routed to it gains a **5th routing ke
 
 Each split queue has its own channel and prefetch count, its own semaphore, and its own dead-letter queue on the
 exchange-specific dead-letter exchange (`dlx.graph` for graph-exchange queues, `dlx.publications` for
-publications-exchange queues) so failures in one traffic class do not affect the other.
+publications-exchange queues, `dlx.directory` for directory-exchange queues) so failures in one traffic class do
+not affect the other.
 
 **Current status:**
 
@@ -70,18 +71,24 @@ publications-exchange queues) so failures in one traffic class do not affect the
 
 | Queue | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
 |---|---|---|---|---|---|
-| `crisalid-ikg-people-batch` | `directory` | `event.people.person.*.batch` | ETL pipelines | crisalid-ikg | |
-| `crisalid-ikg-structures-batch` | `directory` | `event.structures.structure.*.batch` | ETL pipelines | crisalid-ikg | |
+| `crisalid-ikg-people-batch` | `directory` | `event.people.person.*.batch` | ETL pipelines | crisalid-ikg | DLQ on `dlx.directory` |
+| `dlq.crisalid-ikg-people-batch` | `dlx.directory` | `crisalid-ikg-people-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-structures-batch` | `directory` | `event.structures.structure.*.batch` | ETL pipelines | crisalid-ikg | DLQ on `dlx.directory` |
+| `dlq.crisalid-ikg-structures-batch` | `dlx.directory` | `crisalid-ikg-structures-batch` | dead-letter | manual | Dead-letter queue |
 | `crisalid-ikg-actions-interactive` | `graph` | `task.*.*.*.interactive` | sovisuplus | crisalid-ikg | DLQ on `dlx.graph` |
 | `dlq.crisalid-ikg-actions-interactive` | `dlx.graph` | `crisalid-ikg-actions-interactive` | dead-letter | manual | Dead-letter queue |
 | `sovisuplus-interactive` | `graph` | `event.*.*.*.interactive` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
 | `sovisuplus-batch` | `graph` | `event.*.*.*.batch` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
 | `dlq.sovisuplus-interactive` | `dlx.graph` | `sovisuplus-interactive` | dead-letter | manual | Dead-letter queue |
 | `dlq.sovisuplus-batch` | `dlx.graph` | `sovisuplus-batch` | dead-letter | manual | Dead-letter queue |
-| `crisalid-ikg-publications-batch` | `publications` | `event.references.reference.*.batch` | svp-harvester | crisalid-ikg | |
-| `crisalid-ikg-publications-interactive` | `publications` | `event.references.reference.*.interactive` | svp-harvester | crisalid-ikg | |
-| `crisalid-ikg-harvesting-events-batch` | `publications` | `event.references.*.*.batch` | svp-harvester | crisalid-ikg | |
-| `crisalid-ikg-harvesting-events-interactive` | `publications` | `event.references.*.*.interactive` | svp-harvester | crisalid-ikg | |
+| `crisalid-ikg-publications-batch` | `publications` | `event.references.reference.*.batch` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-publications-batch` | `dlx.publications` | `crisalid-ikg-publications-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-publications-interactive` | `publications` | `event.references.reference.*.interactive` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-publications-interactive` | `dlx.publications` | `crisalid-ikg-publications-interactive` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-harvesting-events-batch` | `publications` | `event.references.*.*.batch` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-harvesting-events-batch` | `dlx.publications` | `crisalid-ikg-harvesting-events-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-harvesting-events-interactive` | `publications` | `event.references.*.*.interactive` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-harvesting-events-interactive` | `dlx.publications` | `crisalid-ikg-harvesting-events-interactive` | dead-letter | manual | Dead-letter queue |
 | `svp-harvester-interactive` | `publications` | `task.entity.references.retrieval.interactive` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
 | `svp-harvester-batch` | `publications` | `task.entity.references.retrieval.batch` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
 | `dlq.svp-harvester-interactive` | `dlx.publications` | `svp-harvester-interactive` | dead-letter | manual | Dead-letter queue |
@@ -1067,6 +1074,284 @@ no
   (e.g. `PR`, `MCF`, `DR`, `CR`, `IR`, `Post-doc`).
 * `external: true` marks people who are not managed by the institution (e.g. co-authors discovered through
   publication harvesting). External people carry no `memberships` or `employments`.
+
+---
+
+## Exchange : `publications`
+
+### Purpose
+
+Publication harvesting workflows. crisalid-ikg publishes retrieval task messages; svp-harvester consumes them
+and publishes harvesting progress, per-reference events, and retrieval status back onto the same exchange.
+
+### Exchange Type
+
+```text
+topic
+````
+
+### Delivery Strategy
+
+```text
+at-least-once
+```
+
+### Topic and Routing Key Patterns
+
+All routing keys on the `publications` exchange have **5 segments**, where the last segment is the **queue mode**
+(see [Routing key convention — interactive vs batch](#routing-key-convention-interactive-vs-batch)):
+
+Inbound (crisalid-ikg → svp-harvester):
+
+```text
+task.entity.references.retrieval.<mode>
+```
+
+Outbound (svp-harvester → downstream):
+
+```text
+event.references.reference.<action>.<mode>
+event.references.harvesting.state.<mode>
+event.references.retrieval.state.<mode>
+event.references.retrieval.error.<mode>
+```
+
+Where `<mode>` is `interactive` or `batch`, and `<action>` is `created`, `updated`, `deleted`, or `unchanged`.
+
+<details>
+<summary>Full list of routing keys</summary>
+
+```text
+task.entity.references.retrieval.interactive
+task.entity.references.retrieval.batch
+
+event.references.reference.created.interactive
+event.references.reference.updated.interactive
+event.references.reference.deleted.interactive
+event.references.reference.unchanged.interactive
+event.references.reference.created.batch
+event.references.reference.updated.batch
+event.references.reference.deleted.batch
+event.references.reference.unchanged.batch
+
+event.references.harvesting.state.interactive
+event.references.harvesting.state.batch
+
+event.references.retrieval.state.interactive
+event.references.retrieval.state.batch
+
+event.references.retrieval.error.interactive
+event.references.retrieval.error.batch
+```
+
+</details>
+
+### Message Catalog for `publications` exchange
+
+---
+
+#### Inbound messages (crisalid-ikg → `svp-harvester-interactive` / `svp-harvester-batch`)
+
+##### Routing key
+
+```text
+task.entity.references.retrieval.<mode>
+```
+
+##### Ack required
+
+```text
+yes
+```
+
+##### Payload
+
+```json
+{
+  "type": "person",
+  "fields": {
+    "name": "<string>",
+    "identifiers": [
+      { "type": "<identifier_type>", "value": "<string>" }
+    ]
+  },
+  "harvesters": ["<harvester_name>"],
+  "events": ["created", "updated", "deleted", "unchanged"],
+  "identifiers_safe_mode": false,
+  "nullify": [],
+  "reply": false
+}
+```
+
+`type` is always `"person"`. `harvesters` restricts which harvesters run (omit or leave empty for all).
+`reply: true` triggers an `event.references.retrieval.state` acknowledgement message before harvesting begins.
+
+---
+
+#### Reference event messages (svp-harvester → downstream)
+
+Published once per reference per harvesting when a reference is created, updated, deleted, or confirmed unchanged.
+
+##### Routing key
+
+```text
+event.references.reference.<action>.<mode>
+```
+
+Where `<action>` is `created`, `updated`, `deleted`, or `unchanged`.
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "reference_event": {
+    "type": "created|updated|deleted|unchanged",
+    "reference": {
+      "source_identifier": "<string>",
+      "harvester": "<string>",
+      "harvester_version": "<string>",
+      "identifiers": [],
+      "manifestations": [],
+      "titles": [{ "value": "<string>", "language": "<string>" }],
+      "subtitles": [],
+      "abstracts": [],
+      "subjects": [],
+      "domains": [],
+      "document_type": [],
+      "contributions": [],
+      "issue": null,
+      "page": null,
+      "book": null,
+      "raw_issued": "<string|null>",
+      "issued": "<ISO datetime|null>",
+      "created": "<ISO datetime>",
+      "custom_metadata": {},
+      "version": 0
+    },
+    "enhanced": false
+  },
+  "entity": {
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "name": "<string>"
+  },
+  "harvesting": {
+    "identifier_used_type": "<string|null>",
+    "identifier_used_value": "<string|null>"
+  }
+}
+```
+
+---
+
+#### Harvesting state messages (svp-harvester → downstream)
+
+Published for each individual harvester as it transitions through states (idle → running → completed/failed/skipped).
+
+##### Routing key
+
+```text
+event.references.harvesting.state.<mode>
+```
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "harvester": "<string>",
+  "state": "idle|running|completed|failed|skipped",
+  "identifier_used_type": "<string|null>",
+  "identifier_used_value": "<string|null>",
+  "error": [],
+  "entity": {
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "name": "<string>"
+  }
+}
+```
+
+---
+
+#### Retrieval state messages (svp-harvester → downstream)
+
+Published when a retrieval is registered in the database. Only emitted when `reply: true` in the inbound message.
+
+##### Routing key
+
+```text
+event.references.retrieval.state.<mode>
+```
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "harvestings": [
+    {
+      "harvester": "<string>",
+      "state": "idle|running|completed|failed|skipped",
+      "identifier_used_type": "<string|null>",
+      "identifier_used_value": "<string|null>",
+      "error": [],
+      "reference_events": []
+    }
+  ],
+  "entity": {
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "name": "<string>"
+  }
+}
+```
+
+---
+
+#### Retrieval error messages (svp-harvester → downstream)
+
+Published when a retrieval cannot start — the inbound payload fails Pydantic validation or carries no
+bibliographic identifiers. No DB record is created for these errors.
+
+##### Routing key
+
+```text
+event.references.retrieval.error.<mode>
+```
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "type": "Retrieval",
+  "parameters": {
+    "type": "person",
+    "fields": { "..." },
+    "identifiers_safe_mode": false
+  },
+  "message": "<error description>"
+}
+```
 
 ---
 
