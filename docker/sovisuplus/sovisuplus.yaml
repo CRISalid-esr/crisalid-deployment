@@ -9,8 +9,8 @@ services:
       POSTGRES_DB: ${SVP_DB_NAME}
     expose:
       - 5432
-    #    ports:
-    #      - 5432:5432
+    ports:
+      - 5432:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     networks:
@@ -52,7 +52,8 @@ services:
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
       - AMQP_USER=${CRISALID_BUS_USER}
       - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}
-      - AMQP_QUEUE_NAME=${SVP_AMQP_QUEUE_NAME}
+      - AMQP_INTERACTIVE_QUEUE_NAME=${SVP_AMQP_INTERACTIVE_QUEUE_NAME:-sovisuplus-interactive}
+      - AMQP_BATCH_QUEUE_NAME=${SVP_AMQP_BATCH_QUEUE_NAME:-sovisuplus-batch}
       - AMQP_EXCHANGE_NAME=${SVP_AMQP_EXCHANGE_NAME}
       - GRAPHQL_ENDPOINT_ENABLED=${GRAPHQL_ENDPOINT_ENABLED}
       - GRAPHQL_ENDPOINT_URL=http://${APOLLO_HOST:-apollo}:${APOLLO_API_PORT}/graphql

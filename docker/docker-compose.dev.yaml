@@ -1,6 +1,6 @@
 services:
   crisalid-bus:
-    image: rabbitmq:3.13.7-management
+    image: rabbitmq:4.3.1-management
   # neo4j (graph database)
   neo4j:
     image: neo4j:${NEO4J_VERSION:-5.26.21}-${NEO4J_EDITION:-community}

@@ -39,15 +39,61 @@ Messages are primarily of two types: **events** and **tasks**.
 
 ---
 
-## 🗺️ Existing Queues
+## 🔀 Routing key convention — interactive vs batch
 
-> > TODO queues currently bound to each exchange.
+All queues in the CRISalid bus will progressively be split into two queues suffixed **`-interactive`** and **`-batch`**.
+When a queue has been split, every message routed to it gains a **5th routing key segment**: `.interactive` or `.batch`.
+
+- **`.interactive`** — message triggered by a real-time user action (e.g. a user requesting a document harvest, an
+  operator editing a person record). Processing must be fast and must not be starved by bulk loads.
+- **`.batch`** — message produced by an ETL pipeline or mass-import job. Processing can tolerate higher latency.
+
+Each split queue has its own channel and prefetch count, its own semaphore, and its own dead-letter queue on the
+exchange-specific dead-letter exchange (`dlx.graph` for graph-exchange queues, `dlx.publications` for
+publications-exchange queues, `dlx.directory` for directory-exchange queues) so failures in one traffic class do
+not affect the other.
+
+**Current status:**
+
+| Service | Split done? | Queue names |
+|---|---|---|
+| sovisuplus | ✅ | `sovisuplus-interactive`, `sovisuplus-batch` |
+| crisalid-ikg (inbound actions) | ✅ | `crisalid-ikg-actions-interactive` |
+| crisalid-ikg (inbound directory) | ✅ | `crisalid-ikg-people-batch`, `crisalid-ikg-structures-batch` |
+| crisalid-ikg (publications) | ✅ | `crisalid-ikg-publications-batch`, `crisalid-ikg-publications-interactive`, `crisalid-ikg-harvesting-events-batch`, `crisalid-ikg-harvesting-events-interactive` |
+| svp-harvester | ✅ | `svp-harvester-interactive`, `svp-harvester-batch` |
+
+---
+
+## 🗺️ Existing Queues
 
 ### Queue Inventory
 
-| Queue           | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
-|-----------------|----------|--------------|-------------|-------------|-------|
-| To be completed |          |              |             |             |       |
+| Queue | Exchange | Binding keys | Producer(s) | Consumer(s) | Notes |
+|---|---|---|---|---|---|
+| `crisalid-ikg-people-batch` | `directory` | `event.people.person.*.batch` | ETL pipelines | crisalid-ikg | DLQ on `dlx.directory` |
+| `dlq.crisalid-ikg-people-batch` | `dlx.directory` | `crisalid-ikg-people-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-structures-batch` | `directory` | `event.structures.structure.*.batch` | ETL pipelines | crisalid-ikg | DLQ on `dlx.directory` |
+| `dlq.crisalid-ikg-structures-batch` | `dlx.directory` | `crisalid-ikg-structures-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-actions-interactive` | `graph` | `task.*.*.*.interactive` | sovisuplus | crisalid-ikg | DLQ on `dlx.graph` |
+| `dlq.crisalid-ikg-actions-interactive` | `dlx.graph` | `crisalid-ikg-actions-interactive` | dead-letter | manual | Dead-letter queue |
+| `sovisuplus-interactive` | `graph` | `event.*.*.*.interactive` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
+| `sovisuplus-batch` | `graph` | `event.*.*.*.batch` | crisalid-ikg | sovisuplus | DLQ on `dlx.graph` |
+| `dlq.sovisuplus-interactive` | `dlx.graph` | `sovisuplus-interactive` | dead-letter | manual | Dead-letter queue |
+| `dlq.sovisuplus-batch` | `dlx.graph` | `sovisuplus-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-publications-batch` | `publications` | `event.references.reference.*.batch` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-publications-batch` | `dlx.publications` | `crisalid-ikg-publications-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-publications-interactive` | `publications` | `event.references.reference.*.interactive` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-publications-interactive` | `dlx.publications` | `crisalid-ikg-publications-interactive` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-harvesting-events-batch` | `publications` | `event.references.*.*.batch` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-harvesting-events-batch` | `dlx.publications` | `crisalid-ikg-harvesting-events-batch` | dead-letter | manual | Dead-letter queue |
+| `crisalid-ikg-harvesting-events-interactive` | `publications` | `event.references.*.*.interactive` | svp-harvester | crisalid-ikg | DLQ on `dlx.publications` |
+| `dlq.crisalid-ikg-harvesting-events-interactive` | `dlx.publications` | `crisalid-ikg-harvesting-events-interactive` | dead-letter | manual | Dead-letter queue |
+| `svp-harvester-interactive` | `publications` | `task.entity.references.retrieval.interactive` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
+| `svp-harvester-batch` | `publications` | `task.entity.references.retrieval.batch` | crisalid-ikg | svp-harvester | DLQ on `dlx.publications` |
+| `dlq.svp-harvester-interactive` | `dlx.publications` | `svp-harvester-interactive` | dead-letter | manual | Dead-letter queue |
+| `dlq.svp-harvester-batch` | `dlx.publications` | `svp-harvester-batch` | dead-letter | manual | Dead-letter queue |
+| `ctd-publications` | `publications` | `event.references.reference.*.*` | svp-harvester | CTD | |
 
 ---
 
@@ -75,24 +121,25 @@ at-least-once
 
 ### Topic and Routing Key Patterns
 
-There are two main patterns for routing keys in the `directory` exchange:
+There are two main patterns for routing keys in the `directory` exchange. All directory messages are ETL-sourced
+and carry the `.batch` mode segment:
 
 ```text
-event.structures.structure.<action>
-event.people.person.<action>
+event.structures.structure.<action>.batch
+event.people.person.<action>.batch
 ```
 
 <details>
-<summary>Full list of actions for each entity type</summary>
+<summary>Full list of routing keys for each entity type</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
-event.people.person.created
-event.people.person.updated
-event.people.person.deleted
-event.people.person.unchanged
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
+event.people.person.created.batch
+event.people.person.updated.batch
+event.people.person.deleted.batch
+event.people.person.unchanged.batch
 ```
 </details>
 
@@ -107,16 +154,16 @@ event.people.person.unchanged
 Pattern:
 
 ```text
-event.structures.structure.<action>
+event.structures.structure.<action>.batch
 ```
 
 <details>
 <summary>Full list of routing keys for structure events</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
 ```
 </details>
 
@@ -688,16 +735,16 @@ no
 Pattern:
 
 ```text
-event.people.person.<action>
+event.people.person.<action>.batch
 ```
 
 <details>
 <summary>Full list of routing keys for people events</summary>
 ```text
-event.people.person.created
-event.people.person.updated
-event.people.person.deleted
-event.people.person.unchanged
+event.people.person.created.batch
+event.people.person.updated.batch
+event.people.person.deleted.batch
+event.people.person.unchanged.batch
 ```
 </details>
 
@@ -1030,13 +1077,293 @@ no
 
 ---
 
+## Exchange : `publications`
+
+### Purpose
+
+Publication harvesting workflows. crisalid-ikg publishes retrieval task messages; svp-harvester consumes them
+and publishes harvesting progress, per-reference events, and retrieval status back onto the same exchange.
+
+### Exchange Type
+
+```text
+topic
+````
+
+### Delivery Strategy
+
+```text
+at-least-once
+```
+
+### Topic and Routing Key Patterns
+
+All routing keys on the `publications` exchange have **5 segments**, where the last segment is the **queue mode**
+(see [Routing key convention — interactive vs batch](#routing-key-convention-interactive-vs-batch)):
+
+Inbound (crisalid-ikg → svp-harvester):
+
+```text
+task.entity.references.retrieval.<mode>
+```
+
+Outbound (svp-harvester → downstream):
+
+```text
+event.references.reference.<action>.<mode>
+event.references.harvesting.state.<mode>
+event.references.retrieval.state.<mode>
+event.references.retrieval.error.<mode>
+```
+
+Where `<mode>` is `interactive` or `batch`, and `<action>` is `created`, `updated`, `deleted`, or `unchanged`.
+
+<details>
+<summary>Full list of routing keys</summary>
+
+```text
+task.entity.references.retrieval.interactive
+task.entity.references.retrieval.batch
+
+event.references.reference.created.interactive
+event.references.reference.updated.interactive
+event.references.reference.deleted.interactive
+event.references.reference.unchanged.interactive
+event.references.reference.created.batch
+event.references.reference.updated.batch
+event.references.reference.deleted.batch
+event.references.reference.unchanged.batch
+
+event.references.harvesting.state.interactive
+event.references.harvesting.state.batch
+
+event.references.retrieval.state.interactive
+event.references.retrieval.state.batch
+
+event.references.retrieval.error.interactive
+event.references.retrieval.error.batch
+```
+
+</details>
+
+### Message Catalog for `publications` exchange
+
+---
+
+#### Inbound messages (crisalid-ikg → `svp-harvester-interactive` / `svp-harvester-batch`)
+
+##### Routing key
+
+```text
+task.entity.references.retrieval.<mode>
+```
+
+##### Ack required
+
+```text
+yes
+```
+
+##### Payload
+
+```json
+{
+  "type": "person",
+  "fields": {
+    "name": "<string>",
+    "identifiers": [
+      { "type": "<identifier_type>", "value": "<string>" }
+    ]
+  },
+  "harvesters": ["<harvester_name>"],
+  "events": ["created", "updated", "deleted", "unchanged"],
+  "identifiers_safe_mode": false,
+  "nullify": [],
+  "reply": false
+}
+```
+
+`type` is always `"person"`. `harvesters` restricts which harvesters run (omit or leave empty for all).
+`reply: true` triggers an `event.references.retrieval.state` acknowledgement message before harvesting begins.
+
+---
+
+#### Reference event messages (svp-harvester → downstream)
+
+Published once per reference per harvesting when a reference is created, updated, deleted, or confirmed unchanged.
+
+##### Routing key
+
+```text
+event.references.reference.<action>.<mode>
+```
+
+Where `<action>` is `created`, `updated`, `deleted`, or `unchanged`.
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "reference_event": {
+    "type": "created|updated|deleted|unchanged",
+    "reference": {
+      "source_identifier": "<string>",
+      "harvester": "<string>",
+      "harvester_version": "<string>",
+      "identifiers": [],
+      "manifestations": [],
+      "titles": [{ "value": "<string>", "language": "<string>" }],
+      "subtitles": [],
+      "abstracts": [],
+      "subjects": [],
+      "domains": [],
+      "document_type": [],
+      "contributions": [],
+      "issue": null,
+      "page": null,
+      "book": null,
+      "raw_issued": "<string|null>",
+      "issued": "<ISO datetime|null>",
+      "created": "<ISO datetime>",
+      "custom_metadata": {},
+      "version": 0
+    },
+    "enhanced": false
+  },
+  "entity": {
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "name": "<string>"
+  },
+  "harvesting": {
+    "identifier_used_type": "<string|null>",
+    "identifier_used_value": "<string|null>"
+  }
+}
+```
+
+---
+
+#### Harvesting state messages (svp-harvester → downstream)
+
+Published for each individual harvester as it transitions through states (idle → running → completed/failed/skipped).
+
+##### Routing key
+
+```text
+event.references.harvesting.state.<mode>
+```
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "harvester": "<string>",
+  "state": "idle|running|completed|failed|skipped",
+  "identifier_used_type": "<string|null>",
+  "identifier_used_value": "<string|null>",
+  "error": [],
+  "entity": {
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "name": "<string>"
+  }
+}
+```
+
+---
+
+#### Retrieval state messages (svp-harvester → downstream)
+
+Published when a retrieval is registered in the database. Only emitted when `reply: true` in the inbound message.
+
+##### Routing key
+
+```text
+event.references.retrieval.state.<mode>
+```
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "harvestings": [
+    {
+      "harvester": "<string>",
+      "state": "idle|running|completed|failed|skipped",
+      "identifier_used_type": "<string|null>",
+      "identifier_used_value": "<string|null>",
+      "error": [],
+      "reference_events": []
+    }
+  ],
+  "entity": {
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "name": "<string>"
+  }
+}
+```
+
+---
+
+#### Retrieval error messages (svp-harvester → downstream)
+
+Published when a retrieval cannot start — the inbound payload fails Pydantic validation or carries no
+bibliographic identifiers. No DB record is created for these errors.
+
+##### Routing key
+
+```text
+event.references.retrieval.error.<mode>
+```
+
+##### Ack required
+
+```text
+no
+```
+
+##### Payload
+
+```json
+{
+  "type": "Retrieval",
+  "parameters": {
+    "type": "person",
+    "fields": { "..." },
+    "identifiers_safe_mode": false
+  },
+  "message": "<error description>"
+}
+```
+
+---
+
 ## Exchange : `graph`
 
 ### Purpose
 
-Outgoing lifecycle events published by crisalid-ikg to downstream consumers. Each event signals that an entity in
-the knowledge graph has been created, updated, deleted, or confirmed unchanged following inbound directory or
-harvesting messages.
+Bidirectional exchange between crisalid-ikg and downstream consumers (primarily sovisuplus).
+
+- **crisalid-ikg → sovisuplus**: lifecycle events for people, research units, documents, and harvesting state/results.
+- **sovisuplus → crisalid-ikg**: task messages representing user-initiated graph operations (merge documents, fetch
+  publications, update a person, etc.).
 
 ### Exchange Type
 
@@ -1052,22 +1379,65 @@ at-least-once
 
 ### Topic and Routing Key Patterns
 
+All routing keys on the `graph` exchange have **5 segments**, where the last segment is the **queue mode**
+(see [Routing key convention — interactive vs batch](#routing-key-convention-interactive-vs-batch)):
+
 ```text
-event.structures.structure.<action>
-event.people.person.<action>
+event.structures.structure.<action>.<mode>
+event.people.person.<action>.<mode>
+event.documents.document.<action>.<mode>
+event.harvestings.<event_type>.<action>.<mode>
+task.documents.document.<action>.<mode>
+task.people.person.<action>.<mode>
+task.people.documents.fetch.<mode>
 ```
 
+Where `<mode>` is `interactive` or `batch`.
+
 <details>
-<summary>Full list of actions for each entity type</summary>
+<summary>Full list of event routing keys</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
-event.people.person.created
-event.people.person.updated
-event.people.person.deleted
-event.people.person.unchanged
+event.structures.structure.created.interactive
+event.structures.structure.updated.interactive
+event.structures.structure.deleted.interactive
+event.structures.structure.unchanged.interactive
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
+
+event.people.person.created.interactive
+event.people.person.updated.interactive
+event.people.person.deleted.interactive
+event.people.person.unchanged.interactive
+event.people.person.created.batch
+event.people.person.updated.batch
+event.people.person.deleted.batch
+event.people.person.unchanged.batch
+
+event.documents.document.created.interactive
+event.documents.document.updated.interactive
+event.documents.document.deleted.interactive
+event.documents.document.unchanged.interactive
+event.documents.document.created.batch
+event.documents.document.updated.batch
+event.documents.document.deleted.batch
+event.documents.document.unchanged.batch
+
+event.harvestings.harvesting_state_event.*.interactive
+event.harvestings.harvesting_result_event.*.interactive
+event.harvestings.harvesting_state_event.*.batch
+event.harvestings.harvesting_result_event.*.batch
+```
+</details>
+
+<details>
+<summary>Full list of task routing keys (sovisuplus → crisalid-ikg)</summary>
+```text
+task.documents.document.merge.interactive
+task.documents.document.unmerge.interactive
+task.people.person.update.interactive
+task.people.documents.fetch.interactive
 ```
 </details>
 
@@ -1082,16 +1452,20 @@ event.people.person.unchanged
 Pattern:
 
 ```text
-event.structures.structure.<action>
+event.structures.structure.<action>.<mode>
 ```
 
 <details>
 <summary>Full list of routing keys for structure events</summary>
 ```text
-event.structures.structure.created
-event.structures.structure.updated
-event.structures.structure.deleted
-event.structures.structure.unchanged
+event.structures.structure.created.interactive
+event.structures.structure.updated.interactive
+event.structures.structure.deleted.interactive
+event.structures.structure.unchanged.interactive
+event.structures.structure.created.batch
+event.structures.structure.updated.batch
+event.structures.structure.deleted.batch
+event.structures.structure.unchanged.batch
 ```
 </details>
 
@@ -1388,5 +1762,195 @@ structures (research units, support units, administrative units).
   Consumers implementing reconciliation logic can use it to confirm that the structure is still active.
 * A `deleted` event signals that the structure has been removed from the graph. Consumers should treat
   subsequent references to its `uid` as invalid.
+
+---
+
+## Queues: `sovisuplus-interactive` and `sovisuplus-batch`
+
+### Overview
+
+sovisuplus subscribes to two queues on the `graph` exchange. Both queues are asserted by sovisuplus at startup —
+no manual pre-creation is required, but the `dlx.graph` dead-letter exchange must exist beforehand (it is declared
+in `definitions.sample.json`).
+
+| Queue | Binding keys | Prefetch | Env var |
+|---|---|---|---|
+| `sovisuplus-interactive` | `event.*.*.*.interactive` | 5 | `AMQP_INTERACTIVE_QUEUE_NAME` |
+| `sovisuplus-batch` | `event.*.*.*.batch` | 20 | `AMQP_BATCH_QUEUE_NAME` |
+
+Each queue has a corresponding dead-letter queue (`dlq.sovisuplus-interactive`, `dlq.sovisuplus-batch`) bound to
+`dlx.graph` with the source queue name as routing key (e.g. `sovisuplus-interactive` for `dlq.sovisuplus-interactive`).
+Failed messages (handler throws) are nacked without requeue and routed to the DLQ.
+
+sovisuplus also **publishes** task messages to the `graph` exchange. These are consumed by `crisalid-ikg-actions-interactive`.
+
+### Inbound messages
+
+All inbound messages share the same top-level envelope:
+
+```json
+{
+  "type": "<entity type>",
+  "event": "<action>",
+  "fields": { ... }
+}
+```
+
+#### Person events
+
+Routing key pattern: `event.people.person.<action>.<mode>`
+
+```json
+{
+  "type": "person",
+  "event": "created|updated|deleted|unchanged",
+  "fields": {
+    "uid": "<string>",
+    "identifiers": [
+      {
+        "type": "local|orcid|idref|idhals|idhali|scopus",
+        "value": "<string>"
+      }
+    ],
+    "display_name": "<string>",
+    "first_name": "<string>",
+    "last_name": "<string>",
+    "external": true,
+    "memberships": [
+      {
+        "entity_uid": "<string>",
+        "research_unit": {
+          "names": ["<string>"],
+          "identifiers": [{ "type": "<string>", "value": "<string>" }]
+        },
+        "start_date": "<ISO date|null>",
+        "end_date": "<ISO date|null>"
+      }
+    ]
+  }
+}
+```
+
+#### Research unit events
+
+Routing key pattern: `event.structures.structure.<action>.<mode>`
+
+The payload schema is identical to structure events documented in [Structure events (`graph` exchange)](#structure-events-graph-exchange).
+
+#### Document events
+
+Routing key pattern: `event.documents.document.<action>.<mode>`
+
+```json
+{
+  "type": "document",
+  "event": "created|updated|deleted|unchanged",
+  "fields": {
+    "uid": "<string>",
+    "identifiers": [{ "type": "<string>", "value": "<string>" }],
+    "titles": [{ "value": "<string>", "language": "<string>" }]
+  }
+}
+```
+
+#### Harvesting events
+
+Routing key pattern: `event.harvestings.<event_type>.<action>.<mode>`
+
+There are two subtypes:
+
+**Harvesting state event** (`event_type = harvesting_state_event`):
+
+```json
+{
+  "type": "harvesting_state_event",
+  "event": "started|running|completed|error",
+  "fields": {
+    "harvester": "<string>",
+    "state": "running|completed|error",
+    "error": ["<string>"],
+    "entity": {
+      "identifiers": [{ "type": "<string>", "value": "<string>" }],
+      "name": "<string>"
+    }
+  }
+}
+```
+
+**Harvesting result event** (`event_type = harvesting_result_event`):
+
+```json
+{
+  "type": "harvesting_result_event",
+  "event": "created|updated|unchanged|deleted",
+  "fields": {
+    "reference_event": {
+      "type": "created|updated|unchanged|deleted",
+      "reference": {
+        "source_identifier": "<string>",
+        "harvester": "<string>",
+        "harvester_version": "<string>",
+        "identifiers": [{ "type": "<string>", "value": "<string>" }],
+        "titles": [{ "value": "<string>", "language": "<string>" }],
+        "subtitles": [{ "value": "<string>", "language": "<string>" }],
+        "abstracts": [{ "value": "<string>", "language": "<string|null>" }],
+        "document_type": [{ "uri": "<string>", "label": "<string>" }],
+        "contributions": [
+          {
+            "rank": "<integer|null>",
+            "role": "<string|null>",
+            "contributor": {
+              "name": "<string|null>",
+              "first_name": "<string|null>",
+              "last_name": "<string|null>",
+              "identifiers": [{ "type": "<string>", "value": "<string>" }]
+            }
+          }
+        ],
+        "issued": "<ISO date|null>",
+        "raw_issued": "<string|null>",
+        "version": "<integer>"
+      },
+      "enhanced": true
+    },
+    "entity": {
+      "identifiers": [{ "type": "<string>", "value": "<string>" }],
+      "name": "<string>"
+    }
+  }
+}
+```
+
+### Outbound messages (sovisuplus → `crisalid-ikg-actions-interactive`)
+
+sovisuplus publishes task messages to the `graph` exchange with routing keys of the form
+`task.<domain>.<entity>.<action>.interactive`. All outbound messages from sovisuplus carry the `.interactive`
+suffix — batch task publishing is not implemented.
+
+The queue `crisalid-ikg-actions-interactive` is bound to receive all `task.*.*.*.interactive` keys.
+
+```json
+{
+  "id": "<uuid>",
+  "actionType": "ADD|REMOVE|UPDATE|FETCH|MERGE",
+  "targetType": "DOCUMENT|PERSON|HARVESTING",
+  "targetUid": "<string>",
+  "path": "<string|null>",
+  "parameters": { ... },
+  "timestamp": "<ISO datetime>",
+  "personUid": "<string>",
+  "application": "sovisuplus"
+}
+```
+
+`actionType` and `targetType` are Prisma enum values serialized as uppercase strings.
+
+| `actionType` | `targetType` | Routing key |
+|---|---|---|
+| `MERGE` | `DOCUMENT` | `task.documents.document.merge.interactive` |
+| `REMOVE` | `DOCUMENT` | `task.documents.document.remove.interactive` |
+| `ADD` | `DOCUMENT` | `task.documents.document.add.interactive` |
+| `UPDATE` | `PERSON` | `task.people.person.update.interactive` |
+| `FETCH` | `HARVESTING` | `task.people.documents.fetch.interactive` |
 
 ---
