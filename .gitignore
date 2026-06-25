@@ -2,7 +2,6 @@
 etc/*
 .idea
 postgres-data
-docker/sovisuplus/uploads/
 docker/ikg/data/openalex/*
 !docker/ikg/data/openalex/.gitkeep
 docker/openwebui/data/
