@@ -94,7 +94,9 @@ services:
       - ./config:/config:ro
       - ./theme:/custom-theme:ro
       # HAL deposit files: uploaded attachments (hal-files) + generated TEI/ZIP (hal-tei).
-      - ./uploads:/app/uploads
+      # Named volume so Docker seeds it from the image's /app/uploads (owned by the
+      # non-root nextjs user); a bind mount would be auto-created as root and break mkdir.
+      - svp-uploads:/app/uploads
     networks:
       - svp-network
       - crisalid-front
@@ -106,3 +108,6 @@ networks:
     driver: bridge
   crisalid-front:
     driver: bridge
+
+volumes:
+  svp-uploads:
