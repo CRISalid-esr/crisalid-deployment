@@ -1436,6 +1436,7 @@ event.harvestings.harvesting_result_event.*.batch
 ```text
 task.documents.document.merge.interactive
 task.documents.document.unmerge.interactive
+task.documents.document.update.interactive
 task.people.person.update.interactive
 task.people.documents.fetch.interactive
 ```
@@ -1931,6 +1932,7 @@ The queue `crisalid-ikg-actions-interactive` is bound to receive all `task.*.*.*
 
 ```json
 {
+  "uid": "sovisuplus:<id>",
   "id": "<uuid>",
   "actionType": "ADD|REMOVE|UPDATE|FETCH|MERGE",
   "targetType": "DOCUMENT|PERSON|HARVESTING",
@@ -1943,14 +1945,175 @@ The queue `crisalid-ikg-actions-interactive` is bound to receive all `task.*.*.*
 }
 ```
 
-`actionType` and `targetType` are Prisma enum values serialized as uppercase strings.
+`actionType` and `targetType` are Prisma enum values serialized as uppercase strings. `uid` is the
+globally-unique message id (`<application>:<id>`) under which crisalid-ikg persists the action as a
+`Change` node; `path` selects the sub-resource the action targets (e.g. `contributions`, `subjects`).
 
-| `actionType` | `targetType` | Routing key |
-|---|---|---|
-| `MERGE` | `DOCUMENT` | `task.documents.document.merge.interactive` |
-| `REMOVE` | `DOCUMENT` | `task.documents.document.remove.interactive` |
-| `ADD` | `DOCUMENT` | `task.documents.document.add.interactive` |
-| `UPDATE` | `PERSON` | `task.people.person.update.interactive` |
-| `FETCH` | `HARVESTING` | `task.people.documents.fetch.interactive` |
+| `actionType` | `targetType` | `path` | Routing key |
+|---|---|---|---|
+| `MERGE` | `DOCUMENT` | — | `task.documents.document.merge.interactive` |
+| `REMOVE` | `DOCUMENT` | — | `task.documents.document.remove.interactive` |
+| `ADD` | `DOCUMENT` | — | `task.documents.document.add.interactive` |
+| `UPDATE` | `DOCUMENT` | `contributions` | `task.documents.document.update.interactive` |
+| `UPDATE` | `PERSON` | — | `task.people.person.update.interactive` |
+| `FETCH` | `HARVESTING` | — | `task.people.documents.fetch.interactive` |
+
+#### Contribution update task (`UPDATE` / `DOCUMENT` / `path = contributions`)
+
+Routing key: `task.documents.document.update.interactive`
+
+Emitted when a user saves the **Authors tab** of a document in sovisuplus. The message carries the
+**complete, authoritative** contributor list for the document. crisalid-ikg applies **replace
+semantics**: contributors present in the list are created/updated, contributors absent are removed,
+and an empty list removes all of them. The action is persisted as a `Change` and **replayed after
+every recompute from source records**, so a saved list **pins** the document against later harvests
+(newly-harvested co-authors do not reappear until the user saves again).
+
+##### Payload
+
+`parameters.contributions` is the full, ordered contributor list. Each entry carries a `person`, its
+`roles` (Library of Congress relator URIs), an optional `rank`, and its `affiliations`.
+
+<details>
+<summary>JSON schema for the contributions parameter</summary>
+
+```json
+{
+  "contributions": [
+    {
+      "rank": "<integer|null>",
+      "roles": ["<LoC relator URI>"],
+      "person": {
+        "uid": "<string|null>",
+        "displayName": "<string>",
+        "firstName": "<string|null>",
+        "lastName": "<string|null>",
+        "identifiers": [
+          { "type": "orcid|idref|idhals|idhali|scopus|local", "value": "<string>" }
+        ]
+      },
+      "affiliations": [
+        {
+          "name": "<string|null>",
+          "label": "<string|null>",
+          "acronym": "<string|null>",
+          "type": "institution|laboratory|researchteam|regroupinstitution|regrouplaboratory|regroupresearchteam",
+          "hal": "<HAL structId|null>",
+          "idref": "<string|null>",
+          "ror": "<string|null>",
+          "isni": "<string|null>",
+          "nns": "<string|null>",
+          "wikidata": "<string|null>"
+        }
+      ]
+    }
+  ]
+}
+```
+
+</details>
+
+###### Example payload
+
+<details>
+<summary>Example of a contribution-update message with an internal, an external and a brand-new contributor</summary>
+
+```json
+{
+  "uid": "sovisuplus:9f1c2e7a-5b3d-4c8a-9e21-7a0f4d6b1c33",
+  "id": "9f1c2e7a-5b3d-4c8a-9e21-7a0f4d6b1c33",
+  "actionType": "UPDATE",
+  "targetType": "DOCUMENT",
+  "targetUid": "ebf29bba-9bf5-4bb4-8a66-fa5d7deea2b3",
+  "path": "contributions",
+  "personUid": "local-jdupont",
+  "application": "sovisuplus",
+  "timestamp": "2026-06-27T05:17:57.842Z",
+  "parameters": {
+    "contributions": [
+      {
+        "rank": null,
+        "roles": ["http://id.loc.gov/vocabulary/relators/aut"],
+        "person": {
+          "uid": "local-jdupont",
+          "displayName": "Jeanne Dupont",
+          "firstName": "Jeanne",
+          "lastName": "Dupont",
+          "identifiers": [{ "type": "idref", "value": "123456789" }]
+        },
+        "affiliations": [
+          {
+            "name": "Université Étienne Dupond",
+            "label": null,
+            "acronym": null,
+            "type": "institution",
+            "hal": null,
+            "idref": "123456789",
+            "ror": "05ykr0d48",
+            "isni": "0000000121737435",
+            "nns": null,
+            "wikidata": "Q111111"
+          }
+        ]
+      },
+      {
+        "rank": null,
+        "roles": ["http://id.loc.gov/vocabulary/relators/ctb"],
+        "person": {
+          "uid": "orcid-0000-0002-7428-4208",
+          "displayName": "Bernard Martin",
+          "firstName": null,
+          "lastName": null,
+          "identifiers": [{ "type": "orcid", "value": "0000-0002-7428-4208" }]
+        },
+        "affiliations": [
+          {
+            "name": "Laboratoire Exemple",
+            "label": "Laboratoire Exemple",
+            "acronym": null,
+            "type": "laboratory",
+            "hal": "1009258",
+            "idref": null,
+            "ror": null,
+            "isni": null,
+            "nns": null,
+            "wikidata": null
+          }
+        ]
+      },
+      {
+        "rank": null,
+        "roles": ["http://id.loc.gov/vocabulary/relators/ctb"],
+        "person": {
+          "uid": null,
+          "displayName": "Arnaud Bernard",
+          "firstName": "Arnaud",
+          "lastName": "Bernard",
+          "identifiers": []
+        },
+        "affiliations": []
+      }
+    ]
+  }
+}
+```
+
+</details>
+
+##### Additional considerations
+
+* `person.uid` may be an **internal** uid (`local-<id>`), an **external** uid (`orcid-…`, `idref-…`, …),
+  or **`null`** for a brand-new external contributor to be created from `displayName`. When a uid is
+  given but not found, the person is matched by its identifiers, falling back to creation.
+* **Internal** persons (`external: false`): incoming `identifiers` and names are **frozen** (ignored);
+  only the contribution itself and its affiliations are updated.
+* **External** persons (`external: true`): consistent incoming `identifiers` are added; identifiers that
+  already belong to a different person are discarded.
+* `affiliations` are **HAL-sourced** (the sovisuplus author selector autocompletes against HAL), so each
+  normally carries the HAL `structId` plus any of `idref`/`ror`/`isni`/`nns`/`wikidata`. They are
+  resolved **in memory** to `AuthorityOrganization` nodes — no source-layer node is persisted.
+* `roles` are LoC relator URIs (`…/aut` author, `…/ctb` contributor, `…/edt` editor, …).
+* When several contribution-update changes accumulate on a document, only the **latest** is applied on
+  replay; older ones are preserved for the forthcoming modification-history feature.
 
 ---
