@@ -35,7 +35,7 @@ Messages are primarily of two types: **events** and **tasks**.
 |----------------|----------------------------------------------|---------|-------------------|----------------------------------------------------|
 | `directory`    | Institutional directories and reference data | `topic` | at-least-once     | people, structures                                 |
 | `publications` | Publication harvesting workflows             | `topic` | at-least-once     | publication, harvestings                           |
-| `graph`        | Downstream graph-facing integrations         | `topic` | at-least-once     | people, structures, <br/>publications, harvestings |
+| `graph`        | Downstream graph-facing integrations         | `topic` | at-least-once     | people, structures, <br/>publications, harvestings, changes |
 
 ---
 
@@ -1387,12 +1387,14 @@ event.structures.structure.<action>.<mode>
 event.people.person.<action>.<mode>
 event.documents.document.<action>.<mode>
 event.harvestings.<event_type>.<action>.<mode>
+event.changes.change.<outcome>.interactive
 task.documents.document.<action>.<mode>
 task.people.person.<action>.<mode>
 task.people.documents.fetch.<mode>
 ```
 
-Where `<mode>` is `interactive` or `batch`.
+Where `<mode>` is `interactive` or `batch`. Change events (`<outcome>` = `applied` or `failed`) are only
+ever emitted in interactive mode — see [Change events](#change-events-user-action-outcome).
 
 <details>
 <summary>Full list of event routing keys</summary>
@@ -1428,6 +1430,9 @@ event.harvestings.harvesting_state_event.*.interactive
 event.harvestings.harvesting_result_event.*.interactive
 event.harvestings.harvesting_state_event.*.batch
 event.harvestings.harvesting_result_event.*.batch
+
+event.changes.change.applied.interactive
+event.changes.change.failed.interactive
 ```
 </details>
 
@@ -1922,6 +1927,134 @@ There are two subtypes:
 }
 ```
 
+#### Change events (user-action outcome)
+
+Routing key pattern: `event.changes.change.<outcome>.interactive`
+
+```text
+event.changes.change.applied.interactive
+event.changes.change.failed.interactive
+```
+
+Published by crisalid-ikg after processing a **registered user action** (a `task.documents.document.*`
+message persisted as a `Change` node). They close the feedback loop: sovisuplus can unfreeze the
+frozen data, notify the user, and display per-item warnings. Emitted **only in interactive mode** —
+batch replays of stored changes after a document recompute stay silent (the outcome is still recorded
+on the `Change` node in the graph).
+
+- **`applied`** — the action was applied. A non-empty `warnings` array signals a **partial success**:
+  some items were skipped or degraded (e.g. a contributor that could not be resolved). On success
+  sovisuplus receives this event **and** the usual `event.documents.document.updated.interactive`.
+- **`failed`** — the action was not applied; `error_message` carries the cause. Also emitted when the
+  inbound task message cannot be validated into a `Change` (correlation fields are then copied from the
+  raw payload) or when the target document does not exist. No document event follows a failure.
+
+```json
+{
+  "type": "change",
+  "event": "applied|failed",
+  "fields": {
+    "uid": "sovisuplus:<id>",
+    "id": "<uuid>",
+    "application": "sovisuplus",
+    "person_uid": "<uid of the user who performed the action>",
+    "target_type": "DOCUMENT",
+    "target_uid": "<string>",
+    "path": "<string|null>",
+    "action_type": "ADD|REMOVE|UPDATE|MERGE",
+    "status": "applied|failed",
+    "error_message": "<string|null>",
+    "warnings": [
+      {
+        "code": "<string>",
+        "message": "<string>",
+        "context": { }
+      }
+    ],
+    "timestamp": "<ISO datetime>"
+  }
+}
+```
+
+`uid` is `<application>:<id>` — since sovisuplus minted the `id`, it can correlate the outcome with its
+own pending action directly. `timestamp` is when the outcome was recorded (not the original action time).
+
+Warning codes are open-ended; currently emitted by the contribution update:
+
+| `code` | Meaning | `context` fields |
+|---|---|---|
+| `UNRESOLVABLE_PERSON` | contribution skipped, person could not be resolved | `display_name`, `identifiers` |
+| `EXTERNAL_PERSON_CREATION_FAILED` | external person creation failed | `display_name`, `error` |
+| `MISSING_DISPLAY_NAME` | external person without display name | `identifiers` |
+| `INVALID_IDENTIFIER` | identifier with unknown type or value not matching the type pattern, dropped before any write | `type`, `value`, `display_name` |
+| `CONTRIBUTION_NOT_CREATED` | contribution creation returned no id | `person_uid` |
+| `AFFILIATION_CONFLICT` | conflict while resolving an affiliation to an authority organization | `source_organization_uid`, `error` |
+| `AFFILIATION_WITHOUT_IDENTIFIER` | affiliation without usable identifier skipped | `affiliation` |
+
+###### Example payloads
+
+<details>
+<summary>Example of an "applied" event with a partial-success warning</summary>
+
+```json
+{
+  "type": "change",
+  "event": "applied",
+  "fields": {
+    "uid": "sovisuplus:9f1c2e7a-5b3d-4c8a-9e21-7a0f4d6b1c33",
+    "id": "9f1c2e7a-5b3d-4c8a-9e21-7a0f4d6b1c33",
+    "application": "sovisuplus",
+    "person_uid": "local-jdupont",
+    "target_type": "DOCUMENT",
+    "target_uid": "ebf29bba-9bf5-4bb4-8a66-fa5d7deea2b3",
+    "path": "contributions",
+    "action_type": "UPDATE",
+    "status": "applied",
+    "error_message": null,
+    "warnings": [
+      {
+        "code": "INVALID_IDENTIFIER",
+        "message": "Invalid person identifier ignored",
+        "context": {
+          "type": "idhals",
+          "value": "123456",
+          "display_name": "Arnaud Bernard"
+        }
+      }
+    ],
+    "timestamp": "2026-06-27T05:17:59.114Z"
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Example of a "failed" event (safety guard: no submitted contribution could be applied)</summary>
+
+```json
+{
+  "type": "change",
+  "event": "failed",
+  "fields": {
+    "uid": "sovisuplus:2b6d8f10-1a4c-4e7b-b3d2-5c9e0a7f4d21",
+    "id": "2b6d8f10-1a4c-4e7b-b3d2-5c9e0a7f4d21",
+    "application": "sovisuplus",
+    "person_uid": "local-jdupont",
+    "target_type": "DOCUMENT",
+    "target_uid": "ebf29bba-9bf5-4bb4-8a66-fa5d7deea2b3",
+    "path": "contributions",
+    "action_type": "UPDATE",
+    "status": "failed",
+    "error_message": "None of the 2 submitted contributions could be applied to document ebf29bba-9bf5-4bb4-8a66-fa5d7deea2b3; aborting to avoid removing all contributors (MISSING_DISPLAY_NAME: Cannot create external person without a display name; ...)",
+    "warnings": [],
+    "timestamp": "2026-06-27T05:18:02.007Z"
+  }
+}
+```
+
+</details>
+
 ### Outbound messages (sovisuplus → `crisalid-ikg-actions-interactive`)
 
 sovisuplus publishes task messages to the `graph` exchange with routing keys of the form
@@ -2115,5 +2248,14 @@ every recompute from source records**, so a saved list **pins** the document aga
 * `roles` are LoC relator URIs (`…/aut` author, `…/ctb` contributor, `…/edt` editor, …).
 * When several contribution-update changes accumulate on a document, only the **latest** is applied on
   replay; older ones are preserved for the forthcoming modification-history feature.
+* Identifiers with an unknown type or a value that does not match the type-specific pattern (e.g. an
+  `idhals` made of digits) are **dropped before any write** and reported with an `INVALID_IDENTIFIER`
+  warning on the outcome event.
+* **Safety guard**: if the submitted list is non-empty but **none** of its contributions can be applied,
+  the change **fails** (previous contributors are kept) instead of wiping the contributor list. An
+  intentionally empty list still removes all contributors.
+* The outcome (success, partial success with warnings, or failure) is reported back on
+  `event.changes.change.<applied|failed>.interactive` — see
+  [Change events](#change-events-user-action-outcome).
 
 ---
