@@ -82,8 +82,8 @@ services:
       - NEXT_PUBLIC_TERMS_PAGE_URL=${SVP_TERMS_PAGE_URL}
       - NEXT_PUBLIC_COMMUNITY_PAGE_URL=${SVP_COMMUNITY_PAGE_URL}
       - NEXT_PUBLIC_HELP_URL=${SVP_HELP_URL}
-      # HAL SWORD deposit (server-side). Files are written under HAL_UPLOADS_ROOT, mounted below.
-      - HAL_SWORD_ENDPOINT=${SVP_HAL_SWORD_ENDPOINT:-https://api-preprod.archives-ouvertes.fr/sword/hal/}
+      # HAL deposit (server-side). Files are written under HAL_UPLOADS_ROOT, mounted below.
+      - HAL_ENDPOINT=${SVP_HAL_ENDPOINT:-https://api-preprod.archives-ouvertes.fr}
       - HAL_SERVICE_ACCOUNT_LOGIN=${SVP_HAL_SERVICE_ACCOUNT_LOGIN}
       - HAL_SERVICE_ACCOUNT_PASSWORD=${SVP_HAL_SERVICE_ACCOUNT_PASSWORD}
       - HAL_UPLOADS_ROOT=/app/uploads
