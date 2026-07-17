@@ -3,6 +3,7 @@ services:
     # Single OpenSearch container embedding all vocabularies (one index per vocabulary).
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:os-latest
+    restart: unless-stopped
     expose:
       - "9200"
     # only if you want to access from host machine
@@ -20,6 +21,7 @@ services:
   cvs-api:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:api-1.0
+    restart: unless-stopped
     ports: [ "${CVS_API_PORT:-8000}:8000" ]
     environment:
       API_VERSION: ${API_VERSION:-v1}
