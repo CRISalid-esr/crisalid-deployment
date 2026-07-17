@@ -579,13 +579,68 @@ The toolbox listens on port `5000` inside the Docker network and is reachable by
 
 ---
 
-## 14. ⏰ Configure Ofelia (Scheduler)
+## 14. 📚 Start CRISalid Vocab Search (CVS)
+
+[CRISalid Vocab Search](https://github.com/CRISalid-esr/crisalid-vocab-search) provides concept autocomplete over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+. It is optional: enable it if your institution uses vocabulary suggestion features.
+
+It consists of two containers behind the `cvs` profile:
+
+* **`cvs-os`**: a single OpenSearch container embedding **all vocabularies**, one index per vocabulary. On first start, it indexes the bundled vocabularies (allow a minute or two).
+* **`cvs-api`**: a REST API frontend exposing unified `/vocabs` and `/autocomplete` endpoints, consumed by SoVisu+.
+
+### Configure
+
+Edit `cvs/.env`:
+
+```env
+API_VERSION=v1
+CVS_API_PORT=8005
+```
+
+> ⚠️ The sample value of `CVS_API_PORT` is `8000`, which conflicts with the SVP Harvester default port. Set a different value (e.g. `8005`) when both run on the same server.
+
+The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust `OPENSEARCH_JAVA_OPTS` in `cvs/cvs.yaml`.
+
+### Start
+
+Add `--profile cvs` to your startup command:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.prod.yaml \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile neo4j \
+  --profile ikg \
+  --profile cdb \
+  --profile apollo \
+  --profile keycloak \
+  --profile sovisuplus \
+  --profile neo4j-mcp \
+  --profile cvs \
+  up -d
+```
+
+### Verify
+
+List the available vocabularies (adjust the port to your `CVS_API_PORT`):
+
+```bash
+curl http://localhost:8005/api/v1/vocabs/
+```
+
+All embedded vocabularies should be reported with `"status": "ok"` and a non-zero `doc_count`. The interactive API documentation is available at [http://localhost:8005/docs](http://localhost:8005/docs).
+
+---
+
+## 15. ⏰ Configure Ofelia (Scheduler)
 
 Add `--profile ofelia` to the startup command. See [Docker Compose - Overview](docker-compose.qmd#configure-ofelia-system-wide-scheduler) for full configuration details.
 
 ---
 
-## 15. 🔄 Updating to a New Version
+## 16. 🔄 Updating to a New Version
 
 ```bash
 # Stash local changes (e.g. uncommented ports: sections) before switching
@@ -605,6 +660,7 @@ docker compose \
   --profile crisalid-bus --profile harvester --profile neo4j \
   --profile ikg --profile cdb --profile apollo \
   --profile keycloak --profile sovisuplus --profile neo4j-mcp \
+  --profile cvs \
   pull --include-deps
 
 # Recreate containers
@@ -614,6 +670,7 @@ docker compose \
   --profile crisalid-bus --profile harvester --profile neo4j \
   --profile ikg --profile cdb --profile apollo \
   --profile keycloak --profile sovisuplus --profile neo4j-mcp \
+  --profile cvs \
   up -d
 ```
 

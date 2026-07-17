@@ -96,6 +96,7 @@ docker compose \
   --profile keycloak-db \
   --profile sovisuplus \
   --profile sovisuplus-db \
+  --profile cvs \
   --profile ofelia \
   up -d
 ```
@@ -119,6 +120,7 @@ docker compose \
   --profile keycloak-db \
   --profile sovisuplus \
   --profile sovisuplus-db \
+  --profile cvs \
   --profile ofelia \    
   up -d
 ```
@@ -137,6 +139,7 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile cvs \
   --profile ofelia \
   up -d
 ```
@@ -490,6 +493,41 @@ docker compose \
   up -d
 ```
 
+### 10. 📚 Configure CRISalid Vocab Search (CVS)
+
+[CRISalid Vocab Search](https://github.com/CRISalid-esr/crisalid-vocab-search) provides concept autocomplete
+over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+.
+
+It consists of two containers, enabled through the `cvs` profile:
+
+* **`cvs-os`**: a single OpenSearch container embedding **all vocabularies**, one index per vocabulary.
+  On first start, it indexes the bundled vocabularies (this takes a minute or two).
+* **`cvs-api`**: a REST API frontend exposing unified `/vocabs` and `/autocomplete` endpoints.
+
+Configuration is done in `cvs/.env`:
+
+* `CVS_API_PORT`: host port for the REST API. ⚠️ The default (`8000`) conflicts with the SVP Harvester
+  default port — set a different value (e.g. `8005`) if both run on the same server.
+* `API_VERSION`: API path version segment (keep `v1`).
+
+The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust
+`OPENSEARCH_JAVA_OPTS` in `cvs/cvs.yaml`.
+
+To start CVS along with the rest of the stack, include the `cvs` profile, for example:
+
+```bash
+docker compose \
+...
+  --profile cvs \
+  up -d
+```
+
+Verify the deployment by listing the available vocabularies:
+
+```bash
+curl http://localhost:8005/api/v1/vocabs/
+```
+
 ## 🔌 Communication with Host Machine
 
 If you want to connect external tools (on your host) to the containers, open the necessary ports.
@@ -578,6 +616,7 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile cvs \
   --profile ofelia \
   up -d
 ````
@@ -603,6 +642,7 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile cvs \
   --profile ofelia \
   up -d
 ```
@@ -631,6 +671,8 @@ Once your services are up, follow the component-specific instructions in each se
   Apollo GUI
 * Access Keycloak at [http://keycloak.local:8080](http://keycloak.local:8080) to manage users and roles
 * Access SoVisu+ at [http://sovisuplus.local:3000](http://sovisuplus.local:3000) to visualize your data
+* Access the CRISalid Vocab Search API documentation at [http://localhost:8005/docs](http://localhost:8005/docs)
+  (port set by `CVS_API_PORT` in `cvs/.env`) and list the vocabularies at `/api/v1/vocabs/`
 * Start connecting other CRISalid modules from the host machine
 
 🧭 Back to [Development Index](index.qmd)

@@ -544,8 +544,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#start-6" id="toc-start-6" class="nav-link" data-scroll-target="#start-6">Start</a></li>
   </ul></li>
-  <li><a href="#configure-ofelia-scheduler" id="toc-configure-ofelia-scheduler" class="nav-link" data-scroll-target="#configure-ofelia-scheduler">14. ⏰ Configure Ofelia (Scheduler)</a></li>
-  <li><a href="#updating-to-a-new-version" id="toc-updating-to-a-new-version" class="nav-link" data-scroll-target="#updating-to-a-new-version">15. 🔄 Updating to a New Version</a></li>
+  <li><a href="#start-crisalid-vocab-search-cvs" id="toc-start-crisalid-vocab-search-cvs" class="nav-link" data-scroll-target="#start-crisalid-vocab-search-cvs">14. 📚 Start CRISalid Vocab Search (CVS)</a>
+  <ul class="collapse">
+  <li><a href="#configure-4" id="toc-configure-4" class="nav-link" data-scroll-target="#configure-4">Configure</a></li>
+  <li><a href="#start-7" id="toc-start-7" class="nav-link" data-scroll-target="#start-7">Start</a></li>
+  <li><a href="#verify-7" id="toc-verify-7" class="nav-link" data-scroll-target="#verify-7">Verify</a></li>
+  </ul></li>
+  <li><a href="#configure-ofelia-scheduler" id="toc-configure-ofelia-scheduler" class="nav-link" data-scroll-target="#configure-ofelia-scheduler">15. ⏰ Configure Ofelia (Scheduler)</a></li>
+  <li><a href="#updating-to-a-new-version" id="toc-updating-to-a-new-version" class="nav-link" data-scroll-target="#updating-to-a-new-version">16. 🔄 Updating to a New Version</a></li>
   </ul>
 </nav>
 </nav>
@@ -1036,46 +1042,92 @@ Keycloak service accounts required for authenticated access
 <hr>
 </section>
 </section>
+<section id="start-crisalid-vocab-search-cvs" class="level2">
+<h2 class="anchored" data-anchor-id="start-crisalid-vocab-search-cvs">14. 📚 Start CRISalid Vocab Search (CVS)</h2>
+<p><a href="https://github.com/CRISalid-esr/crisalid-vocab-search">CRISalid Vocab Search</a> provides concept autocomplete over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+. It is optional: enable it if your institution uses vocabulary suggestion features.</p>
+<p>It consists of two containers behind the <code>cvs</code> profile:</p>
+<ul>
+<li><strong><code>cvs-os</code></strong>: a single OpenSearch container embedding <strong>all vocabularies</strong>, one index per vocabulary. On first start, it indexes the bundled vocabularies (allow a minute or two).</li>
+<li><strong><code>cvs-api</code></strong>: a REST API frontend exposing unified <code>/vocabs</code> and <code>/autocomplete</code> endpoints, consumed by SoVisu+.</li>
+</ul>
+<section id="configure-4" class="level3">
+<h3 class="anchored" data-anchor-id="configure-4">Configure</h3>
+<p>Edit <code>cvs/.env</code>:</p>
+<pre class="env"><code>API_VERSION=v1
+CVS_API_PORT=8005</code></pre>
+<blockquote class="blockquote">
+<p>⚠️ The sample value of <code>CVS_API_PORT</code> is <code>8000</code>, which conflicts with the SVP Harvester default port. Set a different value (e.g.&nbsp;<code>8005</code>) when both run on the same server.</p>
+</blockquote>
+<p>The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust <code>OPENSEARCH_JAVA_OPTS</code> in <code>cvs/cvs.yaml</code>.</p>
+</section>
+<section id="start-7" class="level3">
+<h3 class="anchored" data-anchor-id="start-7">Start</h3>
+<p>Add <code>--profile cvs</code> to your startup command:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify-7" class="level3">
+<h3 class="anchored" data-anchor-id="verify-7">Verify</h3>
+<p>List the available vocabularies (adjust the port to your <code>CVS_API_PORT</code>):</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8005/api/v1/vocabs/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>All embedded vocabularies should be reported with <code>"status": "ok"</code> and a non-zero <code>doc_count</code>. The interactive API documentation is available at <a href="http://localhost:8005/docs">http://localhost:8005/docs</a>.</p>
+<hr>
+</section>
+</section>
 <section id="configure-ofelia-scheduler" class="level2">
-<h2 class="anchored" data-anchor-id="configure-ofelia-scheduler">14. ⏰ Configure Ofelia (Scheduler)</h2>
+<h2 class="anchored" data-anchor-id="configure-ofelia-scheduler">15. ⏰ Configure Ofelia (Scheduler)</h2>
 <p>Add <code>--profile ofelia</code> to the startup command. See <a href="../dev/docker-compose.html#configure-ofelia-system-wide-scheduler">Docker Compose - Overview</a> for full configuration details.</p>
 <hr>
 </section>
 <section id="updating-to-a-new-version" class="level2">
-<h2 class="anchored" data-anchor-id="updating-to-a-new-version">15. 🔄 Updating to a New Version</h2>
-<div class="sourceCode" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
-<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h2 class="anchored" data-anchor-id="updating-to-a-new-version">16. 🔄 Updating to a New Version</h2>
+<div class="sourceCode" id="cb48"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To force-recreate a single container without restarting the others:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 <p>🧭 Back to <a href="../dev/docker-compose.html">Docker Compose - Overview</a></p>
 
