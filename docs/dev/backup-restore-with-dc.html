@@ -618,7 +618,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <blockquote class="blockquote">
 <p>Safe backup using <code>neo4j-admin</code>.</p>
 </blockquote>
-<p>Before running the backup script, check your NEO4J_ADMIN_IMAGE variable in <code>.env</code> to ensure you are using the correct Neo4j version for the backup.</p>
+<p>Before running the backup script, check your NEO4J_ADMIN_IMAGE variable in <code>.env</code> to ensure you are using the correct Neo4j version for the backup. The variable must contain the full image reference, including edition and base OS (e.g.&nbsp;<code>neo4j/neo4j-admin:2026.06.0-community-debian</code>).</p>
 <section id="backup-on-source-environment" class="level3">
 <h3 class="anchored" data-anchor-id="backup-on-source-environment">Backup (on source environment)</h3>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/neo4j_offline_backup.sh</span> dev</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

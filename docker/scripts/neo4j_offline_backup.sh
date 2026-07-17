@@ -35,10 +35,6 @@ set +a
 
 : "${NEO4J_ADMIN_IMAGE:?Missing NEO4J_ADMIN_IMAGE in $NEO4J_ENV_FILE}"
 
-if [[ -z "${NEO4J_EDITION:-}" ]]; then
-  NEO4J_EDITION="community"
-fi
-
 COMPOSE_CMD=(
   docker compose
   -f "$BASE_COMPOSE_FILE"
@@ -126,8 +122,6 @@ cleanup_on_error() {
 }
 
 trap cleanup_on_error ERR
-
-NEO4J_ADMIN_IMAGE="${NEO4J_ADMIN_IMAGE}-${NEO4J_EDITION}-bullseye"
 
 log "Using environment: $ENV_NAME"
 log "Neo4j admin image: $NEO4J_ADMIN_IMAGE"
