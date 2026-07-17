@@ -109,7 +109,8 @@ sudo rsync -avz --delete \
 > Safe backup using `neo4j-admin`.
 
 Before running the backup script, check your NEO4J_ADMIN_IMAGE variable in `.env` to ensure you are using the correct
-Neo4j version for the backup.
+Neo4j version for the backup. The variable must contain the full image reference, including edition and base OS
+(e.g. `neo4j/neo4j-admin:2026.06.0-community-debian`).
 
 ### Backup (on source environment)
 

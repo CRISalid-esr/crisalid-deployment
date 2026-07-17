@@ -3,7 +3,7 @@ services:
     image: rabbitmq:4.3.1-management
   # neo4j (graph database)
   neo4j:
-    image: neo4j:${NEO4J_VERSION:-5.26.21}-${NEO4J_EDITION:-community}
+    image: neo4j:${NEO4J_VERSION:-2026.06.0}-${NEO4J_EDITION:-community}
   # IKG (knowledge graph management)
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:dev

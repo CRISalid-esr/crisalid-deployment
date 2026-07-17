@@ -1,7 +1,7 @@
 services:
   neo4j:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
-    # image: neo4j:5-community
+    # image: neo4j:2026-community
     container_name: crisalid-neo4j
     restart: unless-stopped
     # comment the "ports" section if you don't want users to access neo4j UI
