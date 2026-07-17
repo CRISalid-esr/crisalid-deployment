@@ -1056,7 +1056,7 @@ Keycloak service accounts required for authenticated access
 <pre class="env"><code>API_VERSION=v1
 CVS_API_PORT=8005</code></pre>
 <blockquote class="blockquote">
-<p>⚠️ The sample value of <code>CVS_API_PORT</code> is <code>8000</code>, which conflicts with the SVP Harvester default port. Set a different value (e.g.&nbsp;<code>8005</code>) when both run on the same server.</p>
+<p>⚠️ The sample sets <code>CVS_API_PORT=8005</code>. Do not use <code>8000</code> (the fallback when the variable is unset): it conflicts with the SVP Harvester default port when both run on the same server.</p>
 </blockquote>
 <p>The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust <code>OPENSEARCH_JAVA_OPTS</code> in <code>cvs/cvs.yaml</code>.</p>
 </section>

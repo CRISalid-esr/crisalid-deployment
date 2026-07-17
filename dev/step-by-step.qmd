@@ -597,7 +597,7 @@ API_VERSION=v1
 CVS_API_PORT=8005
 ```
 
-> ⚠️ The sample value of `CVS_API_PORT` is `8000`, which conflicts with the SVP Harvester default port. Set a different value (e.g. `8005`) when both run on the same server.
+> ⚠️ The sample sets `CVS_API_PORT=8005`. Do not use `8000` (the fallback when the variable is unset): it conflicts with the SVP Harvester default port when both run on the same server.
 
 The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust `OPENSEARCH_JAVA_OPTS` in `cvs/cvs.yaml`.
 

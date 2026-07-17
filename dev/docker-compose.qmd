@@ -506,8 +506,8 @@ It consists of two containers, enabled through the `cvs` profile:
 
 Configuration is done in `cvs/.env`:
 
-* `CVS_API_PORT`: host port for the REST API. ⚠️ The default (`8000`) conflicts with the SVP Harvester
-  default port — set a different value (e.g. `8005`) if both run on the same server.
+* `CVS_API_PORT`: host port for the REST API. The sample sets `8005`. ⚠️ Do not use `8000` (the fallback
+  when the variable is unset): it conflicts with the SVP Harvester default port.
 * `API_VERSION`: API path version segment (keep `v1`).
 
 The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust

@@ -961,7 +961,7 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 </ul>
 <p>Configuration is done in <code>cvs/.env</code>:</p>
 <ul>
-<li><code>CVS_API_PORT</code>: host port for the REST API. ⚠️ The default (<code>8000</code>) conflicts with the SVP Harvester default port — set a different value (e.g.&nbsp;<code>8005</code>) if both run on the same server.</li>
+<li><code>CVS_API_PORT</code>: host port for the REST API. The sample sets <code>8005</code>. ⚠️ Do not use <code>8000</code> (the fallback when the variable is unset): it conflicts with the SVP Harvester default port.</li>
 <li><code>API_VERSION</code>: API path version segment (keep <code>v1</code>).</li>
 </ul>
 <p>The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust <code>OPENSEARCH_JAVA_OPTS</code> in <code>cvs/cvs.yaml</code>.</p>
