@@ -9,8 +9,8 @@ services:
       POSTGRES_DB: ${SVP_DB_NAME}
     expose:
       - 5432
-    #    ports:
-    #      - 5432:5432
+    ports:
+      - 5432:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
     networks:
@@ -52,7 +52,8 @@ services:
       - AMQP_PORT=${CRISALID_BUS_AMQP_PORT}
       - AMQP_USER=${CRISALID_BUS_USER}
       - AMQP_PASSWORD=${CRISALID_BUS_PASSWORD}
-      - AMQP_QUEUE_NAME=${SVP_AMQP_QUEUE_NAME}
+      - AMQP_INTERACTIVE_QUEUE_NAME=${SVP_AMQP_INTERACTIVE_QUEUE_NAME:-sovisuplus-interactive}
+      - AMQP_BATCH_QUEUE_NAME=${SVP_AMQP_BATCH_QUEUE_NAME:-sovisuplus-batch}
       - AMQP_EXCHANGE_NAME=${SVP_AMQP_EXCHANGE_NAME}
       - GRAPHQL_ENDPOINT_ENABLED=${GRAPHQL_ENDPOINT_ENABLED}
       - GRAPHQL_ENDPOINT_URL=http://${APOLLO_HOST:-apollo}:${APOLLO_API_PORT}/graphql
@@ -81,12 +82,21 @@ services:
       - NEXT_PUBLIC_TERMS_PAGE_URL=${SVP_TERMS_PAGE_URL}
       - NEXT_PUBLIC_COMMUNITY_PAGE_URL=${SVP_COMMUNITY_PAGE_URL}
       - NEXT_PUBLIC_HELP_URL=${SVP_HELP_URL}
+      # HAL deposit (server-side). Files are written under HAL_UPLOADS_ROOT, mounted below.
+      - HAL_ENDPOINT=${SVP_HAL_ENDPOINT:-https://api-preprod.archives-ouvertes.fr}
+      - HAL_SERVICE_ACCOUNT_LOGIN=${SVP_HAL_SERVICE_ACCOUNT_LOGIN}
+      - HAL_SERVICE_ACCOUNT_PASSWORD=${SVP_HAL_SERVICE_ACCOUNT_PASSWORD}
+      - HAL_UPLOADS_ROOT=/app/uploads
     depends_on:
       crisalid-bus:
         condition: service_healthy
     volumes:
       - ./config:/config:ro
       - ./theme:/custom-theme:ro
+      # HAL deposit files: uploaded attachments (hal-files) + generated TEI/ZIP (hal-tei).
+      # Named volume so Docker seeds it from the image's /app/uploads (owned by the
+      # non-root nextjs user); a bind mount would be auto-created as root and break mkdir.
+      - svp-uploads:/app/uploads
     networks:
       - svp-network
       - crisalid-front
@@ -98,3 +108,6 @@ networks:
     driver: bridge
   crisalid-front:
     driver: bridge
+
+volumes:
+  svp-uploads:
