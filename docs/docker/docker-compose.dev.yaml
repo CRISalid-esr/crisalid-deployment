@@ -1,6 +1,6 @@
 services:
   crisalid-bus:
-    image: rabbitmq:3.13.7-management
+    image: rabbitmq:4.3.1-management
   # neo4j (graph database)
   neo4j:
     image: neo4j:${NEO4J_VERSION:-5.26.21}-${NEO4J_EDITION:-community}
@@ -72,18 +72,8 @@ services:
     image: quay.io/keycloak/keycloak:26.5.4
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
-  os-jel:
-    image: crisalidesr/crisalid-vocab-search:os-jel-dev
-  os-acm:
-    image: crisalidesr/crisalid-vocab-search:os-acm-dev
-  os-aat:
-    image: crisalidesr/crisalid-vocab-search:os-aat-dev
-  os-elsst:
-    image: crisalidesr/crisalid-vocab-search:os-elsst-dev
-  os-pactols:
-    image: crisalidesr/crisalid-vocab-search:os-pactols-dev
-  os-euroscivoc:
-    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-dev
+  cvs-os:
+    image: crisalidesr/crisalid-vocab-search:os-dev
   cvs-api:
     image: crisalidesr/crisalid-vocab-search:api-dev
   # neo4j-mcp (MCP toolbox for the knowledge graph)

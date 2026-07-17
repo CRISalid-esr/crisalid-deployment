@@ -72,18 +72,9 @@ services:
     image: quay.io/keycloak/keycloak:26.5.4
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
-  os-jel:
-    image: crisalidesr/crisalid-vocab-search:os-jel-1.1
-  os-acm:
-    image: crisalidesr/crisalid-vocab-search:os-acm-1.1
-  os-aat:
-    image: crisalidesr/crisalid-vocab-search:os-aat-1.1
-  os-elsst:
-    image: crisalidesr/crisalid-vocab-search:os-elsst-1.1
-  os-pactols:
-    image: crisalidesr/crisalid-vocab-search:os-pactols-1.1
-  os-euroscivoc:
-    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-1.1
+  cvs-os:
+    # TODO pin to os-X.Y at the first release including the merged multi-vocab image
+    image: crisalidesr/crisalid-vocab-search:os-latest
   cvs-api:
     image: crisalidesr/crisalid-vocab-search:api-1.1
   # neo4j-mcp (MCP toolbox for the knowledge graph)
