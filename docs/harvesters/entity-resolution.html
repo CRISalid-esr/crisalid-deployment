@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Manual Installation – CRISalid Deployment Documentation</title>
+<title>Entity Resolution &amp; Identifier Alignment – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../prod/index.html" rel="next">
-<link href="../dev/backup-restore-with-dc.html" rel="prev">
+<link href="../harvesters/data-model.html" rel="next">
+<link href="../harvesters/overview.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -297,7 +331,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/manual_installation.html">Manual Installation</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../harvesters/overview.html">Harvesters</a></li><li class="breadcrumb-item"><a href="../harvesters/entity-resolution.html">Entity Resolution &amp; Identifier Alignment</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -361,7 +395,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../harvesters/entity-resolution.html" class="sidebar-item-text sidebar-link">
+  <a href="../harvesters/entity-resolution.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Entity Resolution &amp; Identifier Alignment</span></a>
   </div>
 </li>
@@ -479,7 +513,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link active">
+  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Manual Installation</span></a>
   </div>
 </li>
@@ -533,7 +567,23 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#entities-and-alignment-in-svp-harvester" id="toc-entities-and-alignment-in-svp-harvester" class="nav-link active" data-scroll-target="#entities-and-alignment-in-svp-harvester">Entities and alignment in SVP Harvester</a></li>
+  <li><a href="#identifiers-safe-mode" id="toc-identifiers-safe-mode" class="nav-link" data-scroll-target="#identifiers-safe-mode">Identifiers safe mode</a></li>
+  <li><a href="#recommendations" id="toc-recommendations" class="nav-link" data-scroll-target="#recommendations">Recommendations</a></li>
+  <li><a href="#identifier-conflicts" id="toc-identifier-conflicts" class="nav-link" data-scroll-target="#identifier-conflicts">Identifier conflicts</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
+  <ul class="collapse">
+  <li><a href="#example-1-submitting-a-new-entity" id="toc-example-1-submitting-a-new-entity" class="nav-link" data-scroll-target="#example-1-submitting-a-new-entity">Example 1: submitting a new entity</a></li>
+  <li><a href="#example-2-change-in-identifiers-alignment" id="toc-example-2-change-in-identifiers-alignment" class="nav-link" data-scroll-target="#example-2-change-in-identifiers-alignment">Example 2: change in identifiers alignment</a></li>
+  <li><a href="#example-3-identifiers-safe-mode" id="toc-example-3-identifiers-safe-mode" class="nav-link" data-scroll-target="#example-3-identifiers-safe-mode">Example 3: identifiers safe mode</a></li>
+  <li><a href="#example-4-identifier-conflict" id="toc-example-4-identifier-conflict" class="nav-link" data-scroll-target="#example-4-identifier-conflict">Example 4: identifier conflict</a></li>
+  </ul></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -542,9 +592,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/manual_installation.html">Manual Installation</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../harvesters/overview.html">Harvesters</a></li><li class="breadcrumb-item"><a href="../harvesters/entity-resolution.html">Entity Resolution &amp; Identifier Alignment</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Manual Installation</h1>
+<h1 class="title">Entity Resolution &amp; Identifier Alignment</h1>
 </div>
 
 
@@ -561,21 +611,156 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Work in Progress
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
-</div>
-</div>
+<p>🧭 Back to <a href="../harvesters/overview.html">Harvesters Overview</a></p>
+<p>This page describes how <strong>SVP Harvester</strong> keeps track of the entities (currently: persons) it harvests on behalf of, and how it aligns their identifiers across successive requests.</p>
+<hr>
+<section id="entities-and-alignment-in-svp-harvester" class="level2">
+<h2 class="anchored" data-anchor-id="entities-and-alignment-in-svp-harvester">Entities and alignment in SVP Harvester</h2>
+<p>In SVP Harvester, harvesting activities are always conducted on behalf of an <strong>entity</strong> equipped with unique <strong>identifiers</strong>. An entity can be an individual, a project, a research structure, or an institution — essentially, any unit to which publications can be attributed. Currently, the system primarily supports entities of the <strong>person</strong> type.</p>
+<p><strong>Identifier alignment</strong> is the process whereby an entity is associated with multiple identifiers. These identifiers are presumed to represent the same entity, ensuring that harvesting activities are conducted consistently across the various sources.</p>
+<blockquote class="blockquote">
+<p>ℹ️ SVP Harvester does <strong>not</strong> perform identifier alignment by itself. It is up to the client system (e.g. crisalid-ikg) to provide correct identifiers for each submitted entity. Nevertheless, SVP Harvester <strong>memorizes</strong> the submitted entities and their identifiers (unless instructed otherwise, see <a href="#identifiers-safe-mode">Identifiers safe mode</a>) and reuses the same alignment for subsequent harvestings of the same entity.</p>
+</blockquote>
+<p>When the client system submits an entity with changed identifiers, SVP Harvester does its best to update the entity alignment with respect to the newly provided identifiers.</p>
+<blockquote class="blockquote">
+<p>⚠️ Sending entities with shifting and contradictory alignments to SVP Harvester can put the system into an inconsistent state and make the harvesting history illegible, as past harvestings are <strong>not</strong> retroactively corrected when the alignment is updated.</p>
+</blockquote>
+<hr>
+</section>
+<section id="identifiers-safe-mode" class="level2">
+<h2 class="anchored" data-anchor-id="identifiers-safe-mode">Identifiers safe mode</h2>
+<p>This whole behavior can be disabled by setting the <code>identifiers_safe_mode</code> parameter to <code>true</code> in the request body. In this case, SVP Harvester will not register submitted identifiers nor update existing entities.</p>
+<p>This mode is activated by default in the harvester’s graphical user interface, to prevent accidental perturbation of the entity alignments by manually submitted test requests.</p>
+<hr>
+</section>
+<section id="recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="recommendations">Recommendations</h2>
+<ul>
+<li>Always submit the same entity with the same identifiers — this ensures the legibility of the harvesting history and the coherency of the results.</li>
+<li>Adding new identifiers to an existing entity is expected client behavior. SVP Harvester handles this seamlessly and updates its alignment accordingly.</li>
+<li>Correcting alignment errors is also a common operation SVP Harvester expects to occur occasionally: this includes merging entities that were previously considered distinct, or removing an identifier from an entity to attach it to another one.</li>
+</ul>
+<hr>
+</section>
+<section id="identifier-conflicts" class="level2">
+<h2 class="anchored" data-anchor-id="identifier-conflicts">Identifier conflicts</h2>
+<p>An identifier conflict occurs when the alignment of a newly submitted entity is logically incompatible with previously submitted ones.</p>
+<p>For example, Researcher 1 is submitted with orcid identifier A and idref identifier B:</p>
+<pre class="text"><code>Researcher 1
+|
++-- orcid identifier: A
+|
++-- idref identifier: B
+
+Researcher 2
+|
++-- orcid identifier: A  &lt;- Shared orcid identifier with Researcher 1
+|
++-- idref identifier: C</code></pre>
+<p>orcid A cannot belong to both entities identified respectively by idref B and idref C. This is an <strong>identifier conflict</strong>. SVP Harvester resolves it according to identifier priority rules configured in <code>identifiers.yml</code> (see the per-harvester identifier lists in <a href="../harvesters/overview.html#-available-harvesters">Harvesters Overview</a> — for instance, <a href="../harvesters/hal.html">HAL</a> gives idhal identifiers priority over orcid).</p>
+<hr>
+</section>
+<section id="examples" class="level2">
+<h2 class="anchored" data-anchor-id="examples">Examples</h2>
+<p>The following examples use the harvester’s retrieval endpoint:</p>
+<pre class="text"><code>POST /api/v1/references/retrieval</code></pre>
+<section id="example-1-submitting-a-new-entity" class="level3">
+<h3 class="anchored" data-anchor-id="example-1-submitting-a-new-entity">Example 1: submitting a new entity</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> <span class="st">'POST'</span> <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'http://my-harvester-url/api/v1/references/retrieval'</span> <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'accept: application/json'</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'Content-Type: application/json'</span> <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">'{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">  "person": {</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">    "identifiers": [</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "idref", "value": "111111111" },</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "orcid", "value": "0000-0001-1111-1112" }</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">    ],</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">    "name": "Smith, P"</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">  },</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">  "identifiers_safe_mode": false,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">  "harvesters": ["hal", "idref", "scanr", "openalex"],</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">  "events": ["created", "updated", "deleted", "unchanged"]</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>During the execution of this request, SVP Harvester will:</p>
+<ul>
+<li>register a new entity with the name “Smith, P” and the identifiers <code>111111111</code> (idref) and <code>0000-0001-1111-1112</code> (orcid)</li>
+<li>submit the entity to the harvesters <code>hal</code>, <code>idref</code>, <code>scanr</code> and <code>openalex</code></li>
+<li>return a URL where the status and results of the harvesting can be fetched asynchronously</li>
+</ul>
+<p>When a later request is submitted using <strong>either</strong> the idref identifier <code>111111111</code> <strong>or</strong> the orcid identifier <code>0000-0001-1111-1112</code>, SVP Harvester recognizes and aligns with the previously established entity without creating a new one — after an entity has been initially aligned with specific identifiers, subsequent retrievals require <strong>only one of the identifiers</strong>, not all, to trigger a retrieval with all associated identifiers.</p>
+</section>
+<section id="example-2-change-in-identifiers-alignment" class="level3">
+<h3 class="anchored" data-anchor-id="example-2-change-in-identifiers-alignment">Example 2: change in identifiers alignment</h3>
+<p>Following the previous example, the client system now wants to update the orcid identifier of the entity identified by <code>111111111</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> <span class="st">'POST'</span> <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'http://my-harvester-url/api/v1/references/retrieval'</span> <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'accept: application/json'</span> <span class="dt">\</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'Content-Type: application/json'</span> <span class="dt">\</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">'{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">  "person": {</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">    "identifiers": [</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "idref", "value": "111111111" },</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "orcid", "value": "0000-0001-1111-1113" }</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">    ],</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">    "name": "Smith, P"</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="st">  },</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="st">  "identifiers_safe_mode": false,</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="st">  "harvesters": ["hal", "idref", "scanr", "openalex"],</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="st">  "events": ["created", "updated", "deleted", "unchanged"]</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>SVP Harvester will update the entity identified by <code>111111111</code> with the new orcid identifier <code>0000-0001-1111-1113</code>, then submit it to the requested harvesters as before.</p>
+</section>
+<section id="example-3-identifiers-safe-mode" class="level3">
+<h3 class="anchored" data-anchor-id="example-3-identifiers-safe-mode">Example 3: identifiers safe mode</h3>
+<p>Following example 1, imagine the client system wants to submit the same idref identifier with a <em>different</em> orcid identifier, but this time with <code>identifiers_safe_mode</code> set to <code>true</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> <span class="st">'POST'</span> <span class="dt">\</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'http://my-harvester-url/api/v1/references/retrieval'</span> <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'accept: application/json'</span> <span class="dt">\</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'Content-Type: application/json'</span> <span class="dt">\</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">'{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">  "person": {</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">    "identifiers": [</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "idref", "value": "111111111" },</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "orcid", "value": "0000-0001-1111-1114" }</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">    ],</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">    "name": "Smith, P"</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">  },</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">  "identifiers_safe_mode": true,</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="st">  "harvesters": ["hal", "idref", "scanr", "openalex"],</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="st">  "events": ["created", "updated", "deleted", "unchanged"]</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>SVP Harvester retrieves the previously registered entity identified by <code>111111111</code> (a superior priority is given to the idref identifier). Because <code>identifiers_safe_mode</code> is <code>true</code>, the entity is <strong>not</strong> updated: the newly submitted orcid is ignored, and the entity is submitted to the harvesters with the same identifiers as in Example 1 (orcid <code>0000-0001-1111-1112</code>).</p>
+</section>
+<section id="example-4-identifier-conflict" class="level3">
+<h3 class="anchored" data-anchor-id="example-4-identifier-conflict">Example 4: identifier conflict</h3>
+<p>This time the new request contains an identifier conflict: a new entity is submitted with the same orcid identifier as an existing entity, but a different idref identifier.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> <span class="st">'POST'</span> <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'http://my-harvester-url/api/v1/references/retrieval'</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'accept: application/json'</span> <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">'Content-Type: application/json'</span> <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">'{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">  "person": {</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">    "identifiers": [</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "idref", "value": "222222222" },</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">      { "type": "orcid", "value": "0000-0001-1111-1112" }</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">    ],</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">    "name": "Dupont, G"</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">  },</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">  "identifiers_safe_mode": false,</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">  "harvesters": ["hal", "idref", "scanr", "openalex"],</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">  "events": ["created", "updated", "deleted", "unchanged"]</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="st">}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Since <code>identifiers_safe_mode</code> is <code>false</code>, SVP Harvester will:</p>
+<ul>
+<li>register a new entity “Dupont, G” with identifiers <code>222222222</code> (idref) and <code>0000-0001-1111-1112</code> (orcid)</li>
+<li><strong>remove</strong> the orcid identifier <code>0000-0001-1111-1112</code> from the entity previously identified by <code>111111111</code>, leaving it with only its idref identifier</li>
+<li>submit the new entity to the requested harvesters</li>
+</ul>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -997,13 +1182,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../dev/backup-restore-with-dc.html" class="pagination-link" aria-label="Data backup and restoration with Docker Compose">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Data backup and restoration with Docker Compose</span>
+      <a href="../harvesters/overview.html" class="pagination-link" aria-label="Overview">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../prod/index.html" class="pagination-link" aria-label="Kubernetes – Introduction">
-        <span class="nav-page-text">Kubernetes – Introduction</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../harvesters/data-model.html" class="pagination-link" aria-label="Data reference model">
+        <span class="nav-page-text">Data reference model</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

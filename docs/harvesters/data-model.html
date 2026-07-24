@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Manual Installation – CRISalid Deployment Documentation</title>
+<title>Data reference model – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../prod/index.html" rel="next">
-<link href="../dev/backup-restore-with-dc.html" rel="prev">
+<link href="../harvesters/hal.html" rel="next">
+<link href="../harvesters/entity-resolution.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -297,7 +297,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/manual_installation.html">Manual Installation</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../harvesters/overview.html">Harvesters</a></li><li class="breadcrumb-item"><a href="../harvesters/data-model.html">Data reference model</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -367,7 +367,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../harvesters/data-model.html" class="sidebar-item-text sidebar-link">
+  <a href="../harvesters/data-model.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Data reference model</span></a>
   </div>
 </li>
@@ -479,7 +479,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link active">
+  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Manual Installation</span></a>
   </div>
 </li>
@@ -533,7 +533,14 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#reference-model" id="toc-reference-model" class="nav-link active" data-scroll-target="#reference-model">Reference model</a></li>
+  <li><a href="#database-model" id="toc-database-model" class="nav-link" data-scroll-target="#database-model">Database model</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -542,9 +549,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/manual_installation.html">Manual Installation</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../harvesters/overview.html">Harvesters</a></li><li class="breadcrumb-item"><a href="../harvesters/data-model.html">Data reference model</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Manual Installation</h1>
+<h1 class="title">Data reference model</h1>
 </div>
 
 
@@ -561,21 +568,28 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Work in Progress
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
-</div>
+<p>🧭 Back to <a href="../harvesters/overview.html">Harvesters Overview</a></p>
+<p>One of SVP Harvester’s main tasks is to convert the various formats originating from the source platforms into a common data model compatible with the Semantic Web standards.</p>
+<section id="reference-model" class="level2">
+<h2 class="anchored" data-anchor-id="reference-model">Reference model</h2>
+<p>The target model used to represent scientific output in SVP Harvester is inspired by the <a href="https://documentation.abes.fr/aidescienceplusabes/index.html#ModeleGeneral">ABES Science Plus model</a>.</p>
+<p>For more information about modeling choices and mapping with source formats, see the <a href="https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=1352335371">Modeling working group reports</a>.</p>
+<blockquote class="blockquote">
+<p>🔗 This is the same target model referenced by the per-harvester data conversion tables — see <a href="../harvesters/hal.html#data-conversion">HAL</a>, <a href="../harvesters/idref.html#data-conversion">IdRef</a>, <a href="../harvesters/scanr.html#data-conversion">ScanR</a>, <a href="../harvesters/openalex.html#data-conversion">OpenAlex</a>, <a href="../harvesters/scopus.html#data-conversion">Scopus</a> — and by the reference event payloads published on the <code>publications</code> exchange, documented in the <a href="../map/message_catalog.html#exchange--publications">Message Catalog</a>.</p>
+</blockquote>
+</section>
+<section id="database-model" class="level2">
+<h2 class="anchored" data-anchor-id="database-model">Database model</h2>
+<p>Here is a UML-like schema generated from the SQLAlchemy models:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://raw.githubusercontent.com/CRISalid-esr/svp-harvester/dev-main/img/sql_alchemy_entities.png" class="img-fluid figure-img"></p>
+<figcaption>SVP Harvester UML model</figcaption>
+</figure>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -997,13 +1011,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../dev/backup-restore-with-dc.html" class="pagination-link" aria-label="Data backup and restoration with Docker Compose">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Data backup and restoration with Docker Compose</span>
+      <a href="../harvesters/entity-resolution.html" class="pagination-link" aria-label="Entity Resolution &amp; Identifier Alignment">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Entity Resolution &amp; Identifier Alignment</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../prod/index.html" class="pagination-link" aria-label="Kubernetes – Introduction">
-        <span class="nav-page-text">Kubernetes – Introduction</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../harvesters/hal.html" class="pagination-link" aria-label="Hal harvester">
+        <span class="nav-page-text">Hal harvester</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

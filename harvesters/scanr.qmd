@@ -1,0 +1,29 @@
+---
+title: "Scanr harvester"
+---
+
+🧭 Back to [Harvesters Overview](overview.qmd)
+
+> ⚠️ The ScanR harvester requires identifiers and credentials for the ScanR API (currently under restricted access):
+>
+> 1. Obtain identifiers, credentials, and host from ScanR.
+> 2. Add them to the harvester's environment as `SCANR_ES_USER`, `SCANR_ES_PASSWORD`, and `SCANR_ES_HOST`.
+
+## Data source
+
+The ScanR harvester fetches data from the latest ScanR API.
+
+## Supported identifiers
+
+- idref
+- orcid
+- idhals
+
+> ℹ️ When `idref` is unavailable, the harvester falls back to `orcid` or `idhals` to gather the entity's data. It
+> then derives the internal `scanr_id` from the `idref`, enabling retrieval of the entity's publications from the
+> ScanR API.
+
+## Data conversion
+
+ScanR document types and author qualities are mapped to RDF classes following the table provided in the
+[CRISalid data model documentation](https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=1352335371#GECMod%C3%A9lisation-MappingScanr-SoVisu+).
