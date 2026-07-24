@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Manual Installation – CRISalid Deployment Documentation</title>
+<title>Idref harvester – CRISalid Deployment Documentation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../prod/index.html" rel="next">
-<link href="../dev/backup-restore-with-dc.html" rel="prev">
+<link href="../harvesters/scanr.html" rel="next">
+<link href="../harvesters/hal.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -297,7 +297,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/manual_installation.html">Manual Installation</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../harvesters/overview.html">Harvesters</a></li><li class="breadcrumb-item"><a href="../harvesters/idref.html">Idref harvester</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -379,7 +379,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../harvesters/idref.html" class="sidebar-item-text sidebar-link">
+  <a href="../harvesters/idref.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Idref harvester</span></a>
   </div>
 </li>
@@ -479,7 +479,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link active">
+  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Manual Installation</span></a>
   </div>
 </li>
@@ -533,7 +533,16 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#data-source" id="toc-data-source" class="nav-link active" data-scroll-target="#data-source">Data source</a></li>
+  <li><a href="#supported-identifiers" id="toc-supported-identifiers" class="nav-link" data-scroll-target="#supported-identifiers">Supported identifiers</a></li>
+  <li><a href="#data-conversion" id="toc-data-conversion" class="nav-link" data-scroll-target="#data-conversion">Data conversion</a></li>
+  <li><a href="#sub-harvesters" id="toc-sub-harvesters" class="nav-link" data-scroll-target="#sub-harvesters">Sub-harvesters</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -542,9 +551,9 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/manual_installation.html">Manual Installation</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../harvesters/overview.html">Harvesters</a></li><li class="breadcrumb-item"><a href="../harvesters/idref.html">Idref harvester</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Manual Installation</h1>
+<h1 class="title">Idref harvester</h1>
 </div>
 
 
@@ -561,21 +570,54 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Work in Progress
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
-</div>
-</div>
+<p>🧭 Back to <a href="../harvesters/overview.html">Harvesters Overview</a></p>
+<section id="data-source" class="level2">
+<h2 class="anchored" data-anchor-id="data-source">Data source</h2>
+<p>The IdRef harvester fetches data from the <a href="https://data.idref.fr/sparql">IdRef SPARQL endpoint</a>.</p>
+</section>
+<section id="supported-identifiers" class="level2">
+<h2 class="anchored" data-anchor-id="supported-identifiers">Supported identifiers</h2>
+<ul>
+<li>idref</li>
+<li>orcid</li>
+</ul>
+</section>
+<section id="data-conversion" class="level2">
+<h2 class="anchored" data-anchor-id="data-conversion">Data conversion</h2>
+<p>IdRef document types are mapped to RDF classes, and author qualities are mapped to LoC roles, following the tables provided in the <a href="https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=1452441617">CRISalid data model documentation</a>.</p>
+</section>
+<section id="sub-harvesters" class="level2">
+<h2 class="anchored" data-anchor-id="sub-harvesters">Sub-harvesters</h2>
+<p>When the data returned by the main IdRef harvester is not sufficient, IdRef harvester delegates to additional sub-harvesters to gather more data:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Sub-harvester</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>OpenEdition</td>
+<td><a href="http://oai.openedition.org/?verb=ListRecords&amp;metadataPrefix=oai_dc">OpenEdition OAI-PMH API</a></td>
+</tr>
+<tr class="even">
+<td>Persée</td>
+<td>Persée RDF endpoint</td>
+</tr>
+<tr class="odd">
+<td>SciencePlus</td>
+<td>SciencePlus RDF endpoint</td>
+</tr>
+<tr class="even">
+<td>SUDOC</td>
+<td>SUDOC RDF endpoint</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -997,13 +1039,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../dev/backup-restore-with-dc.html" class="pagination-link" aria-label="Data backup and restoration with Docker Compose">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Data backup and restoration with Docker Compose</span>
+      <a href="../harvesters/hal.html" class="pagination-link" aria-label="Hal harvester">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Hal harvester</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../prod/index.html" class="pagination-link" aria-label="Kubernetes – Introduction">
-        <span class="nav-page-text">Kubernetes – Introduction</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../harvesters/scanr.html" class="pagination-link" aria-label="Scanr harvester">
+        <span class="nav-page-text">Scanr harvester</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

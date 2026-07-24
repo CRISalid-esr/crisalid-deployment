@@ -1,0 +1,18 @@
+---
+title: "Openalex harvester"
+---
+
+🧭 Back to [Harvesters Overview](overview.qmd)
+
+## Data source
+
+The OpenAlex harvester fetches data from the [OpenAlex API](https://api.openalex.org/works).
+
+## Supported identifiers
+
+- orcid
+
+## Data conversion
+
+OpenAlex document types are mapped to RDF classes following the table provided in the
+[CRISalid data model documentation](https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=1378320388).

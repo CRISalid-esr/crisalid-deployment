@@ -54,6 +54,215 @@
     ]
   },
   {
+    "objectID": "harvesters/scopus.html",
+    "href": "harvesters/scopus.html",
+    "title": "Scopus harvester",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview",
+    "crumbs": [
+      "Harvesters",
+      "Scopus harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scopus.html#data-source",
+    "href": "harvesters/scopus.html#data-source",
+    "title": "Scopus harvester",
+    "section": "Data source",
+    "text": "Data source\nThe Scopus harvester fetches data from the Scopus API.",
+    "crumbs": [
+      "Harvesters",
+      "Scopus harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scopus.html#supported-identifiers",
+    "href": "harvesters/scopus.html#supported-identifiers",
+    "title": "Scopus harvester",
+    "section": "Supported identifiers",
+    "text": "Supported identifiers\n\nscopus (Scopus EID)",
+    "crumbs": [
+      "Harvesters",
+      "Scopus harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scopus.html#data-conversion",
+    "href": "harvesters/scopus.html#data-conversion",
+    "title": "Scopus harvester",
+    "section": "Data conversion",
+    "text": "Data conversion\nScopus document types are mapped to RDF classes following the table provided in the CRISalid data model documentation.",
+    "crumbs": [
+      "Harvesters",
+      "Scopus harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/overview.html",
+    "href": "harvesters/overview.html",
+    "title": "Overview",
+    "section": "",
+    "text": "This section documents the individual harvesters used by SVP Harvester to retrieve bibliographic references from external sources.",
+    "crumbs": [
+      "Harvesters",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "harvesters/overview.html#harvester-architecture",
+    "href": "harvesters/overview.html#harvester-architecture",
+    "title": "Overview",
+    "section": "🧱 Harvester architecture",
+    "text": "🧱 Harvester architecture\nEach harvester is a self-contained module made of two parts:\n\nData Fetcher / Client — retrieves data from a specific source (JSON API, SPARQL endpoint, SRU endpoint, …).\nConverter — transforms the fetched data into the shared reference format, aligned with the SciencePlus data model (Dublin Core, Bibo, Vivo, …).\n\nHarvesters are registered through a factory class inheriting from AbstractHarvesterFactory. The list of active harvesters is declared in harvesters.yaml (see Harvester — Available Harvesters).\nAll harvesters run on asyncio, so the harvesters triggered for a given entity execute in parallel.",
+    "crumbs": [
+      "Harvesters",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "harvesters/overview.html#triggering-logic",
+    "href": "harvesters/overview.html#triggering-logic",
+    "title": "Overview",
+    "section": "🔀 Triggering logic",
+    "text": "🔀 Triggering logic\nWhen an entity’s identifiers are received, each harvester independently decides whether it is relevant, based on the identifiers it supports (see the per-harvester pages below). A harvester will not run if:\n\nit is not declared in harvesters.yaml, or\nit is excluded by the harvesters parameter of the request, or\nnone of the identifiers it supports are present for the entity",
+    "crumbs": [
+      "Harvesters",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "harvesters/overview.html#available-harvesters",
+    "href": "harvesters/overview.html#available-harvesters",
+    "title": "Overview",
+    "section": "📚 Available harvesters",
+    "text": "📚 Available harvesters\n\n\n\nHarvester\nSource\nSupported identifiers\nCredentials required\n\n\n\n\nHAL\nHAL API\nidhali, idhals, orcid\n—\n\n\nIdRef\nIdRef SPARQL endpoint (+ sub-harvesters)\nidref, orcid\n—\n\n\nOpenAlex\nOpenAlex API\norcid\n—\n\n\nScanR\nScanR API\nidref, orcid, idhals\nSCANR_ES_USER, SCANR_ES_PASSWORD, SCANR_ES_HOST\n\n\nScopus\nScopus API\nScopus EID\nSCOPUS_API_KEY, SCOPUS_INST_TOKEN",
+    "crumbs": [
+      "Harvesters",
+      "Overview"
+    ]
+  },
+  {
+    "objectID": "harvesters/idref.html",
+    "href": "harvesters/idref.html",
+    "title": "Idref harvester",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview",
+    "crumbs": [
+      "Harvesters",
+      "Idref harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/idref.html#data-source",
+    "href": "harvesters/idref.html#data-source",
+    "title": "Idref harvester",
+    "section": "Data source",
+    "text": "Data source\nThe IdRef harvester fetches data from the IdRef SPARQL endpoint.",
+    "crumbs": [
+      "Harvesters",
+      "Idref harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/idref.html#supported-identifiers",
+    "href": "harvesters/idref.html#supported-identifiers",
+    "title": "Idref harvester",
+    "section": "Supported identifiers",
+    "text": "Supported identifiers\n\nidref\norcid",
+    "crumbs": [
+      "Harvesters",
+      "Idref harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/idref.html#data-conversion",
+    "href": "harvesters/idref.html#data-conversion",
+    "title": "Idref harvester",
+    "section": "Data conversion",
+    "text": "Data conversion\nIdRef document types are mapped to RDF classes, and author qualities are mapped to LoC roles, following the tables provided in the CRISalid data model documentation.",
+    "crumbs": [
+      "Harvesters",
+      "Idref harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/idref.html#sub-harvesters",
+    "href": "harvesters/idref.html#sub-harvesters",
+    "title": "Idref harvester",
+    "section": "Sub-harvesters",
+    "text": "Sub-harvesters\nWhen the data returned by the main IdRef harvester is not sufficient, IdRef harvester delegates to additional sub-harvesters to gather more data:\n\n\n\nSub-harvester\nSource\n\n\n\n\nOpenEdition\nOpenEdition OAI-PMH API\n\n\nPersée\nPersée RDF endpoint\n\n\nSciencePlus\nSciencePlus RDF endpoint\n\n\nSUDOC\nSUDOC RDF endpoint",
+    "crumbs": [
+      "Harvesters",
+      "Idref harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/entity-resolution.html",
+    "href": "harvesters/entity-resolution.html",
+    "title": "Entity Resolution & Identifier Alignment",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview\nThis page describes how SVP Harvester keeps track of the entities (currently: persons) it harvests on behalf of, and how it aligns their identifiers across successive requests.",
+    "crumbs": [
+      "Harvesters",
+      "Entity Resolution & Identifier Alignment"
+    ]
+  },
+  {
+    "objectID": "harvesters/entity-resolution.html#entities-and-alignment-in-svp-harvester",
+    "href": "harvesters/entity-resolution.html#entities-and-alignment-in-svp-harvester",
+    "title": "Entity Resolution & Identifier Alignment",
+    "section": "Entities and alignment in SVP Harvester",
+    "text": "Entities and alignment in SVP Harvester\nIn SVP Harvester, harvesting activities are always conducted on behalf of an entity equipped with unique identifiers. An entity can be an individual, a project, a research structure, or an institution — essentially, any unit to which publications can be attributed. Currently, the system primarily supports entities of the person type.\nIdentifier alignment is the process whereby an entity is associated with multiple identifiers. These identifiers are presumed to represent the same entity, ensuring that harvesting activities are conducted consistently across the various sources.\n\nℹ️ SVP Harvester does not perform identifier alignment by itself. It is up to the client system (e.g. crisalid-ikg) to provide correct identifiers for each submitted entity. Nevertheless, SVP Harvester memorizes the submitted entities and their identifiers (unless instructed otherwise, see Identifiers safe mode) and reuses the same alignment for subsequent harvestings of the same entity.\n\nWhen the client system submits an entity with changed identifiers, SVP Harvester does its best to update the entity alignment with respect to the newly provided identifiers.\n\n⚠️ Sending entities with shifting and contradictory alignments to SVP Harvester can put the system into an inconsistent state and make the harvesting history illegible, as past harvestings are not retroactively corrected when the alignment is updated.",
+    "crumbs": [
+      "Harvesters",
+      "Entity Resolution & Identifier Alignment"
+    ]
+  },
+  {
+    "objectID": "harvesters/entity-resolution.html#identifiers-safe-mode",
+    "href": "harvesters/entity-resolution.html#identifiers-safe-mode",
+    "title": "Entity Resolution & Identifier Alignment",
+    "section": "Identifiers safe mode",
+    "text": "Identifiers safe mode\nThis whole behavior can be disabled by setting the identifiers_safe_mode parameter to true in the request body. In this case, SVP Harvester will not register submitted identifiers nor update existing entities.\nThis mode is activated by default in the harvester’s graphical user interface, to prevent accidental perturbation of the entity alignments by manually submitted test requests.",
+    "crumbs": [
+      "Harvesters",
+      "Entity Resolution & Identifier Alignment"
+    ]
+  },
+  {
+    "objectID": "harvesters/entity-resolution.html#recommendations",
+    "href": "harvesters/entity-resolution.html#recommendations",
+    "title": "Entity Resolution & Identifier Alignment",
+    "section": "Recommendations",
+    "text": "Recommendations\n\nAlways submit the same entity with the same identifiers — this ensures the legibility of the harvesting history and the coherency of the results.\nAdding new identifiers to an existing entity is expected client behavior. SVP Harvester handles this seamlessly and updates its alignment accordingly.\nCorrecting alignment errors is also a common operation SVP Harvester expects to occur occasionally: this includes merging entities that were previously considered distinct, or removing an identifier from an entity to attach it to another one.",
+    "crumbs": [
+      "Harvesters",
+      "Entity Resolution & Identifier Alignment"
+    ]
+  },
+  {
+    "objectID": "harvesters/entity-resolution.html#identifier-conflicts",
+    "href": "harvesters/entity-resolution.html#identifier-conflicts",
+    "title": "Entity Resolution & Identifier Alignment",
+    "section": "Identifier conflicts",
+    "text": "Identifier conflicts\nAn identifier conflict occurs when the alignment of a newly submitted entity is logically incompatible with previously submitted ones.\nFor example, Researcher 1 is submitted with orcid identifier A and idref identifier B:\nResearcher 1\n|\n+-- orcid identifier: A\n|\n+-- idref identifier: B\n\nResearcher 2\n|\n+-- orcid identifier: A  &lt;- Shared orcid identifier with Researcher 1\n|\n+-- idref identifier: C\norcid A cannot belong to both entities identified respectively by idref B and idref C. This is an identifier conflict. SVP Harvester resolves it according to identifier priority rules configured in identifiers.yml (see the per-harvester identifier lists in Harvesters Overview — for instance, HAL gives idhal identifiers priority over orcid).",
+    "crumbs": [
+      "Harvesters",
+      "Entity Resolution & Identifier Alignment"
+    ]
+  },
+  {
+    "objectID": "harvesters/entity-resolution.html#examples",
+    "href": "harvesters/entity-resolution.html#examples",
+    "title": "Entity Resolution & Identifier Alignment",
+    "section": "Examples",
+    "text": "Examples\nThe following examples use the harvester’s retrieval endpoint:\nPOST /api/v1/references/retrieval\n\nExample 1: submitting a new entity\ncurl -X 'POST' \\\n  'http://my-harvester-url/api/v1/references/retrieval' \\\n  -H 'accept: application/json' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"person\": {\n    \"identifiers\": [\n      { \"type\": \"idref\", \"value\": \"111111111\" },\n      { \"type\": \"orcid\", \"value\": \"0000-0001-1111-1112\" }\n    ],\n    \"name\": \"Smith, P\"\n  },\n  \"identifiers_safe_mode\": false,\n  \"harvesters\": [\"hal\", \"idref\", \"scanr\", \"openalex\"],\n  \"events\": [\"created\", \"updated\", \"deleted\", \"unchanged\"]\n}'\nDuring the execution of this request, SVP Harvester will:\n\nregister a new entity with the name “Smith, P” and the identifiers 111111111 (idref) and 0000-0001-1111-1112 (orcid)\nsubmit the entity to the harvesters hal, idref, scanr and openalex\nreturn a URL where the status and results of the harvesting can be fetched asynchronously\n\nWhen a later request is submitted using either the idref identifier 111111111 or the orcid identifier 0000-0001-1111-1112, SVP Harvester recognizes and aligns with the previously established entity without creating a new one — after an entity has been initially aligned with specific identifiers, subsequent retrievals require only one of the identifiers, not all, to trigger a retrieval with all associated identifiers.\n\n\nExample 2: change in identifiers alignment\nFollowing the previous example, the client system now wants to update the orcid identifier of the entity identified by 111111111:\ncurl -X 'POST' \\\n  'http://my-harvester-url/api/v1/references/retrieval' \\\n  -H 'accept: application/json' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"person\": {\n    \"identifiers\": [\n      { \"type\": \"idref\", \"value\": \"111111111\" },\n      { \"type\": \"orcid\", \"value\": \"0000-0001-1111-1113\" }\n    ],\n    \"name\": \"Smith, P\"\n  },\n  \"identifiers_safe_mode\": false,\n  \"harvesters\": [\"hal\", \"idref\", \"scanr\", \"openalex\"],\n  \"events\": [\"created\", \"updated\", \"deleted\", \"unchanged\"]\n}'\nSVP Harvester will update the entity identified by 111111111 with the new orcid identifier 0000-0001-1111-1113, then submit it to the requested harvesters as before.\n\n\nExample 3: identifiers safe mode\nFollowing example 1, imagine the client system wants to submit the same idref identifier with a different orcid identifier, but this time with identifiers_safe_mode set to true:\ncurl -X 'POST' \\\n  'http://my-harvester-url/api/v1/references/retrieval' \\\n  -H 'accept: application/json' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"person\": {\n    \"identifiers\": [\n      { \"type\": \"idref\", \"value\": \"111111111\" },\n      { \"type\": \"orcid\", \"value\": \"0000-0001-1111-1114\" }\n    ],\n    \"name\": \"Smith, P\"\n  },\n  \"identifiers_safe_mode\": true,\n  \"harvesters\": [\"hal\", \"idref\", \"scanr\", \"openalex\"],\n  \"events\": [\"created\", \"updated\", \"deleted\", \"unchanged\"]\n}'\nSVP Harvester retrieves the previously registered entity identified by 111111111 (a superior priority is given to the idref identifier). Because identifiers_safe_mode is true, the entity is not updated: the newly submitted orcid is ignored, and the entity is submitted to the harvesters with the same identifiers as in Example 1 (orcid 0000-0001-1111-1112).\n\n\nExample 4: identifier conflict\nThis time the new request contains an identifier conflict: a new entity is submitted with the same orcid identifier as an existing entity, but a different idref identifier.\ncurl -X 'POST' \\\n  'http://my-harvester-url/api/v1/references/retrieval' \\\n  -H 'accept: application/json' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"person\": {\n    \"identifiers\": [\n      { \"type\": \"idref\", \"value\": \"222222222\" },\n      { \"type\": \"orcid\", \"value\": \"0000-0001-1111-1112\" }\n    ],\n    \"name\": \"Dupont, G\"\n  },\n  \"identifiers_safe_mode\": false,\n  \"harvesters\": [\"hal\", \"idref\", \"scanr\", \"openalex\"],\n  \"events\": [\"created\", \"updated\", \"deleted\", \"unchanged\"]\n}'\nSince identifiers_safe_mode is false, SVP Harvester will:\n\nregister a new entity “Dupont, G” with identifiers 222222222 (idref) and 0000-0001-1111-1112 (orcid)\nremove the orcid identifier 0000-0001-1111-1112 from the entity previously identified by 111111111, leaving it with only its idref identifier\nsubmit the new entity to the requested harvesters",
+    "crumbs": [
+      "Harvesters",
+      "Entity Resolution & Identifier Alignment"
+    ]
+  },
+  {
     "objectID": "directories/structures.html",
     "href": "directories/structures.html",
     "title": "Structures Data",
@@ -920,6 +1129,171 @@
     "crumbs": [
       "Institutional Directories",
       "People Data"
+    ]
+  },
+  {
+    "objectID": "harvesters/data-model.html",
+    "href": "harvesters/data-model.html",
+    "title": "Data reference model",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview\nOne of SVP Harvester’s main tasks is to convert the various formats originating from the source platforms into a common data model compatible with the Semantic Web standards.",
+    "crumbs": [
+      "Harvesters",
+      "Data reference model"
+    ]
+  },
+  {
+    "objectID": "harvesters/data-model.html#reference-model",
+    "href": "harvesters/data-model.html#reference-model",
+    "title": "Data reference model",
+    "section": "Reference model",
+    "text": "Reference model\nThe target model used to represent scientific output in SVP Harvester is inspired by the ABES Science Plus model.\nFor more information about modeling choices and mapping with source formats, see the Modeling working group reports.\n\n🔗 This is the same target model referenced by the per-harvester data conversion tables — see HAL, IdRef, ScanR, OpenAlex, Scopus — and by the reference event payloads published on the publications exchange, documented in the Message Catalog.",
+    "crumbs": [
+      "Harvesters",
+      "Data reference model"
+    ]
+  },
+  {
+    "objectID": "harvesters/data-model.html#database-model",
+    "href": "harvesters/data-model.html#database-model",
+    "title": "Data reference model",
+    "section": "Database model",
+    "text": "Database model\nHere is a UML-like schema generated from the SQLAlchemy models:\n\n\n\nSVP Harvester UML model",
+    "crumbs": [
+      "Harvesters",
+      "Data reference model"
+    ]
+  },
+  {
+    "objectID": "harvesters/hal.html",
+    "href": "harvesters/hal.html",
+    "title": "Hal harvester",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview",
+    "crumbs": [
+      "Harvesters",
+      "Hal harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/hal.html#data-source",
+    "href": "harvesters/hal.html#data-source",
+    "title": "Hal harvester",
+    "section": "Data source",
+    "text": "Data source\nThe HAL harvester fetches data from the HAL API.",
+    "crumbs": [
+      "Harvesters",
+      "Hal harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/hal.html#supported-identifiers",
+    "href": "harvesters/hal.html#supported-identifiers",
+    "title": "Hal harvester",
+    "section": "Supported identifiers",
+    "text": "Supported identifiers\n\nidhali\nidhals\norcid\n\n\nℹ️ HAL identifiers take priority over orcid. When both idhali and idhals are provided, idhali is used. The harvester does not check consistency between idhali and idhals — the client system is expected to provide consistent data.",
+    "crumbs": [
+      "Harvesters",
+      "Hal harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/hal.html#data-conversion",
+    "href": "harvesters/hal.html#data-conversion",
+    "title": "Hal harvester",
+    "section": "Data conversion",
+    "text": "Data conversion\nHAL document types are mapped to RDF classes, and HAL author qualities are mapped to LoC roles, following the tables provided in the CRISalid data model documentation (document types) and the same page’s “Typologie des rôles” section (author roles).",
+    "crumbs": [
+      "Harvesters",
+      "Hal harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/openalex.html",
+    "href": "harvesters/openalex.html",
+    "title": "Openalex harvester",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview",
+    "crumbs": [
+      "Harvesters",
+      "Openalex harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/openalex.html#data-source",
+    "href": "harvesters/openalex.html#data-source",
+    "title": "Openalex harvester",
+    "section": "Data source",
+    "text": "Data source\nThe OpenAlex harvester fetches data from the OpenAlex API.",
+    "crumbs": [
+      "Harvesters",
+      "Openalex harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/openalex.html#supported-identifiers",
+    "href": "harvesters/openalex.html#supported-identifiers",
+    "title": "Openalex harvester",
+    "section": "Supported identifiers",
+    "text": "Supported identifiers\n\norcid",
+    "crumbs": [
+      "Harvesters",
+      "Openalex harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/openalex.html#data-conversion",
+    "href": "harvesters/openalex.html#data-conversion",
+    "title": "Openalex harvester",
+    "section": "Data conversion",
+    "text": "Data conversion\nOpenAlex document types are mapped to RDF classes following the table provided in the CRISalid data model documentation.",
+    "crumbs": [
+      "Harvesters",
+      "Openalex harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scanr.html",
+    "href": "harvesters/scanr.html",
+    "title": "Scanr harvester",
+    "section": "",
+    "text": "🧭 Back to Harvesters Overview",
+    "crumbs": [
+      "Harvesters",
+      "Scanr harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scanr.html#data-source",
+    "href": "harvesters/scanr.html#data-source",
+    "title": "Scanr harvester",
+    "section": "Data source",
+    "text": "Data source\nThe ScanR harvester fetches data from the latest ScanR API.",
+    "crumbs": [
+      "Harvesters",
+      "Scanr harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scanr.html#supported-identifiers",
+    "href": "harvesters/scanr.html#supported-identifiers",
+    "title": "Scanr harvester",
+    "section": "Supported identifiers",
+    "text": "Supported identifiers\n\nidref\norcid\nidhals\n\n\nℹ️ When idref is unavailable, the harvester falls back to orcid or idhals to gather the entity’s data. It then derives the internal scanr_id from the idref, enabling retrieval of the entity’s publications from the ScanR API.",
+    "crumbs": [
+      "Harvesters",
+      "Scanr harvester"
+    ]
+  },
+  {
+    "objectID": "harvesters/scanr.html#data-conversion",
+    "href": "harvesters/scanr.html#data-conversion",
+    "title": "Scanr harvester",
+    "section": "Data conversion",
+    "text": "Data conversion\nScanR document types and author qualities are mapped to RDF classes following the table provided in the CRISalid data model documentation.",
+    "crumbs": [
+      "Harvesters",
+      "Scanr harvester"
     ]
   },
   {
