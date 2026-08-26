@@ -51,9 +51,9 @@ services:
       - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Inbound auth: x-api-key header checked against CHAT_API_KEYS (always on)
-      - ENABLE_API_KEYS=true
-      - API_KEYS=${CHAT_API_KEYS}
+      # Inbound auth: x-api-key header checked against the shared key (see docker/.env)
+      - ENABLE_API_KEYS=${CRISALID_AGENTS_ENABLE_API_KEYS}
+      - API_KEYS=${SOVISUPLUS_CHAT_API_KEY}
       # Use the internal Keycloak address for token requests (client credentials grant)
       - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
       - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}

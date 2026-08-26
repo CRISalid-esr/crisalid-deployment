@@ -35,5 +35,5 @@ docker compose \
 Configuration:
 
 - Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
-- Chat API inbound keys: `CHAT_API_KEYS` in `docker/crisalid-agents/.env`; the matching client key for SoVisuPlus is `SVP_CRISALID_CHAT_API_KEY` in `docker/sovisuplus/.env`. See [Security](security.qmd).
+- Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus; toggled by `CRISALID_AGENTS_ENABLE_API_KEYS`. See [Security](security.qmd).
 - OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
