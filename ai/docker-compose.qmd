@@ -2,7 +2,38 @@
 title: "Docker Compose"
 ---
 
-::: {.callout-note appearance="simple"}
-## Work in Progress
-This page is coming soon.
-:::
+The AI layer is composed of four profiles, to be started together with the rest of the stack (see [Docker Compose — Overview](../dev/docker-compose.qmd)):
+
+| Profile | Service | Purpose |
+|---|---|---|
+| `neo4j-mcp` | `neo4j-mcp` | MCP toolbox exposing knowledge graph tools (port 5000, internal) |
+| `crisalid-agents-owui` | `crisalid-agents-owui` | Graph agent served as OpenWebUI pipelines (port 9099, internal) |
+| `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal) |
+| `openwebui` | `openwebui` | User-facing chat UI |
+
+Both agent services run the same CRISalid graph agent and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:
+
+```bash
+# OpenWebUI chat stack
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile neo4j-mcp \
+  --profile crisalid-agents-owui \
+  --profile openwebui \
+  up -d
+
+# SoVisuPlus chat API
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile neo4j-mcp \
+  --profile crisalid-agents-chat-api \
+  up -d
+```
+
+Configuration:
+
+- Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
+- Chat API inbound keys: `CHAT_API_KEYS` in `docker/crisalid-agents/.env`; the matching client key for SoVisuPlus is `SVP_CRISALID_CHAT_API_KEY` in `docker/sovisuplus/.env`. See [Security](security.qmd).
+- OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
