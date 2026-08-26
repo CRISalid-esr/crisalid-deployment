@@ -73,11 +73,10 @@ Port 9099 is **not exposed on the host** — it is only reachable inside the Doc
 A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by a **shared API key**, following the same scheme as the Apollo GraphQL endpoint: the key is configured once in the shared `docker/.env` and injected on both sides —
 
 ```bash
-CRISALID_AGENTS_ENABLE_API_KEYS="true"
 SOVISUPLUS_CHAT_API_KEY=<your-secret-key>
 ```
 
-The chat API checks the `x-api-key` request header against it; SoVisuPlus sends it with every request. Set `CRISALID_AGENTS_ENABLE_API_KEYS="false"` to disable the check (trusted local development only).
+The chat API checks the `x-api-key` request header against it; SoVisuPlus sends it with every request. The check is always on.
 
 Port 9100 is **not exposed on the host** — the chat API is only reachable inside the Docker network (`crisalid-front`), server-to-server.
 
