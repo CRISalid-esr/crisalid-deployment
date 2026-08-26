@@ -547,7 +547,7 @@ Keep all models private
 <h3 class="anchored" data-anchor-id="crisalid-agents-pipeline-connection">CRISalid Agents pipeline connection</h3>
 <p>Add a second OpenAI-compatible connection for the pipeline server:</p>
 <ul>
-<li><strong>URL</strong>: <code>http://crisalid-agents:9099</code></li>
+<li><strong>URL</strong>: <code>http://crisalid-agents-owui:9099</code></li>
 <li><strong>API key</strong>: the value of <code>CRISALID_AGENTS_PIPELINES_API_KEY</code> from <code>docker/.env</code></li>
 </ul>
 <p>See <a href="../ai/security.html#the-agent-layer-crisalid-agents-openwebui-pipelines">the agent layer security notes</a> for how this key is configured.</p>
@@ -561,7 +561,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The pipeline server is only reachable inside the <code>agents-network</code> Docker network — not exposed on the host. The URL <code>http://crisalid-agents:9099</code> is only valid from within the OpenWebUI container.</p>
+<p>The pipeline server is only reachable inside the <code>agents-network</code> Docker network — not exposed on the host. The URL <code>http://crisalid-agents-owui:9099</code> is only valid from within the OpenWebUI container.</p>
 </div>
 </div>
 <hr>

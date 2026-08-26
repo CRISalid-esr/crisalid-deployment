@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -369,19 +403,66 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Work in Progress
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>This page is coming soon.</p>
-</div>
-</div>
+<p>The AI layer is composed of four profiles, to be started together with the rest of the stack (see <a href="../dev/docker-compose.html">Docker Compose — Overview</a>):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Profile</th>
+<th>Service</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>neo4j-mcp</code></td>
+<td><code>neo4j-mcp</code></td>
+<td>MCP toolbox exposing knowledge graph tools (port 5000, internal)</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-agents-owui</code></td>
+<td><code>crisalid-agents-owui</code></td>
+<td>Graph agent served as OpenWebUI pipelines (port 9099, internal)</td>
+</tr>
+<tr class="odd">
+<td><code>crisalid-agents-chat-api</code></td>
+<td><code>crisalid-agents-chat-api</code></td>
+<td>Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal)</td>
+</tr>
+<tr class="even">
+<td><code>openwebui</code></td>
+<td><code>openwebui</code></td>
+<td>User-facing chat UI</td>
+</tr>
+</tbody>
+</table>
+<p>Both agent services run the same CRISalid graph agent and require the <code>neo4j-mcp</code> profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OpenWebUI chat stack</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-owui <span class="dt">\</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> openwebui <span class="dt">\</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># SoVisuPlus chat API</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Configuration:</p>
+<ul>
+<li>Agent LLM and toolbox settings: <code>docker/crisalid-agents/.env</code> (shared by both agent services).</li>
+<li>Chat API inbound keys: <code>CHAT_API_KEYS</code> in <code>docker/crisalid-agents/.env</code>; the matching client key for SoVisuPlus is <code>SVP_CRISALID_CHAT_API_KEY</code> in <code>docker/sovisuplus/.env</code>. See <a href="../ai/security.html">Security</a>.</li>
+<li>OpenWebUI → pipelines connection: configured by hand in the admin panel, see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
+</ul>
 
 
 

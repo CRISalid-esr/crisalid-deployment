@@ -32,7 +32,7 @@ services:
       - OAUTH_PROVIDER_NAME=${OPENWEBUI_OAUTH_PROVIDER_NAME}
       - OPENID_REDIRECT_URI=${OPENWEBUI_OPENID_REDIRECT_URI}
     depends_on:
-      crisalid-agents:
+      crisalid-agents-owui:
         condition: service_healthy
     networks:
       - agents-network
