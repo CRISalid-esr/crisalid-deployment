@@ -160,7 +160,7 @@ Ensure all the environment variables are set correctly before running the script
 
 3.  **Update `KEYCLOAK_INTERNAL_HOST` in `docker/.env`:**
 
-Services that call Keycloak internally (neo4j-mcp, crisalid-agents, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:
+Services that call Keycloak internally (neo4j-mcp, crisalid-agents-owui, crisalid-agents-chat-api, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:
 
 ```bash
 # docker/.env

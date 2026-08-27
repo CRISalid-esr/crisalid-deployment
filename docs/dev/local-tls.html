@@ -644,7 +644,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol start="3" type="1">
 <li><strong>Update <code>KEYCLOAK_INTERNAL_HOST</code> in <code>docker/.env</code>:</strong></li>
 </ol>
-<p>Services that call Keycloak internally (neo4j-mcp, crisalid-agents, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:</p>
+<p>Services that call Keycloak internally (neo4j-mcp, crisalid-agents-owui, crisalid-agents-chat-api, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># docker/.env</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="va">KEYCLOAK_INTERNAL_HOST</span><span class="op">=</span>keycloak-tls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The default value is <code>keycloak</code> (plain HTTP profile). Forgetting this change will cause internal token requests to fail with a connection error.</p>

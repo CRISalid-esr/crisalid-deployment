@@ -106,13 +106,13 @@ This connection is used by OpenWebUI's built-in UI features only (see [User inte
 
 Add a second OpenAI-compatible connection for the pipeline server:
 
-- **URL**: `http://crisalid-agents:9099`
+- **URL**: `http://crisalid-agents-owui:9099`
 - **API key**: the value of `CRISALID_AGENTS_PIPELINES_API_KEY` from `docker/.env`
 
 See [the agent layer security notes](security.qmd#the-agent-layer-crisalid-agents-openwebui-pipelines) for how this key is configured.
 
 ::: {.callout-note}
-The pipeline server is only reachable inside the `agents-network` Docker network — not exposed on the host. The URL `http://crisalid-agents:9099` is only valid from within the OpenWebUI container.
+The pipeline server is only reachable inside the `agents-network` Docker network — not exposed on the host. The URL `http://crisalid-agents-owui:9099` is only valid from within the OpenWebUI container.
 :::
 
 ---

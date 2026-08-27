@@ -1,5 +1,5 @@
 services:
-  crisalid-agents:
+  crisalid-agents-owui:
     # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
     # ports:
@@ -36,7 +36,48 @@ services:
       - crisalid-front
       - agents-network
     profiles:
-      - crisalid-agents
+      - crisalid-agents-owui
+
+  crisalid-agents-chat-api:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    # ports:
+    #   - "9100:9100"
+    expose:
+      - "9100"
+    environment:
+      - MODEL=${CRISALID_AGENTS_MODEL}
+      - API_KEY=${CRISALID_AGENTS_API_KEY}
+      - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
+      - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
+      - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
+      # Inbound auth (always on): x-api-key header checked against the shared key (see docker/.env)
+      - ENABLE_API_KEYS=true
+      - API_KEYS=${SOVISUPLUS_CHAT_API_KEY}
+      # Use the internal Keycloak address for token requests (client credentials grant)
+      - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
+      - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
+      - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+    depends_on:
+      neo4j-mcp:
+        condition: service_healthy
+    healthcheck:
+      # Base image (python:3.11-slim) has no curl; probe the unauthenticated /health endpoint
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9100/health', timeout=3)" ]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - crisalid-front
+    profiles:
+      - crisalid-agents-chat-api
 networks:
   crisalid-front:
     driver: bridge

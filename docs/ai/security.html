@@ -381,7 +381,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#the-graph-layer-neo4j" id="toc-the-graph-layer-neo4j" class="nav-link active" data-scroll-target="#the-graph-layer-neo4j">🕸️ The graph layer — Neo4j</a></li>
   <li><a href="#the-tools-layer-neo4j-mcp" id="toc-the-tools-layer-neo4j-mcp" class="nav-link" data-scroll-target="#the-tools-layer-neo4j-mcp">🛠️ The tools layer — Neo4j MCP</a></li>
-  <li><a href="#the-agent-layer-crisalid-agents-openwebui-pipelines" id="toc-the-agent-layer-crisalid-agents-openwebui-pipelines" class="nav-link" data-scroll-target="#the-agent-layer-crisalid-agents-openwebui-pipelines">🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)</a></li>
+  <li><a href="#the-agent-layer-crisalid-agents-openwebui-pipelines" id="toc-the-agent-layer-crisalid-agents-openwebui-pipelines" class="nav-link" data-scroll-target="#the-agent-layer-crisalid-agents-openwebui-pipelines">🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)</a>
+  <ul class="collapse">
+  <li><a href="#the-chat-api-crisalid-agents-chat-api" id="toc-the-chat-api-crisalid-agents-chat-api" class="nav-link" data-scroll-target="#the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</a></li>
+  </ul></li>
   <li><a href="#the-interface-layer-openwebui" id="toc-the-interface-layer-openwebui" class="nav-link" data-scroll-target="#the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</a></li>
   </ul>
 </nav>
@@ -454,7 +457,7 @@ No RBAC in Neo4j Community Edition
 <section id="the-tools-layer-neo4j-mcp" class="level2">
 <h2 class="anchored" data-anchor-id="the-tools-layer-neo4j-mcp">🛠️ The tools layer — Neo4j MCP</h2>
 <p>The <a href="https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/">Neo4j MCP Toolbox</a> does <strong>not</strong> support passwords or API keys. Authentication relies exclusively on <strong>JWT tokens</strong> issued by an OIDC provider — in the Crisalid stack, this is <strong>Keycloak</strong>.</p>
-<p>Each client application (such as <code>crisalid-agents</code>) must be provisioned with a <strong>Keycloak service account</strong> to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.</p>
+<p>Each client application (such as <code>crisalid-agents-owui</code> or <code>crisalid-agents-chat-api</code>) must be provisioned with a <strong>Keycloak service account</strong> to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -478,10 +481,15 @@ Local workstation
 <p>The key is set once and must be provided by any client connecting to the pipelines server — in the Crisalid stack, this client is OpenWebUI itself.</p>
 <p><strong>In the Docker deployment</strong>, the key is configured in the shared <code>docker/.env</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">CRISALID_AGENTS_PIPELINES_API_KEY</span><span class="op">=&lt;</span>your-secret-key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>It is injected into <code>crisalid-agents</code> as <code>PIPELINES_API_KEY</code> — the server uses it to authenticate incoming requests.</p>
-<p>When adding the pipelines connection in OpenWebUI (<strong>Admin panel → Settings → Connections</strong>, URL <code>http://crisalid-agents:9099</code>), enter this key by hand in the API key field.</p>
+<p>It is injected into <code>crisalid-agents-owui</code> as <code>PIPELINES_API_KEY</code> — the server uses it to authenticate incoming requests.</p>
+<p>When adding the pipelines connection in OpenWebUI (<strong>Admin panel → Settings → Connections</strong>, URL <code>http://crisalid-agents-owui:9099</code>), enter this key by hand in the API key field.</p>
 <p>Port 9099 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network (<code>agents-network</code>).</p>
+<section id="the-chat-api-crisalid-agents-chat-api" class="level3">
+<h3 class="anchored" data-anchor-id="the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</h3>
+<p>A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by <strong>API keys</strong>: the <code>x-api-key</code> request header is checked against the comma-separated <code>CHAT_API_KEYS</code> list in <code>docker/crisalid-agents/.env</code>. SoVisuPlus authenticates with the key set as <code>SVP_CRISALID_CHAT_API_KEY</code> in <code>docker/sovisuplus/.env</code>, which must be one of the <code>CHAT_API_KEYS</code> values.</p>
+<p>Port 9100 is <strong>not exposed on the host</strong> — the chat API is only reachable inside the Docker network (<code>crisalid-front</code>), server-to-server.</p>
 <hr>
+</section>
 </section>
 <section id="the-interface-layer-openwebui" class="level2">
 <h2 class="anchored" data-anchor-id="the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</h2>

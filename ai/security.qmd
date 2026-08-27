@@ -37,7 +37,7 @@ In production, avoid storing the Neo4j password in plain-text `.env` files. Use 
 
 The [Neo4j MCP Toolbox](https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/) does **not** support passwords or API keys. Authentication relies exclusively on **JWT tokens** issued by an OIDC provider — in the Crisalid stack, this is **Keycloak**.
 
-Each client application (such as `crisalid-agents`) must be provisioned with a **Keycloak service account** to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.
+Each client application (such as `crisalid-agents-owui` or `crisalid-agents-chat-api`) must be provisioned with a **Keycloak service account** to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.
 
 ::: {.callout-note}
 ## Local workstation
@@ -62,11 +62,23 @@ The key is set once and must be provided by any client connecting to the pipelin
 CRISALID_AGENTS_PIPELINES_API_KEY=<your-secret-key>
 ```
 
-It is injected into `crisalid-agents` as `PIPELINES_API_KEY` — the server uses it to authenticate incoming requests.
+It is injected into `crisalid-agents-owui` as `PIPELINES_API_KEY` — the server uses it to authenticate incoming requests.
 
-When adding the pipelines connection in OpenWebUI (**Admin panel → Settings → Connections**, URL `http://crisalid-agents:9099`), enter this key by hand in the API key field.
+When adding the pipelines connection in OpenWebUI (**Admin panel → Settings → Connections**, URL `http://crisalid-agents-owui:9099`), enter this key by hand in the API key field.
 
 Port 9099 is **not exposed on the host** — it is only reachable inside the Docker network (`agents-network`).
+
+### The chat API (`crisalid-agents-chat-api`)
+
+A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by a **shared API key**, following the same scheme as the Apollo GraphQL endpoint: the key is configured once in the shared `docker/.env` and injected on both sides —
+
+```bash
+SOVISUPLUS_CHAT_API_KEY=<your-secret-key>
+```
+
+The chat API checks the `x-api-key` request header against it; SoVisuPlus sends it with every request. The check is always on.
+
+Port 9100 is **not exposed on the host** — the chat API is only reachable inside the Docker network (`crisalid-front`), server-to-server.
 
 ---
 
