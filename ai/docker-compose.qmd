@@ -36,4 +36,83 @@ Configuration:
 
 - Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
 - Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
+- Assistant content (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
 - OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
+
+## SoVisuPlus assistant content {#sovisuplus-assistant-content}
+
+The chat widget's **welcome message**, **prompt suggestions** and the agent's **system prompt** are not baked into the SoVisuPlus image. They come from a JSON config file that SoVisuPlus reads server-side, so the same image can be deployed at any institution without a rebuild.
+
+::: {.callout-note}
+## The widget only appears when the chat API is configured
+SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`). A `chat.json` on its own will not make the widget appear — the `crisalid-agents-chat-api` profile must be running too.
+:::
+
+### Where the file is read from
+
+The container resolves the config in this order, first match wins:
+
+| # | Source | Notes |
+|---|---|---|
+| 1 | `CHAT_CONFIG_FILE` | Set from `SVP_CHAT_CONFIG_FILE` in `docker/sovisuplus/.env.sample` (commented out by default, in which case it falls back to `/config/chat.json`). The value is a path *inside* the container — a file outside `/config` needs a mount of its own. |
+| 2 | `/config/chat.json` | The mount — `docker/sovisuplus/config` is bind-mounted read-only at `/config`. **This is the one to use.** |
+| 3 | `/app/configs/chat.json` | Generic placeholder shipped inside the image. |
+
+Because `docker/sovisuplus/config` is already mounted (it also carries `rbac.roles.yaml`), customising the assistant is a one-file change — no compose edit and no extra volume:
+
+```bash
+cp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json
+$EDITOR docker/sovisuplus/config/chat.json
+```
+
+The file is read **once per process and cached**, so a restart is required to pick up edits:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile sovisuplus \
+  up -d sovisuplus
+```
+
+To roll back, delete `config/chat.json` and restart: resolution falls through to the baked default and the widget keeps working.
+
+### Schema
+
+```json
+{
+  "systemPrompt": "Instructions that shape the agent's behaviour.",
+  "locales": {
+    "en": {
+      "welcome": { "title": "Welcome", "message": "Hi! I'm your SoVisu+ assistant…" },
+      "suggestions": [{ "label": "Open access rate", "value": "How many publications in my organization are open access?" }]
+    },
+    "fr": {
+      "welcome": { "title": "Bienvenue", "message": "Bonjour ! Je suis votre assistant SoVisu+…" },
+      "suggestions": [{ "label": "Taux de science ouverte", "value": "Combien de publications sont en science ouverte dans mon organisation ?" }]
+    }
+  }
+}
+```
+
+| Field | Purpose |
+|---|---|
+| `systemPrompt` | Sent to the agent as a `role:"system"` message by the `/api/chat` proxy. **Layered after** the agent's own built-in prompt — it augments the agent, it does not replace it. Omit it or leave it empty to rely on the agent's default. |
+| `locales.<lang>.welcome` | Seeds the first assistant message when the widget opens; `title` names the conversation. |
+| `locales.<lang>.suggestions` | Starter chips. `value` is the text submitted, `label` is what the user sees (`label` falls back to `value` when omitted). |
+
+Locales are keyed by the language segment of the URL (`en`, `fr`, …). An unknown locale falls back to `en`, and then to empty values.
+
+Every field is optional. A missing, unreadable or malformed file is logged as a warning and degrades to empty values — the widget still renders, so a bad edit will not take SoVisuPlus down.
+
+::: {.callout-important}
+## The system prompt is server-only, the rest is public
+`systemPrompt` is read in the Next.js server process and injected into the upstream request. It is **never** sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in [Security](security.qmd), and the `welcome`/`suggestions` strings *are* shipped to the browser.
+
+Note that the proxy also injects the signed-in user's identity as a second system message, from the trusted session, so the agent can resolve "me"/"my" and scope graph queries to that person. That happens regardless of `chat.json`.
+:::
+
+::: {.callout-tip}
+## Keep the institution name in sync
+The sample prompt refers to `[University Name]`. If you replace it with your institution's name, update `INSTITUTION_NAME` in `docker/.env` to match — the two are independent and nothing checks that they agree.
+:::
