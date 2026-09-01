@@ -410,7 +410,25 @@ cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
 * After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions
   in database.
 
-### 9. ⏰ Configure Ofelia (system-wide scheduler)
+### 9. SoVisu+ Chat Configuration
+
+SoVisu+ drives the AI chat assistant's welcome message, prompt suggestions and agent system prompt
+from a JSON file, alongside the RBAC one. Start by copying the sample:
+
+```bash
+cp sovisuplus/config/chat.sample.json sovisuplus/config/chat.json
+```
+
+* Edit `sovisuplus/config/chat.json` to tailor the assistant to your institution. The schema and
+  each field's meaning are documented in
+  [SoVisuPlus assistant content](../ai/docker-compose.qmd#sovisuplus-assistant-content).
+* The system prompt uses `{{institutionName}}`, filled in from `INSTITUTION_NAME` in `docker/.env`
+  — no need to type your institution's name again.
+* Restart the container after any change; the file is read once at startup.
+* This step is optional: with no `chat.json` the container falls back to the generic
+  `chat.sample.json` baked into the image, and the assistant still works.
+
+### 10. ⏰ Configure Ofelia (system-wide scheduler)
 
 [Ofelia](https://hub.docker.com/r/mcuadros/ofelia) is the **scheduler of the whole CRISalid stack**.
 It runs as its own container and periodically triggers tasks for other containers (by running a CLI command
@@ -493,7 +511,7 @@ docker compose \
   up -d
 ```
 
-### 10. 📚 Configure CRISalid Vocab Search (CVS)
+### 11. 📚 Configure CRISalid Vocab Search (CVS)
 
 [CRISalid Vocab Search](https://github.com/CRISalid-esr/crisalid-vocab-search) provides concept autocomplete
 over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+.
