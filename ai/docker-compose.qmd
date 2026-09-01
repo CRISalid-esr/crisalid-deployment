@@ -41,11 +41,11 @@ Configuration:
 
 ## SoVisuPlus assistant content {#sovisuplus-assistant-content}
 
-The chat widget's **welcome message**, **prompt suggestions** and the agent's **system prompt** are not baked into the SoVisuPlus image. They come from a JSON config file that SoVisuPlus reads server-side, so the same image can be deployed at any institution without a rebuild.
+The chat widget's **welcome message**, **prompt suggestions** and the agent's **system prompt** are not hardcoded in SoVisuPlus. They come from a JSON config file that SoVisuPlus reads server-side, so the same image can be deployed at any institution without a rebuild. The image carries a generic version of that file as a fallback; this section is about replacing it with your own.
 
 ::: {.callout-note}
 ## The widget only appears when the chat API is configured
-SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is always met — the image ships a generic `chat.sample.json` as a last-resort fallback. A `chat.json` on its own will not make the widget appear: the `crisalid-agents-chat-api` profile must be running too.
+SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is normally met — the image ships a generic `chat.sample.json` as a last-resort fallback — but a config file that fails to parse counts as no config at all (see below). A `chat.json` on its own will not make the widget appear: the `crisalid-agents-chat-api` profile must be running too.
 :::
 
 ### Where the file is read from
