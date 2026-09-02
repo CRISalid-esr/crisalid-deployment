@@ -425,8 +425,10 @@ cp sovisuplus/config/chat.sample.json sovisuplus/config/chat.json
 * The system prompt uses `{{institutionName}}`, filled in from `INSTITUTION_NAME` in `docker/.env`
   — no need to type your institution's name again.
 * Restart the container after any change; the file is read once at startup.
-* This step is optional: with no `chat.json` — or one that fails to parse — the container falls
-  back to the generic `chat.sample.json` baked into the image, and the assistant still works. Check
+* Keep the `systemPrompt` key, even if you empty its value — a file without it is not recognised
+  as a chat config and is ignored.
+* This step is optional: with no `chat.json` — or one the app rejects — the container falls back to
+  the generic `chat.sample.json` baked into the image, and the assistant still works. Check
   `docker compose logs sovisuplus | grep ChatConfigService` if your edits seem to be ignored.
 
 ### 10. ⏰ Configure Ofelia (system-wide scheduler)

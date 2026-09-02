@@ -45,14 +45,14 @@ The chat widget's **welcome message**, **prompt suggestions** and the agent's **
 
 ::: {.callout-note}
 ## The widget only appears when the chat API is configured
-SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load. A `chat.json` on its own will not make the widget appear: the `crisalid-agents-chat-api` profile must be running too.
+SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load or is not a usable config. A `chat.json` on its own will not make the widget appear: the `crisalid-agents-chat-api` profile must be running too.
 :::
 
 ### Where the file is read from
 
 The file lives at `docker/sovisuplus/config/chat.json`, exactly like `rbac.roles.yaml` beside it: `docker/sovisuplus/config` is bind-mounted read-only at `/config`, and `sovisuplus.yaml` pins `CHAT_CONFIG_FILE=/config/chat.json` the same way it pins `RBAC_ROLES_FILE=/config/rbac.roles.yaml`. There is no environment variable for you to set.
 
-SoVisuPlus tries each candidate in turn and uses the first that **loads** — that is, exists *and* parses as JSON. A candidate that is missing or broken is skipped to the next tier, so neither is fatal:
+SoVisuPlus tries each candidate in turn and uses the first that loads to a **usable config** — a JSON object carrying a `systemPrompt` key. Anything else is skipped to the next tier, so no candidate is ever fatal:
 
 | # | Source | Notes |
 |---|---|---|
@@ -100,24 +100,24 @@ To roll back, delete `config/chat.json` and restart: resolution falls through to
 
 | Field | Purpose |
 |---|---|
-| `systemPrompt` | Sent to the agent as a `role:"system"` message by the `/api/chat` proxy. **Layered after** the agent's own built-in prompt — it augments the agent, it does not replace it. Omit it or leave it empty to rely on the agent's default. |
+| `systemPrompt` | Sent to the agent as a `role:"system"` message by the `/api/chat` proxy. **Layered after** the agent's own built-in prompt — it augments the agent, it does not replace it. **The key is required** (see below); set it to `""` to rely on the agent's own prompt. |
 | `variables` | Optional map of custom `{{key}}` values for `systemPrompt`, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them. |
 | `locales.<lang>.welcome` | Seeds the first assistant message when the widget opens; `title` names the conversation. |
 | `locales.<lang>.suggestions` | Starter chips. `value` is the text submitted, `label` is what the user sees (`label` falls back to `value` when omitted). |
 
 Locales are keyed by the language segment of the URL (`en`, `fr`, …). An unknown locale falls back to `en`, and then to empty values.
 
-Every field is optional, so a config containing only the pieces you care about is valid. Note the flip side: a file that parses wins the cascade even if it is empty or partial — the fallback below only rescues files that fail to load, not ones that load with nothing useful in them.
+`systemPrompt` is the one key every config file must carry — its value may be empty, but the key has to be there, because its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.
 
 ::: {.callout-warning}
-## A broken file reverts the assistant to generic content, quietly
-A candidate that is unreadable or does not parse is skipped with a
-`[ChatConfigService] Skipping /config/chat.json (missing or invalid).` warning in the container logs, and the next tier is used instead. That keeps the assistant working, but it means a JSON syntax error in your `config/chat.json` shows up as the *generic* welcome and suggestions rather than as an error — easy to mistake for the file not being picked up at all.
+## A rejected file reverts the assistant to generic content, quietly
+A candidate that is unreadable or malformed is skipped with
+`[ChatConfigService] Skipping /config/chat.json (missing or invalid).`, and one that parses but is not a usable config — `null`, `{}`, an array, a bare value, or an object with no `systemPrompt` key — is skipped with `[ChatConfigService] Skipping /config/chat.json (not a usable chat config).`. Either way the next tier is used.
 
-Validate before restarting, and check the logs after:
+That keeps the assistant working, but it means a bad edit to `config/chat.json` shows up as the *generic* welcome and suggestions rather than as an error — easy to mistake for the file not being picked up at all. Validate before restarting, and check the logs after:
 
 ```bash
-python3 -m json.tool docker/sovisuplus/config/chat.json > /dev/null && echo OK
+python3 -c "import json;d=json.load(open('docker/sovisuplus/config/chat.json'));assert isinstance(d,dict) and 'systemPrompt' in d" && echo OK
 docker compose logs sovisuplus | grep ChatConfigService
 ```
 :::
