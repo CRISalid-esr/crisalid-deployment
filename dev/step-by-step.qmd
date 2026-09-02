@@ -136,10 +136,11 @@ cp neo4j-mcp/.env.sample     neo4j-mcp/.env
 
 The root `docker/.env` holds **shared credentials** used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.
 
-Also copy the RBAC roles sample for SoVisu+:
+Also copy the SoVisu+ config file samples:
 
 ```bash
 cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
+cp sovisuplus/config/chat.sample.json       sovisuplus/config/chat.json
 ```
 
 > All subsequent `docker compose` commands in this guide assume you are in the `docker/` directory.
