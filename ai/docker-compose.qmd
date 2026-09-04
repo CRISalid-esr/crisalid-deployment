@@ -36,54 +36,23 @@ Configuration:
 
 - Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
 - Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
-- Assistant content (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
+- Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
 - OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
 
-## SoVisuPlus assistant content {#sovisuplus-assistant-content}
+## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
 
-The chat widget's **welcome message**, **prompt suggestions** and the agent's **system prompt** are not hardcoded in SoVisuPlus. They come from a JSON config file that SoVisuPlus reads server-side, so the same image can be deployed at any institution without a rebuild. The image carries a generic version of that file as a fallback; this section is about replacing it with your own.
-
-::: {.callout-note}
-## The widget only appears when the chat API is configured
-SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load or is not a usable config. A `chat.json` on its own will not make the widget appear: the `crisalid-agents-chat-api` profile must be running too.
-:::
-
-### Where the file is read from
-
-The file lives at `docker/sovisuplus/config/chat.json`, exactly like `rbac.roles.yaml` beside it: `docker/sovisuplus/config` is bind-mounted read-only at `/config`, and `sovisuplus.yaml` pins `CHAT_CONFIG_FILE=/config/chat.json` the same way it pins `RBAC_ROLES_FILE=/config/rbac.roles.yaml`. There is no environment variable for you to set.
-
-SoVisuPlus tries each candidate in turn and uses the first that loads to a **usable config** — a JSON object carrying a `systemPrompt` key. Anything else is skipped to the next tier, so no candidate is ever fatal:
-
-| # | Source | Notes |
-|---|---|---|
-| 1 | `/config/chat.json` | The mount, named by `CHAT_CONFIG_FILE`. **This is the one to edit.** |
-| 2 | `/app/chat.json` | The app's own working-directory config. Unreachable through the `/config` mount, so unused in this deployment. |
-| 3 | `/app/chat.sample.json` | Generic fallback baked into the image. |
-
-Because `docker/sovisuplus/config` is already mounted, customising the assistant is a one-file change — no compose edit and no extra volume:
+The assistant is configured by a JSON file located in the `docker/sovisuplus/config` directory, named `chat.json`. It lets you set a system prompt, seed the chat's conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the `chat.sample.json` located in the same directory and fill in the fields.
 
 ```bash
 cp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json
 $EDITOR docker/sovisuplus/config/chat.json
 ```
 
-The file is read **once per process and cached**, so a restart is required to pick up edits:
-
-```bash
-docker compose \
-  -f docker-compose.yaml \
-  -f docker-compose.dev.yaml \
-  --profile sovisuplus \
-  up -d sovisuplus
-```
-
-To roll back, delete `config/chat.json` and restart: resolution falls through to the baked `/app/chat.sample.json` and the widget keeps working.
-
 ### Schema
 
 ```json
 {
-  "systemPrompt": "Instructions that shape the agent's behaviour, for {{institutionName}}.",
+  "systemPrompt": "Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'",
   "variables": { "supportEmail": "svp-support@example.edu" },
   "locales": {
     "en": {
@@ -100,33 +69,34 @@ To roll back, delete `config/chat.json` and restart: resolution falls through to
 
 | Field | Purpose |
 |---|---|
-| `systemPrompt` | Sent to the agent as a `role:"system"` message by the `/api/chat` proxy. **Layered after** the agent's own built-in prompt — it augments the agent, it does not replace it. **The key is required** (see below); set it to `""` to rely on the agent's own prompt. |
+| `systemPrompt` | Sent to the agent as a `role:"system"` message by the `/api/chat` proxy. **The field is required** (see below). |
 | `variables` | Optional map of custom `{{key}}` values for `systemPrompt`, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them. |
-| `locales.<lang>.welcome` | Seeds the first assistant message when the widget opens; `title` names the conversation. |
-| `locales.<lang>.suggestions` | Starter chips. `value` is the text submitted, `label` is what the user sees (`label` falls back to `value` when omitted). |
+| `locales.<lang>.welcome` | Seeds the first conversation and assistant message when the widget opens; `title` names the conversation. |
+| `locales.<lang>.suggestions` | Starter question suggestions, rendered as chips. `value` is the text submitted by clicking on the chip, `label` is the chip's label — it should be shorter than `value` (`label` falls back to `value` when omitted). |
 
-Locales are keyed by the language segment of the URL (`en`, `fr`, …). An unknown locale falls back to `en`, and then to empty values.
+Locales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to `en` if it exists, or to empty values if not.
 
-`systemPrompt` is the one key every config file must carry — its value may be empty, but the key has to be there, because its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.
+`systemPrompt` is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.
 
-::: {.callout-warning}
-## A rejected file reverts the assistant to generic content, quietly
-A candidate that is unreadable or malformed is skipped with
-`[ChatConfigService] Skipping /config/chat.json (missing or invalid).`, and one that parses but is not a usable config — `null`, `{}`, an array, a bare value, or an object with no `systemPrompt` key — is skipped with `[ChatConfigService] Skipping /config/chat.json (not a usable chat config).`. Either way the next tier is used.
-
-That keeps the assistant working, but it means a bad edit to `config/chat.json` shows up as the *generic* welcome and suggestions rather than as an error — easy to mistake for the file not being picked up at all. Validate before restarting, and check the logs after:
-
-```bash
-python3 -c "import json;d=json.load(open('docker/sovisuplus/config/chat.json'));assert isinstance(d,dict) and 'systemPrompt' in d" && echo OK
-docker compose logs sovisuplus | grep ChatConfigService
-```
+::: {.callout-note}
+`systemPrompt` field value may be empty but in that case you're relying on the agent's own built-in prompt that doesn't contain any specific instructions.
 :::
+
+::: {.callout-note}
+## The widget only appears when the chat API is configured
+SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load.
+:::
+
+### Fallback
+
+The file is read at `docker/sovisuplus/config/chat.json`, as `docker/sovisuplus/config` is bind-mounted read-only at `/config`.
+If you forgot to create it, or if it is malformed, SoVisuPlus falls back to `/app/chat.sample.json`, the generic configuration baked into the image.
 
 ::: {.callout-important}
 ## The system prompt is server-only, the rest is public
-`systemPrompt` is read in the Next.js server process and injected into the upstream request. It is **never** sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in [Security](security.qmd), and the `welcome`/`suggestions` strings *are* shipped to the browser.
+`systemPrompt` is read by the server and injected into the upstream request. It is **never** sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in [Security](security.qmd), and the `welcome`/`suggestions` strings *are* shipped to the browser.
 
-Note that the proxy also injects the signed-in user's identity as a second system message, from the trusted session, so the agent can resolve "me"/"my" and scope graph queries to that person. That happens regardless of `chat.json`.
+Note that the proxy also injects the signed-in user's identity as a second system message, from the trusted session, so the agent can resolve "me"/"my" and scope graph queries to that person.
 :::
 
 ::: {.callout-tip}
@@ -135,3 +105,15 @@ Note that the proxy also injects the signed-in user's identity as a second syste
 
 Any other key you need goes in the file's `variables` map. A placeholder that matches neither an app-provided default nor a `variables` entry resolves to an empty string, so a typo silently drops the text rather than leaking `{{...}}` to the agent.
 :::
+
+### Applying changes
+
+The file is read **once per process and cached**, so a restart is required to pick up edits:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile sovisuplus \
+  up -d sovisuplus
+```
