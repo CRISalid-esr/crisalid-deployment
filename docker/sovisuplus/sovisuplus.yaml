@@ -62,6 +62,8 @@ services:
       # CRISalid agents chat API (server-to-server over crisalid-front)
       - CRISALID_AGENTS_API_URL=${SVP_CRISALID_CHAT_API_URL:-http://crisalid-agents-chat-api:9100}
       - CRISALID_AGENTS_API_KEY=${SOVISUPLUS_CHAT_API_KEY}
+      # Agent to talk to; must be one of the agents served by crisalid-agents (CRISALID_AGENTS_AGENTS)
+      - CRISALID_AGENTS_AGENT=${SVP_CRISALID_AGENTS_AGENT:-generic_agent}
       - CHAT_CONFIG_FILE=/config/chat.json
       - KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}
