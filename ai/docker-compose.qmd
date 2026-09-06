@@ -62,6 +62,18 @@ docker compose \
 docker compose exec crisalid-agents-chat-api python scripts/index_horizon_topics.py --report /tmp/ingest.json
 ```
 
+### Topic-to-Researcher Match
+
+The batch that matches every topic of a cluster with the researchers of the laboratories (from their publications in
+the knowledge graph) runs in the same container, by hand, and needs the `neo4j-mcp` profile. Set `TRM_MODEL` in
+`docker/crisalid-agents/.env` (it defaults to the chat model). The JSON, Markdown and PDF reports are written to
+`docker/horizon-europe-index/reports/` on the host.
+
+```bash
+docker compose exec crisalid-agents-chat-api python scripts/topic_researcher_match.py --list-clusters
+docker compose exec crisalid-agents-chat-api python scripts/topic_researcher_match.py --cluster CL2
+```
+
 ## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
 
 The assistant is configured by a JSON file located in the `docker/sovisuplus/config` directory, named `chat.json`. It lets you set a system prompt, seed the chat's conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the `chat.sample.json` located in the same directory and fill in the fields.
