@@ -2,7 +2,7 @@
 title: "Docker Compose"
 ---
 
-The AI layer is composed of four profiles, to be started together with the rest of the stack (see [Docker Compose — Overview](../dev/docker-compose.qmd)):
+The AI layer is composed of five profiles, to be started together with the rest of the stack (see [Docker Compose — Overview](../dev/docker-compose.qmd)):
 
 | Profile | Service | Purpose |
 |---|---|---|
@@ -10,6 +10,7 @@ The AI layer is composed of four profiles, to be started together with the rest 
 | `crisalid-agents-owui` | `crisalid-agents-owui` | Graph agent served as OpenWebUI pipelines (port 9099, internal) |
 | `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal) |
 | `openwebui` | `openwebui` | User-facing chat UI |
+| `horizon_europe_index` | `opensearch` | OpenSearch index of Horizon Europe work programme topics, used by the Horizon topic finder agent and the topic-to-researcher batch (port 9200, internal) |
 
 Both agent services run the same CRISalid graph agent and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:
 
@@ -38,6 +39,28 @@ Configuration:
 - Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
 - Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
 - OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
+
+## Horizon Europe topic index {#horizon-europe-index}
+
+The `horizon_europe_index` profile runs a single-node OpenSearch (`docker/horizon-europe-index/`, data in `./data`).
+Set `OPENSEARCH_ADMIN_PASSWORD` in `docker/horizon-europe-index/.env` and the same value as `HORIZON_OS_PASSWORD` in
+`docker/crisalid-agents/.env`.
+
+The index is built from the work programme PDFs of the current programme (one PDF per cluster part), dropped by hand in
+`docker/horizon-europe-index/wp/` (mounted read-only in the chat API container as `/data/horizon`). Run the ingestion
+after each update of that directory; it is idempotent and removes the topics of files that are no longer there:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile horizon_europe_index \
+  --profile neo4j-mcp \
+  --profile crisalid-agents-chat-api \
+  up -d
+
+docker compose exec crisalid-agents-chat-api python scripts/index_horizon_topics.py --report /tmp/ingest.json
+```
 
 ## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
 
