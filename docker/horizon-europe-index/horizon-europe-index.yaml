@@ -3,8 +3,7 @@ services:
   # topic-to-researcher batch). Fed by `docker compose exec crisalid-agents-chat-api python scripts/index_horizon_topics.py`
   # from the work programme PDFs dropped in ./horizon-europe-index/wp (mounted read-only in the chat-api container).
   opensearch:
-    image: opensearchproject/opensearch:${OPENSEARCH_VERSION:-2.19.3}
-    container_name: crisalid-opensearch
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml)
     restart: unless-stopped
     expose:
       - "9200"
