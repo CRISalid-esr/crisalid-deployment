@@ -74,9 +74,9 @@ services:
     image: quay.io/keycloak/keycloak:26.5.4
   cvs-os:
     # TODO pin to os-X.Y at the first release including the merged multi-vocab image
-    image: crisalidesr/crisalid-vocab-search:os-latest
+    image: crisalidesr/crisalid-vocab-search:os-1.6
   cvs-api:
-    image: crisalidesr/crisalid-vocab-search:api-1.1
+    image: crisalidesr/crisalid-vocab-search:api-1.6
   # neo4j-mcp (MCP toolbox for the knowledge graph)
   neo4j-mcp:
     image: crisalidesr/crisalid-neo4j-mcp-toolbox:1.0
