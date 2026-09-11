@@ -4,6 +4,8 @@ etc/*
 postgres-data
 docker/ikg/data/openalex/*
 !docker/ikg/data/openalex/.gitkeep
+docker/crisalid-taxi/data/openalex/*
+!docker/crisalid-taxi/data/openalex/.gitkeep
 docker/openwebui/data/
 realm-export
 /etc/*

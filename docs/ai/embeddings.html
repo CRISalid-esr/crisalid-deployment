@@ -380,6 +380,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#shared-configuration" id="toc-shared-configuration" class="nav-link active" data-scroll-target="#shared-configuration">Shared configuration</a></li>
   <li><a href="#ikg-specific-configuration" id="toc-ikg-specific-configuration" class="nav-link" data-scroll-target="#ikg-specific-configuration">IKG-specific configuration</a></li>
+  <li><a href="#crisalid-taxi-specific-configuration" id="toc-crisalid-taxi-specific-configuration" class="nav-link" data-scroll-target="#crisalid-taxi-specific-configuration">CRISalid Taxi-specific configuration</a></li>
   <li><a href="#computing-embeddings-ikg" id="toc-computing-embeddings-ikg" class="nav-link" data-scroll-target="#computing-embeddings-ikg">Computing embeddings (IKG)</a></li>
   <li><a href="#changing-the-embedding-model" id="toc-changing-the-embedding-model" class="nav-link" data-scroll-target="#changing-the-embedding-model">Changing the embedding model</a></li>
   </ul>
@@ -411,12 +412,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Embedding vectors are used by two services in the CRISalid AI stack:</p>
+<p>Embedding vectors are used by three services in the CRISalid AI stack:</p>
 <ul>
 <li><strong>IKG</strong> stores embedding vectors directly on graph nodes, enabling vector similarity search in Neo4j. Vectors are computed offline, in batch, after each write that produces embeddable nodes (document titles, abstracts, etc.).</li>
 <li><strong>CRISalid Agents</strong> computes embeddings on demand at query time to power semantic tools such as <code>publications-by-theme</code>, which searches the graph by semantic similarity rather than exact keyword matching.</li>
+<li><strong>CRISalid Taxi</strong> embeds the OpenAlex taxonomy once at startup and the documents it is asked to classify, to assign topics by semantic similarity (see <a href="../ai/docker-compose.html#crisalid-taxi">Topics classification</a>).</li>
 </ul>
-<p>Both services use the same embedding endpoint and model — configured once in the shared <code>.env</code>.</p>
+<p>All three services use the same embedding endpoint and model — configured once in the shared <code>.env</code>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -432,7 +434,7 @@ Note
 </div>
 <section id="shared-configuration" class="level2">
 <h2 class="anchored" data-anchor-id="shared-configuration">Shared configuration</h2>
-<p>The following variables are shared by IKG and CRISalid Agents. Set them in the <strong>common <code>.env</code></strong> file:</p>
+<p>The following variables are shared by IKG, CRISalid Agents and CRISalid Taxi. Set them in the <strong>common <code>.env</code></strong> file:</p>
 <pre class="env"><code>EMBEDDING_API_URL=https://your-embedding-server/
 EMBEDDING_API_KEY=&lt;your-api-key&gt;
 EMBEDDING_API_MODEL=&lt;model-name&gt;
@@ -470,15 +472,22 @@ EMBEDDING_DIMENSIONS=1024
 # Number of texts sent per request. Must not exceed the server's max-client-batch-size.
 EMBEDDING_BATCH_SIZE=32</code></pre>
 </section>
+<section id="crisalid-taxi-specific-configuration" class="level2">
+<h2 class="anchored" data-anchor-id="crisalid-taxi-specific-configuration">CRISalid Taxi-specific configuration</h2>
+<p>Set in <code>docker/crisalid-taxi/.env</code>:</p>
+<pre class="env"><code># Number of texts sent per request. Must not exceed the server's max-client-batch-size.
+TAXI_EMBEDDING_BATCH_SIZE=32</code></pre>
+<p>The default similarity threshold (<code>TAXI_SIMILARITY_THRESHOLD</code>) is calibrated for <code>bge-m3</code>; recalibrate it when changing the embedding model.</p>
+</section>
 <section id="computing-embeddings-ikg" class="level2">
 <h2 class="anchored" data-anchor-id="computing-embeddings-ikg">Computing embeddings (IKG)</h2>
 <p>Once enabled, embeddings are updated <strong>automatically</strong> after each write that produces embeddable nodes. For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process all pending and failed nodes (default)</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Restrict to specific literal types (e.g. titles and abstracts only)</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--types</span> document_title,document_abstract</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Process all pending and failed nodes (default)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Restrict to specific literal types (e.g. titles and abstracts only)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--types</span> document_title,document_abstract</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The command prints status counts before and after:</p>
 <pre><code>Embedding status counts: {'pending': 42831, 'success': 0}
 ...
@@ -487,8 +496,8 @@ Done. Embedding status counts after: {'success': 42831}</code></pre>
 <section id="changing-the-embedding-model" class="level2">
 <h2 class="anchored" data-anchor-id="changing-the-embedding-model">Changing the embedding model</h2>
 <p>If you switch to a model with a different output dimension, update <code>EMBEDDING_API_MODEL</code> in the common <code>.env</code> and <code>EMBEDDING_DIMENSIONS</code> in <code>docker/ikg/.env</code>, restart the stack, then rebuild the vector index:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--recreate-vector-indexes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec crisalid-ikg python <span class="at">-m</span> app.cli literals compute-embeddings <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--recreate-vector-indexes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
