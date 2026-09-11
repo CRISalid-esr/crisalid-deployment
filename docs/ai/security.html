@@ -386,6 +386,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#the-chat-api-crisalid-agents-chat-api" id="toc-the-chat-api-crisalid-agents-chat-api" class="nav-link" data-scroll-target="#the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</a></li>
   </ul></li>
   <li><a href="#the-interface-layer-openwebui" id="toc-the-interface-layer-openwebui" class="nav-link" data-scroll-target="#the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</a></li>
+  <li><a href="#supporting-services-crisalid-taxi" id="toc-supporting-services-crisalid-taxi" class="nav-link" data-scroll-target="#supporting-services-crisalid-taxi">🚖 Supporting services — CRISalid Taxi</a></li>
   </ul>
 </nav>
 </nav>
@@ -486,7 +487,9 @@ Local workstation
 <p>Port 9099 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network (<code>agents-network</code>).</p>
 <section id="the-chat-api-crisalid-agents-chat-api" class="level3">
 <h3 class="anchored" data-anchor-id="the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</h3>
-<p>A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by <strong>API keys</strong>: the <code>x-api-key</code> request header is checked against the comma-separated <code>CHAT_API_KEYS</code> list in <code>docker/crisalid-agents/.env</code>. SoVisuPlus authenticates with the key set as <code>SVP_CRISALID_CHAT_API_KEY</code> in <code>docker/sovisuplus/.env</code>, which must be one of the <code>CHAT_API_KEYS</code> values.</p>
+<p>A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by a <strong>shared API key</strong>, following the same scheme as the Apollo GraphQL endpoint: the key is configured once in the shared <code>docker/.env</code> and injected on both sides —</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">SOVISUPLUS_CHAT_API_KEY</span><span class="op">=&lt;</span>your-secret-key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The chat API checks the <code>x-api-key</code> request header against it; SoVisuPlus sends it with every request. The check is always on.</p>
 <p>Port 9100 is <strong>not exposed on the host</strong> — the chat API is only reachable inside the Docker network (<code>crisalid-front</code>), server-to-server.</p>
 <hr>
 </section>
@@ -498,6 +501,16 @@ Local workstation
 <li><strong>User registration is disabled</strong> by default (<code>ENABLE_SIGNUP=false</code>) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO.</li>
 <li>An <strong>admin account is seeded</strong> on first run via <code>OPENWEBUI_ADMIN_EMAIL</code> and <code>OPENWEBUI_ADMIN_PASSWORD</code> in <code>docker/openwebui/.env</code>.</li>
 <li><strong>Keycloak SSO</strong> can be enabled via OAuth2/OIDC — see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
+</ul>
+<hr>
+</section>
+<section id="supporting-services-crisalid-taxi" class="level2">
+<h2 class="anchored" data-anchor-id="supporting-services-crisalid-taxi">🚖 Supporting services — CRISalid Taxi</h2>
+<p>CRISalid Taxi has <strong>no authentication</strong> of its own. It is designed to be reached only by IKG on the internal Docker network, and its port is not published to the host.</p>
+<ul>
+<li><strong>Do not expose it on the web.</strong> Each request triggers embedding calls to the shared endpoint, so an exposed instance is an easy way to exhaust your embedding quota.</li>
+<li>On a multi-server deployment, if you publish its port for IKG, restrict access to the IKG host with a firewall rule (see <a href="../dev/step-by-step.html#multi-server-deployment-optional">Multi-Server Deployment</a>).</li>
+<li>The optional OpenSearch Dashboards profile publishes port <code>5601</code> without authentication: keep it for local inspection only.</li>
 </ul>
 
 

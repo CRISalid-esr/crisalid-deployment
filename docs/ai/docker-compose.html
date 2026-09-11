@@ -375,7 +375,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#crisalid-taxi" id="toc-crisalid-taxi" class="nav-link active" data-scroll-target="#crisalid-taxi">Topics classification (crisalid-taxi)</a></li>
+  <li><a href="#sovisuplus-assistant-content" id="toc-sovisuplus-assistant-content" class="nav-link" data-scroll-target="#sovisuplus-assistant-content">SoVisuPlus assistant configuration</a>
+  <ul class="collapse">
+  <li><a href="#schema" id="toc-schema" class="nav-link" data-scroll-target="#schema">Schema</a></li>
+  <li><a href="#fallback" id="toc-fallback" class="nav-link" data-scroll-target="#fallback">Fallback</a></li>
+  <li><a href="#applying-changes" id="toc-applying-changes" class="nav-link" data-scroll-target="#applying-changes">Applying changes</a></li>
+  </ul></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -403,7 +415,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>The AI layer is composed of four profiles, to be started together with the rest of the stack (see <a href="../dev/docker-compose.html">Docker Compose — Overview</a>):</p>
+<p>The AI layer is composed of the following profiles, to be started together with the rest of the stack (see <a href="../dev/docker-compose.html">Docker Compose — Overview</a>):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -438,6 +450,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>openwebui</code></td>
 <td>User-facing chat UI</td>
 </tr>
+<tr class="odd">
+<td><code>crisalid-taxi</code></td>
+<td><code>crisalid-taxi</code>, <code>crisalid-taxi-opensearch</code></td>
+<td>OpenAlex topics classification API used by IKG (port 8000, internal) and its vector store</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-taxi-dashboards</code></td>
+<td><code>crisalid-taxi-dashboards</code></td>
+<td>Optional OpenSearch Dashboards UI for the taxi index (port 5601)</td>
+</tr>
 </tbody>
 </table>
 <p>Both agent services run the same CRISalid graph agent and require the <code>neo4j-mcp</code> profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:</p>
@@ -460,11 +482,153 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Configuration:</p>
 <ul>
 <li>Agent LLM and toolbox settings: <code>docker/crisalid-agents/.env</code> (shared by both agent services).</li>
-<li>Chat API inbound keys: <code>CHAT_API_KEYS</code> in <code>docker/crisalid-agents/.env</code>; the matching client key for SoVisuPlus is <code>SVP_CRISALID_CHAT_API_KEY</code> in <code>docker/sovisuplus/.env</code>. See <a href="../ai/security.html">Security</a>.</li>
+<li>Chat API key: the shared <code>SOVISUPLUS_CHAT_API_KEY</code> in <code>docker/.env</code>, injected into both the chat API and SoVisuPlus. See <a href="../ai/security.html">Security</a>.</li>
+<li>Assistant configuration (welcome message, prompt suggestions, agent system prompt): the <code>docker/sovisuplus/config/chat.json</code> file, see <a href="#sovisuplus-assistant-content">below</a>.</li>
 <li>OpenWebUI → pipelines connection: configured by hand in the admin panel, see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
 </ul>
+<section id="crisalid-taxi" class="level2">
+<h2 class="anchored" data-anchor-id="crisalid-taxi">Topics classification (crisalid-taxi)</h2>
+<p><code>crisalid-taxi</code> classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.</p>
+<p>Before the first start, download the OpenAlex snapshot into the taxi data directory (see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a>):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh crisalid-taxi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Then start the profile (add <code>crisalid-taxi-dashboards</code> to get the OpenSearch Dashboards UI on port 5601):</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-taxi <span class="dt">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The first startup embeds the full taxonomy through the shared embedding endpoint (see <a href="../ai/embeddings.html">Semantic Embeddings</a>), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.</p>
+<p>Configuration:</p>
+<ul>
+<li>Matching thresholds, retries and OpenSearch settings: <code>docker/crisalid-taxi/.env</code>.</li>
+<li>Embedding endpoint: the shared <code>EMBEDDING_*</code> variables in <code>docker/.env</code>.</li>
+<li>IKG side: set <code>TAXI_ENABLED=true</code> in <code>docker/ikg/.env</code> so IKG calls the taxi service (<code>http://crisalid-taxi:8000</code>) when documents are written. Disabled by default.</li>
+</ul>
+</section>
+<section id="sovisuplus-assistant-content" class="level2">
+<h2 class="anchored" data-anchor-id="sovisuplus-assistant-content">SoVisuPlus assistant configuration</h2>
+<p>The assistant is configured by a JSON file located in the <code>docker/sovisuplus/config</code> directory, named <code>chat.json</code>. It lets you set a system prompt, seed the chat’s conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the <code>chat.sample.json</code> located in the same directory and fill in the fields.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">$EDITOR</span> docker/sovisuplus/config/chat.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="schema" class="level3">
+<h3 class="anchored" data-anchor-id="schema">Schema</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"systemPrompt"</span><span class="fu">:</span> <span class="st">"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'"</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"variables"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"supportEmail"</span><span class="fu">:</span> <span class="st">"svp-support@example.edu"</span> <span class="fu">},</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"locales"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"en"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"welcome"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Welcome"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Hi! I'm your SoVisu+ assistant…"</span> <span class="fu">},</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"suggestions"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">"label"</span><span class="fu">:</span> <span class="st">"Open access rate"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"How many publications in my organization are open access?"</span> <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"fr"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"welcome"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Bienvenue"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Bonjour ! Je suis votre assistant SoVisu+…"</span> <span class="fu">},</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"suggestions"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">"label"</span><span class="fu">:</span> <span class="st">"Taux de science ouverte"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Combien de publications sont en science ouverte dans mon organisation ?"</span> <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>systemPrompt</code></td>
+<td>Sent to the agent as a <code>role:"system"</code> message by the <code>/api/chat</code> proxy. <strong>The field is required</strong> (see below).</td>
+</tr>
+<tr class="even">
+<td><code>variables</code></td>
+<td>Optional map of custom <code>{key}</code> values for <code>systemPrompt</code>, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them.</td>
+</tr>
+<tr class="odd">
+<td><code>locales.&lt;lang&gt;.welcome</code></td>
+<td>Seeds the first conversation and assistant message when the widget opens; <code>title</code> names the conversation.</td>
+</tr>
+<tr class="even">
+<td><code>locales.&lt;lang&gt;.suggestions</code></td>
+<td>Starter question suggestions, rendered as chips. <code>value</code> is the text submitted by clicking on the chip, <code>label</code> is the chip’s label — it should be shorter than <code>value</code> (<code>label</code> falls back to <code>value</code> when omitted).</td>
+</tr>
+</tbody>
+</table>
+<p>Locales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to <code>en</code> if it exists, or to empty values if not.</p>
+<p><code>systemPrompt</code> is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>systemPrompt</code> field value may be empty but in that case you’re relying on the agent’s own built-in prompt that doesn’t contain any specific instructions.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The widget only appears when the chat API is configured
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>SoVisuPlus renders the assistant only if <code>CRISALID_AGENTS_API_URL</code> is set (it defaults to <code>http://crisalid-agents-chat-api:9100</code> in <code>sovisuplus.yaml</code>) <strong>and</strong> a config file resolves. In Docker the second condition is effectively always met — the image ships a generic <code>chat.sample.json</code> as a last-resort fallback, and it is only skipped if it too fails to load.</p>
+</div>
+</div>
+</section>
+<section id="fallback" class="level3">
+<h3 class="anchored" data-anchor-id="fallback">Fallback</h3>
+<p>The file is read at <code>docker/sovisuplus/config/chat.json</code>, as <code>docker/sovisuplus/config</code> is bind-mounted read-only at <code>/config</code>. If you forgot to create it, or if it is malformed, SoVisuPlus falls back to <code>/app/chat.sample.json</code>, the generic configuration baked into the image.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The system prompt is server-only, the rest is public
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>systemPrompt</code> is read by the server and injected into the upstream request. It is <strong>never</strong> sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in <a href="../ai/security.html">Security</a>, and the <code>welcome</code>/<code>suggestions</code> strings <em>are</em> shipped to the browser.</p>
+<p>Note that the proxy also injects the signed-in user’s identity as a second system message, from the trusted session, so the agent can resolve “me”/“my” and scope graph queries to that person.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The institution name fills itself in
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>systemPrompt</code> supports <code>{variable}</code> placeholders, resolved server-side before the prompt is sent. The sample uses <code>{institutionName}</code>, which SoVisuPlus fills from <code>INSTITUTION_NAME</code> in <code>docker/.env</code> (passed through as <code>NEXT_PUBLIC_INSTITUTION_NAME</code> in <code>sovisuplus.yaml</code>) — so there is nothing to keep in sync by hand.</p>
+<p>Any other key you need goes in the file’s <code>variables</code> map. A placeholder that matches neither an app-provided default nor a <code>variables</code> entry resolves to an empty string, so a typo silently drops the text rather than leaking <code>{...}</code> to the agent.</p>
+</div>
+</div>
+</section>
+<section id="applying-changes" class="level3">
+<h3 class="anchored" data-anchor-id="applying-changes">Applying changes</h3>
+<p>The file is read <strong>once per process and cached</strong>, so a restart is required to pick up edits:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

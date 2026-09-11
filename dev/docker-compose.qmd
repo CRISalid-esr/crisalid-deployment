@@ -97,6 +97,7 @@ docker compose \
   --profile sovisuplus \
   --profile sovisuplus-db \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -121,6 +122,7 @@ docker compose \
   --profile sovisuplus \
   --profile sovisuplus-db \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \    
   up -d
 ```
@@ -140,6 +142,7 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -163,7 +166,7 @@ docker compose \
 
 ### 1. 🧾 `.env` Files
 
-Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
+Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, `crisalid-taxi`, ...) has its own
 `.env.sample` file.
 
 * Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh`
@@ -318,17 +321,28 @@ Full documentation (in French):
 
 ### 5. 🌐 Download the OpenAlex Classification Tree {#openalex-tree-download}
 
-Before starting IKG for the first time, download the OpenAlex snapshot data (domains, fields,
-subfields, and topics). IKG uses these files to build the classification tree in Neo4j on its
-first startup, then wipes them automatically.
+The OpenAlex snapshot data (domains, fields, subfields, and topics) is consumed by two services,
+each with its own copy:
+
+- **IKG** (`docker/ikg/data/openalex`) builds the classification tree in Neo4j on its first
+  startup, then wipes its copy automatically.
+- **crisalid-taxi** (`docker/crisalid-taxi/data/openalex`) reads its copy at every startup to
+  index the taxonomy for topics classification (see [Topics classification](../ai/docker-compose.qmd#crisalid-taxi)).
+
+Before starting either service for the first time, run the download script. Without argument it
+fills both directories (each file is downloaded once and copied); pass the service name to fill
+only one of them:
 
 ```bash
-bash docker/scripts/download_openalex_tree.sh
+bash docker/scripts/download_openalex_tree.sh                 # both
+bash docker/scripts/download_openalex_tree.sh crisalid-ikg    # IKG only
+bash docker/scripts/download_openalex_tree.sh crisalid-taxi   # crisalid-taxi only
 ```
 
-When IKG starts, it checks the mounted data directory for snapshot files. If files are present, it
-runs the import (which is idempotent) and then wipes them so they do not trigger a re-import on the
-next startup. To refresh the tree later, re-run the script and restart IKG.
+The script is idempotent and skips files already present. When IKG starts, it checks its data
+directory for snapshot files. If files are present, it runs the import (which is idempotent) and
+then wipes them so they do not trigger a re-import on the next startup; the taxi copy is not
+affected. To refresh the tree later, re-run the script and restart the service(s).
 
 ---
 
@@ -637,6 +651,7 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ````
@@ -663,6 +678,7 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```

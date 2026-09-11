@@ -43,3 +43,6 @@ include:
   - path: ./openwebui/openwebui.yaml
     env_file: ./openwebui/.env
     project_directory: ./openwebui
+  - path: ./crisalid-taxi/crisalid-taxi.yaml
+    env_file: ./crisalid-taxi/.env
+    project_directory: ./crisalid-taxi

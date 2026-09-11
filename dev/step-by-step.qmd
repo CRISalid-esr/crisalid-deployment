@@ -90,6 +90,8 @@ The stack can be split across **two or more servers**. A typical split is one se
 - **Apollo** connects directly to Neo4j and benefits from co-location for latency and simplicity.
 :::
 
+**CRISalid Taxi** has no such constraint: IKG only needs to reach it over HTTP. If you run it on another server, publish its port `8000` there (see below), copy the OpenAlex snapshot on that host, and point `TAXI_API_URL` in `ikg/ikg.yaml` to the new address instead of the default `http://crisalid-taxi:8000`.
+
 ### Exposing ports between servers
 
 By default, most services only expose ports *within* the Docker network. When a service on server A needs to reach a service on server B, you must uncomment the relevant `ports:` section in the corresponding YAML file (e.g. `crisalid-bus/crisalid-bus.yaml`, `neo4j/neo4j.yaml`).
@@ -130,6 +132,7 @@ cp keycloak/.env.sample      keycloak/.env
 cp ofelia/.env.sample        ofelia/.env
 cp cvs/.env.sample           cvs/.env
 cp neo4j-mcp/.env.sample     neo4j-mcp/.env
+cp crisalid-taxi/.env.sample crisalid-taxi/.env
 ```
 
 > ⚠️ All `.env` files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.
@@ -285,15 +288,16 @@ Edit `ikg/.env` — the two main variables are:
 
 - `REFRESH_ORG_REGISTRY`: if `true`, the organizational registry is reloaded from the open data source at every startup (slow). Set to `false` after the first run and re-enable periodically.
 - `HARVESTERS`: the list of harvesters IKG may query. Remove `scopus` if your institution has no subscription.
+- `TAXI_ENABLED`: set to `true` once [CRISalid Taxi](#start-crisalid-taxi-topics-classification) is running so that IKG links documents to OpenAlex topics. Leave `false` otherwise.
 
 You can also choose to not expose port 8001 on the host (it only serves the Swagger UI and a health-check REST endpoint; actual data flows through RabbitMQ or Apollo/GraphQL).
 
 ### Before the first start
 
-Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see [Download the OpenAlex Classification Tree](docker-compose.qmd#openalex-tree-download) for full details.
+Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see [Download the OpenAlex Classification Tree](docker-compose.qmd#openalex-tree-download) for full details. IKG wipes its copy after import; without argument the script also fills the copy used by `crisalid-taxi`.
 
 ```bash
-bash docker/scripts/download_openalex_tree.sh
+bash docker/scripts/download_openalex_tree.sh crisalid-ikg
 ```
 
 ---
@@ -580,7 +584,66 @@ The toolbox listens on port `5000` inside the Docker network and is reachable by
 
 ---
 
-## 14. 📚 Start CRISalid Vocab Search (CVS)
+## 14. 🚖 Start CRISalid Taxi (topics classification)
+
+[CRISalid Taxi](https://github.com/CRISalid-esr/crisalid-taxi) classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity, on behalf of IKG. It is optional: enable it if you want documents in the knowledge graph to be linked to OpenAlex topics.
+
+It consists of two containers behind the `crisalid-taxi` profile:
+
+* **`crisalid-taxi`**: the FastAPI classification service, reachable by IKG at `http://crisalid-taxi:8000` (not published to the host).
+* **`crisalid-taxi-opensearch`**: a dedicated OpenSearch instance holding the taxonomy embeddings.
+
+An optional `crisalid-taxi-dashboards` profile adds OpenSearch Dashboards on port `5601` to inspect the index.
+
+### Configure
+
+Taxi uses the shared embedding endpoint configured by the `EMBEDDING_*` variables in `docker/.env` (see [Semantic Embeddings](../ai/embeddings.qmd)). Service-specific settings (matching thresholds, retries, OpenSearch heap) live in `crisalid-taxi/.env`; the sample values are fine to start with.
+
+### Before the first start
+
+Download the OpenAlex snapshot into the taxi data directory. Skip this if you already ran the script without argument in [step 9](#start-ikg): it then filled both the IKG and the taxi copies.
+
+```bash
+bash scripts/download_openalex_tree.sh crisalid-taxi
+```
+
+### Start
+
+Add `--profile crisalid-taxi` to your startup command:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.prod.yaml \
+  --profile crisalid-bus \
+  --profile harvester \
+  --profile neo4j \
+  --profile ikg \
+  --profile cdb \
+  --profile apollo \
+  --profile keycloak \
+  --profile sovisuplus \
+  --profile neo4j-mcp \
+  --profile crisalid-taxi \
+  up -d
+```
+
+On the first start, Taxi embeds the whole taxonomy through the embedding endpoint before it starts serving. Allow several minutes; the container stays in `starting` state meanwhile. Later starts skip unchanged data.
+
+### Verify
+
+The port is not published, so probe the readiness route from inside the container:
+
+```bash
+docker exec "$(docker ps -q -f label=com.docker.compose.service=crisalid-taxi)" \
+  python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:8000/readiness').read().decode())"
+```
+
+Once ready, set `TAXI_ENABLED=true` in `ikg/.env` and restart IKG (`docker compose ... up -d ikg`) so that newly written documents get their OpenAlex topics.
+
+---
+
+## 15. 📚 Start CRISalid Vocab Search (CVS)
 
 [CRISalid Vocab Search](https://github.com/CRISalid-esr/crisalid-vocab-search) provides concept autocomplete over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+. It is optional: enable it if your institution uses vocabulary suggestion features.
 
@@ -635,13 +698,13 @@ All embedded vocabularies should be reported with `"status": "ok"` and a non-zer
 
 ---
 
-## 15. ⏰ Configure Ofelia (Scheduler)
+## 16. ⏰ Configure Ofelia (Scheduler)
 
 Add `--profile ofelia` to the startup command. See [Docker Compose - Overview](docker-compose.qmd#configure-ofelia-system-wide-scheduler) for full configuration details.
 
 ---
 
-## 16. 🔄 Updating to a New Version
+## 17. 🔄 Updating to a New Version
 
 ```bash
 # Stash local changes (e.g. uncommented ports: sections) before switching

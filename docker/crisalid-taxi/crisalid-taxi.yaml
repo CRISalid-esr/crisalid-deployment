@@ -1,0 +1,107 @@
+services:
+  crisalid-taxi:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    # ports:
+    #   - "8000:8000"
+    expose:
+      - "8000"
+    environment:
+      # APP_ENV: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+      # OpenAlex snapshot (topics/domains/fields/subfields) mounted below
+      - OPENALEX_DATA_PATH=/data/openalex
+      # Vector store (internal OpenSearch instance, see crisalid-taxi-opensearch)
+      - OPENSEARCH_HOST=crisalid-taxi-opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_SCHEME=http
+      # Embeddings: endpoint vars are shared with ikg and crisalid-agents (see docker/.env)
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
+      - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
+      - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+      - EMBEDDING_BATCH_SIZE=${TAXI_EMBEDDING_BATCH_SIZE:-32}
+      # Matching defaults (overridable per request)
+      - SIMILARITY_THRESHOLD=${TAXI_SIMILARITY_THRESHOLD:-0.53}
+      - MAX_TOPICS=${TAXI_MAX_TOPICS:-100}
+      - MIN_INPUT_LENGTH=${TAXI_MIN_INPUT_LENGTH:-25}
+      # Retries against the embedding API
+      - RETRY_MAX_ATTEMPTS=${TAXI_RETRY_MAX_ATTEMPTS:-3}
+      - RETRY_MIN_WAIT=${TAXI_RETRY_MIN_WAIT:-2}
+      - RETRY_MAX_WAIT=${TAXI_RETRY_MAX_WAIT:-10}
+    volumes:
+      # Own copy of the OpenAlex snapshot (IKG wipes its copy after import).
+      # Populate with: scripts/download_openalex_tree.sh crisalid-taxi
+      - ${TAXI_OPENALEX_DATA_HOST_PATH:-./data/openalex}:/data/openalex:ro
+    depends_on:
+      crisalid-taxi-opensearch:
+        condition: service_healthy
+    healthcheck:
+      # Base image (python:3.11-slim) has no curl. The startup pipeline (embedding + indexing
+      # of the whole taxonomy) runs before the API starts serving, hence the long start_period.
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/liveness', timeout=3)" ]
+      interval: 30s
+      retries: 5
+      start_period: 600s
+      timeout: 5s
+    networks:
+      - crisalid-taxi-network
+      - ikg-network
+    profiles:
+      - crisalid-taxi
+
+  crisalid-taxi-opensearch:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    expose:
+      - "9200"
+    environment:
+      - cluster.name=${TAXI_OPENSEARCH_CLUSTER_NAME:-crisalid-taxi}
+      - node.name=${TAXI_OPENSEARCH_NODE_NAME:-crisalid-taxi-node}
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=${TAXI_OPENSEARCH_JAVA_OPTS:--Xms512m -Xmx512m}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${TAXI_OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      # Only reachable from the internal network: security plugin disabled
+      - plugins.security.disabled=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - taxi_opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test: [ "CMD", "curl", "-sf", "http://localhost:9200/_cluster/health" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - crisalid-taxi-network
+    profiles:
+      - crisalid-taxi
+
+  crisalid-taxi-dashboards:
+    # Optional admin UI for the taxi OpenSearch index (separate profile)
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    ports:
+      - "${TAXI_DASHBOARDS_PORT:-5601}:5601"
+    environment:
+      - OPENSEARCH_HOSTS=["http://crisalid-taxi-opensearch:9200"]
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      crisalid-taxi-opensearch:
+        condition: service_healthy
+    networks:
+      - crisalid-taxi-network
+    profiles:
+      - crisalid-taxi-dashboards
+
+networks:
+  crisalid-taxi-network:
+    driver: bridge
+  ikg-network:
+    driver: bridge
+
+volumes:
+  taxi_opensearch_data:

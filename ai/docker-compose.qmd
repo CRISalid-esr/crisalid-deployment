@@ -2,7 +2,7 @@
 title: "Docker Compose"
 ---
 
-The AI layer is composed of four profiles, to be started together with the rest of the stack (see [Docker Compose — Overview](../dev/docker-compose.qmd)):
+The AI layer is composed of the following profiles, to be started together with the rest of the stack (see [Docker Compose — Overview](../dev/docker-compose.qmd)):
 
 | Profile | Service | Purpose |
 |---|---|---|
@@ -10,6 +10,8 @@ The AI layer is composed of four profiles, to be started together with the rest 
 | `crisalid-agents-owui` | `crisalid-agents-owui` | Graph agent served as OpenWebUI pipelines (port 9099, internal) |
 | `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal) |
 | `openwebui` | `openwebui` | User-facing chat UI |
+| `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG (port 8000, internal) and its vector store |
+| `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601) |
 
 Both agent services run the same CRISalid graph agent and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:
 
@@ -38,6 +40,34 @@ Configuration:
 - Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
 - Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
 - OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
+
+## Topics classification (crisalid-taxi) {#crisalid-taxi}
+
+`crisalid-taxi` classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.
+
+Before the first start, download the OpenAlex snapshot into the taxi data directory (see [Download the OpenAlex Classification Tree](../dev/docker-compose.qmd#openalex-tree-download)):
+
+```bash
+bash docker/scripts/download_openalex_tree.sh crisalid-taxi
+```
+
+Then start the profile (add `crisalid-taxi-dashboards` to get the OpenSearch Dashboards UI on port 5601):
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile crisalid-taxi \
+  up -d
+```
+
+The first startup embeds the full taxonomy through the shared embedding endpoint (see [Semantic Embeddings](embeddings.qmd)), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.
+
+Configuration:
+
+- Matching thresholds, retries and OpenSearch settings: `docker/crisalid-taxi/.env`.
+- Embedding endpoint: the shared `EMBEDDING_*` variables in `docker/.env`.
+- IKG side: set `TAXI_ENABLED=true` in `docker/ikg/.env` so IKG calls the taxi service (`http://crisalid-taxi:8000`) when documents are written. Disabled by default.
 
 ## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
 

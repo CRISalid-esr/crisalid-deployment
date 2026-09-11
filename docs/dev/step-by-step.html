@@ -544,14 +544,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#start-6" id="toc-start-6" class="nav-link" data-scroll-target="#start-6">Start</a></li>
   </ul></li>
-  <li><a href="#start-crisalid-vocab-search-cvs" id="toc-start-crisalid-vocab-search-cvs" class="nav-link" data-scroll-target="#start-crisalid-vocab-search-cvs">14. 📚 Start CRISalid Vocab Search (CVS)</a>
+  <li><a href="#start-crisalid-taxi-topics-classification" id="toc-start-crisalid-taxi-topics-classification" class="nav-link" data-scroll-target="#start-crisalid-taxi-topics-classification">14. 🚖 Start CRISalid Taxi (topics classification)</a>
   <ul class="collapse">
   <li><a href="#configure-4" id="toc-configure-4" class="nav-link" data-scroll-target="#configure-4">Configure</a></li>
+  <li><a href="#before-the-first-start-1" id="toc-before-the-first-start-1" class="nav-link" data-scroll-target="#before-the-first-start-1">Before the first start</a></li>
   <li><a href="#start-7" id="toc-start-7" class="nav-link" data-scroll-target="#start-7">Start</a></li>
   <li><a href="#verify-7" id="toc-verify-7" class="nav-link" data-scroll-target="#verify-7">Verify</a></li>
   </ul></li>
-  <li><a href="#configure-ofelia-scheduler" id="toc-configure-ofelia-scheduler" class="nav-link" data-scroll-target="#configure-ofelia-scheduler">15. ⏰ Configure Ofelia (Scheduler)</a></li>
-  <li><a href="#updating-to-a-new-version" id="toc-updating-to-a-new-version" class="nav-link" data-scroll-target="#updating-to-a-new-version">16. 🔄 Updating to a New Version</a></li>
+  <li><a href="#start-crisalid-vocab-search-cvs" id="toc-start-crisalid-vocab-search-cvs" class="nav-link" data-scroll-target="#start-crisalid-vocab-search-cvs">15. 📚 Start CRISalid Vocab Search (CVS)</a>
+  <ul class="collapse">
+  <li><a href="#configure-5" id="toc-configure-5" class="nav-link" data-scroll-target="#configure-5">Configure</a></li>
+  <li><a href="#start-8" id="toc-start-8" class="nav-link" data-scroll-target="#start-8">Start</a></li>
+  <li><a href="#verify-8" id="toc-verify-8" class="nav-link" data-scroll-target="#verify-8">Verify</a></li>
+  </ul></li>
+  <li><a href="#configure-ofelia-scheduler" id="toc-configure-ofelia-scheduler" class="nav-link" data-scroll-target="#configure-ofelia-scheduler">16. ⏰ Configure Ofelia (Scheduler)</a></li>
+  <li><a href="#updating-to-a-new-version" id="toc-updating-to-a-new-version" class="nav-link" data-scroll-target="#updating-to-a-new-version">17. 🔄 Updating to a New Version</a></li>
   </ul>
 </nav>
 </nav>
@@ -648,6 +655,7 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 </ul>
 </div>
 </div>
+<p><strong>CRISalid Taxi</strong> has no such constraint: IKG only needs to reach it over HTTP. If you run it on another server, publish its port <code>8000</code> there (see below), copy the OpenAlex snapshot on that host, and point <code>TAXI_API_URL</code> in <code>ikg/ikg.yaml</code> to the new address instead of the default <code>http://crisalid-taxi:8000</code>.</p>
 </section>
 <section id="exposing-ports-between-servers" class="level3">
 <h3 class="anchored" data-anchor-id="exposing-ports-between-servers">Exposing ports between servers</h3>
@@ -683,13 +691,15 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> keycloak/.env.sample      keycloak/.env</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ofelia/.env.sample        ofelia/.env</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> cvs/.env.sample           cvs/.env</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> neo4j-mcp/.env.sample     neo4j-mcp/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> neo4j-mcp/.env.sample     neo4j-mcp/.env</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> crisalid-taxi/.env.sample crisalid-taxi/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p>⚠️ All <code>.env</code> files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.</p>
 </blockquote>
 <p>The root <code>docker/.env</code> holds <strong>shared credentials</strong> used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.</p>
-<p>Also copy the RBAC roles sample for SoVisu+:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Also copy the SoVisu+ config file samples:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/chat.sample.json       sovisuplus/config/chat.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p>All subsequent <code>docker compose</code> commands in this guide assume you are in the <code>docker/</code> directory.</p>
 </blockquote>
@@ -801,13 +811,14 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 <ul>
 <li><code>REFRESH_ORG_REGISTRY</code>: if <code>true</code>, the organizational registry is reloaded from the open data source at every startup (slow). Set to <code>false</code> after the first run and re-enable periodically.</li>
 <li><code>HARVESTERS</code>: the list of harvesters IKG may query. Remove <code>scopus</code> if your institution has no subscription.</li>
+<li><code>TAXI_ENABLED</code>: set to <code>true</code> once <a href="#start-crisalid-taxi-topics-classification">CRISalid Taxi</a> is running so that IKG links documents to OpenAlex topics. Leave <code>false</code> otherwise.</li>
 </ul>
 <p>You can also choose to not expose port 8001 on the host (it only serves the Swagger UI and a health-check REST endpoint; actual data flows through RabbitMQ or Apollo/GraphQL).</p>
 </section>
 <section id="before-the-first-start" class="level3">
 <h3 class="anchored" data-anchor-id="before-the-first-start">Before the first start</h3>
-<p>Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a> for full details.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Download the OpenAlex snapshot data so IKG can build the classification tree in Neo4j at startup — see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a> for full details. IKG wipes its copy after import; without argument the script also fills the copy used by <code>crisalid-taxi</code>.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh crisalid-ikg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 </section>
 <section id="start-2" class="level3">
@@ -1042,27 +1053,27 @@ Keycloak service accounts required for authenticated access
 <hr>
 </section>
 </section>
-<section id="start-crisalid-vocab-search-cvs" class="level2">
-<h2 class="anchored" data-anchor-id="start-crisalid-vocab-search-cvs">14. 📚 Start CRISalid Vocab Search (CVS)</h2>
-<p><a href="https://github.com/CRISalid-esr/crisalid-vocab-search">CRISalid Vocab Search</a> provides concept autocomplete over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+. It is optional: enable it if your institution uses vocabulary suggestion features.</p>
-<p>It consists of two containers behind the <code>cvs</code> profile:</p>
+<section id="start-crisalid-taxi-topics-classification" class="level2">
+<h2 class="anchored" data-anchor-id="start-crisalid-taxi-topics-classification">14. 🚖 Start CRISalid Taxi (topics classification)</h2>
+<p><a href="https://github.com/CRISalid-esr/crisalid-taxi">CRISalid Taxi</a> classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity, on behalf of IKG. It is optional: enable it if you want documents in the knowledge graph to be linked to OpenAlex topics.</p>
+<p>It consists of two containers behind the <code>crisalid-taxi</code> profile:</p>
 <ul>
-<li><strong><code>cvs-os</code></strong>: a single OpenSearch container embedding <strong>all vocabularies</strong>, one index per vocabulary. On first start, it indexes the bundled vocabularies (allow a minute or two).</li>
-<li><strong><code>cvs-api</code></strong>: a REST API frontend exposing unified <code>/vocabs</code> and <code>/autocomplete</code> endpoints, consumed by SoVisu+.</li>
+<li><strong><code>crisalid-taxi</code></strong>: the FastAPI classification service, reachable by IKG at <code>http://crisalid-taxi:8000</code> (not published to the host).</li>
+<li><strong><code>crisalid-taxi-opensearch</code></strong>: a dedicated OpenSearch instance holding the taxonomy embeddings.</li>
 </ul>
+<p>An optional <code>crisalid-taxi-dashboards</code> profile adds OpenSearch Dashboards on port <code>5601</code> to inspect the index.</p>
 <section id="configure-4" class="level3">
 <h3 class="anchored" data-anchor-id="configure-4">Configure</h3>
-<p>Edit <code>cvs/.env</code>:</p>
-<pre class="env"><code>API_VERSION=v1
-CVS_API_PORT=8005</code></pre>
-<blockquote class="blockquote">
-<p>⚠️ The sample sets <code>CVS_API_PORT=8005</code>. Do not use <code>8000</code> (the fallback when the variable is unset): it conflicts with the SVP Harvester default port when both run on the same server.</p>
-</blockquote>
-<p>The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust <code>OPENSEARCH_JAVA_OPTS</code> in <code>cvs/cvs.yaml</code>.</p>
+<p>Taxi uses the shared embedding endpoint configured by the <code>EMBEDDING_*</code> variables in <code>docker/.env</code> (see <a href="../ai/embeddings.html">Semantic Embeddings</a>). Service-specific settings (matching thresholds, retries, OpenSearch heap) live in <code>crisalid-taxi/.env</code>; the sample values are fine to start with.</p>
+</section>
+<section id="before-the-first-start-1" class="level3">
+<h3 class="anchored" data-anchor-id="before-the-first-start-1">Before the first start</h3>
+<p>Download the OpenAlex snapshot into the taxi data directory. Skip this if you already ran the script without argument in <a href="#start-ikg">step 9</a>: it then filled both the IKG and the taxi copies.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> scripts/download_openalex_tree.sh crisalid-taxi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="start-7" class="level3">
 <h3 class="anchored" data-anchor-id="start-7">Start</h3>
-<p>Add <code>--profile cvs</code> to your startup command:</p>
+<p>Add <code>--profile crisalid-taxi</code> to your startup command:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
@@ -1075,59 +1086,105 @@ CVS_API_PORT=8005</code></pre>
 <span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
 <span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
 <span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-taxi <span class="dt">\</span></span>
 <span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>On the first start, Taxi embeds the whole taxonomy through the embedding endpoint before it starts serving. Allow several minutes; the container stays in <code>starting</code> state meanwhile. Later starts skip unchanged data.</p>
 </section>
 <section id="verify-7" class="level3">
 <h3 class="anchored" data-anchor-id="verify-7">Verify</h3>
+<p>The port is not published, so probe the readiness route from inside the container:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> exec <span class="st">"</span><span class="va">$(</span><span class="ex">docker</span> ps <span class="at">-q</span> <span class="at">-f</span> label=com.docker.compose.service=crisalid-taxi<span class="va">)</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  python <span class="at">-c</span> <span class="st">"import urllib.request; print(urllib.request.urlopen('http://localhost:8000/readiness').read().decode())"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Once ready, set <code>TAXI_ENABLED=true</code> in <code>ikg/.env</code> and restart IKG (<code>docker compose ... up -d ikg</code>) so that newly written documents get their OpenAlex topics.</p>
+<hr>
+</section>
+</section>
+<section id="start-crisalid-vocab-search-cvs" class="level2">
+<h2 class="anchored" data-anchor-id="start-crisalid-vocab-search-cvs">15. 📚 Start CRISalid Vocab Search (CVS)</h2>
+<p><a href="https://github.com/CRISalid-esr/crisalid-vocab-search">CRISalid Vocab Search</a> provides concept autocomplete over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+. It is optional: enable it if your institution uses vocabulary suggestion features.</p>
+<p>It consists of two containers behind the <code>cvs</code> profile:</p>
+<ul>
+<li><strong><code>cvs-os</code></strong>: a single OpenSearch container embedding <strong>all vocabularies</strong>, one index per vocabulary. On first start, it indexes the bundled vocabularies (allow a minute or two).</li>
+<li><strong><code>cvs-api</code></strong>: a REST API frontend exposing unified <code>/vocabs</code> and <code>/autocomplete</code> endpoints, consumed by SoVisu+.</li>
+</ul>
+<section id="configure-5" class="level3">
+<h3 class="anchored" data-anchor-id="configure-5">Configure</h3>
+<p>Edit <code>cvs/.env</code>:</p>
+<pre class="env"><code>API_VERSION=v1
+CVS_API_PORT=8005</code></pre>
+<blockquote class="blockquote">
+<p>⚠️ The sample sets <code>CVS_API_PORT=8005</code>. Do not use <code>8000</code> (the fallback when the variable is unset): it conflicts with the SVP Harvester default port when both run on the same server.</p>
+</blockquote>
+<p>The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust <code>OPENSEARCH_JAVA_OPTS</code> in <code>cvs/cvs.yaml</code>.</p>
+</section>
+<section id="start-8" class="level3">
+<h3 class="anchored" data-anchor-id="start-8">Start</h3>
+<p>Add <code>--profile cvs</code> to your startup command:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="dt">\</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> harvester <span class="dt">\</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="dt">\</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cdb <span class="dt">\</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="dt">\</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="verify-8" class="level3">
+<h3 class="anchored" data-anchor-id="verify-8">Verify</h3>
 <p>List the available vocabularies (adjust the port to your <code>CVS_API_PORT</code>):</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8005/api/v1/vocabs/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> http://localhost:8005/api/v1/vocabs/</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>All embedded vocabularies should be reported with <code>"status": "ok"</code> and a non-zero <code>doc_count</code>. The interactive API documentation is available at <a href="http://localhost:8005/docs">http://localhost:8005/docs</a>.</p>
 <hr>
 </section>
 </section>
 <section id="configure-ofelia-scheduler" class="level2">
-<h2 class="anchored" data-anchor-id="configure-ofelia-scheduler">15. ⏰ Configure Ofelia (Scheduler)</h2>
+<h2 class="anchored" data-anchor-id="configure-ofelia-scheduler">16. ⏰ Configure Ofelia (Scheduler)</h2>
 <p>Add <code>--profile ofelia</code> to the startup command. See <a href="../dev/docker-compose.html#configure-ofelia-system-wide-scheduler">Docker Compose - Overview</a> for full configuration details.</p>
 <hr>
 </section>
 <section id="updating-to-a-new-version" class="level2">
-<h2 class="anchored" data-anchor-id="updating-to-a-new-version">16. 🔄 Updating to a New Version</h2>
-<div class="sourceCode" id="cb48"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
-<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
-<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
-<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
-<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
-<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
-<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h2 class="anchored" data-anchor-id="updating-to-a-new-version">17. 🔄 Updating to a New Version</h2>
+<div class="sourceCode" id="cb51"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stash local changes (e.g. uncommented ports: sections) before switching</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the new tag</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/X.Y.Z vX.Y.Z</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Restore local changes and resolve any conflicts</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull updated images</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>  pull <span class="at">--include-deps</span></span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Recreate containers</span></span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-bus <span class="at">--profile</span> harvester <span class="at">--profile</span> neo4j <span class="dt">\</span></span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> ikg <span class="at">--profile</span> cdb <span class="at">--profile</span> apollo <span class="dt">\</span></span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> sovisuplus <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> cvs <span class="dt">\</span></span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>To force-recreate a single container without restarting the others:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> <span class="at">--no-deps</span> <span class="at">--force-recreate</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <hr>
 <p>🧭 Back to <a href="../dev/docker-compose.html">Docker Compose - Overview</a></p>
 
