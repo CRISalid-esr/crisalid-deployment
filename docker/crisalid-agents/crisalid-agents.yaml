@@ -25,6 +25,12 @@ services:
       - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
       - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
       - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile)
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-https://opensearch:9200}
+      - HORIZON_OS_USER=${HORIZON_OS_USER:-admin}
+      - HORIZON_OS_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-}
+      - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
+      - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
     depends_on:
       neo4j-mcp:
         condition: service_healthy
@@ -68,6 +74,21 @@ services:
       - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
       - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
       - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile) and the work
+      # programme PDFs it is built from: docker compose exec crisalid-agents-chat-api python scripts/index_horizon_topics.py
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-https://opensearch:9200}
+      - HORIZON_OS_USER=${HORIZON_OS_USER:-admin}
+      - HORIZON_OS_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-}
+      - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
+      - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
+      - HORIZON_WP_DIR=/data/horizon
+      # Topic-to-Researcher Match batch: docker compose exec crisalid-agents-chat-api python scripts/topic_researcher_match.py --cluster CL2
+      # Reports (JSON / Markdown / PDF) land in ./horizon-europe-index/reports on the host.
+      - TRM_MODEL=${TRM_MODEL:-${CRISALID_AGENTS_MODEL}}
+      - TRM_OUTPUT_DIR=/app/reports
+    volumes:
+      - ../horizon-europe-index/wp:/data/horizon:ro
+      - ../horizon-europe-index/reports:/app/reports
     depends_on:
       neo4j-mcp:
         condition: service_healthy

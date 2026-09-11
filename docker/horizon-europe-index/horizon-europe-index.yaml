@@ -1,0 +1,31 @@
+services:
+  # OpenSearch index of Horizon Europe work programme topics (crisalid-agents: Horizon topic finder agent and
+  # topic-to-researcher batch). Fed by `docker compose exec crisalid-agents-chat-api python scripts/index_horizon_topics.py`
+  # from the work programme PDFs dropped in ./horizon-europe-index/wp (mounted read-only in the chat-api container).
+  opensearch:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml)
+    restart: unless-stopped
+    expose:
+      - "9200"
+    environment:
+      - discovery.type=single-node
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=${OPENSEARCH_DISABLE_SECURITY:-false}
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD}
+      - OPENSEARCH_JAVA_OPTS=-Xms${OPENSEARCH_HEAP:-1g} -Xmx${OPENSEARCH_HEAP:-1g}
+    volumes:
+      - ./data:/usr/share/opensearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -sfk ${OPENSEARCH_HEALTH_URL:-https://localhost:9200/_cluster/health} -u admin:${OPENSEARCH_ADMIN_PASSWORD} || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - agents-network
+    profiles:
+      - horizon_europe_index
+
+networks:
+  agents-network:
+    driver: bridge
