@@ -1,4 +1,15 @@
 /.quarto/
+etc/*
 .idea
 postgres-data
+docker/ikg/data/openalex/*
+!docker/ikg/data/openalex/.gitkeep
+docker/crisalid-taxi/data/openalex/*
+!docker/crisalid-taxi/data/openalex/.gitkeep
+docker/openwebui/data/
 realm-export
+/etc/*
+!/etc/.gitkeep
+docs/docker/satosa/
+Agent.md
+Claude.md

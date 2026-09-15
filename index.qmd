@@ -53,6 +53,8 @@ service-oriented approaches.
       synchronizes the graph.
     - [`crisalid-apollo`](https://github.com/CRISalid-esr/crisalid-apollo): A GraphQL API gateway exposing the graph to
       frontend and analytical services.
+    - [`crisalid-taxi`](https://github.com/CRISalid-esr/crisalid-taxi): An optional classification service that links
+      documents to OpenAlex topics by semantic similarity, on behalf of `crisalid-ikg`.
 
 ---
 

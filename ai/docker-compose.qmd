@@ -1,0 +1,149 @@
+---
+title: "Docker Compose"
+---
+
+The AI layer is composed of the following profiles, to be started together with the rest of the stack (see [Docker Compose — Overview](../dev/docker-compose.qmd)):
+
+| Profile | Service | Purpose |
+|---|---|---|
+| `neo4j-mcp` | `neo4j-mcp` | MCP toolbox exposing knowledge graph tools (port 5000, internal) |
+| `crisalid-agents-owui` | `crisalid-agents-owui` | Graph agent served as OpenWebUI pipelines (port 9099, internal) |
+| `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal) |
+| `openwebui` | `openwebui` | User-facing chat UI |
+| `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG (port 8000, internal) and its vector store |
+| `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601) |
+
+Both agent services run the same CRISalid graph agent and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:
+
+```bash
+# OpenWebUI chat stack
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile neo4j-mcp \
+  --profile crisalid-agents-owui \
+  --profile openwebui \
+  up -d
+
+# SoVisuPlus chat API
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile neo4j-mcp \
+  --profile crisalid-agents-chat-api \
+  up -d
+```
+
+Configuration:
+
+- Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
+- Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
+- Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
+- OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
+
+## Topics classification (crisalid-taxi) {#crisalid-taxi}
+
+`crisalid-taxi` classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.
+
+Before the first start, download the OpenAlex snapshot into the taxi data directory (see [Download the OpenAlex Classification Tree](../dev/docker-compose.qmd#openalex-tree-download)):
+
+```bash
+bash docker/scripts/download_openalex_tree.sh crisalid-taxi
+```
+
+Then start the profile (add `crisalid-taxi-dashboards` to get the OpenSearch Dashboards UI on port 5601):
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile crisalid-taxi \
+  up -d
+```
+
+The first startup embeds the full taxonomy through the shared embedding endpoint (see [Semantic Embeddings](embeddings.qmd)), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.
+
+Configuration:
+
+- Matching thresholds, retries and OpenSearch settings: `docker/crisalid-taxi/.env`.
+- Embedding endpoint: the shared `EMBEDDING_*` variables in `docker/.env`.
+- IKG side: set `TAXI_ENABLED=true` in `docker/ikg/.env` so IKG calls the taxi service (`http://crisalid-taxi:8000`) when documents are written. Disabled by default.
+
+## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
+
+The assistant is configured by a JSON file located in the `docker/sovisuplus/config` directory, named `chat.json`. It lets you set a system prompt, seed the chat's conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the `chat.sample.json` located in the same directory and fill in the fields.
+
+```bash
+cp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json
+$EDITOR docker/sovisuplus/config/chat.json
+```
+
+### Schema
+
+```json
+{
+  "systemPrompt": "Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'",
+  "variables": { "supportEmail": "svp-support@example.edu" },
+  "locales": {
+    "en": {
+      "welcome": { "title": "Welcome", "message": "Hi! I'm your SoVisu+ assistant…" },
+      "suggestions": [{ "label": "Open access rate", "value": "How many publications in my organization are open access?" }]
+    },
+    "fr": {
+      "welcome": { "title": "Bienvenue", "message": "Bonjour ! Je suis votre assistant SoVisu+…" },
+      "suggestions": [{ "label": "Taux de science ouverte", "value": "Combien de publications sont en science ouverte dans mon organisation ?" }]
+    }
+  }
+}
+```
+
+| Field | Purpose |
+|---|---|
+| `systemPrompt` | Sent to the agent as a `role:"system"` message by the `/api/chat` proxy. **The field is required** (see below). |
+| `variables` | Optional map of custom `{{key}}` values for `systemPrompt`, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them. |
+| `locales.<lang>.welcome` | Seeds the first conversation and assistant message when the widget opens; `title` names the conversation. |
+| `locales.<lang>.suggestions` | Starter question suggestions, rendered as chips. `value` is the text submitted by clicking on the chip, `label` is the chip's label — it should be shorter than `value` (`label` falls back to `value` when omitted). |
+
+Locales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to `en` if it exists, or to empty values if not.
+
+`systemPrompt` is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.
+
+::: {.callout-note}
+`systemPrompt` field value may be empty but in that case you're relying on the agent's own built-in prompt that doesn't contain any specific instructions.
+:::
+
+::: {.callout-note}
+## The widget only appears when the chat API is configured
+SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load.
+:::
+
+### Fallback
+
+The file is read at `docker/sovisuplus/config/chat.json`, as `docker/sovisuplus/config` is bind-mounted read-only at `/config`.
+If you forgot to create it, or if it is malformed, SoVisuPlus falls back to `/app/chat.sample.json`, the generic configuration baked into the image.
+
+::: {.callout-important}
+## The system prompt is server-only, the rest is public
+`systemPrompt` is read by the server and injected into the upstream request. It is **never** sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in [Security](security.qmd), and the `welcome`/`suggestions` strings *are* shipped to the browser.
+
+Note that the proxy also injects the signed-in user's identity as a second system message, from the trusted session, so the agent can resolve "me"/"my" and scope graph queries to that person.
+:::
+
+::: {.callout-tip}
+## The institution name fills itself in
+`systemPrompt` supports `{{variable}}` placeholders, resolved server-side before the prompt is sent. The sample uses `{{institutionName}}`, which SoVisuPlus fills from `INSTITUTION_NAME` in `docker/.env` (passed through as `NEXT_PUBLIC_INSTITUTION_NAME` in `sovisuplus.yaml`) — so there is nothing to keep in sync by hand.
+
+Any other key you need goes in the file's `variables` map. A placeholder that matches neither an app-provided default nor a `variables` entry resolves to an empty string, so a typo silently drops the text rather than leaking `{{...}}` to the agent.
+:::
+
+### Applying changes
+
+The file is read **once per process and cached**, so a restart is required to pick up edits:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  --profile sovisuplus \
+  up -d sovisuplus
+```

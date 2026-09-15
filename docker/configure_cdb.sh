@@ -134,6 +134,7 @@ if [ -f "$TEMPLATE_ENV" ]; then
   export CDB_REDIS_PORT=6379
   export CDB_REDIS_DB=0
   export RESTART_TRIGGER="$(date +%s)"
+  export OVERRIDE_LDAP_STRUCTURE_DATA_FROM_SPREADSHEET="${OVERRIDE_LDAP_STRUCTURE_DATA_FROM_SPREADSHEET:-False}"
 
   # Required variables
   : "${LDAP_HOST:?Missing LDAP_HOST in environment}"

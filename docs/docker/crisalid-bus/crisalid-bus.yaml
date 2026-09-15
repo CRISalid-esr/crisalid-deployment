@@ -2,7 +2,6 @@ services:
   crisalid-bus:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: rabbitmq:3-management
-    container_name: 'crisalid-bus'
     restart: unless-stopped
     environment:
       - RABBITMQ_DEFAULT_USER=${CRISALID_BUS_USER}

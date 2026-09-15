@@ -1,9 +1,9 @@
 services:
   crisalid-bus:
-    image: rabbitmq:3.13.7-management
+    image: rabbitmq:4.3.1-management
   # neo4j (graph database)
   neo4j:
-    image: neo4j:${NEO4J_VERSION:-5.26.21}-${NEO4J_EDITION:-community}
+    image: neo4j:${NEO4J_VERSION:-2026.06.0}-${NEO4J_EDITION:-community}
   # IKG (knowledge graph management)
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:dev
@@ -72,17 +72,28 @@ services:
     image: quay.io/keycloak/keycloak:26.5.4
   keycloak-tls:
     image: quay.io/keycloak/keycloak:26.5.4
-  os-jel:
-    image: crisalidesr/crisalid-vocab-search:os-jel-dev
-  os-acm:
-    image: crisalidesr/crisalid-vocab-search:os-acm-dev
-  os-aat:
-    image: crisalidesr/crisalid-vocab-search:os-aat-dev
-  os-elsst:
-    image: crisalidesr/crisalid-vocab-search:os-elsst-dev
-  os-pactols:
-    image: crisalidesr/crisalid-vocab-search:os-pactols-dev
-  os-euroscivoc:
-    image: crisalidesr/crisalid-vocab-search:os-euroscivoc-dev
+  cvs-os:
+    image: crisalidesr/crisalid-vocab-search:os-dev
   cvs-api:
     image: crisalidesr/crisalid-vocab-search:api-dev
+  # neo4j-mcp (MCP toolbox for the knowledge graph)
+  neo4j-mcp:
+    image: crisalidesr/crisalid-neo4j-mcp-toolbox:dev
+  # crisalid-agents (OpenWebUI pipelines / graph agent)
+  crisalid-agents-owui:
+    image: crisalidesr/crisalid-agents-owui:dev
+  # crisalid-agents (chat API for sovisuplus)
+  crisalid-agents-chat-api:
+    image: crisalidesr/crisalid-agents-chat-api:dev
+  # openwebui (user-facing chat UI)
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:0.9.5-slim
+  # crisalid-taxi (OpenAlex topics classification API)
+  crisalid-taxi:
+    image: crisalidesr/crisalid-taxi:dev
+    environment:
+      - APP_ENV=DEV
+  crisalid-taxi-opensearch:
+    image: opensearchproject/opensearch:2.11.0
+  crisalid-taxi-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.0

@@ -1,5 +1,5 @@
 ---
-title: "Docker Compose deployment"
+title: "Docker Compose - Overview"
 format:
   html:
     toc: true
@@ -96,6 +96,8 @@ docker compose \
   --profile keycloak-db \
   --profile sovisuplus \
   --profile sovisuplus-db \
+  --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -119,6 +121,8 @@ docker compose \
   --profile keycloak-db \
   --profile sovisuplus \
   --profile sovisuplus-db \
+  --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \    
   up -d
 ```
@@ -137,6 +141,8 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -160,7 +166,7 @@ docker compose \
 
 ### 1. 🧾 `.env` Files
 
-Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
+Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, `crisalid-taxi`, ...) has its own
 `.env.sample` file.
 
 * Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh`
@@ -313,7 +319,34 @@ Full documentation (in French):
 
 ---
 
-### 5. 🔑 Configure Keycloak
+### 5. 🌐 Download the OpenAlex Classification Tree {#openalex-tree-download}
+
+The OpenAlex snapshot data (domains, fields, subfields, and topics) is consumed by two services,
+each with its own copy:
+
+- **IKG** (`docker/ikg/data/openalex`) builds the classification tree in Neo4j on its first
+  startup, then wipes its copy automatically.
+- **crisalid-taxi** (`docker/crisalid-taxi/data/openalex`) reads its copy at every startup to
+  index the taxonomy for topics classification (see [Topics classification](../ai/docker-compose.qmd#crisalid-taxi)).
+
+Before starting either service for the first time, run the download script. Without argument it
+fills both directories (each file is downloaded once and copied); pass the service name to fill
+only one of them:
+
+```bash
+bash docker/scripts/download_openalex_tree.sh                 # both
+bash docker/scripts/download_openalex_tree.sh crisalid-ikg    # IKG only
+bash docker/scripts/download_openalex_tree.sh crisalid-taxi   # crisalid-taxi only
+```
+
+The script is idempotent and skips files already present. When IKG starts, it checks its data
+directory for snapshot files. If files are present, it runs the import (which is idempotent) and
+then wipes them so they do not trigger a re-import on the next startup; the taxi copy is not
+affected. To refresh the tree later, re-run the script and restart the service(s).
+
+---
+
+### 6. 🔑 Configure Keycloak
 
 Keycloak is handling authentication within the system. Multiple client applications (such as Sovisu+) can share the same
 authentication realm. To set up Keycloak in this environment, follow these steps:
@@ -366,7 +399,7 @@ keys.
 127.0.0.1 keycloak.local
 ```
 
-### 6. **SoVisu+ custom themes**
+### 7. **SoVisu+ custom themes**
 
 SoVisu+ allows you to customize its appearance using themes. You can create your own theme by following these steps:
 
@@ -378,7 +411,7 @@ cp -r sovisuplus/theme-sample sovisuplus/theme
 
 2. **Edit the theme files** in `sovisuplus/theme` to customize text and images according to your institution's branding.
 
-### 7. SoVisu+ RBAC Roles File
+### 8. SoVisu+ RBAC Roles File
 
 SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
 
@@ -391,7 +424,27 @@ cp sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml
 * After any change, the docker startup script will copy the file to the container and re-seed the roles and permissions
   in database.
 
-### 8. ⏰ Configure Ofelia (system-wide scheduler)
+### 9. SoVisu+ Chat Configuration
+
+SoVisu+ drives the AI chat assistant's welcome message, prompt suggestions and agent system prompt
+from a JSON file. Start by copying the sample:
+
+```bash
+cp sovisuplus/config/chat.sample.json sovisuplus/config/chat.json
+```
+
+* Edit `sovisuplus/config/chat.json` to tailor the assistant to your institution. The schema and
+  each field's meaning are documented in
+  [SoVisuPlus assistant configuration](../ai/docker-compose.qmd#sovisuplus-assistant-content).
+* The system prompt uses `{{institutionName}}`, filled in from `INSTITUTION_NAME` in `docker/.env`
+  — no need to type your institution's name again.
+* Restart the container after any change; the file is read once at startup.
+* Keep the `systemPrompt` key, even if you empty its value — a file without it is not recognised
+  as a chat config and is ignored.
+* This step is optional: with no `chat.json` — or one the app rejects — the container falls back to
+  the generic `chat.sample.json` baked into the image, and the assistant still works.
+
+### 10. ⏰ Configure Ofelia (system-wide scheduler)
 
 [Ofelia](https://hub.docker.com/r/mcuadros/ofelia) is the **scheduler of the whole CRISalid stack**.
 It runs as its own container and periodically triggers tasks for other containers (by running a CLI command
@@ -472,6 +525,41 @@ docker compose \
 ...
   --profile ofelia \
   up -d
+```
+
+### 11. 📚 Configure CRISalid Vocab Search (CVS)
+
+[CRISalid Vocab Search](https://github.com/CRISalid-esr/crisalid-vocab-search) provides concept autocomplete
+over research vocabularies (JEL, ACM CCS, Getty AAT, ELSST, PACTOLS, EuroSciVoc) to SoVisu+.
+
+It consists of two containers, enabled through the `cvs` profile:
+
+* **`cvs-os`**: a single OpenSearch container embedding **all vocabularies**, one index per vocabulary.
+  On first start, it indexes the bundled vocabularies (this takes a minute or two).
+* **`cvs-api`**: a REST API frontend exposing unified `/vocabs` and `/autocomplete` endpoints.
+
+Configuration is done in `cvs/.env`:
+
+* `CVS_API_PORT`: host port for the REST API. The sample sets `8005`. ⚠️ Do not use `8000` (the fallback
+  when the variable is unset): it conflicts with the SVP Harvester default port.
+* `API_VERSION`: API path version segment (keep `v1`).
+
+The OpenSearch JVM heap is bounded to 1 GB by default. To change it, uncomment and adjust
+`OPENSEARCH_JAVA_OPTS` in `cvs/cvs.yaml`.
+
+To start CVS along with the rest of the stack, include the `cvs` profile, for example:
+
+```bash
+docker compose \
+...
+  --profile cvs \
+  up -d
+```
+
+Verify the deployment by listing the available vocabularies:
+
+```bash
+curl http://localhost:8005/api/v1/vocabs/
 ```
 
 ## 🔌 Communication with Host Machine
@@ -562,6 +650,8 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ````
@@ -587,6 +677,8 @@ docker compose \
   --profile cdb \
   --profile keycloak \
   --profile sovisuplus \
+  --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -615,6 +707,8 @@ Once your services are up, follow the component-specific instructions in each se
   Apollo GUI
 * Access Keycloak at [http://keycloak.local:8080](http://keycloak.local:8080) to manage users and roles
 * Access SoVisu+ at [http://sovisuplus.local:3000](http://sovisuplus.local:3000) to visualize your data
+* Access the CRISalid Vocab Search API documentation at [http://localhost:8005/docs](http://localhost:8005/docs)
+  (port set by `CVS_API_PORT` in `cvs/.env`) and list the vocabularies at `/api/v1/vocabs/`
 * Start connecting other CRISalid modules from the host machine
 
 🧭 Back to [Development Index](index.qmd)

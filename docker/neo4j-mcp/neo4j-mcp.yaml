@@ -1,0 +1,33 @@
+services:
+  neo4j-mcp:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: unless-stopped
+    # ports:
+    #   - "5000:5000"
+    expose:
+      - "5000"
+    environment:
+      - NEO4J_URI=bolt://${NEO4J_HOST}:${NEO4J_BOLT_PORT}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      # Use the internal Keycloak address for OIDC discovery and JWKS fetching.
+      - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "echo > /dev/tcp/localhost/5000" ]
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+    networks:
+      - ikg-network
+      - crisalid-front
+    profiles:
+      - neo4j-mcp
+networks:
+  ikg-network:
+    driver: bridge
+  crisalid-front:
+    driver: bridge

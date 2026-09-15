@@ -2,65 +2,49 @@
   "bindings": [
     {
       "arguments": {},
-      "destination": "crisalid-ikg-people",
+      "destination": "crisalid-ikg-people-batch",
       "destination_type": "queue",
-      "routing_key": "event.people.person.*",
+      "routing_key": "event.people.person.*.batch",
       "source": "directory",
       "vhost": "/"
     },
     {
       "arguments": {},
-      "destination": "crisalid-ikg-structures",
+      "destination": "crisalid-ikg-structures-batch",
       "destination_type": "queue",
-      "routing_key": "event.structures.structure.*",
+      "routing_key": "event.structures.structure.*.batch",
       "source": "directory",
       "vhost": "/"
     },
     {
       "arguments": {},
-      "destination": "sovisuplus",
+      "source": "dlx.directory",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-people-batch",
       "destination_type": "queue",
-      "routing_key": "event.documents.document.*",
-      "source": "graph",
+      "routing_key": "crisalid-ikg-people-batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.directory",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-structures-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-structures-batch"
+    },
+    {
+      "arguments": {},
+      "destination": "crisalid-ikg-publications-batch",
+      "destination_type": "queue",
+      "routing_key": "event.references.reference.*.batch",
+      "source": "publications",
       "vhost": "/"
     },
     {
       "arguments": {},
-      "destination": "sovisuplus",
+      "destination": "crisalid-ikg-publications-interactive",
       "destination_type": "queue",
-      "routing_key": "event.documents.document.created",
-      "source": "graph",
-      "vhost": "/"
-    },
-    {
-      "arguments": {},
-      "destination": "sovisuplus",
-      "destination_type": "queue",
-      "routing_key": "event.documents.document.updated",
-      "source": "graph",
-      "vhost": "/"
-    },
-    {
-      "arguments": {},
-      "destination": "sovisuplus",
-      "destination_type": "queue",
-      "routing_key": "event.people.person.*",
-      "source": "graph",
-      "vhost": "/"
-    },
-    {
-      "arguments": {},
-      "destination": "sovisuplus",
-      "destination_type": "queue",
-      "routing_key": "event.structures.structure.*",
-      "source": "graph",
-      "vhost": "/"
-    },
-    {
-      "arguments": {},
-      "destination": "crisalid-ikg-publications",
-      "destination_type": "queue",
-      "routing_key": "event.references.reference.*",
+      "routing_key": "event.references.reference.*.interactive",
       "source": "publications",
       "vhost": "/"
     },
@@ -68,65 +52,201 @@
       "arguments": {},
       "destination": "ctd-publications",
       "destination_type": "queue",
-      "routing_key": "event.references.reference.*",
+      "routing_key": "event.references.reference.*.*",
       "source": "publications",
       "vhost": "/"
     },
     {
       "arguments": {},
-      "destination": "svp-harvester",
+      "destination": "svp-harvester-interactive",
       "destination_type": "queue",
-      "routing_key": "task.entity.references.retrieval",
+      "routing_key": "task.entity.references.retrieval.interactive",
       "source": "publications",
       "vhost": "/"
     },
     {
+      "arguments": {},
+      "destination": "svp-harvester-batch",
+      "destination_type": "queue",
+      "routing_key": "task.entity.references.retrieval.batch",
+      "source": "publications",
+      "vhost": "/"
+    },
+    {
+      "arguments": {},
+      "source": "publications",
+      "vhost": "/",
+      "destination": "crisalid-ikg-harvesting-events-batch",
+      "destination_type": "queue",
+      "routing_key": "event.references.*.*.batch"
+    },
+    {
+      "arguments": {},
+      "source": "publications",
+      "vhost": "/",
+      "destination": "crisalid-ikg-harvesting-events-interactive",
+      "destination_type": "queue",
+      "routing_key": "event.references.*.*.interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-publications-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-publications-batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-publications-interactive",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-publications-interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-harvesting-events-batch",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-harvesting-events-batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.crisalid-ikg-harvesting-events-interactive",
+      "destination_type": "queue",
+      "routing_key": "crisalid-ikg-harvesting-events-interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.svp-harvester-interactive",
+      "destination_type": "queue",
+      "routing_key": "svp-harvester-interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.publications",
+      "vhost": "/",
+      "destination": "dlq.svp-harvester-batch",
+      "destination_type": "queue",
+      "routing_key": "svp-harvester-batch"
+    },
+    {
+      "arguments": {},
       "source": "dlx.graph",
       "vhost": "/",
-      "destination": "dlq.crisalid-ikg-user-actions",
+      "destination": "dlq.crisalid-ikg-actions-interactive",
       "destination_type": "queue",
-      "routing_key": "#",
-      "arguments": {}
+      "routing_key": "crisalid-ikg-actions-interactive"
     },
     {
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "sovisuplus",
+      "destination": "crisalid-ikg-actions-interactive",
       "destination_type": "queue",
-      "routing_key": "event.harvestings.*.*"
+      "routing_key": "task.documents.document.*.interactive"
     },
     {
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-user-actions",
+      "destination": "crisalid-ikg-actions-interactive",
       "destination_type": "queue",
-      "routing_key": "task.documents.document.*"
+      "routing_key": "task.people.person.*.interactive"
     },
     {
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-user-actions",
+      "destination": "crisalid-ikg-actions-interactive",
       "destination_type": "queue",
-      "routing_key": "task.people.person.*"
+      "routing_key": "task.people.documents.fetch.interactive"
     },
     {
       "arguments": {},
       "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-user-actions",
+      "destination": "sovisuplus-interactive",
       "destination_type": "queue",
-      "routing_key": "task.people.documents.fetch"
+      "routing_key": "event.people.person.*.interactive"
     },
     {
       "arguments": {},
-      "source": "publications",
+      "source": "graph",
       "vhost": "/",
-      "destination": "crisalid-ikg-harvesting-events",
+      "destination": "sovisuplus-interactive",
       "destination_type": "queue",
-      "routing_key": "event.references.*.*"
+      "routing_key": "event.structures.structure.*.interactive"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus-interactive",
+      "destination_type": "queue",
+      "routing_key": "event.documents.document.*.interactive"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus-interactive",
+      "destination_type": "queue",
+      "routing_key": "event.harvestings.*.*.interactive"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus-batch",
+      "destination_type": "queue",
+      "routing_key": "event.people.person.*.batch"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus-batch",
+      "destination_type": "queue",
+      "routing_key": "event.structures.structure.*.batch"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus-batch",
+      "destination_type": "queue",
+      "routing_key": "event.documents.document.*.batch"
+    },
+    {
+      "arguments": {},
+      "source": "graph",
+      "vhost": "/",
+      "destination": "sovisuplus-batch",
+      "destination_type": "queue",
+      "routing_key": "event.harvestings.*.*.batch"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.graph",
+      "vhost": "/",
+      "destination": "dlq.sovisuplus-interactive",
+      "destination_type": "queue",
+      "routing_key": "sovisuplus-interactive"
+    },
+    {
+      "arguments": {},
+      "source": "dlx.graph",
+      "vhost": "/",
+      "destination": "dlq.sovisuplus-batch",
+      "destination_type": "queue",
+      "routing_key": "sovisuplus-batch"
     }
   ],
   "exchanges": [
@@ -155,12 +275,28 @@
       "vhost": "/"
     },
     {
+      "name": "dlx.publications",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
       "arguments": {},
       "auto_delete": false,
       "durable": true,
       "name": "directory",
       "type": "topic",
       "vhost": "/"
+    },
+    {
+      "name": "dlx.directory",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
     }
   ],
   "queues": [
@@ -173,57 +309,139 @@
       "vhost": "/"
     },
     {
-      "arguments": {
-        "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "sovisuplus",
+      "name": "crisalid-ikg-people-batch",
+      "vhost": "/",
       "type": "classic",
-      "vhost": "/"
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.directory",
+        "x-dead-letter-routing-key": "crisalid-ikg-people-batch"
+      }
     },
     {
+      "name": "dlq.crisalid-ikg-people-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "crisalid-ikg-structures",
-      "type": "classic",
-      "vhost": "/"
+      }
     },
     {
+      "name": "crisalid-ikg-structures-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.directory",
+        "x-dead-letter-routing-key": "crisalid-ikg-structures-batch"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-structures-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "svp-harvester",
-      "type": "classic",
-      "vhost": "/"
+      }
     },
     {
+      "name": "svp-harvester-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "svp-harvester-interactive"
+      }
+    },
+    {
+      "name": "svp-harvester-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "svp-harvester-batch"
+      }
+    },
+    {
+      "name": "dlq.svp-harvester-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "crisalid-ikg-people",
-      "type": "classic",
-      "vhost": "/"
+      }
     },
     {
+      "name": "dlq.svp-harvester-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {
         "x-consumer-timeout": 43200000
-      },
-      "auto_delete": false,
-      "durable": true,
-      "name": "crisalid-ikg-publications",
-      "type": "classic",
-      "vhost": "/"
+      }
     },
     {
-      "name": "crisalid-ikg-user-actions",
+      "name": "crisalid-ikg-publications-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-publications-batch"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-publications-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "crisalid-ikg-publications-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-publications-interactive"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-publications-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "crisalid-ikg-actions-interactive",
       "vhost": "/",
       "type": "classic",
       "durable": true,
@@ -231,11 +449,11 @@
       "arguments": {
         "x-consumer-timeout": 43200000,
         "x-dead-letter-exchange": "dlx.graph",
-        "x-dead-letter-routing-key": "user_actions"
+        "x-dead-letter-routing-key": "crisalid-ikg-actions-interactive"
       }
     },
     {
-      "name": "dlq.crisalid-ikg-user-actions",
+      "name": "dlq.crisalid-ikg-actions-interactive",
       "vhost": "/",
       "type": "classic",
       "durable": true,
@@ -245,7 +463,85 @@
       }
     },
     {
-      "name": "crisalid-ikg-harvesting-events",
+      "name": "crisalid-ikg-harvesting-events-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-harvesting-events-batch"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-harvesting-events-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "crisalid-ikg-harvesting-events-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.publications",
+        "x-dead-letter-routing-key": "crisalid-ikg-harvesting-events-interactive"
+      }
+    },
+    {
+      "name": "dlq.crisalid-ikg-harvesting-events-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "sovisuplus-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.graph",
+        "x-dead-letter-routing-key": "sovisuplus-interactive"
+      }
+    },
+    {
+      "name": "sovisuplus-batch",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000,
+        "x-dead-letter-exchange": "dlx.graph",
+        "x-dead-letter-routing-key": "sovisuplus-batch"
+      }
+    },
+    {
+      "name": "dlq.sovisuplus-interactive",
+      "vhost": "/",
+      "type": "classic",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-consumer-timeout": 43200000
+      }
+    },
+    {
+      "name": "dlq.sovisuplus-batch",
       "vhost": "/",
       "type": "classic",
       "durable": true,
