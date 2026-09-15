@@ -193,7 +193,10 @@ etc.).
 
 ### 3. 🔧 Configure CRISalid Directory Bridge (CDB)
 
-This script clones the DAGs, generates environment files, and runs the Airflow initialization.
+The CDB Airflow DAGs are not part of this repository: they live in
+[crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) and are cloned into
+`docker/cdb/dags` by the `configure_cdb.sh` script, which also generates the environment files and runs the Airflow
+initialization.
 
 You must specify the target environment:
 
@@ -206,6 +209,29 @@ or
 ```bash
 ./docker/configure_cdb.sh prod
 ```
+
+#### 🏷️ Choosing the DAGs version (`CDB_DAGS_REF`)
+
+The git ref (tag or branch) of `crisalid-directory-bridge` that gets cloned depends on the environment:
+
+| Environment | Ref cloned                                   |
+|-------------|----------------------------------------------|
+| `dev`       | always the `dev-main` branch                 |
+| `prod`      | the value of `CDB_DAGS_REF` in `docker/.env` (defaults to `main` if unset) |
+
+In `prod`, set `CDB_DAGS_REF` in the root `docker/.env` to the CDB release tag that matches the deployment release
+you are running (see the [CDB releases](https://github.com/CRISalid-esr/crisalid-directory-bridge/releases)):
+
+```env
+CDB_DAGS_REF=v1.1.0
+```
+
+`docker/.env.sample` ships with the recommended tag for the current deployment release, so copying it is enough for a
+fresh install.
+
+> ℹ️ The script does a shallow clone of the requested ref and wipes any previous content of `docker/cdb/dags`.
+> To upgrade the DAGs, change `CDB_DAGS_REF`, re-run `./docker/configure_cdb.sh prod` and restart the `cdb` profile.
+> Do not edit the DAGs in place: your changes would be lost on the next run.
 
 ---
 

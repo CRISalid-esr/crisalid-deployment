@@ -2,35 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://docs.crisalid.org/security/index.html</loc>
-    <lastmod>2026-09-07T13:48:55.415Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.647Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/prod/manual_installation.html</loc>
-    <lastmod>2026-09-07T13:48:55.415Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.646Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/prod/helm_charts.html</loc>
-    <lastmod>2026-09-07T13:48:55.415Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.645Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/index.html</loc>
-    <lastmod>2026-09-07T13:48:55.414Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.643Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/components.html</loc>
-    <lastmod>2026-09-07T13:48:55.414Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.643Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/directories/structures.html</loc>
-    <lastmod>2026-09-07T13:48:55.364Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.532Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/step-by-step.html</loc>
-    <lastmod>2026-09-11T09:28:37.060Z</lastmod>
+    <lastmod>2026-09-15T10:06:23.201Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
-    <lastmod>2026-09-07T13:48:55.363Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.530Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
@@ -42,55 +42,55 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/using-skills.html</loc>
-    <lastmod>2026-09-07T13:48:55.362Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.528Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/local-workstation.html</loc>
-    <lastmod>2026-09-07T13:48:55.361Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.528Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/embeddings.html</loc>
-    <lastmod>2026-09-11T09:28:37.058Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.524Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/configuring-openwebui.html</loc>
-    <lastmod>2026-09-07T13:48:55.358Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.523Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
-    <lastmod>2026-09-11T09:28:37.058Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.524Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/index.html</loc>
-    <lastmod>2026-09-11T09:28:37.059Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.527Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/security.html</loc>
-    <lastmod>2026-09-11T09:28:37.059Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.528Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>
-    <lastmod>2026-09-07T13:48:55.362Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.529Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2026-09-11T09:28:37.059Z</lastmod>
+    <lastmod>2026-09-15T10:06:23.201Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/index.html</loc>
-    <lastmod>2026-09-07T13:48:55.363Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.530Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/manual_installation.html</loc>
-    <lastmod>2026-09-07T13:48:55.363Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.530Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/directories/people.html</loc>
-    <lastmod>2026-09-07T13:48:55.363Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.531Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/index.html</loc>
-    <lastmod>2026-09-11T09:28:37.075Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.643Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/harvesting.html</loc>
@@ -98,14 +98,14 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/message_catalog.html</loc>
-    <lastmod>2026-09-07T13:48:55.415Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.645Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/prod/index.html</loc>
-    <lastmod>2026-09-07T13:48:55.415Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.646Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/requirements/index.html</loc>
-    <lastmod>2026-09-07T13:48:55.415Z</lastmod>
+    <lastmod>2026-09-15T07:36:01.646Z</lastmod>
   </url>
 </urlset>
