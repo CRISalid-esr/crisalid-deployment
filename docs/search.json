@@ -263,6 +263,17 @@
     ]
   },
   {
+    "objectID": "dev/step-by-step.html#start-crisalid-taxi-topics-classification",
+    "href": "dev/step-by-step.html#start-crisalid-taxi-topics-classification",
+    "title": "Docker Compose - Step by Step",
+    "section": "14. 🚖 Start CRISalid Taxi (topics classification)",
+    "text": "14. 🚖 Start CRISalid Taxi (topics classification)\nCRISalid Taxi classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity, on behalf of IKG. It is optional: enable it if you want documents in the knowledge graph to be linked to OpenAlex topics.\nIt consists of two containers behind the crisalid-taxi profile:\n\ncrisalid-taxi: the FastAPI classification service, reachable by IKG at http://crisalid-taxi:8000 (not published to the host).\ncrisalid-taxi-opensearch: a dedicated OpenSearch instance holding the taxonomy embeddings.\n\nAn optional crisalid-taxi-dashboards profile adds OpenSearch Dashboards on port 5601 to inspect the index.\n\nConfigure\nTaxi uses the shared embedding endpoint configured by the EMBEDDING_* variables in docker/.env (see Semantic Embeddings). Service-specific settings (matching thresholds, retries, OpenSearch heap) live in crisalid-taxi/.env; the sample values are fine to start with.\n\n\nBefore the first start\nDownload the OpenAlex snapshot into the taxi data directory. Skip this if you already ran the script without argument in step 9: it then filled both the IKG and the taxi copies.\nbash scripts/download_openalex_tree.sh crisalid-taxi\n\n\nStart\nAdd --profile crisalid-taxi to your startup command:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile apollo \\\n  --profile keycloak \\\n  --profile sovisuplus \\\n  --profile neo4j-mcp \\\n  --profile crisalid-taxi \\\n  up -d\nOn the first start, Taxi embeds the whole taxonomy through the embedding endpoint before it starts serving. Allow several minutes; the container stays in starting state meanwhile. Later starts skip unchanged data.\n\n\nVerify\nThe port is not published, so probe the readiness route from inside the container:\ndocker exec \"$(docker ps -q -f label=com.docker.compose.service=crisalid-taxi)\" \\\n  python -c \"import urllib.request; print(urllib.request.urlopen('http://localhost:8000/readiness').read().decode())\"\nOnce ready, set TAXI_ENABLED=true in ikg/.env and restart IKG (docker compose ... up -d ikg) so that newly written documents get their OpenAlex topics.",
+    "crumbs": [
+      "Docker Compose",
+      "Docker Compose - Step by Step"
+    ]
+  },
+  {
     "objectID": "dev/step-by-step.html#start-crisalid-vocab-search-cvs",
     "href": "dev/step-by-step.html#start-crisalid-vocab-search-cvs",
     "title": "Docker Compose - Step by Step",
@@ -516,6 +527,17 @@
     ]
   },
   {
+    "objectID": "ai/embeddings.html#crisalid-taxi-specific-configuration",
+    "href": "ai/embeddings.html#crisalid-taxi-specific-configuration",
+    "title": "Semantic Embeddings",
+    "section": "CRISalid Taxi-specific configuration",
+    "text": "CRISalid Taxi-specific configuration\nSet in docker/crisalid-taxi/.env:\n# Number of texts sent per request. Must not exceed the server's max-client-batch-size.\nTAXI_EMBEDDING_BATCH_SIZE=32\nThe default similarity threshold (TAXI_SIMILARITY_THRESHOLD) is calibrated for bge-m3; recalibrate it when changing the embedding model.",
+    "crumbs": [
+      "Installation",
+      "Semantic Embeddings"
+    ]
+  },
+  {
     "objectID": "ai/embeddings.html#computing-embeddings-ikg",
     "href": "ai/embeddings.html#computing-embeddings-ikg",
     "title": "Semantic Embeddings",
@@ -615,6 +637,28 @@
     ]
   },
   {
+    "objectID": "ai/docker-compose.html#crisalid-taxi",
+    "href": "ai/docker-compose.html#crisalid-taxi",
+    "title": "Docker Compose",
+    "section": "Topics classification (crisalid-taxi)",
+    "text": "Topics classification (crisalid-taxi)\ncrisalid-taxi classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.\nBefore the first start, download the OpenAlex snapshot into the taxi data directory (see Download the OpenAlex Classification Tree):\nbash docker/scripts/download_openalex_tree.sh crisalid-taxi\nThen start the profile (add crisalid-taxi-dashboards to get the OpenSearch Dashboards UI on port 5601):\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile crisalid-taxi \\\n  up -d\nThe first startup embeds the full taxonomy through the shared embedding endpoint (see Semantic Embeddings), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.\nConfiguration:\n\nMatching thresholds, retries and OpenSearch settings: docker/crisalid-taxi/.env.\nEmbedding endpoint: the shared EMBEDDING_* variables in docker/.env.\nIKG side: set TAXI_ENABLED=true in docker/ikg/.env so IKG calls the taxi service (http://crisalid-taxi:8000) when documents are written. Disabled by default.",
+    "crumbs": [
+      "Installation",
+      "Docker Compose"
+    ]
+  },
+  {
+    "objectID": "ai/docker-compose.html#sovisuplus-assistant-content",
+    "href": "ai/docker-compose.html#sovisuplus-assistant-content",
+    "title": "Docker Compose",
+    "section": "SoVisuPlus assistant configuration",
+    "text": "SoVisuPlus assistant configuration\nThe assistant is configured by a JSON file located in the docker/sovisuplus/config directory, named chat.json. It lets you set a system prompt, seed the chat’s conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the chat.sample.json located in the same directory and fill in the fields.\ncp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json\n$EDITOR docker/sovisuplus/config/chat.json\n\nSchema\n{\n  \"systemPrompt\": \"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'\",\n  \"variables\": { \"supportEmail\": \"svp-support@example.edu\" },\n  \"locales\": {\n    \"en\": {\n      \"welcome\": { \"title\": \"Welcome\", \"message\": \"Hi! I'm your SoVisu+ assistant…\" },\n      \"suggestions\": [{ \"label\": \"Open access rate\", \"value\": \"How many publications in my organization are open access?\" }]\n    },\n    \"fr\": {\n      \"welcome\": { \"title\": \"Bienvenue\", \"message\": \"Bonjour ! Je suis votre assistant SoVisu+…\" },\n      \"suggestions\": [{ \"label\": \"Taux de science ouverte\", \"value\": \"Combien de publications sont en science ouverte dans mon organisation ?\" }]\n    }\n  }\n}\n\n\n\n\n\n\n\nField\nPurpose\n\n\n\n\nsystemPrompt\nSent to the agent as a role:\"system\" message by the /api/chat proxy. The field is required (see below).\n\n\nvariables\nOptional map of custom {key} values for systemPrompt, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them.\n\n\nlocales.&lt;lang&gt;.welcome\nSeeds the first conversation and assistant message when the widget opens; title names the conversation.\n\n\nlocales.&lt;lang&gt;.suggestions\nStarter question suggestions, rendered as chips. value is the text submitted by clicking on the chip, label is the chip’s label — it should be shorter than value (label falls back to value when omitted).\n\n\n\nLocales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to en if it exists, or to empty values if not.\nsystemPrompt is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.\n\n\n\n\n\n\nNote\n\n\n\nsystemPrompt field value may be empty but in that case you’re relying on the agent’s own built-in prompt that doesn’t contain any specific instructions.\n\n\n\n\n\n\n\n\nThe widget only appears when the chat API is configured\n\n\n\nSoVisuPlus renders the assistant only if CRISALID_AGENTS_API_URL is set (it defaults to http://crisalid-agents-chat-api:9100 in sovisuplus.yaml) and a config file resolves. In Docker the second condition is effectively always met — the image ships a generic chat.sample.json as a last-resort fallback, and it is only skipped if it too fails to load.\n\n\n\n\nFallback\nThe file is read at docker/sovisuplus/config/chat.json, as docker/sovisuplus/config is bind-mounted read-only at /config. If you forgot to create it, or if it is malformed, SoVisuPlus falls back to /app/chat.sample.json, the generic configuration baked into the image.\n\n\n\n\n\n\nThe system prompt is server-only, the rest is public\n\n\n\nsystemPrompt is read by the server and injected into the upstream request. It is never sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in Security, and the welcome/suggestions strings are shipped to the browser.\nNote that the proxy also injects the signed-in user’s identity as a second system message, from the trusted session, so the agent can resolve “me”/“my” and scope graph queries to that person.\n\n\n\n\n\n\n\n\nThe institution name fills itself in\n\n\n\nsystemPrompt supports {variable} placeholders, resolved server-side before the prompt is sent. The sample uses {institutionName}, which SoVisuPlus fills from INSTITUTION_NAME in docker/.env (passed through as NEXT_PUBLIC_INSTITUTION_NAME in sovisuplus.yaml) — so there is nothing to keep in sync by hand.\nAny other key you need goes in the file’s variables map. A placeholder that matches neither an app-provided default nor a variables entry resolves to an empty string, so a typo silently drops the text rather than leaking {...} to the agent.\n\n\n\n\nApplying changes\nThe file is read once per process and cached, so a restart is required to pick up edits:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile sovisuplus \\\n  up -d sovisuplus",
+    "crumbs": [
+      "Installation",
+      "Docker Compose"
+    ]
+  },
+  {
     "objectID": "ai/index.html",
     "href": "ai/index.html",
     "title": "Introduction",
@@ -697,6 +741,17 @@
     "title": "Security",
     "section": "🖥️ The interface layer — OpenWebUI",
     "text": "🖥️ The interface layer — OpenWebUI\nOpenWebUI is the only layer directly exposed to end users.\n\nUser registration is disabled by default (ENABLE_SIGNUP=false) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO.\nAn admin account is seeded on first run via OPENWEBUI_ADMIN_EMAIL and OPENWEBUI_ADMIN_PASSWORD in docker/openwebui/.env.\nKeycloak SSO can be enabled via OAuth2/OIDC — see Configuring OpenWebUI.",
+    "crumbs": [
+      "Overview",
+      "Security"
+    ]
+  },
+  {
+    "objectID": "ai/security.html#supporting-services-crisalid-taxi",
+    "href": "ai/security.html#supporting-services-crisalid-taxi",
+    "title": "Security",
+    "section": "🚖 Supporting services — CRISalid Taxi",
+    "text": "🚖 Supporting services — CRISalid Taxi\nCRISalid Taxi has no authentication of its own. It is designed to be reached only by IKG on the internal Docker network, and its port is not published to the host.\n\nDo not expose it on the web. Each request triggers embedding calls to the shared endpoint, so an exposed instance is an easy way to exhaust your embedding quota.\nOn a multi-server deployment, if you publish its port for IKG, restrict access to the IKG host with a firewall rule (see Multi-Server Deployment).\nThe optional OpenSearch Dashboards profile publishes port 5601 without authentication: keep it for local inspection only.",
     "crumbs": [
       "Overview",
       "Security"
@@ -1117,61 +1172,6 @@
     "crumbs": [
       "Requirements",
       "Required Infrastructure and Dependencies"
-    ]
-  },
-  {
-    "objectID": "ai/docker-compose.html#sovisuplus-assistant-content",
-    "href": "ai/docker-compose.html#sovisuplus-assistant-content",
-    "title": "Docker Compose",
-    "section": "SoVisuPlus assistant configuration",
-    "text": "SoVisuPlus assistant configuration\nThe assistant is configured by a JSON file located in the docker/sovisuplus/config directory, named chat.json. It lets you set a system prompt, seed the chat’s conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the chat.sample.json located in the same directory and fill in the fields.\ncp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json\n$EDITOR docker/sovisuplus/config/chat.json\n\nSchema\n{\n  \"systemPrompt\": \"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'\",\n  \"variables\": { \"supportEmail\": \"svp-support@example.edu\" },\n  \"locales\": {\n    \"en\": {\n      \"welcome\": { \"title\": \"Welcome\", \"message\": \"Hi! I'm your SoVisu+ assistant…\" },\n      \"suggestions\": [{ \"label\": \"Open access rate\", \"value\": \"How many publications in my organization are open access?\" }]\n    },\n    \"fr\": {\n      \"welcome\": { \"title\": \"Bienvenue\", \"message\": \"Bonjour ! Je suis votre assistant SoVisu+…\" },\n      \"suggestions\": [{ \"label\": \"Taux de science ouverte\", \"value\": \"Combien de publications sont en science ouverte dans mon organisation ?\" }]\n    }\n  }\n}\n\n\n\n\n\n\n\nField\nPurpose\n\n\n\n\nsystemPrompt\nSent to the agent as a role:\"system\" message by the /api/chat proxy. The field is required (see below).\n\n\nvariables\nOptional map of custom {key} values for systemPrompt, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them.\n\n\nlocales.&lt;lang&gt;.welcome\nSeeds the first conversation and assistant message when the widget opens; title names the conversation.\n\n\nlocales.&lt;lang&gt;.suggestions\nStarter question suggestions, rendered as chips. value is the text submitted by clicking on the chip, label is the chip’s label — it should be shorter than value (label falls back to value when omitted).\n\n\n\nLocales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to en if it exists, or to empty values if not.\nsystemPrompt is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.\n\n\n\n\n\n\nNote\n\n\n\nsystemPrompt field value may be empty but in that case you’re relying on the agent’s own built-in prompt that doesn’t contain any specific instructions.\n\n\n\n\n\n\n\n\nThe widget only appears when the chat API is configured\n\n\n\nSoVisuPlus renders the assistant only if CRISALID_AGENTS_API_URL is set (it defaults to http://crisalid-agents-chat-api:9100 in sovisuplus.yaml) and a config file resolves. In Docker the second condition is effectively always met — the image ships a generic chat.sample.json as a last-resort fallback, and it is only skipped if it too fails to load.\n\n\n\n\nFallback\nThe file is read at docker/sovisuplus/config/chat.json, as docker/sovisuplus/config is bind-mounted read-only at /config. If you forgot to create it, or if it is malformed, SoVisuPlus falls back to /app/chat.sample.json, the generic configuration baked into the image.\n\n\n\n\n\n\nThe system prompt is server-only, the rest is public\n\n\n\nsystemPrompt is read by the server and injected into the upstream request. It is never sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in Security, and the welcome/suggestions strings are shipped to the browser.\nNote that the proxy also injects the signed-in user’s identity as a second system message, from the trusted session, so the agent can resolve “me”/“my” and scope graph queries to that person.\n\n\n\n\n\n\n\n\nThe institution name fills itself in\n\n\n\nsystemPrompt supports {variable} placeholders, resolved server-side before the prompt is sent. The sample uses {institutionName}, which SoVisuPlus fills from INSTITUTION_NAME in docker/.env (passed through as NEXT_PUBLIC_INSTITUTION_NAME in sovisuplus.yaml) — so there is nothing to keep in sync by hand.\nAny other key you need goes in the file’s variables map. A placeholder that matches neither an app-provided default nor a variables entry resolves to an empty string, so a typo silently drops the text rather than leaking {...} to the agent.\n\n\n\n\nApplying changes\nThe file is read once per process and cached, so a restart is required to pick up edits:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile sovisuplus \\\n  up -d sovisuplus",
-    "crumbs": [
-      "Installation",
-      "Docker Compose"
-    ]
-  },
-  {
-    "objectID": "dev/step-by-step.html#start-crisalid-taxi-topics-classification",
-    "href": "dev/step-by-step.html#start-crisalid-taxi-topics-classification",
-    "title": "Docker Compose - Step by Step",
-    "section": "14. 🚖 Start CRISalid Taxi (topics classification)",
-    "text": "14. 🚖 Start CRISalid Taxi (topics classification)\nCRISalid Taxi classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity, on behalf of IKG. It is optional: enable it if you want documents in the knowledge graph to be linked to OpenAlex topics.\nIt consists of two containers behind the crisalid-taxi profile:\n\ncrisalid-taxi: the FastAPI classification service, reachable by IKG at http://crisalid-taxi:8000 (not published to the host).\ncrisalid-taxi-opensearch: a dedicated OpenSearch instance holding the taxonomy embeddings.\n\nAn optional crisalid-taxi-dashboards profile adds OpenSearch Dashboards on port 5601 to inspect the index.\n\nConfigure\nTaxi uses the shared embedding endpoint configured by the EMBEDDING_* variables in docker/.env (see Semantic Embeddings). Service-specific settings (matching thresholds, retries, OpenSearch heap) live in crisalid-taxi/.env; the sample values are fine to start with.\n\n\nBefore the first start\nDownload the OpenAlex snapshot into the taxi data directory. Skip this if you already ran the script without argument in step 9: it then filled both the IKG and the taxi copies.\nbash scripts/download_openalex_tree.sh crisalid-taxi\n\n\nStart\nAdd --profile crisalid-taxi to your startup command:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.prod.yaml \\\n  --profile crisalid-bus \\\n  --profile harvester \\\n  --profile neo4j \\\n  --profile ikg \\\n  --profile cdb \\\n  --profile apollo \\\n  --profile keycloak \\\n  --profile sovisuplus \\\n  --profile neo4j-mcp \\\n  --profile crisalid-taxi \\\n  up -d\nOn the first start, Taxi embeds the whole taxonomy through the embedding endpoint before it starts serving. Allow several minutes; the container stays in starting state meanwhile. Later starts skip unchanged data.\n\n\nVerify\nThe port is not published, so probe the readiness route from inside the container:\ndocker exec \"$(docker ps -q -f label=com.docker.compose.service=crisalid-taxi)\" \\\n  python -c \"import urllib.request; print(urllib.request.urlopen('http://localhost:8000/readiness').read().decode())\"\nOnce ready, set TAXI_ENABLED=true in ikg/.env and restart IKG (docker compose ... up -d ikg) so that newly written documents get their OpenAlex topics.",
-    "crumbs": [
-      "Docker Compose",
-      "Docker Compose - Step by Step"
-    ]
-  },
-  {
-    "objectID": "ai/security.html#supporting-services-crisalid-taxi",
-    "href": "ai/security.html#supporting-services-crisalid-taxi",
-    "title": "Security",
-    "section": "🚖 Supporting services — CRISalid Taxi",
-    "text": "🚖 Supporting services — CRISalid Taxi\nCRISalid Taxi has no authentication of its own. It is designed to be reached only by IKG on the internal Docker network, and its port is not published to the host.\n\nDo not expose it on the web. Each request triggers embedding calls to the shared endpoint, so an exposed instance is an easy way to exhaust your embedding quota.\nOn a multi-server deployment, if you publish its port for IKG, restrict access to the IKG host with a firewall rule (see Multi-Server Deployment).\nThe optional OpenSearch Dashboards profile publishes port 5601 without authentication: keep it for local inspection only.",
-    "crumbs": [
-      "Overview",
-      "Security"
-    ]
-  },
-  {
-    "objectID": "ai/docker-compose.html#crisalid-taxi",
-    "href": "ai/docker-compose.html#crisalid-taxi",
-    "title": "Docker Compose",
-    "section": "Topics classification (crisalid-taxi)",
-    "text": "Topics classification (crisalid-taxi)\ncrisalid-taxi classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.\nBefore the first start, download the OpenAlex snapshot into the taxi data directory (see Download the OpenAlex Classification Tree):\nbash docker/scripts/download_openalex_tree.sh crisalid-taxi\nThen start the profile (add crisalid-taxi-dashboards to get the OpenSearch Dashboards UI on port 5601):\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile crisalid-taxi \\\n  up -d\nThe first startup embeds the full taxonomy through the shared embedding endpoint (see Semantic Embeddings), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.\nConfiguration:\n\nMatching thresholds, retries and OpenSearch settings: docker/crisalid-taxi/.env.\nEmbedding endpoint: the shared EMBEDDING_* variables in docker/.env.\nIKG side: set TAXI_ENABLED=true in docker/ikg/.env so IKG calls the taxi service (http://crisalid-taxi:8000) when documents are written. Disabled by default.",
-    "crumbs": [
-      "Installation",
-      "Docker Compose"
-    ]
-  },
-  {
-    "objectID": "ai/embeddings.html#crisalid-taxi-specific-configuration",
-    "href": "ai/embeddings.html#crisalid-taxi-specific-configuration",
-    "title": "Semantic Embeddings",
-    "section": "CRISalid Taxi-specific configuration",
-    "text": "CRISalid Taxi-specific configuration\nSet in docker/crisalid-taxi/.env:\n# Number of texts sent per request. Must not exceed the server's max-client-batch-size.\nTAXI_EMBEDDING_BATCH_SIZE=32\nThe default similarity threshold (TAXI_SIMILARITY_THRESHOLD) is calibrated for bge-m3; recalibrate it when changing the embedding model.",
-    "crumbs": [
-      "Installation",
-      "Semantic Embeddings"
     ]
   }
 ]
