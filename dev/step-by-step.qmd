@@ -331,10 +331,20 @@ Test the health route in the Swagger at [http://localhost:8001/docs](http://loca
 
 ### Configure
 
-Edit the root `.env` to set LDAP parameters (if applicable) and Airflow admin credentials:
+Edit the root `.env` to set LDAP parameters (if applicable), Airflow admin credentials and the version of the DAGs to
+deploy:
 
 ```bash
 vim .env
+```
+
+The CDB DAGs are cloned from the
+[crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) repository at the git ref given
+by `CDB_DAGS_REF`. Keep the tag shipped in `.env.sample` for the deployment release you checked out, or pick another
+one from the [CDB releases](https://github.com/CRISalid-esr/crisalid-directory-bridge/releases):
+
+```env
+CDB_DAGS_REF=v1.1.0
 ```
 
 ### Add data files
@@ -359,7 +369,9 @@ Data format documentation (French):
 ./configure_cdb.sh prod
 ```
 
-> This script overwrites the Airflow `.env` file. Re-run it whenever the root `.env` changes.
+> This script clones the DAGs at `CDB_DAGS_REF` into `cdb/dags` (replacing any previous content) and overwrites the
+> Airflow `.env` file. Re-run it whenever the root `.env` changes, including when you bump `CDB_DAGS_REF` to upgrade
+> the DAGs, then restart the `cdb` profile.
 
 ### Start
 
