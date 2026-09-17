@@ -37,6 +37,7 @@ docker compose \
 Configuration:
 
 - Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
+- Turning the SoVisuPlus assistant on or off: `SVP_CHAT_ENABLED` in `docker/sovisuplus/.env`, see [below](#disabling-the-assistant).
 - Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
 - Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
 - OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
@@ -113,8 +114,24 @@ Locales are keyed by language, and should be filled in for every locale the app 
 :::
 
 ::: {.callout-note}
-## The widget only appears when the chat API is configured
-SoVisuPlus renders the assistant only if `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the second condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load.
+## When the widget appears
+SoVisuPlus renders the assistant only if `SVP_CHAT_ENABLED` is not `false` **and** `CRISALID_AGENTS_API_URL` is set (it defaults to `http://crisalid-agents-chat-api:9100` in `sovisuplus.yaml`) **and** a config file resolves. In Docker the last condition is effectively always met — the image ships a generic `chat.sample.json` as a last-resort fallback, and it is only skipped if it too fails to load.
+
+When any condition is not met, the widget is hidden, `/api/chat` returns 404, and SoVisuPlus logs the reason once (`[ChatConfigService] AI chat is disabled: …`).
+:::
+
+### Disabling the assistant {#disabling-the-assistant}
+
+The assistant is enabled by default. To turn it off, set in `docker/sovisuplus/.env`:
+
+```bash
+SVP_CHAT_ENABLED=false
+```
+
+then recreate the `sovisuplus` container (`docker compose … up -d`). The `crisalid-agents-chat-api` profile (and `neo4j-mcp`, if nothing else uses it) can then be left out.
+
+::: {.callout-note}
+Emptying `SVP_CRISALID_CHAT_API_URL` does **not** disable the chat: an empty value falls back to the default URL.
 :::
 
 ### Fallback
