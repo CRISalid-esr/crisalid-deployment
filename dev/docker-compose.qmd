@@ -437,6 +437,9 @@ cp -r sovisuplus/theme-sample sovisuplus/theme
 
 2. **Edit the theme files** in `sovisuplus/theme` to customize text and images according to your institution's branding.
 
+> The help button is configured in `sovisuplus/.env` with `SVP_HELP_LINK_TYPE`: `url` opens the page at `SVP_HELP_URL`,
+> `mail` opens the mail client addressed to `SVP_MAINTENANCE_MAIL_ADDRESS`, and leaving it empty hides the button.
+
 ### 8. SoVisu+ RBAC Roles File
 
 SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
