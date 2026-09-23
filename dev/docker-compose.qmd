@@ -472,6 +472,8 @@ cp sovisuplus/config/chat.sample.json sovisuplus/config/chat.json
   as a chat config and is ignored.
 * This step is optional: with no `chat.json` — or one the app rejects — the container falls back to
   the generic `chat.sample.json` baked into the image, and the assistant still works.
+* To turn the assistant off, set `SVP_CHAT_ENABLED=false` in `docker/sovisuplus/.env` — see
+  [Disabling the assistant](../ai/docker-compose.qmd#disabling-the-assistant).
 
 ### 10. ⏰ Configure Ofelia (system-wide scheduler)
 

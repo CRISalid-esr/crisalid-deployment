@@ -59,6 +59,8 @@ services:
       - GRAPHQL_ENDPOINT_URL=http://${APOLLO_HOST:-apollo}:${APOLLO_API_PORT}/graphql
       - GRAPHQL_API_KEY_ENABLED=${APOLLO_ENABLE_API_KEYS}
       - GRAPHQL_API_KEY=${SOVISUPLUS_GRAPHQL_API_KEY}
+      # Kill switch for the AI chat assistant: set SVP_CHAT_ENABLED=false to hide it (default: enabled)
+      - CHAT_ENABLED=${SVP_CHAT_ENABLED:-true}
       # CRISalid agents chat API (server-to-server over crisalid-front)
       - CRISALID_AGENTS_API_URL=${SVP_CRISALID_CHAT_API_URL:-http://crisalid-agents-chat-api:9100}
       - CRISALID_AGENTS_API_KEY=${SOVISUPLUS_CHAT_API_KEY}
