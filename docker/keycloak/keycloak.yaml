@@ -48,6 +48,19 @@ services:
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
     hostname: ${KEYCLOAK_HOST}
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/8080;
+          printf 'GET /realms/crisalid-inst/.well-known/openid-configuration HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n' >&3;
+          head -c 15 <&3 | grep -q '200 OK'
+      interval: 20s
+      timeout: 5s
+      retries: 20
+      start_period: 120s
     volumes:
       - ./config:/opt/keycloak/data/import
       - ./themes:/opt/keycloak/themes

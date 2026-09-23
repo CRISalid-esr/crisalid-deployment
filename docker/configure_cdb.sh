@@ -165,10 +165,13 @@ if [[ "$RESET" == "true" ]]; then
 fi
 
 echo "Cleaning up old containers..."
-docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" "${DOWN_ARGS[@]}"
+docker compose $COMPOSE_ARGS --profile cdb --profile cdb-db -f "$CDB_DIR/cdb.yaml" "${DOWN_ARGS[@]}"
+
+echo "Starting cdb-postgres..."
+docker compose $COMPOSE_ARGS --profile cdb --profile cdb-db -f "$CDB_DIR/cdb.yaml" up -d --wait cdb-postgres
 
 echo "Running airflow-init..."
-docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
+docker compose $COMPOSE_ARGS --profile cdb --profile cdb-db -f "$CDB_DIR/cdb.yaml" run --rm airflow-init
 
 echo "Cleaning up old containers..."
-docker compose $COMPOSE_ARGS --profile cdb -f "$CDB_DIR/cdb.yaml" down --remove-orphans
+docker compose $COMPOSE_ARGS --profile cdb --profile cdb-db -f "$CDB_DIR/cdb.yaml" down --remove-orphans
