@@ -32,7 +32,7 @@ services:
       test: [ "CMD", "wget", "--spider", "http://localhost:7474" ]
       interval: 10s
       timeout: 10s
-      retries: 5
+      retries: 10
     networks:
       - ikg-network
     profiles:
