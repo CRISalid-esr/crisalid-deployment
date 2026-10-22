@@ -80,6 +80,8 @@ website:
           contents:
             - ai/local-workstation.qmd
             - ai/docker-compose.qmd
+            - href: ai/horizon-europe.qmd
+              text: "Horizon Europe topics"
             - href: ai/using-skills.qmd
               text: "Using CRISalid AI Skills"
             - ai/configuring-openwebui.qmd

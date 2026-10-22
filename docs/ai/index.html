@@ -211,6 +211,10 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/horizon-europe.html">
+ <span class="dropdown-text">Horizon Europe topics</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -319,6 +323,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../ai/docker-compose.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Docker Compose</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ai/horizon-europe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Horizon Europe topics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -553,6 +563,7 @@ Note
 <section id="supporting-services" class="level3">
 <h3 class="anchored" data-anchor-id="supporting-services">🚖 Supporting services</h3>
 <p>Outside the four chat layers, <strong><a href="https://github.com/CRISalid-esr/crisalid-taxi">CRISalid Taxi</a></strong> enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see <a href="../ai/docker-compose.html#crisalid-taxi">Topics classification</a>.</p>
+<p>Also optional, the <strong>Horizon Europe topic index</strong> adds a second data source next to the graph: an OpenSearch index of the topics of the current work programme, used by the Horizon topic finder agent (which topics fit a project idea?) and by the Topic-to-Researcher Match batch (which researchers fit each topic?). See <a href="../ai/horizon-europe.html">Horizon Europe topics</a>.</p>
 
 
 </section>
