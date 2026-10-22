@@ -1,0 +1,133 @@
+---
+title: "Horizon Europe topics"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+The Horizon Europe topic index is an OpenSearch index of the topics (calls for proposals) of the current Horizon
+Europe work programme, built from the official work programme PDFs. Two features of
+[crisalid-agents](https://github.com/CRISalid-esr/crisalid-agents) rely on it:
+
+- the **Horizon topic finder** (`project_topic_matching` agent): a chat agent that finds the topics matching a project
+  idea, served by OpenWebUI and by the chat API;
+- the **Topic-to-Researcher Match** (TRM): a batch that matches every topic of a cluster with the researchers of the
+  laboratories, from their publications in the knowledge graph, and produces evaluation reports.
+
+## Services and configuration
+
+| Profile | Service | Purpose |
+|---|---|---|
+| `horizon_europe_index` | `opensearch` | Single-node OpenSearch holding the topic index (port 9200, internal) |
+| `crisalid-agents-batch` | `crisalid-agents-batch` | One-shot container for the index ingestion and the TRM batch, run on demand with `docker compose run` (never by `up`) |
+
+Both are included in the main Docker Compose stack (see [Docker Compose](docker-compose.qmd)). The OpenSearch
+instance (`docker/horizon-europe-index/`) is only reachable on the internal agents network, over plain HTTP and without
+authentication: the security plugin is disabled. Its data lives in the `horizon_opensearch_data` named volume.
+
+Configuration files:
+
+- `docker/horizon-europe-index/.env` (copy of `.env.sample`): only the heap size, `OPENSEARCH_HEAP=1g`. The file must
+  exist even if the profile is never started, because the main compose file includes it.
+- `docker/crisalid-agents/.env`: the index settings (`HORIZON_OS_URL`, `HORIZON_OS_INDEX`, `HORIZON_SEARCH_PIPELINE`,
+  defaults are fine), the agents served (`CRISALID_AGENTS_AGENTS`, which includes `project_topic_matching` by default)
+  and `TRM_MODEL` (the model of the TRM batch, empty to reuse the chat model).
+- `docker/.env`: the shared `EMBEDDING_*` variables. The ingestion and the searches embed texts through this endpoint,
+  so it must be configured first (see [Semantic Embeddings](embeddings.qmd)).
+
+The `crisalid-agents-batch` service is built from the chat API image, the only one shipping the batch scripts, and
+mounts two host directories of `docker/horizon-europe-index/`: `wp/` (the PDFs, read-only, mounted as
+`/data/horizon`) and `reports/` (the TRM reports). Both are ignored by git.
+
+## 1. Upload the work programme PDFs
+
+Download the work programme parts of the current programme from the
+[Funding & Tenders portal](https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/programmes/horizon)
+(reference documents of Horizon Europe: one PDF per cluster, e.g. `wp-5-culture-creativity-and-inclusive-society_horizon-2026-2027_en.pdf`),
+and copy them into `docker/horizon-europe-index/wp/` on the server. For instance with sftp, as the user owning the
+deployment:
+
+```bash
+sftp crisalid@<server>
+sftp> cd /opt/crisalid/crisalid-deployment/docker/horizon-europe-index/wp
+sftp> put *.pdf
+sftp> bye
+```
+
+Only the cluster parts are useful (the agent and the batch work per cluster, CL1 to CL6); other parts of the programme
+are ignored or produce parse warnings.
+
+## 2. Build the index
+
+From `docker/`, as the user owning the deployment. `docker compose run` starts the OpenSearch service if needed and
+waits for it to be healthy before running the command.
+
+Pull the images first, then check the PDFs parse correctly without touching the index (`--issues` prints every parse
+warning):
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml pull opensearch crisalid-agents-batch
+
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
+  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py --dry-run --issues
+```
+
+Then build the index. The first run (or a rebuild after a change of the embedding model) uses `--recreate`, which drops
+and recreates the index and its search pipelines:
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
+  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py --recreate
+```
+
+Every topic and passage is embedded through the embedding endpoint, so the run takes a few minutes. It ends with a
+summary of the files and topics indexed, and `complete=True, ok=True` when everything went through. `--report
+<file>` writes the same summary as JSON.
+
+### Updating the programme
+
+Add, replace or remove PDFs in `wp/` and run the ingestion again, without `--recreate`:
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
+  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py
+```
+
+The ingestion is idempotent: unchanged files (same content, parser and embedding model) are skipped, and after a
+complete run the topics of files that are no longer in the directory are removed from the index.
+
+## 3. Serve the Horizon topic finder
+
+Once the index is built, start (or restart) the agent services together with the index profile, so that they reach
+the OpenSearch service:
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
+  --profile horizon_europe_index --profile neo4j-mcp \
+  --profile crisalid-agents-owui --profile crisalid-agents-chat-api \
+  up -d
+```
+
+Both agent services serve the graph agent and the topic finder by default (`CRISALID_AGENTS_AGENTS` in
+`docker/crisalid-agents/.env`); chat API clients select the agent they call. In OpenWebUI the topic finder appears as a
+model next to the graph agent (see [Configuring OpenWebUI](configuring-openwebui.qmd)).
+
+## 4. Topic-to-Researcher Match
+
+The TRM batch runs in the same `crisalid-agents-batch` service, by hand, and needs the `neo4j-mcp` profile to be up
+(it reads the publications through the MCP toolbox). Set `TRM_MODEL` in `docker/crisalid-agents/.env` to use a
+dedicated model. The JSON, Markdown and PDF reports are written to `docker/horizon-europe-index/reports/` on the host.
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml --profile neo4j-mcp up -d
+
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
+  run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --list-clusters
+
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
+  run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2
+```
+
+A single topic can be rerun with `--topic <topic id>`; a failed topic is recorded in the JSON report and never aborts
+the cluster.

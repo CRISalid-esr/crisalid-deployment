@@ -122,3 +122,5 @@ Although the user no longer interacts directly with the LLMs, OpenWebUI still ne
 ### 🚖 Supporting services
 
 Outside the four chat layers, **[CRISalid Taxi](https://github.com/CRISalid-esr/crisalid-taxi)** enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see [Topics classification](docker-compose.qmd#crisalid-taxi).
+
+Also optional, the **Horizon Europe topic index** adds a second data source next to the graph: an OpenSearch index of the topics of the current work programme, used by the Horizon topic finder agent (which topics fit a project idea?) and by the Topic-to-Researcher Match batch (which researchers fit each topic?). See [Horizon Europe topics](horizon-europe.qmd).

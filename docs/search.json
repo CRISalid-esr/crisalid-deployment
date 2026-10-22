@@ -494,69 +494,113 @@
     ]
   },
   {
-    "objectID": "ai/embeddings.html",
-    "href": "ai/embeddings.html",
-    "title": "Semantic Embeddings",
+    "objectID": "ai/horizon-europe.html",
+    "href": "ai/horizon-europe.html",
+    "title": "Horizon Europe topics",
     "section": "",
-    "text": "Embedding vectors are used by three services in the CRISalid AI stack:\nAll three services use the same embedding endpoint and model — configured once in the shared .env.",
+    "text": "The Horizon Europe topic index is an OpenSearch index of the topics (calls for proposals) of the current Horizon Europe work programme, built from the official work programme PDFs. Two features of crisalid-agents rely on it:",
     "crumbs": [
       "Installation",
-      "Semantic Embeddings"
+      "Horizon Europe topics"
     ]
   },
   {
-    "objectID": "ai/embeddings.html#shared-configuration",
-    "href": "ai/embeddings.html#shared-configuration",
-    "title": "Semantic Embeddings",
-    "section": "Shared configuration",
-    "text": "Shared configuration\nThe following variables are shared by IKG, CRISalid Agents and CRISalid Taxi. Set them in the common .env file:\nEMBEDDING_API_URL=https://your-embedding-server/\nEMBEDDING_API_KEY=&lt;your-api-key&gt;\nEMBEDDING_API_MODEL=&lt;model-name&gt;\nEMBEDDING_TIMEOUT_SECONDS=30\nOnly the openai_compatible provider is supported in Docker Compose deployments. It connects to any remote HTTP service exposing a /v1/embeddings endpoint (OpenAI, vLLM, Hugging Face TEI, or any compatible API).\n\n\n\n\n\n\nRecommended provider: ILaaS\n\n\n\nILaaS offers a sovereign French embedding API that works out of the box with the openai_compatible provider. It is the recommended choice for institutions subject to French or European data sovereignty requirements.\nWith ILaaS and the bge-m3 model (strong multilingual performance on academic French and English):\nEMBEDDING_API_URL=https://rag-api.ilaas.fr\nEMBEDDING_API_KEY=&lt;your-ilaas-api-key&gt;\nEMBEDDING_API_MODEL=bge-m3\nEMBEDDING_TIMEOUT_SECONDS=30",
+    "objectID": "ai/horizon-europe.html#services-and-configuration",
+    "href": "ai/horizon-europe.html#services-and-configuration",
+    "title": "Horizon Europe topics",
+    "section": "Services and configuration",
+    "text": "Services and configuration\n\n\n\n\n\n\n\n\nProfile\nService\nPurpose\n\n\n\n\nhorizon_europe_index\nopensearch\nSingle-node OpenSearch holding the topic index (port 9200, internal)\n\n\ncrisalid-agents-batch\ncrisalid-agents-batch\nOne-shot container for the index ingestion and the TRM batch, run on demand with docker compose run (never by up)\n\n\n\nBoth are included in the main Docker Compose stack (see Docker Compose). The OpenSearch instance (docker/horizon-europe-index/) is only reachable on the internal agents network, over plain HTTP and without authentication: the security plugin is disabled. Its data lives in the horizon_opensearch_data named volume.\nConfiguration files:\n\ndocker/horizon-europe-index/.env (copy of .env.sample): only the heap size, OPENSEARCH_HEAP=1g. The file must exist even if the profile is never started, because the main compose file includes it.\ndocker/crisalid-agents/.env: the index settings (HORIZON_OS_URL, HORIZON_OS_INDEX, HORIZON_SEARCH_PIPELINE, defaults are fine), the agents served (CRISALID_AGENTS_AGENTS, which includes project_topic_matching by default) and TRM_MODEL (the model of the TRM batch, empty to reuse the chat model).\ndocker/.env: the shared EMBEDDING_* variables. The ingestion and the searches embed texts through this endpoint, so it must be configured first (see Semantic Embeddings).\n\nThe crisalid-agents-batch service is built from the chat API image, the only one shipping the batch scripts, and mounts two host directories of docker/horizon-europe-index/: wp/ (the PDFs, read-only, mounted as /data/horizon) and reports/ (the TRM reports). Both are ignored by git.",
     "crumbs": [
       "Installation",
-      "Semantic Embeddings"
+      "Horizon Europe topics"
     ]
   },
   {
-    "objectID": "ai/embeddings.html#ikg-specific-configuration",
-    "href": "ai/embeddings.html#ikg-specific-configuration",
-    "title": "Semantic Embeddings",
-    "section": "IKG-specific configuration",
-    "text": "IKG-specific configuration\nThe following variables are specific to IKG and are set in docker/ikg/.env:\n# Enable batch embedding computation in the IKG service (default: false)\nEMBEDDING_ENABLED=true\n\n# Must match the model's actual output size; used to configure the Neo4j vector index.\n# Common values: 384 (multilingual-e5-small), 768 (e5-base), 1024 (bge-m3), 1536 (OpenAI ada-002)\nEMBEDDING_DIMENSIONS=1024\n\n# Number of texts sent per request. Must not exceed the server's max-client-batch-size.\nEMBEDDING_BATCH_SIZE=32",
+    "objectID": "ai/horizon-europe.html#upload-the-work-programme-pdfs",
+    "href": "ai/horizon-europe.html#upload-the-work-programme-pdfs",
+    "title": "Horizon Europe topics",
+    "section": "1. Upload the work programme PDFs",
+    "text": "1. Upload the work programme PDFs\nDownload the work programme parts of the current programme from the Funding & Tenders portal (reference documents of Horizon Europe: one PDF per cluster, e.g. wp-5-culture-creativity-and-inclusive-society_horizon-2026-2027_en.pdf), and copy them into docker/horizon-europe-index/wp/ on the server. For instance with sftp, as the user owning the deployment:\nsftp crisalid@&lt;server&gt;\nsftp&gt; cd /opt/crisalid/crisalid-deployment/docker/horizon-europe-index/wp\nsftp&gt; put *.pdf\nsftp&gt; bye\nOnly the cluster parts are useful (the agent and the batch work per cluster, CL1 to CL6); other parts of the programme are ignored or produce parse warnings.",
     "crumbs": [
       "Installation",
-      "Semantic Embeddings"
+      "Horizon Europe topics"
     ]
   },
   {
-    "objectID": "ai/embeddings.html#crisalid-taxi-specific-configuration",
-    "href": "ai/embeddings.html#crisalid-taxi-specific-configuration",
-    "title": "Semantic Embeddings",
-    "section": "CRISalid Taxi-specific configuration",
-    "text": "CRISalid Taxi-specific configuration\nSet in docker/crisalid-taxi/.env:\n# Number of texts sent per request. Must not exceed the server's max-client-batch-size.\nTAXI_EMBEDDING_BATCH_SIZE=32\nThe default similarity threshold (TAXI_SIMILARITY_THRESHOLD) is calibrated for bge-m3; recalibrate it when changing the embedding model.",
+    "objectID": "ai/horizon-europe.html#build-the-index",
+    "href": "ai/horizon-europe.html#build-the-index",
+    "title": "Horizon Europe topics",
+    "section": "2. Build the index",
+    "text": "2. Build the index\nFrom docker/, as the user owning the deployment. docker compose run starts the OpenSearch service if needed and waits for it to be healthy before running the command.\nPull the images first, then check the PDFs parse correctly without touching the index (--issues prints every parse warning):\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml pull opensearch crisalid-agents-batch\n\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml \\\n  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py --dry-run --issues\nThen build the index. The first run (or a rebuild after a change of the embedding model) uses --recreate, which drops and recreates the index and its search pipelines:\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml \\\n  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py --recreate\nEvery topic and passage is embedded through the embedding endpoint, so the run takes a few minutes. It ends with a summary of the files and topics indexed, and complete=True, ok=True when everything went through. --report &lt;file&gt; writes the same summary as JSON.\n\nUpdating the programme\nAdd, replace or remove PDFs in wp/ and run the ingestion again, without --recreate:\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml \\\n  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py\nThe ingestion is idempotent: unchanged files (same content, parser and embedding model) are skipped, and after a complete run the topics of files that are no longer in the directory are removed from the index.",
     "crumbs": [
       "Installation",
-      "Semantic Embeddings"
+      "Horizon Europe topics"
     ]
   },
   {
-    "objectID": "ai/embeddings.html#computing-embeddings-ikg",
-    "href": "ai/embeddings.html#computing-embeddings-ikg",
-    "title": "Semantic Embeddings",
-    "section": "Computing embeddings (IKG)",
-    "text": "Computing embeddings (IKG)\nOnce enabled, embeddings are updated automatically after each write that produces embeddable nodes. For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:\n# Process all pending and failed nodes (default)\ndocker compose exec crisalid-ikg python -m app.cli literals compute-embeddings\n\n# Restrict to specific literal types (e.g. titles and abstracts only)\ndocker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \\\n  --types document_title,document_abstract\nThe command prints status counts before and after:\nEmbedding status counts: {'pending': 42831, 'success': 0}\n...\nDone. Embedding status counts after: {'success': 42831}",
+    "objectID": "ai/horizon-europe.html#serve-the-horizon-topic-finder",
+    "href": "ai/horizon-europe.html#serve-the-horizon-topic-finder",
+    "title": "Horizon Europe topics",
+    "section": "3. Serve the Horizon topic finder",
+    "text": "3. Serve the Horizon topic finder\nOnce the index is built, start (or restart) the agent services together with the index profile, so that they reach the OpenSearch service:\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml \\\n  --profile horizon_europe_index --profile neo4j-mcp \\\n  --profile crisalid-agents-owui --profile crisalid-agents-chat-api \\\n  up -d\nBoth agent services serve the graph agent and the topic finder by default (CRISALID_AGENTS_AGENTS in docker/crisalid-agents/.env); chat API clients select the agent they call. In OpenWebUI the topic finder appears as a model next to the graph agent (see Configuring OpenWebUI).",
     "crumbs": [
       "Installation",
-      "Semantic Embeddings"
+      "Horizon Europe topics"
     ]
   },
   {
-    "objectID": "ai/embeddings.html#changing-the-embedding-model",
-    "href": "ai/embeddings.html#changing-the-embedding-model",
-    "title": "Semantic Embeddings",
-    "section": "Changing the embedding model",
-    "text": "Changing the embedding model\nIf you switch to a model with a different output dimension, update EMBEDDING_API_MODEL in the common .env and EMBEDDING_DIMENSIONS in docker/ikg/.env, restart the stack, then rebuild the vector index:\ndocker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \\\n  --recreate-vector-indexes\n\n\n\n\n\n\nWarning\n\n\n\n--recreate-vector-indexes resets all embeddings and recomputes them from scratch. The graph remains usable during reprocessing; vector search results will be partial until all nodes are processed.",
+    "objectID": "ai/horizon-europe.html#topic-to-researcher-match",
+    "href": "ai/horizon-europe.html#topic-to-researcher-match",
+    "title": "Horizon Europe topics",
+    "section": "4. Topic-to-Researcher Match",
+    "text": "4. Topic-to-Researcher Match\nThe TRM batch runs in the same crisalid-agents-batch service, by hand, and needs the neo4j-mcp profile to be up (it reads the publications through the MCP toolbox). Set TRM_MODEL in docker/crisalid-agents/.env to use a dedicated model. The JSON, Markdown and PDF reports are written to docker/horizon-europe-index/reports/ on the host.\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml --profile neo4j-mcp up -d\n\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml \\\n  run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --list-clusters\n\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml \\\n  run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2\nA single topic can be rerun with --topic &lt;topic id&gt;; a failed topic is recorded in the JSON report and never aborts the cluster.",
     "crumbs": [
       "Installation",
-      "Semantic Embeddings"
+      "Horizon Europe topics"
+    ]
+  },
+  {
+    "objectID": "ai/docker-compose.html",
+    "href": "ai/docker-compose.html",
+    "title": "Docker Compose",
+    "section": "",
+    "text": "The AI layer is composed of the following profiles, to be started together with the rest of the stack (see Docker Compose — Overview):\nBoth agent services run the same CRISalid graph agent and require the neo4j-mcp profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:\nConfiguration:",
+    "crumbs": [
+      "Installation",
+      "Docker Compose"
+    ]
+  },
+  {
+    "objectID": "ai/docker-compose.html#crisalid-taxi",
+    "href": "ai/docker-compose.html#crisalid-taxi",
+    "title": "Docker Compose",
+    "section": "Topics classification (crisalid-taxi)",
+    "text": "Topics classification (crisalid-taxi)\ncrisalid-taxi classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.\nBefore the first start, download the OpenAlex snapshot into the taxi data directory (see Download the OpenAlex Classification Tree):\nbash docker/scripts/download_openalex_tree.sh crisalid-taxi\nThen start the profile (add crisalid-taxi-dashboards to get the OpenSearch Dashboards UI on port 5601):\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile crisalid-taxi \\\n  up -d\nThe first startup embeds the full taxonomy through the shared embedding endpoint (see Semantic Embeddings), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.\nConfiguration:\n\nMatching thresholds, retries and OpenSearch settings: docker/crisalid-taxi/.env.\nEmbedding endpoint: the shared EMBEDDING_* variables in docker/.env.\nIKG side: set TAXI_ENABLED=true in docker/ikg/.env so IKG calls the taxi service (http://crisalid-taxi:8000) when documents are written. Disabled by default.",
+    "crumbs": [
+      "Installation",
+      "Docker Compose"
+    ]
+  },
+  {
+    "objectID": "ai/docker-compose.html#horizon-europe-index",
+    "href": "ai/docker-compose.html#horizon-europe-index",
+    "title": "Docker Compose",
+    "section": "Horizon Europe topic index",
+    "text": "Horizon Europe topic index\nThe horizon_europe_index and crisalid-agents-batch profiles (OpenSearch index of the Horizon Europe work programme topics, its ingestion from the work programme PDFs, the Horizon topic finder agent and the Topic-to-Researcher Match batch) are documented on their own page: Horizon Europe topics.",
+    "crumbs": [
+      "Installation",
+      "Docker Compose"
+    ]
+  },
+  {
+    "objectID": "ai/docker-compose.html#sovisuplus-assistant-content",
+    "href": "ai/docker-compose.html#sovisuplus-assistant-content",
+    "title": "Docker Compose",
+    "section": "SoVisuPlus assistant configuration",
+    "text": "SoVisuPlus assistant configuration\nThe assistant is configured by a JSON file located in the docker/sovisuplus/config directory, named chat.json. It lets you set a system prompt, seed the chat’s conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the chat.sample.json located in the same directory and fill in the fields.\ncp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json\n$EDITOR docker/sovisuplus/config/chat.json\n\nSchema\n{\n  \"systemPrompt\": \"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'\",\n  \"variables\": { \"supportEmail\": \"svp-support@example.edu\" },\n  \"locales\": {\n    \"en\": {\n      \"welcome\": { \"title\": \"Welcome\", \"message\": \"Hi! I'm your SoVisu+ assistant…\" },\n      \"suggestions\": [{ \"label\": \"Open access rate\", \"value\": \"How many publications in my organization are open access?\" }]\n    },\n    \"fr\": {\n      \"welcome\": { \"title\": \"Bienvenue\", \"message\": \"Bonjour ! Je suis votre assistant SoVisu+…\" },\n      \"suggestions\": [{ \"label\": \"Taux de science ouverte\", \"value\": \"Combien de publications sont en science ouverte dans mon organisation ?\" }]\n    }\n  }\n}\n\n\n\n\n\n\n\nField\nPurpose\n\n\n\n\nsystemPrompt\nSent to the agent as a role:\"system\" message by the /api/chat proxy. The field is required (see below).\n\n\nvariables\nOptional map of custom {key} values for systemPrompt, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them.\n\n\nlocales.&lt;lang&gt;.welcome\nSeeds the first conversation and assistant message when the widget opens; title names the conversation.\n\n\nlocales.&lt;lang&gt;.suggestions\nStarter question suggestions, rendered as chips. value is the text submitted by clicking on the chip, label is the chip’s label — it should be shorter than value (label falls back to value when omitted).\n\n\n\nLocales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to en if it exists, or to empty values if not.\nsystemPrompt is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.\n\n\n\n\n\n\nNote\n\n\n\nsystemPrompt field value may be empty but in that case you’re relying on the agent’s own built-in prompt that doesn’t contain any specific instructions.\n\n\n\n\n\n\n\n\nWhen the widget appears\n\n\n\nSoVisuPlus renders the assistant only if SVP_CHAT_ENABLED is not false and CRISALID_AGENTS_API_URL is set (it defaults to http://crisalid-agents-chat-api:9100 in sovisuplus.yaml) and a config file resolves. In Docker the last condition is effectively always met — the image ships a generic chat.sample.json as a last-resort fallback, and it is only skipped if it too fails to load.\nWhen any condition is not met, the widget is hidden, /api/chat returns 404, and SoVisuPlus logs the reason once ([ChatConfigService] AI chat is disabled: …).\n\n\n\n\nDisabling the assistant\nThe assistant is enabled by default. To turn it off, set in docker/sovisuplus/.env:\nSVP_CHAT_ENABLED=false\nthen recreate the sovisuplus container (docker compose … up -d). The crisalid-agents-chat-api profile (and neo4j-mcp, if nothing else uses it) can then be left out.\n\n\n\n\n\n\nNote\n\n\n\nEmptying SVP_CRISALID_CHAT_API_URL does not disable the chat: an empty value falls back to the default URL.\n\n\n\n\nFallback\nThe file is read at docker/sovisuplus/config/chat.json, as docker/sovisuplus/config is bind-mounted read-only at /config. If you forgot to create it, or if it is malformed, SoVisuPlus falls back to /app/chat.sample.json, the generic configuration baked into the image.\n\n\n\n\n\n\nThe system prompt is server-only, the rest is public\n\n\n\nsystemPrompt is read by the server and injected into the upstream request. It is never sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in Security, and the welcome/suggestions strings are shipped to the browser.\nNote that the proxy also injects the signed-in user’s identity as a second system message, from the trusted session, so the agent can resolve “me”/“my” and scope graph queries to that person.\n\n\n\n\n\n\n\n\nThe institution name fills itself in\n\n\n\nsystemPrompt supports {variable} placeholders, resolved server-side before the prompt is sent. The sample uses {institutionName}, which SoVisuPlus fills from INSTITUTION_NAME in docker/.env (passed through as NEXT_PUBLIC_INSTITUTION_NAME in sovisuplus.yaml) — so there is nothing to keep in sync by hand.\nAny other key you need goes in the file’s variables map. A placeholder that matches neither an app-provided default nor a variables entry resolves to an empty string, so a typo silently drops the text rather than leaking {...} to the agent.\n\n\n\n\nApplying changes\nThe file is read once per process and cached, so a restart is required to pick up edits:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile sovisuplus \\\n  up -d sovisuplus",
+    "crumbs": [
+      "Installation",
+      "Docker Compose"
     ]
   },
   {
@@ -626,36 +670,69 @@
     ]
   },
   {
-    "objectID": "ai/docker-compose.html",
-    "href": "ai/docker-compose.html",
-    "title": "Docker Compose",
+    "objectID": "ai/embeddings.html",
+    "href": "ai/embeddings.html",
+    "title": "Semantic Embeddings",
     "section": "",
-    "text": "The AI layer is composed of the following profiles, to be started together with the rest of the stack (see Docker Compose — Overview):\nBoth agent services run the same CRISalid graph agent and require the neo4j-mcp profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:\nConfiguration:",
+    "text": "Embedding vectors are used by three services in the CRISalid AI stack:\nAll three services use the same embedding endpoint and model — configured once in the shared .env.",
     "crumbs": [
       "Installation",
-      "Docker Compose"
+      "Semantic Embeddings"
     ]
   },
   {
-    "objectID": "ai/docker-compose.html#crisalid-taxi",
-    "href": "ai/docker-compose.html#crisalid-taxi",
-    "title": "Docker Compose",
-    "section": "Topics classification (crisalid-taxi)",
-    "text": "Topics classification (crisalid-taxi)\ncrisalid-taxi classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.\nBefore the first start, download the OpenAlex snapshot into the taxi data directory (see Download the OpenAlex Classification Tree):\nbash docker/scripts/download_openalex_tree.sh crisalid-taxi\nThen start the profile (add crisalid-taxi-dashboards to get the OpenSearch Dashboards UI on port 5601):\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile crisalid-taxi \\\n  up -d\nThe first startup embeds the full taxonomy through the shared embedding endpoint (see Semantic Embeddings), which can take several minutes; the API only starts serving once indexing is complete. Later startups skip unchanged data.\nConfiguration:\n\nMatching thresholds, retries and OpenSearch settings: docker/crisalid-taxi/.env.\nEmbedding endpoint: the shared EMBEDDING_* variables in docker/.env.\nIKG side: set TAXI_ENABLED=true in docker/ikg/.env so IKG calls the taxi service (http://crisalid-taxi:8000) when documents are written. Disabled by default. ## Horizon Europe topic index {#horizon-europe-index}\n\nThe horizon_europe_index profile runs a single-node OpenSearch (docker/horizon-europe-index/, data in the horizon_opensearch_data named volume). It is only reachable on the internal agents network, over plain HTTP and without authentication (the security plugin is disabled), so there is nothing to configure beyond the heap size in docker/horizon-europe-index/.env.\nThe index is built from the work programme PDFs of the current programme (one PDF per cluster part), dropped by hand in docker/horizon-europe-index/wp/. The ingestion runs in the crisalid-agents-batch service, a one-shot container built from the chat API image (the only one shipping the batch scripts), which mounts that directory read-only as /data/horizon. docker compose run starts the OpenSearch service if needed and waits for it to be healthy. Run the ingestion after each update of the PDF directory; it is idempotent and removes the topics of files that are no longer there:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py --report /tmp/ingest.json\n\nHorizon topic finder agent\nOnce the index is built, the project_topic_matching agent (“Horizon topic finder”) works in both agent services: they serve the graph agent and the topic finder by default (CRISALID_AGENTS_AGENTS in docker/crisalid-agents/.env), and chat API clients select the agent they call. In OpenWebUI it appears as a model next to the graph agent (see Configuring OpenWebUI).\n\n\nTopic-to-Researcher Match\nThe batch that matches every topic of a cluster with the researchers of the laboratories (from their publications in the knowledge graph) runs in the same crisalid-agents-batch service, by hand, and needs the neo4j-mcp profile to be up. Set TRM_MODEL in docker/crisalid-agents/.env (it defaults to the chat model). The JSON, Markdown and PDF reports are written to docker/horizon-europe-index/reports/ on the host.\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml --profile neo4j-mcp up -d\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --list-clusters\ndocker compose -f docker-compose.yaml -f docker-compose.dev.yaml run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2",
+    "objectID": "ai/embeddings.html#shared-configuration",
+    "href": "ai/embeddings.html#shared-configuration",
+    "title": "Semantic Embeddings",
+    "section": "Shared configuration",
+    "text": "Shared configuration\nThe following variables are shared by IKG, CRISalid Agents and CRISalid Taxi. Set them in the common .env file:\nEMBEDDING_API_URL=https://your-embedding-server/\nEMBEDDING_API_KEY=&lt;your-api-key&gt;\nEMBEDDING_API_MODEL=&lt;model-name&gt;\nEMBEDDING_TIMEOUT_SECONDS=30\nOnly the openai_compatible provider is supported in Docker Compose deployments. It connects to any remote HTTP service exposing a /v1/embeddings endpoint (OpenAI, vLLM, Hugging Face TEI, or any compatible API).\n\n\n\n\n\n\nRecommended provider: ILaaS\n\n\n\nILaaS offers a sovereign French embedding API that works out of the box with the openai_compatible provider. It is the recommended choice for institutions subject to French or European data sovereignty requirements.\nWith ILaaS and the bge-m3 model (strong multilingual performance on academic French and English):\nEMBEDDING_API_URL=https://rag-api.ilaas.fr\nEMBEDDING_API_KEY=&lt;your-ilaas-api-key&gt;\nEMBEDDING_API_MODEL=bge-m3\nEMBEDDING_TIMEOUT_SECONDS=30",
     "crumbs": [
       "Installation",
-      "Docker Compose"
+      "Semantic Embeddings"
     ]
   },
   {
-    "objectID": "ai/docker-compose.html#sovisuplus-assistant-content",
-    "href": "ai/docker-compose.html#sovisuplus-assistant-content",
-    "title": "Docker Compose",
-    "section": "SoVisuPlus assistant configuration",
-    "text": "SoVisuPlus assistant configuration\nThe assistant is configured by a JSON file located in the docker/sovisuplus/config directory, named chat.json. It lets you set a system prompt, seed the chat’s conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the chat.sample.json located in the same directory and fill in the fields.\ncp docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json\n$EDITOR docker/sovisuplus/config/chat.json\n\nSchema\n{\n  \"systemPrompt\": \"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'\",\n  \"variables\": { \"supportEmail\": \"svp-support@example.edu\" },\n  \"locales\": {\n    \"en\": {\n      \"welcome\": { \"title\": \"Welcome\", \"message\": \"Hi! I'm your SoVisu+ assistant…\" },\n      \"suggestions\": [{ \"label\": \"Open access rate\", \"value\": \"How many publications in my organization are open access?\" }]\n    },\n    \"fr\": {\n      \"welcome\": { \"title\": \"Bienvenue\", \"message\": \"Bonjour ! Je suis votre assistant SoVisu+…\" },\n      \"suggestions\": [{ \"label\": \"Taux de science ouverte\", \"value\": \"Combien de publications sont en science ouverte dans mon organisation ?\" }]\n    }\n  }\n}\n\n\n\n\n\n\n\nField\nPurpose\n\n\n\n\nsystemPrompt\nSent to the agent as a role:\"system\" message by the /api/chat proxy. The field is required (see below).\n\n\nvariables\nOptional map of custom {key} values for systemPrompt, so the prompt can be parametrised by editing this file alone. Merged over the app-provided defaults, and able to override them.\n\n\nlocales.&lt;lang&gt;.welcome\nSeeds the first conversation and assistant message when the widget opens; title names the conversation.\n\n\nlocales.&lt;lang&gt;.suggestions\nStarter question suggestions, rendered as chips. value is the text submitted by clicking on the chip, label is the chip’s label — it should be shorter than value (label falls back to value when omitted).\n\n\n\nLocales are keyed by language, and should be filled in for every locale the app supports. An unknown locale falls back to en if it exists, or to empty values if not.\nsystemPrompt is the only mandatory field — its presence is what marks the file as a real chat config rather than a stray JSON file. Everything else is optional, so a config containing only the pieces you care about is valid.\n\n\n\n\n\n\nNote\n\n\n\nsystemPrompt field value may be empty but in that case you’re relying on the agent’s own built-in prompt that doesn’t contain any specific instructions.\n\n\n\n\n\n\n\n\nWhen the widget appears\n\n\n\nSoVisuPlus renders the assistant only if SVP_CHAT_ENABLED is not false and CRISALID_AGENTS_API_URL is set (it defaults to http://crisalid-agents-chat-api:9100 in sovisuplus.yaml) and a config file resolves. In Docker the last condition is effectively always met — the image ships a generic chat.sample.json as a last-resort fallback, and it is only skipped if it too fails to load.\nWhen any condition is not met, the widget is hidden, /api/chat returns 404, and SoVisuPlus logs the reason once ([ChatConfigService] AI chat is disabled: …).\n\n\n\n\nDisabling the assistant\nThe assistant is enabled by default. To turn it off, set in docker/sovisuplus/.env:\nSVP_CHAT_ENABLED=false\nthen recreate the sovisuplus container (docker compose … up -d). The crisalid-agents-chat-api profile (and neo4j-mcp, if nothing else uses it) can then be left out.\n\n\n\n\n\n\nNote\n\n\n\nEmptying SVP_CRISALID_CHAT_API_URL does not disable the chat: an empty value falls back to the default URL.\n\n\n\n\nFallback\nThe file is read at docker/sovisuplus/config/chat.json, as docker/sovisuplus/config is bind-mounted read-only at /config. If you forgot to create it, or if it is malformed, SoVisuPlus falls back to /app/chat.sample.json, the generic configuration baked into the image.\n\n\n\n\n\n\nThe system prompt is server-only, the rest is public\n\n\n\nsystemPrompt is read by the server and injected into the upstream request. It is never sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in Security, and the welcome/suggestions strings are shipped to the browser.\nNote that the proxy also injects the signed-in user’s identity as a second system message, from the trusted session, so the agent can resolve “me”/“my” and scope graph queries to that person.\n\n\n\n\n\n\n\n\nThe institution name fills itself in\n\n\n\nsystemPrompt supports {variable} placeholders, resolved server-side before the prompt is sent. The sample uses {institutionName}, which SoVisuPlus fills from INSTITUTION_NAME in docker/.env (passed through as NEXT_PUBLIC_INSTITUTION_NAME in sovisuplus.yaml) — so there is nothing to keep in sync by hand.\nAny other key you need goes in the file’s variables map. A placeholder that matches neither an app-provided default nor a variables entry resolves to an empty string, so a typo silently drops the text rather than leaking {...} to the agent.\n\n\n\n\nApplying changes\nThe file is read once per process and cached, so a restart is required to pick up edits:\ndocker compose \\\n  -f docker-compose.yaml \\\n  -f docker-compose.dev.yaml \\\n  --profile sovisuplus \\\n  up -d sovisuplus",
+    "objectID": "ai/embeddings.html#ikg-specific-configuration",
+    "href": "ai/embeddings.html#ikg-specific-configuration",
+    "title": "Semantic Embeddings",
+    "section": "IKG-specific configuration",
+    "text": "IKG-specific configuration\nThe following variables are specific to IKG and are set in docker/ikg/.env:\n# Enable batch embedding computation in the IKG service (default: false)\nEMBEDDING_ENABLED=true\n\n# Must match the model's actual output size; used to configure the Neo4j vector index.\n# Common values: 384 (multilingual-e5-small), 768 (e5-base), 1024 (bge-m3), 1536 (OpenAI ada-002)\nEMBEDDING_DIMENSIONS=1024\n\n# Number of texts sent per request. Must not exceed the server's max-client-batch-size.\nEMBEDDING_BATCH_SIZE=32",
     "crumbs": [
       "Installation",
-      "Docker Compose"
+      "Semantic Embeddings"
+    ]
+  },
+  {
+    "objectID": "ai/embeddings.html#crisalid-taxi-specific-configuration",
+    "href": "ai/embeddings.html#crisalid-taxi-specific-configuration",
+    "title": "Semantic Embeddings",
+    "section": "CRISalid Taxi-specific configuration",
+    "text": "CRISalid Taxi-specific configuration\nSet in docker/crisalid-taxi/.env:\n# Number of texts sent per request. Must not exceed the server's max-client-batch-size.\nTAXI_EMBEDDING_BATCH_SIZE=32\nThe default similarity threshold (TAXI_SIMILARITY_THRESHOLD) is calibrated for bge-m3; recalibrate it when changing the embedding model.",
+    "crumbs": [
+      "Installation",
+      "Semantic Embeddings"
+    ]
+  },
+  {
+    "objectID": "ai/embeddings.html#computing-embeddings-ikg",
+    "href": "ai/embeddings.html#computing-embeddings-ikg",
+    "title": "Semantic Embeddings",
+    "section": "Computing embeddings (IKG)",
+    "text": "Computing embeddings (IKG)\nOnce enabled, embeddings are updated automatically after each write that produces embeddable nodes. For an existing graph, or to reprocess failed nodes, run the CLI inside the running container:\n# Process all pending and failed nodes (default)\ndocker compose exec crisalid-ikg python -m app.cli literals compute-embeddings\n\n# Restrict to specific literal types (e.g. titles and abstracts only)\ndocker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \\\n  --types document_title,document_abstract\nThe command prints status counts before and after:\nEmbedding status counts: {'pending': 42831, 'success': 0}\n...\nDone. Embedding status counts after: {'success': 42831}",
+    "crumbs": [
+      "Installation",
+      "Semantic Embeddings"
+    ]
+  },
+  {
+    "objectID": "ai/embeddings.html#changing-the-embedding-model",
+    "href": "ai/embeddings.html#changing-the-embedding-model",
+    "title": "Semantic Embeddings",
+    "section": "Changing the embedding model",
+    "text": "Changing the embedding model\nIf you switch to a model with a different output dimension, update EMBEDDING_API_MODEL in the common .env and EMBEDDING_DIMENSIONS in docker/ikg/.env, restart the stack, then rebuild the vector index:\ndocker compose exec crisalid-ikg python -m app.cli literals compute-embeddings \\\n  --recreate-vector-indexes\n\n\n\n\n\n\nWarning\n\n\n\n--recreate-vector-indexes resets all embeddings and recomputes them from scratch. The graph remains usable during reprocessing; vector search results will be partial until all nodes are processed.",
+    "crumbs": [
+      "Installation",
+      "Semantic Embeddings"
     ]
   },
   {
@@ -685,7 +762,7 @@
     "href": "ai/index.html#layers",
     "title": "Introduction",
     "section": "Layers",
-    "text": "Layers\n\n🕸️ The graph layer\nThe Neo4j graph is powered by the IKG middleware. IKG is not part of the Crisalid AI stack — it is a prerequisite to build the graph (see Crisalid Core).\n\n\n🛠️ The tools layer\nThe crisalid-ai-skills repository brings together the tool technologies that enable access to the graph, whether via MCP, skills, or non-standard approaches.\nThe current implementation uses the Neo4j MCP Toolbox (documentation).\nTwo toolsets are available:\n\n\n\n\n\n\n\nToolset\nDescription\n\n\n\n\ncrisalid-restricted\nA small set of tools with pre-prepared Cypher queries\n\n\ncrisalid-unrestricted\nAll of the above, plus the ability to execute any read-only Cypher query\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nWith Neo4j Community Edition, role-based access control (RBAC) is not available. The crisalid-unrestricted toolset is therefore a sensitive option that should be reserved for agents requiring elevated authorisation.\n\n\n\n\n🤖 The agent layer\nThe agent layer enables the development of agents within the LangChain–LangGraph ecosystem, leveraging the full Crisalid AI stack.\nCurrently, two general-purpose agents have been developed:\n\nActive — a LangGraph-based agent using Crisalid AI Skills tools.\nDisabled — an agent based on direct LangChain Neo4j integration, currently inactive due to disappointing performance.\n\nMore specialised agents may be developed in the future.\nCrisalid Agents also includes OpenWebUI Pipelines, enabling LangGraph agents to be deployed directly from OpenWebUI.\n\n\n🖥️ The interface layer\nFor the time being, this consists solely of OpenWebUI — a self-hosted chat interface accessible via a web browser.\nThe LangChain/LangGraph agents in Crisalid Agents are presented to the user as pipelines — in the place where the user would normally select LLMs in a basic use of OpenWebUI.\n\n\n\n\n\n\nNote\n\n\n\nAlthough the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.\n\n\n\n\n🚖 Supporting services\nOutside the four chat layers, CRISalid Taxi enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see Topics classification.",
+    "text": "Layers\n\n🕸️ The graph layer\nThe Neo4j graph is powered by the IKG middleware. IKG is not part of the Crisalid AI stack — it is a prerequisite to build the graph (see Crisalid Core).\n\n\n🛠️ The tools layer\nThe crisalid-ai-skills repository brings together the tool technologies that enable access to the graph, whether via MCP, skills, or non-standard approaches.\nThe current implementation uses the Neo4j MCP Toolbox (documentation).\nTwo toolsets are available:\n\n\n\n\n\n\n\nToolset\nDescription\n\n\n\n\ncrisalid-restricted\nA small set of tools with pre-prepared Cypher queries\n\n\ncrisalid-unrestricted\nAll of the above, plus the ability to execute any read-only Cypher query\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nWith Neo4j Community Edition, role-based access control (RBAC) is not available. The crisalid-unrestricted toolset is therefore a sensitive option that should be reserved for agents requiring elevated authorisation.\n\n\n\n\n🤖 The agent layer\nThe agent layer enables the development of agents within the LangChain–LangGraph ecosystem, leveraging the full Crisalid AI stack.\nCurrently, two general-purpose agents have been developed:\n\nActive — a LangGraph-based agent using Crisalid AI Skills tools.\nDisabled — an agent based on direct LangChain Neo4j integration, currently inactive due to disappointing performance.\n\nMore specialised agents may be developed in the future.\nCrisalid Agents also includes OpenWebUI Pipelines, enabling LangGraph agents to be deployed directly from OpenWebUI.\n\n\n🖥️ The interface layer\nFor the time being, this consists solely of OpenWebUI — a self-hosted chat interface accessible via a web browser.\nThe LangChain/LangGraph agents in Crisalid Agents are presented to the user as pipelines — in the place where the user would normally select LLMs in a basic use of OpenWebUI.\n\n\n\n\n\n\nNote\n\n\n\nAlthough the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.\n\n\n\n\n🚖 Supporting services\nOutside the four chat layers, CRISalid Taxi enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see Topics classification.\nAlso optional, the Horizon Europe topic index adds a second data source next to the graph: an OpenSearch index of the topics of the current work programme, used by the Horizon topic finder agent (which topics fit a project idea?) and by the Topic-to-Researcher Match batch (which researchers fit each topic?). See Horizon Europe topics.",
     "crumbs": [
       "Overview",
       "Introduction"
