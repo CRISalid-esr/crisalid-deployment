@@ -654,12 +654,15 @@ Main docker-compose.yaml
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./crisalid-agents/crisalid-agents.yaml</span></span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./crisalid-agents/.env</span></span>
 <span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./crisalid-agents</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./openwebui/openwebui.yaml</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./openwebui/.env</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./openwebui</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./crisalid-taxi/crisalid-taxi.yaml</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./crisalid-taxi/.env</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./crisalid-taxi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./horizon-europe-index/horizon-europe-index.yaml</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./horizon-europe-index/.env</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./horizon-europe-index</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./openwebui/openwebui.yaml</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./openwebui/.env</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./openwebui</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">path</span><span class="kw">:</span><span class="at"> ./crisalid-taxi/crisalid-taxi.yaml</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">env_file</span><span class="kw">:</span><span class="at"> ./crisalid-taxi/.env</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">project_directory</span><span class="kw">:</span><span class="at"> ./crisalid-taxi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <section id="dev-example-with-docker-managed-postgresql" class="level3">
 <h3 class="anchored" data-anchor-id="dev-example-with-docker-managed-postgresql">DEV example (with docker managed PostgreSQL)</h3>
@@ -929,6 +932,9 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <ol start="2" type="1">
 <li><strong>Edit the theme files</strong> in <code>sovisuplus/theme</code> to customize text and images according to your institution’s branding.</li>
 </ol>
+<blockquote class="blockquote">
+<p>The help button is configured in <code>sovisuplus/.env</code> with <code>SVP_HELP_LINK_TYPE</code>: <code>url</code> opens the page at <code>SVP_HELP_URL</code>, <code>mail</code> opens the mail client addressed to <code>SVP_MAINTENANCE_MAIL_ADDRESS</code>, and leaving it empty hides the button.</p>
+</blockquote>
 </section>
 <section id="sovisu-rbac-roles-file" class="level3">
 <h3 class="anchored" data-anchor-id="sovisu-rbac-roles-file">8. SoVisu+ RBAC Roles File</h3>
@@ -949,6 +955,7 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <li>Restart the container after any change; the file is read once at startup.</li>
 <li>Keep the <code>systemPrompt</code> key, even if you empty its value — a file without it is not recognised as a chat config and is ignored.</li>
 <li>This step is optional: with no <code>chat.json</code> — or one the app rejects — the container falls back to the generic <code>chat.sample.json</code> baked into the image, and the assistant still works.</li>
+<li>To turn the assistant off, set <code>SVP_CHAT_ENABLED=false</code> in <code>docker/sovisuplus/.env</code> — see <a href="../ai/docker-compose.html#disabling-the-assistant">Disabling the assistant</a>.</li>
 </ul>
 </section>
 <section id="configure-ofelia-system-wide-scheduler" class="level3">

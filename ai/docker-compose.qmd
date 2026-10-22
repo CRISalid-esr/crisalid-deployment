@@ -12,6 +12,8 @@ The AI layer is composed of the following profiles, to be started together with 
 | `openwebui` | `openwebui` | User-facing chat UI |
 | `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG (port 8000, internal) and its vector store |
 | `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601) |
+| `horizon_europe_index` | `opensearch` | OpenSearch index of Horizon Europe work programme topics, used by the Horizon topic finder agent and the topic-to-researcher batch (port 9200, internal) |
+| `crisalid-agents-batch` | `crisalid-agents-batch` | Batch entry points of crisalid-agents (topic index ingestion, topic-to-researcher match), run on demand with `docker compose run` |
 
 Both agent services run the same CRISalid graph agent and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:
 
@@ -69,6 +71,46 @@ Configuration:
 - Matching thresholds, retries and OpenSearch settings: `docker/crisalid-taxi/.env`.
 - Embedding endpoint: the shared `EMBEDDING_*` variables in `docker/.env`.
 - IKG side: set `TAXI_ENABLED=true` in `docker/ikg/.env` so IKG calls the taxi service (`http://crisalid-taxi:8000`) when documents are written. Disabled by default.
+## Horizon Europe topic index {#horizon-europe-index}
+
+The `horizon_europe_index` profile runs a single-node OpenSearch (`docker/horizon-europe-index/`, data in the
+`horizon_opensearch_data` named volume).
+It is only reachable on the internal agents network, over plain HTTP and without authentication (the security plugin
+is disabled), so there is nothing to configure beyond the heap size in `docker/horizon-europe-index/.env`.
+
+The index is built from the work programme PDFs of the current programme (one PDF per cluster part), dropped by hand in
+`docker/horizon-europe-index/wp/`. The ingestion runs in the `crisalid-agents-batch` service, a one-shot container
+built from the chat API image (the only one shipping the batch scripts), which mounts that directory read-only as
+`/data/horizon`. `docker compose run` starts the OpenSearch service if needed and waits for it to be healthy. Run the
+ingestion after each update of the PDF directory; it is idempotent and removes the topics of files that are no longer
+there:
+
+```bash
+docker compose \
+  -f docker-compose.yaml \
+  -f docker-compose.dev.yaml \
+  run --rm crisalid-agents-batch python scripts/index_horizon_topics.py --report /tmp/ingest.json
+```
+
+### Horizon topic finder agent
+
+Once the index is built, the `project_topic_matching` agent ("Horizon topic finder") works in both agent services:
+they serve the graph agent and the topic finder by default (`CRISALID_AGENTS_AGENTS` in `docker/crisalid-agents/.env`),
+and chat API clients select the agent they call. In OpenWebUI it appears as a model next to the graph agent (see
+[Configuring OpenWebUI](configuring-openwebui.qmd)).
+
+### Topic-to-Researcher Match
+
+The batch that matches every topic of a cluster with the researchers of the laboratories (from their publications in
+the knowledge graph) runs in the same `crisalid-agents-batch` service, by hand, and needs the `neo4j-mcp` profile to be
+up. Set `TRM_MODEL` in `docker/crisalid-agents/.env` (it defaults to the chat model). The JSON, Markdown and PDF
+reports are written to `docker/horizon-europe-index/reports/` on the host.
+
+```bash
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml --profile neo4j-mcp up -d
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --list-clusters
+docker compose -f docker-compose.yaml -f docker-compose.dev.yaml run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2
+```
 
 ## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
 

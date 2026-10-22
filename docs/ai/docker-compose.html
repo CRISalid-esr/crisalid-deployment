@@ -379,10 +379,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#crisalid-taxi" id="toc-crisalid-taxi" class="nav-link active" data-scroll-target="#crisalid-taxi">Topics classification (crisalid-taxi)</a></li>
+  <li><a href="#crisalid-taxi" id="toc-crisalid-taxi" class="nav-link active" data-scroll-target="#crisalid-taxi">Topics classification (crisalid-taxi)</a>
+  <ul class="collapse">
+  <li><a href="#horizon-topic-finder-agent" id="toc-horizon-topic-finder-agent" class="nav-link" data-scroll-target="#horizon-topic-finder-agent">Horizon topic finder agent</a></li>
+  <li><a href="#topic-to-researcher-match" id="toc-topic-to-researcher-match" class="nav-link" data-scroll-target="#topic-to-researcher-match">Topic-to-Researcher Match</a></li>
+  </ul></li>
   <li><a href="#sovisuplus-assistant-content" id="toc-sovisuplus-assistant-content" class="nav-link" data-scroll-target="#sovisuplus-assistant-content">SoVisuPlus assistant configuration</a>
   <ul class="collapse">
   <li><a href="#schema" id="toc-schema" class="nav-link" data-scroll-target="#schema">Schema</a></li>
+  <li><a href="#disabling-the-assistant" id="toc-disabling-the-assistant" class="nav-link" data-scroll-target="#disabling-the-assistant">Disabling the assistant</a></li>
   <li><a href="#fallback" id="toc-fallback" class="nav-link" data-scroll-target="#fallback">Fallback</a></li>
   <li><a href="#applying-changes" id="toc-applying-changes" class="nav-link" data-scroll-target="#applying-changes">Applying changes</a></li>
   </ul></li>
@@ -460,6 +465,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td><code>crisalid-taxi-dashboards</code></td>
 <td>Optional OpenSearch Dashboards UI for the taxi index (port 5601)</td>
 </tr>
+<tr class="odd">
+<td><code>horizon_europe_index</code></td>
+<td><code>opensearch</code></td>
+<td>OpenSearch index of Horizon Europe work programme topics, used by the Horizon topic finder agent and the topic-to-researcher batch (port 9200, internal)</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-agents-batch</code></td>
+<td><code>crisalid-agents-batch</code></td>
+<td>Batch entry points of crisalid-agents (topic index ingestion, topic-to-researcher match), run on demand with <code>docker compose run</code></td>
+</tr>
 </tbody>
 </table>
 <p>Both agent services run the same CRISalid graph agent and require the <code>neo4j-mcp</code> profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:</p>
@@ -482,6 +497,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Configuration:</p>
 <ul>
 <li>Agent LLM and toolbox settings: <code>docker/crisalid-agents/.env</code> (shared by both agent services).</li>
+<li>Turning the SoVisuPlus assistant on or off: <code>SVP_CHAT_ENABLED</code> in <code>docker/sovisuplus/.env</code>, see <a href="#disabling-the-assistant">below</a>.</li>
 <li>Chat API key: the shared <code>SOVISUPLUS_CHAT_API_KEY</code> in <code>docker/.env</code>, injected into both the chat API and SoVisuPlus. See <a href="../ai/security.html">Security</a>.</li>
 <li>Assistant configuration (welcome message, prompt suggestions, agent system prompt): the <code>docker/sovisuplus/config/chat.json</code> file, see <a href="#sovisuplus-assistant-content">below</a>.</li>
 <li>OpenWebUI → pipelines connection: configured by hand in the admin panel, see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
@@ -502,30 +518,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>Matching thresholds, retries and OpenSearch settings: <code>docker/crisalid-taxi/.env</code>.</li>
 <li>Embedding endpoint: the shared <code>EMBEDDING_*</code> variables in <code>docker/.env</code>.</li>
-<li>IKG side: set <code>TAXI_ENABLED=true</code> in <code>docker/ikg/.env</code> so IKG calls the taxi service (<code>http://crisalid-taxi:8000</code>) when documents are written. Disabled by default.</li>
+<li>IKG side: set <code>TAXI_ENABLED=true</code> in <code>docker/ikg/.env</code> so IKG calls the taxi service (<code>http://crisalid-taxi:8000</code>) when documents are written. Disabled by default. ## Horizon Europe topic index {#horizon-europe-index}</li>
 </ul>
+<p>The <code>horizon_europe_index</code> profile runs a single-node OpenSearch (<code>docker/horizon-europe-index/</code>, data in the <code>horizon_opensearch_data</code> named volume). It is only reachable on the internal agents network, over plain HTTP and without authentication (the security plugin is disabled), so there is nothing to configure beyond the heap size in <code>docker/horizon-europe-index/.env</code>.</p>
+<p>The index is built from the work programme PDFs of the current programme (one PDF per cluster part), dropped by hand in <code>docker/horizon-europe-index/wp/</code>. The ingestion runs in the <code>crisalid-agents-batch</code> service, a one-shot container built from the chat API image (the only one shipping the batch scripts), which mounts that directory read-only as <code>/data/horizon</code>. <code>docker compose run</code> starts the OpenSearch service if needed and waits for it to be healthy. Run the ingestion after each update of the PDF directory; it is idempotent and removes the topics of files that are no longer there:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  run <span class="at">--rm</span> crisalid-agents-batch python scripts/index_horizon_topics.py <span class="at">--report</span> /tmp/ingest.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="horizon-topic-finder-agent" class="level3">
+<h3 class="anchored" data-anchor-id="horizon-topic-finder-agent">Horizon topic finder agent</h3>
+<p>Once the index is built, the <code>project_topic_matching</code> agent (“Horizon topic finder”) works in both agent services: they serve the graph agent and the topic finder by default (<code>CRISALID_AGENTS_AGENTS</code> in <code>docker/crisalid-agents/.env</code>), and chat API clients select the agent they call. In OpenWebUI it appears as a model next to the graph agent (see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>).</p>
+</section>
+<section id="topic-to-researcher-match" class="level3">
+<h3 class="anchored" data-anchor-id="topic-to-researcher-match">Topic-to-Researcher Match</h3>
+<p>The batch that matches every topic of a cluster with the researchers of the laboratories (from their publications in the knowledge graph) runs in the same <code>crisalid-agents-batch</code> service, by hand, and needs the <code>neo4j-mcp</code> profile to be up. Set <code>TRM_MODEL</code> in <code>docker/crisalid-agents/.env</code> (it defaults to the chat model). The JSON, Markdown and PDF reports are written to <code>docker/horizon-europe-index/reports/</code> on the host.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.dev.yaml <span class="at">--profile</span> neo4j-mcp up <span class="at">-d</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.dev.yaml run <span class="at">--rm</span> crisalid-agents-batch python scripts/topic_researcher_match.py <span class="at">--list-clusters</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.dev.yaml run <span class="at">--rm</span> crisalid-agents-batch python scripts/topic_researcher_match.py <span class="at">--cluster</span> CL2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
 </section>
 <section id="sovisuplus-assistant-content" class="level2">
 <h2 class="anchored" data-anchor-id="sovisuplus-assistant-content">SoVisuPlus assistant configuration</h2>
 <p>The assistant is configured by a JSON file located in the <code>docker/sovisuplus/config</code> directory, named <code>chat.json</code>. It lets you set a system prompt, seed the chat’s conversation list (with a welcome message, for example) and provide query suggestions. To set it up, copy the <code>chat.sample.json</code> located in the same directory and fill in the fields.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">$EDITOR</span> docker/sovisuplus/config/chat.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/sovisuplus/config/chat.sample.json docker/sovisuplus/config/chat.json</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">$EDITOR</span> docker/sovisuplus/config/chat.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="schema" class="level3">
 <h3 class="anchored" data-anchor-id="schema">Schema</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"systemPrompt"</span><span class="fu">:</span> <span class="st">"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'"</span><span class="fu">,</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"variables"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"supportEmail"</span><span class="fu">:</span> <span class="st">"svp-support@example.edu"</span> <span class="fu">},</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"locales"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"en"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"welcome"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Welcome"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Hi! I'm your SoVisu+ assistant…"</span> <span class="fu">},</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"suggestions"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">"label"</span><span class="fu">:</span> <span class="st">"Open access rate"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"How many publications in my organization are open access?"</span> <span class="fu">}</span><span class="ot">]</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"fr"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"welcome"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Bienvenue"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Bonjour ! Je suis votre assistant SoVisu+…"</span> <span class="fu">},</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"suggestions"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">"label"</span><span class="fu">:</span> <span class="st">"Taux de science ouverte"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Combien de publications sont en science ouverte dans mon organisation ?"</span> <span class="fu">}</span><span class="ot">]</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"systemPrompt"</span><span class="fu">:</span> <span class="st">"Instructions that shape the agent's behaviour, for {{institutionName}}. For example: 'If at any point you are unable to answer the user, suggest contacting {{supportEmail}}.'"</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"variables"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"supportEmail"</span><span class="fu">:</span> <span class="st">"svp-support@example.edu"</span> <span class="fu">},</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"locales"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"en"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"welcome"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Welcome"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Hi! I'm your SoVisu+ assistant…"</span> <span class="fu">},</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"suggestions"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">"label"</span><span class="fu">:</span> <span class="st">"Open access rate"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"How many publications in my organization are open access?"</span> <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"fr"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"welcome"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"title"</span><span class="fu">:</span> <span class="st">"Bienvenue"</span><span class="fu">,</span> <span class="dt">"message"</span><span class="fu">:</span> <span class="st">"Bonjour ! Je suis votre assistant SoVisu+…"</span> <span class="fu">},</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"suggestions"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span> <span class="dt">"label"</span><span class="fu">:</span> <span class="st">"Taux de science ouverte"</span><span class="fu">,</span> <span class="dt">"value"</span><span class="fu">:</span> <span class="st">"Combien de publications sont en science ouverte dans mon organisation ?"</span> <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -577,11 +610,31 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-The widget only appears when the chat API is configured
+When the widget appears
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>SoVisuPlus renders the assistant only if <code>CRISALID_AGENTS_API_URL</code> is set (it defaults to <code>http://crisalid-agents-chat-api:9100</code> in <code>sovisuplus.yaml</code>) <strong>and</strong> a config file resolves. In Docker the second condition is effectively always met — the image ships a generic <code>chat.sample.json</code> as a last-resort fallback, and it is only skipped if it too fails to load.</p>
+<p>SoVisuPlus renders the assistant only if <code>SVP_CHAT_ENABLED</code> is not <code>false</code> <strong>and</strong> <code>CRISALID_AGENTS_API_URL</code> is set (it defaults to <code>http://crisalid-agents-chat-api:9100</code> in <code>sovisuplus.yaml</code>) <strong>and</strong> a config file resolves. In Docker the last condition is effectively always met — the image ships a generic <code>chat.sample.json</code> as a last-resort fallback, and it is only skipped if it too fails to load.</p>
+<p>When any condition is not met, the widget is hidden, <code>/api/chat</code> returns 404, and SoVisuPlus logs the reason once (<code>[ChatConfigService] AI chat is disabled: …</code>).</p>
+</div>
+</div>
+</section>
+<section id="disabling-the-assistant" class="level3">
+<h3 class="anchored" data-anchor-id="disabling-the-assistant">Disabling the assistant</h3>
+<p>The assistant is enabled by default. To turn it off, set in <code>docker/sovisuplus/.env</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">SVP_CHAT_ENABLED</span><span class="op">=</span>false</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>then recreate the <code>sovisuplus</code> container (<code>docker compose … up -d</code>). The <code>crisalid-agents-chat-api</code> profile (and <code>neo4j-mcp</code>, if nothing else uses it) can then be left out.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Emptying <code>SVP_CRISALID_CHAT_API_URL</code> does <strong>not</strong> disable the chat: an empty value falls back to the default URL.</p>
 </div>
 </div>
 </section>
@@ -620,11 +673,11 @@ The institution name fills itself in
 <section id="applying-changes" class="level3">
 <h3 class="anchored" data-anchor-id="applying-changes">Applying changes</h3>
 <p>The file is read <strong>once per process and cached</strong>, so a restart is required to pick up edits:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> sovisuplus <span class="dt">\</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span> sovisuplus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
