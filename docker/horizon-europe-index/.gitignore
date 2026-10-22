@@ -1,4 +1,3 @@
-data/
 wp/*.pdf
 reports/*
 !reports/.gitkeep

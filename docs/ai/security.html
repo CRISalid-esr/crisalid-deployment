@@ -486,7 +486,9 @@ Local workstation
 <p>Port 9099 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network (<code>agents-network</code>).</p>
 <section id="the-chat-api-crisalid-agents-chat-api" class="level3">
 <h3 class="anchored" data-anchor-id="the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</h3>
-<p>A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by <strong>API keys</strong>: the <code>x-api-key</code> request header is checked against the comma-separated <code>CHAT_API_KEYS</code> list in <code>docker/crisalid-agents/.env</code>. SoVisuPlus authenticates with the key set as <code>SVP_CRISALID_CHAT_API_KEY</code> in <code>docker/sovisuplus/.env</code>, which must be one of the <code>CHAT_API_KEYS</code> values.</p>
+<p>A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by a <strong>shared API key</strong>, following the same scheme as the Apollo GraphQL endpoint: the key is configured once in the shared <code>docker/.env</code> and injected on both sides —</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">SOVISUPLUS_CHAT_API_KEY</span><span class="op">=&lt;</span>your-secret-key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The chat API checks the <code>x-api-key</code> request header against it; SoVisuPlus sends it with every request. The check is always on.</p>
 <p>Port 9100 is <strong>not exposed on the host</strong> — the chat API is only reachable inside the Docker network (<code>crisalid-front</code>), server-to-server.</p>
 <hr>
 </section>

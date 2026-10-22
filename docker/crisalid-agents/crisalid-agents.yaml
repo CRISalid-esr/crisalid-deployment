@@ -12,8 +12,8 @@ services:
       - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Agents served by this image (comma-separated package names under agents/)
-      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent}
+      # Agents served (comma-separated package names under agents/)
+      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent,project_topic_matching}
       - PIPELINES_API_KEY=${CRISALID_AGENTS_PIPELINES_API_KEY}
       # Use the internal Keycloak address for token requests (client credentials grant)
       - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
@@ -25,10 +25,8 @@ services:
       - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
       - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
       - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
-      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile)
-      - HORIZON_OS_URL=${HORIZON_OS_URL:-https://opensearch:9200}
-      - HORIZON_OS_USER=${HORIZON_OS_USER:-admin}
-      - HORIZON_OS_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile, internal HTTP, no auth)
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-http://opensearch:9200}
       - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
       - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
     depends_on:
@@ -59,8 +57,8 @@ services:
       - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Agents served by this image (comma-separated package names under agents/)
-      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent}
+      # Agents served (comma-separated package names under agents/); chat API clients pick the agent they call
+      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent,project_topic_matching}
       # Inbound auth (always on): x-api-key header checked against the shared key (see docker/.env)
       - ENABLE_API_KEYS=true
       - API_KEYS=${SOVISUPLUS_CHAT_API_KEY}
@@ -74,21 +72,10 @@ services:
       - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
       - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
       - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
-      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile) and the work
-      # programme PDFs it is built from: docker compose exec crisalid-agents-chat-api python scripts/index_horizon_topics.py
-      - HORIZON_OS_URL=${HORIZON_OS_URL:-https://opensearch:9200}
-      - HORIZON_OS_USER=${HORIZON_OS_USER:-admin}
-      - HORIZON_OS_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile, internal HTTP, no auth)
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-http://opensearch:9200}
       - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
       - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
-      - HORIZON_WP_DIR=/data/horizon
-      # Topic-to-Researcher Match batch: docker compose exec crisalid-agents-chat-api python scripts/topic_researcher_match.py --cluster CL2
-      # Reports (JSON / Markdown / PDF) land in ./horizon-europe-index/reports on the host.
-      - TRM_MODEL=${TRM_MODEL:-${CRISALID_AGENTS_MODEL}}
-      - TRM_OUTPUT_DIR=/app/reports
-    volumes:
-      - ../horizon-europe-index/wp:/data/horizon:ro
-      - ../horizon-europe-index/reports:/app/reports
     depends_on:
       neo4j-mcp:
         condition: service_healthy
@@ -101,8 +88,55 @@ services:
       timeout: 5s
     networks:
       - crisalid-front
+      - agents-network
     profiles:
       - crisalid-agents-chat-api
+  # Batch entry points of crisalid-agents (same image as the chat API, which ships scripts/ and the trm package):
+  # ingestion of the Horizon Europe topic index and the Topic-to-Researcher Match. Never started by `up`: run one
+  # command at a time with `docker compose run --rm crisalid-agents-batch …`, which also starts the opensearch service.
+  #   docker compose run --rm crisalid-agents-batch python scripts/index_horizon_topics.py
+  #   docker compose run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2
+  # The TRM needs the neo4j-mcp profile to be up. Reports (JSON / Markdown / PDF) land in ./horizon-europe-index/reports.
+  crisalid-agents-batch:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml)
+    restart: "no"
+    command: [ "python", "scripts/topic_researcher_match.py", "--list-clusters" ]
+    environment:
+      - MODEL=${CRISALID_AGENTS_MODEL}
+      - API_KEY=${CRISALID_AGENTS_API_KEY}
+      - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
+      - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
+      - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
+      # Use the internal Keycloak address for token requests (client credentials grant)
+      - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
+      - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
+      - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile, internal HTTP, no auth)
+      # and the work programme PDFs it is built from
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-http://opensearch:9200}
+      - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
+      - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
+      - HORIZON_WP_DIR=/data/horizon
+      # Topic-to-Researcher Match: dedicated model (defaults to the chat model) and report directory
+      - TRM_MODEL=${TRM_MODEL:-${CRISALID_AGENTS_MODEL}}
+      - TRM_OUTPUT_DIR=/app/reports
+    volumes:
+      - ../horizon-europe-index/wp:/data/horizon:ro
+      - ../horizon-europe-index/reports:/app/reports
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    networks:
+      - crisalid-front
+      - agents-network
+    profiles:
+      - crisalid-agents-batch
 networks:
   crisalid-front:
     driver: bridge

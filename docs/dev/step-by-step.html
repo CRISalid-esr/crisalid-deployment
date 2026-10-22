@@ -688,8 +688,9 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 <p>⚠️ All <code>.env</code> files must exist even for services you do not intend to start — Docker Compose requires them for variable resolution.</p>
 </blockquote>
 <p>The root <code>docker/.env</code> holds <strong>shared credentials</strong> used by multiple services (RabbitMQ, Neo4j, etc.). Review and fill it in before starting any service.</p>
-<p>Also copy the RBAC roles sample for SoVisu+:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Also copy the SoVisu+ config file samples:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/rbac.roles.sample.yaml sovisuplus/config/rbac.roles.yaml</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> sovisuplus/config/chat.sample.json       sovisuplus/config/chat.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <blockquote class="blockquote">
 <p>All subsequent <code>docker compose</code> commands in this guide assume you are in the <code>docker/</code> directory.</p>
 </blockquote>

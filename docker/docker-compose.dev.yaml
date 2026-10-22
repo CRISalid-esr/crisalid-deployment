@@ -88,6 +88,9 @@ services:
   # crisalid-agents (chat API for sovisuplus)
   crisalid-agents-chat-api:
     image: crisalidesr/crisalid-agents-chat-api:dev
+  # crisalid-agents (batch entry points: Horizon topic index ingestion, topic-to-researcher match)
+  crisalid-agents-batch:
+    image: crisalidesr/crisalid-agents-chat-api:dev
   # openwebui (user-facing chat UI)
   openwebui:
     image: ghcr.io/open-webui/open-webui:0.9.5-slim
