@@ -89,3 +89,13 @@ OpenWebUI is the only layer directly exposed to end users.
 - **User registration is disabled** by default (`ENABLE_SIGNUP=false`) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO.
 - An **admin account is seeded** on first run via `OPENWEBUI_ADMIN_EMAIL` and `OPENWEBUI_ADMIN_PASSWORD` in `docker/openwebui/.env`.
 - **Keycloak SSO** can be enabled via OAuth2/OIDC — see [Configuring OpenWebUI](configuring-openwebui.qmd).
+
+---
+
+## 🚖 Supporting services — CRISalid Taxi
+
+CRISalid Taxi has **no authentication** of its own. It is designed to be reached only by IKG on the internal Docker network, and its port is not published to the host.
+
+- **Do not expose it on the web.** Each request triggers embedding calls to the shared endpoint, so an exposed instance is an easy way to exhaust your embedding quota.
+- On a multi-server deployment, if you publish its port for IKG, restrict access to the IKG host with a firewall rule (see [Multi-Server Deployment](../dev/step-by-step.qmd#multi-server-deployment-optional)).
+- The optional OpenSearch Dashboards profile publishes port `5601` without authentication: keep it for local inspection only.

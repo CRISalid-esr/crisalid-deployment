@@ -357,6 +357,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#the-tools-layer" id="toc-the-tools-layer" class="nav-link" data-scroll-target="#the-tools-layer">🛠️ The tools layer</a></li>
   <li><a href="#the-agent-layer" id="toc-the-agent-layer" class="nav-link" data-scroll-target="#the-agent-layer">🤖 The agent layer</a></li>
   <li><a href="#the-interface-layer" id="toc-the-interface-layer" class="nav-link" data-scroll-target="#the-interface-layer">🖥️ The interface layer</a></li>
+  <li><a href="#supporting-services" id="toc-supporting-services" class="nav-link" data-scroll-target="#supporting-services">🚖 Supporting services</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -452,8 +453,10 @@ Recommended LLMs
     AGENTS["🤖 Crisalid Agents&lt;br/&gt;OpenWebUI Pipelines&lt;br/&gt;LangChain · LangGraph"]
     SKILLS["🛠️ Crisalid AI Skills&lt;br/&gt;MCP Tools"]
     GRAPH["🕸️ Neo4j Graph&lt;br/&gt;(IKG)"]
+    TAXI["🚖 Crisalid Taxi&lt;br/&gt;OpenAlex topics"]
 
     UI --&gt; AGENTS --&gt; SKILLS --&gt; GRAPH
+    TAXI -.-&gt; GRAPH
 </pre>
 </div>
 <p></p></figure><p></p>
@@ -546,6 +549,10 @@ Note
 <p>Although the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.</p>
 </div>
 </div>
+</section>
+<section id="supporting-services" class="level3">
+<h3 class="anchored" data-anchor-id="supporting-services">🚖 Supporting services</h3>
+<p>Outside the four chat layers, <strong><a href="https://github.com/CRISalid-esr/crisalid-taxi">CRISalid Taxi</a></strong> enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see <a href="../ai/docker-compose.html#crisalid-taxi">Topics classification</a>.</p>
 
 
 </section>

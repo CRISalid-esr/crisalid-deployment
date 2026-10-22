@@ -97,6 +97,7 @@ docker compose \
   --profile sovisuplus \
   --profile sovisuplus-db \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -121,6 +122,7 @@ docker compose \
   --profile sovisuplus \
   --profile sovisuplus-db \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \    
   up -d
 ```
@@ -140,6 +142,7 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```
@@ -163,7 +166,7 @@ docker compose \
 
 ### 1. 🧾 `.env` Files
 
-Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, ...) has its own
+Each directory under `docker/` (e.g. `apollo`, `crisalid-bus`, `ikg`, `neo4j`, `cdb`, `harvester`, `crisalid-taxi`, ...) has its own
 `.env.sample` file.
 
 * Copy each `.env.sample` to `.env` for each directory except `cdb` (which is configured by the `configure_cdb.sh`
@@ -190,7 +193,10 @@ etc.).
 
 ### 3. 🔧 Configure CRISalid Directory Bridge (CDB)
 
-This script clones the DAGs, generates environment files, and runs the Airflow initialization.
+The CDB Airflow DAGs are not part of this repository: they live in
+[crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) and are cloned into
+`docker/cdb/dags` by the `configure_cdb.sh` script, which also generates the environment files and runs the Airflow
+initialization.
 
 You must specify the target environment:
 
@@ -203,6 +209,29 @@ or
 ```bash
 ./docker/configure_cdb.sh prod
 ```
+
+#### 🏷️ Choosing the DAGs version (`CDB_DAGS_REF`)
+
+The git ref (tag or branch) of `crisalid-directory-bridge` that gets cloned depends on the environment:
+
+| Environment | Ref cloned                                   |
+|-------------|----------------------------------------------|
+| `dev`       | always the `dev-main` branch                 |
+| `prod`      | the value of `CDB_DAGS_REF` in `docker/.env` (defaults to `main` if unset) |
+
+In `prod`, set `CDB_DAGS_REF` in the root `docker/.env` to the CDB release tag that matches the deployment release
+you are running (see the [CDB releases](https://github.com/CRISalid-esr/crisalid-directory-bridge/releases)):
+
+```env
+CDB_DAGS_REF=v1.1.0
+```
+
+`docker/.env.sample` ships with the recommended tag for the current deployment release, so copying it is enough for a
+fresh install.
+
+> ℹ️ The script does a shallow clone of the requested ref and wipes any previous content of `docker/cdb/dags`.
+> To upgrade the DAGs, change `CDB_DAGS_REF`, re-run `./docker/configure_cdb.sh prod` and restart the `cdb` profile.
+> Do not edit the DAGs in place: your changes would be lost on the next run.
 
 ---
 
@@ -318,17 +347,28 @@ Full documentation (in French):
 
 ### 5. 🌐 Download the OpenAlex Classification Tree {#openalex-tree-download}
 
-Before starting IKG for the first time, download the OpenAlex snapshot data (domains, fields,
-subfields, and topics). IKG uses these files to build the classification tree in Neo4j on its
-first startup, then wipes them automatically.
+The OpenAlex snapshot data (domains, fields, subfields, and topics) is consumed by two services,
+each with its own copy:
+
+- **IKG** (`docker/ikg/data/openalex`) builds the classification tree in Neo4j on its first
+  startup, then wipes its copy automatically.
+- **crisalid-taxi** (`docker/crisalid-taxi/data/openalex`) reads its copy at every startup to
+  index the taxonomy for topics classification (see [Topics classification](../ai/docker-compose.qmd#crisalid-taxi)).
+
+Before starting either service for the first time, run the download script. Without argument it
+fills both directories (each file is downloaded once and copied); pass the service name to fill
+only one of them:
 
 ```bash
-bash docker/scripts/download_openalex_tree.sh
+bash docker/scripts/download_openalex_tree.sh                 # both
+bash docker/scripts/download_openalex_tree.sh crisalid-ikg    # IKG only
+bash docker/scripts/download_openalex_tree.sh crisalid-taxi   # crisalid-taxi only
 ```
 
-When IKG starts, it checks the mounted data directory for snapshot files. If files are present, it
-runs the import (which is idempotent) and then wipes them so they do not trigger a re-import on the
-next startup. To refresh the tree later, re-run the script and restart IKG.
+The script is idempotent and skips files already present. When IKG starts, it checks its data
+directory for snapshot files. If files are present, it runs the import (which is idempotent) and
+then wipes them so they do not trigger a re-import on the next startup; the taxi copy is not
+affected. To refresh the tree later, re-run the script and restart the service(s).
 
 ---
 
@@ -397,6 +437,9 @@ cp -r sovisuplus/theme-sample sovisuplus/theme
 
 2. **Edit the theme files** in `sovisuplus/theme` to customize text and images according to your institution's branding.
 
+> The help button is configured in `sovisuplus/.env` with `SVP_HELP_LINK_TYPE`: `url` opens the page at `SVP_HELP_URL`,
+> `mail` opens the mail client addressed to `SVP_MAINTENANCE_MAIL_ADDRESS`, and leaving it empty hides the button.
+
 ### 8. SoVisu+ RBAC Roles File
 
 SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
@@ -429,6 +472,8 @@ cp sovisuplus/config/chat.sample.json sovisuplus/config/chat.json
   as a chat config and is ignored.
 * This step is optional: with no `chat.json` — or one the app rejects — the container falls back to
   the generic `chat.sample.json` baked into the image, and the assistant still works.
+* To turn the assistant off, set `SVP_CHAT_ENABLED=false` in `docker/sovisuplus/.env` — see
+  [Disabling the assistant](../ai/docker-compose.qmd#disabling-the-assistant).
 
 ### 10. ⏰ Configure Ofelia (system-wide scheduler)
 
@@ -637,6 +682,7 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ````
@@ -663,6 +709,7 @@ docker compose \
   --profile keycloak \
   --profile sovisuplus \
   --profile cvs \
+  --profile crisalid-taxi \
   --profile ofelia \
   up -d
 ```

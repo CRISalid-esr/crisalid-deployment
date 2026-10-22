@@ -57,8 +57,10 @@ flowchart LR
     AGENTS["🤖 Crisalid Agents<br/>OpenWebUI Pipelines<br/>LangChain · LangGraph"]
     SKILLS["🛠️ Crisalid AI Skills<br/>MCP Tools"]
     GRAPH["🕸️ Neo4j Graph<br/>(IKG)"]
+    TAXI["🚖 Crisalid Taxi<br/>OpenAlex topics"]
 
     UI --> AGENTS --> SKILLS --> GRAPH
+    TAXI -.-> GRAPH
 ```
 
 ### Why a layered architecture?
@@ -116,3 +118,7 @@ The LangChain/LangGraph agents in Crisalid Agents are presented to the user as *
 ::: {.callout-note}
 Although the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.
 :::
+
+### 🚖 Supporting services
+
+Outside the four chat layers, **[CRISalid Taxi](https://github.com/CRISalid-esr/crisalid-taxi)** enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see [Topics classification](docker-compose.qmd#crisalid-taxi).
