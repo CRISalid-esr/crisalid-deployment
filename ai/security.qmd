@@ -26,7 +26,7 @@ Neo4j is secured by a **username and password**, configured in `docker/neo4j/.en
 ## No RBAC in Neo4j Community Edition
 Neo4j Community Edition does not support role-based access control (RBAC). All authenticated users have the same level of access to the graph. For fine-grained access control, the Enterprise Edition is required.
 
-In a Community Edition deployment, the choice of toolset (`crisalid-restricted` vs `crisalid-unrestricted`) is the primary access control mechanism — see [the tools layer](#the-tools-layer-neo4j-mcp) below.
+In a Community Edition deployment, the choice of toolset (`crisalid-restricted` or `sorbobot`, pre-prepared queries only, vs `crisalid-unrestricted`) is the primary access control mechanism — see [the tools layer](#the-tools-layer-neo4j-mcp) below.
 :::
 
 In production, avoid storing the Neo4j password in plain-text `.env` files. Use a sovereign secret management solution such as [HashiCorp Vault](https://www.vaultproject.io/).

@@ -46,7 +46,9 @@ services:
       timeout: 5s
     networks:
       - crisalid-taxi-network
+      # IKG (topics classification of documents) and the SorboBot agent of crisalid-agents-owui (research expertise)
       - ikg-network
+      - agents-network
     profiles:
       - crisalid-taxi
 
@@ -101,6 +103,8 @@ networks:
   crisalid-taxi-network:
     driver: bridge
   ikg-network:
+    driver: bridge
+  agents-network:
     driver: bridge
 
 volumes:

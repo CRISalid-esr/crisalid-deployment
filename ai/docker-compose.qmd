@@ -7,15 +7,15 @@ The AI layer is composed of the following profiles, to be started together with 
 | Profile | Service | Purpose |
 |---|---|---|
 | `neo4j-mcp` | `neo4j-mcp` | MCP toolbox exposing knowledge graph tools (port 5000, internal) |
-| `crisalid-agents-owui` | `crisalid-agents-owui` | Graph agent served as OpenWebUI pipelines (port 9099, internal) |
-| `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal) |
+| `crisalid-agents-owui` | `crisalid-agents-owui` | Agents served as OpenWebUI pipelines: graph agent, Horizon topic finder, SorboBot (port 9099, internal) |
+| `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Agents served as a streaming chat API for SoVisuPlus: graph agent, Horizon topic finder (port 9100, internal) |
 | `openwebui` | `openwebui` | User-facing chat UI |
-| `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG (port 8000, internal) and its vector store |
+| `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG and by the SorboBot agent (port 8000, internal) and its vector store |
 | `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601) |
 | `horizon_europe_index` | `opensearch` | OpenSearch index of Horizon Europe work programme topics, see [Horizon Europe topics](horizon-europe.qmd) (port 9200, internal) |
 | `crisalid-agents-batch` | `crisalid-agents-batch` | Batch entry points of crisalid-agents (topic index ingestion, topic-to-researcher match), run on demand with `docker compose run`, see [Horizon Europe topics](horizon-europe.qmd) |
 
-Both agent services run the same CRISalid graph agent and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:
+Both agent services run the same image family and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Each one serves its own list of agents: `CRISALID_AGENTS_AGENTS` for the pipelines server (graph agent, Horizon topic finder and SorboBot by default) and `CRISALID_AGENTS_CHAT_API_AGENTS` for the chat API (graph agent and Horizon topic finder by default; SoVisuPlus picks one of them with `SVP_CRISALID_AGENTS_AGENT`). Only start the wrapper(s) you actually use:
 
 ```bash
 # OpenWebUI chat stack
@@ -38,7 +38,7 @@ docker compose \
 
 Configuration:
 
-- Agent LLM and toolbox settings: `docker/crisalid-agents/.env` (shared by both agent services).
+- Agent LLM and toolbox settings, and the agents served by each service (`CRISALID_AGENTS_AGENTS`, `CRISALID_AGENTS_CHAT_API_AGENTS`): `docker/crisalid-agents/.env` (shared by both agent services).
 - Turning the SoVisuPlus assistant on or off: `SVP_CHAT_ENABLED` in `docker/sovisuplus/.env`, see [below](#disabling-the-assistant).
 - Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
 - Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
@@ -46,7 +46,7 @@ Configuration:
 
 ## Topics classification (crisalid-taxi) {#crisalid-taxi}
 
-`crisalid-taxi` classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.
+`crisalid-taxi` classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG and from the [SorboBot](sorbobot.qmd) agent (the service joins both the `ikg-network` and the `agents-network` Docker networks).
 
 Before the first start, download the OpenAlex snapshot into the taxi data directory (see [Download the OpenAlex Classification Tree](../dev/docker-compose.qmd#openalex-tree-download)):
 
@@ -77,6 +77,11 @@ Configuration:
 The `horizon_europe_index` and `crisalid-agents-batch` profiles (OpenSearch index of the Horizon Europe work programme
 topics, its ingestion from the work programme PDFs, the Horizon topic finder agent and the Topic-to-Researcher Match
 batch) are documented on their own page: [Horizon Europe topics](horizon-europe.qmd).
+
+## SorboBot {#sorbobot}
+
+The research expertise agent (experts of a theme, expertise of a researcher) served by the pipelines server on top of
+`crisalid-taxi` and the `sorbobot` toolset of the toolbox is documented on its own page: [SorboBot](sorbobot.qmd).
 
 ## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
 

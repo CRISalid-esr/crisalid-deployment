@@ -247,6 +247,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Horizon Europe topics</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -365,6 +369,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../ai/sorbobot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SorboBot (research expertise)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
@@ -459,7 +469,7 @@ No RBAC in Neo4j Community Edition
 </div>
 <div class="callout-body-container callout-body">
 <p>Neo4j Community Edition does not support role-based access control (RBAC). All authenticated users have the same level of access to the graph. For fine-grained access control, the Enterprise Edition is required.</p>
-<p>In a Community Edition deployment, the choice of toolset (<code>crisalid-restricted</code> vs <code>crisalid-unrestricted</code>) is the primary access control mechanism — see <a href="#the-tools-layer-neo4j-mcp">the tools layer</a> below.</p>
+<p>In a Community Edition deployment, the choice of toolset (<code>crisalid-restricted</code> or <code>sorbobot</code>, pre-prepared queries only, vs <code>crisalid-unrestricted</code>) is the primary access control mechanism — see <a href="#the-tools-layer-neo4j-mcp">the tools layer</a> below.</p>
 </div>
 </div>
 <p>In production, avoid storing the Neo4j password in plain-text <code>.env</code> files. Use a sovereign secret management solution such as <a href="https://www.vaultproject.io/">HashiCorp Vault</a>.</p>

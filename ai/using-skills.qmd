@@ -8,14 +8,15 @@ format:
 
 The **Neo4j MCP Toolbox** exposes curated Cypher queries as [MCP](https://modelcontextprotocol.io/) tools, making it easy to integrate structured CRISalid knowledge graph data into LLM-based agents and workflows.
 
-Two toolsets are available:
+Three toolsets are available:
 
 | Toolset | Tools |
 |---|---|
-| `crisalid-restricted` | `get-crisalid-schema`, `list-person-publications` |
+| `crisalid-restricted` | `get-crisalid-schema`, `list-person-publications` and the other pre-prepared Cypher queries |
 | `crisalid-unrestricted` | above + `execute-cypher-readonly` |
+| `sorbobot` | the research-expertise tools of the [SorboBot](sorbobot.qmd) agent (OpenAlex concepts, experts of a concept, publications and abstracts of a person), all pre-prepared queries |
 
-All tools in the restricted toolset require a valid JWT — clients must authenticate via a Keycloak service account.
+All tools in the restricted and `sorbobot` toolsets require a valid JWT — clients must authenticate via a Keycloak service account.
 
 ---
 

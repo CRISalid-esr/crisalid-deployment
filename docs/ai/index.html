@@ -215,6 +215,10 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Horizon Europe topics</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -329,6 +333,12 @@ ul.task-list li input[type="checkbox"] {
   <div class="sidebar-item-container"> 
   <a href="../ai/horizon-europe.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Horizon Europe topics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ai/sorbobot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SorboBot (research expertise)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -494,7 +504,7 @@ Recommended LLMs
 <h3 class="anchored" data-anchor-id="the-tools-layer">🛠️ The tools layer</h3>
 <p>The <a href="https://github.com/CRISalid-esr/crisalid-ai-skills">crisalid-ai-skills</a> repository brings together the tool technologies that enable access to the graph, whether via MCP, skills, or non-standard approaches.</p>
 <p>The current implementation uses the <a href="https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/">Neo4j MCP Toolbox</a> (<a href="https://mcp-toolbox.dev/documentation/introduction/">documentation</a>).</p>
-<p>Two toolsets are available:</p>
+<p>Three toolsets are available:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -514,6 +524,10 @@ Recommended LLMs
 <tr class="even">
 <td><code>crisalid-unrestricted</code></td>
 <td>All of the above, plus the ability to execute any read-only Cypher query</td>
+</tr>
+<tr class="odd">
+<td><code>sorbobot</code></td>
+<td>The curated research-expertise tools (OpenAlex topics, experts, publications) used by the SorboBot agent</td>
 </tr>
 </tbody>
 </table>
@@ -539,7 +553,11 @@ Important
 <li><strong>Active</strong> — a <a href="https://langchain-ai.github.io/langgraph/">LangGraph</a>-based agent using Crisalid AI Skills tools.</li>
 <li><strong>Disabled</strong> — an agent based on direct <a href="https://neo4j.com/labs/genai-ecosystem/langchain/">LangChain Neo4j integration</a>, currently inactive due to disappointing performance.</li>
 </ul>
-<p>More specialised agents may be developed in the future.</p>
+<p>Two specialised agents complete them:</p>
+<ul>
+<li>the <strong>Horizon topic finder</strong>, which matches a project idea with the topics of the Horizon Europe work programme (see <a href="../ai/horizon-europe.html">Horizon Europe topics</a>);</li>
+<li><strong>SorboBot</strong>, which finds the experts of a research theme and describes the expertise of a researcher from the OpenAlex topics of their publications (see <a href="../ai/sorbobot.html">SorboBot</a>).</li>
+</ul>
 <p>Crisalid Agents also includes <strong>OpenWebUI Pipelines</strong>, enabling LangGraph agents to be deployed directly from OpenWebUI.</p>
 </section>
 <section id="the-interface-layer" class="level3">
@@ -562,7 +580,7 @@ Note
 </section>
 <section id="supporting-services" class="level3">
 <h3 class="anchored" data-anchor-id="supporting-services">🚖 Supporting services</h3>
-<p>Outside the four chat layers, <strong><a href="https://github.com/CRISalid-esr/crisalid-taxi">CRISalid Taxi</a></strong> enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see <a href="../ai/docker-compose.html#crisalid-taxi">Topics classification</a>.</p>
+<p>Outside the four chat layers, <strong><a href="https://github.com/CRISalid-esr/crisalid-taxi">CRISalid Taxi</a></strong> enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above, and the SorboBot agent also queries Taxi live to turn a question into topics. Taxi is optional — see <a href="../ai/docker-compose.html#crisalid-taxi">Topics classification</a>.</p>
 <p>Also optional, the <strong>Horizon Europe topic index</strong> adds a second data source next to the graph: an OpenSearch index of the topics of the current work programme, used by the Horizon topic finder agent (which topics fit a project idea?) and by the Topic-to-Researcher Match batch (which researchers fit each topic?). See <a href="../ai/horizon-europe.html">Horizon Europe topics</a>.</p>
 
 
