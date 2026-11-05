@@ -247,6 +247,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Horizon Europe topics</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -626,7 +630,7 @@ sovisuplus.yaml
 <span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="co">      # CRISalid agents chat API (server-to-server over crisalid-front)</span></span>
 <span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> CRISALID_AGENTS_API_URL=${SVP_CRISALID_CHAT_API_URL:-http://crisalid-agents-chat-api:9100}</span></span>
 <span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> CRISALID_AGENTS_API_KEY=${SOVISUPLUS_CHAT_API_KEY}</span></span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co">      # Agent to talk to; must be one of the agents served by crisalid-agents (CRISALID_AGENTS_AGENTS)</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co">      # Agent to talk to; must be one of the agents served by the chat API (CRISALID_AGENTS_CHAT_API_AGENTS)</span></span>
 <span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> CRISALID_AGENTS_AGENT=${SVP_CRISALID_AGENTS_AGENT:-generic_agent}</span></span>
 <span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> CHAT_CONFIG_FILE=/config/chat.json</span></span>
 <span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}</span></span>

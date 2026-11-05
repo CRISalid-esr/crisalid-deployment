@@ -82,6 +82,8 @@ website:
             - ai/docker-compose.qmd
             - href: ai/horizon-europe.qmd
               text: "Horizon Europe topics"
+            - href: ai/sorbobot.qmd
+              text: "SorboBot (research expertise)"
             - href: ai/using-skills.qmd
               text: "Using CRISalid AI Skills"
             - ai/configuring-openwebui.qmd

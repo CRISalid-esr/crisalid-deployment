@@ -12,8 +12,8 @@ services:
       - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Agents served (comma-separated package names under agents/)
-      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent,project_topic_matching}
+      # Agents served (comma-separated package names under agents/): graph agent, Horizon topic finder, SorboBot
+      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent,project_topic_matching,sorbobot}
       - PIPELINES_API_KEY=${CRISALID_AGENTS_PIPELINES_API_KEY}
       # Use the internal Keycloak address for token requests (client credentials grant)
       - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
@@ -29,6 +29,31 @@ services:
       - HORIZON_OS_URL=${HORIZON_OS_URL:-http://opensearch:9200}
       - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
       - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
+      # SorboBot (research expertise agent): crisalid-taxi (profile crisalid-taxi, reached over agents-network) and
+      # the "sorbobot" toolset of neo4j-mcp (CRISALID_MCP_TOOLBOX_URL). Every SORBOBOT_* variable keeps the agent's
+      # built-in default when empty (see docker/crisalid-agents/.env.sample).
+      - CRISALID_TAXI_URL=${CRISALID_TAXI_URL:-http://crisalid-taxi:8000}
+      - SORBOBOT_TAXI_TIMEOUT_SECONDS=${SORBOBOT_TAXI_TIMEOUT_SECONDS:-}
+      - SORBOBOT_TOOLBOX_TIMEOUT_SECONDS=${SORBOBOT_TOOLBOX_TIMEOUT_SECONDS:-}
+      - SORBOBOT_JUDGE_TIMEOUT_SECONDS=${SORBOBOT_JUDGE_TIMEOUT_SECONDS:-}
+      - SORBOBOT_TAXI_MAX_TOPICS=${SORBOBOT_TAXI_MAX_TOPICS:-}
+      - SORBOBOT_TAXI_MIN_QUERY_CHARS=${SORBOBOT_TAXI_MIN_QUERY_CHARS:-}
+      - SORBOBOT_SEMANTIC_THRESHOLD=${SORBOBOT_SEMANTIC_THRESHOLD:-}
+      - SORBOBOT_MAX_SEARCH_TOPICS=${SORBOBOT_MAX_SEARCH_TOPICS:-}
+      - SORBOBOT_TOPIC_LINK_THRESHOLD=${SORBOBOT_TOPIC_LINK_THRESHOLD:-}
+      - SORBOBOT_TOPIC_SOURCES=${SORBOBOT_TOPIC_SOURCES:-}
+      - SORBOBOT_JUDGE_THRESHOLD=${SORBOBOT_JUDGE_THRESHOLD:-}
+      - SORBOBOT_MIN_AUTHORS=${SORBOBOT_MIN_AUTHORS:-}
+      - SORBOBOT_MAX_JUDGED_SIBLINGS=${SORBOBOT_MAX_JUDGED_SIBLINGS:-}
+      - SORBOBOT_RANKING_METHOD=${SORBOBOT_RANKING_METHOD:-}
+      - SORBOBOT_SHOW_MAX_AUTHORS=${SORBOBOT_SHOW_MAX_AUTHORS:-}
+      - SORBOBOT_SHOW_MAX_DOMAINS=${SORBOBOT_SHOW_MAX_DOMAINS:-}
+      - SORBOBOT_SHOW_MAX_PERSON_PUBLICATIONS=${SORBOBOT_SHOW_MAX_PERSON_PUBLICATIONS:-}
+      - SORBOBOT_PROFILE_MAX_PUBLICATIONS=${SORBOBOT_PROFILE_MAX_PUBLICATIONS:-}
+      - SORBOBOT_EXPLORE_MAX_DOMAINS=${SORBOBOT_EXPLORE_MAX_DOMAINS:-}
+      - SORBOBOT_MAX_MESSAGE_CHARS=${SORBOBOT_MAX_MESSAGE_CHARS:-}
+      - SORBOBOT_SUPPORTED_LANGUAGES=${SORBOBOT_SUPPORTED_LANGUAGES:-}
+      - SORBOBOT_DEFAULT_LANGUAGE=${SORBOBOT_DEFAULT_LANGUAGE:-}
     depends_on:
       neo4j-mcp:
         condition: service_healthy
@@ -57,8 +82,9 @@ services:
       - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Agents served (comma-separated package names under agents/); chat API clients pick the agent they call
-      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent,project_topic_matching}
+      # Agents served (comma-separated package names under agents/); chat API clients pick the agent they call.
+      # Own list, distinct from the pipelines server: SorboBot is not served to SoVisuPlus.
+      - AGENTS=${CRISALID_AGENTS_CHAT_API_AGENTS:-generic_agent,project_topic_matching}
       # Inbound auth (always on): x-api-key header checked against the shared key (see docker/.env)
       - ENABLE_API_KEYS=true
       - API_KEYS=${SOVISUPLUS_CHAT_API_KEY}

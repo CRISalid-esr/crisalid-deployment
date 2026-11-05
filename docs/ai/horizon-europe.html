@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../ai/using-skills.html" rel="next">
+<link href="../ai/sorbobot.html" rel="next">
 <link href="../ai/docker-compose.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -247,6 +247,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Horizon Europe topics</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -361,6 +365,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../ai/horizon-europe.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Horizon Europe topics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ai/sorbobot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SorboBot (research expertise)</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -504,7 +514,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> horizon_europe_index <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-owui <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Both agent services serve the graph agent and the topic finder by default (<code>CRISALID_AGENTS_AGENTS</code> in <code>docker/crisalid-agents/.env</code>); chat API clients select the agent they call. In OpenWebUI the topic finder appears as a model next to the graph agent (see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>).</p>
+<p>Both agent services serve the graph agent and the topic finder by default (<code>CRISALID_AGENTS_AGENTS</code> for the pipelines server and <code>CRISALID_AGENTS_CHAT_API_AGENTS</code> for the chat API, in <code>docker/crisalid-agents/.env</code>); chat API clients select the agent they call. In OpenWebUI the topic finder appears as a model next to the graph agent (see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>).</p>
 </section>
 <section id="topic-to-researcher-match" class="level2">
 <h2 class="anchored" data-anchor-id="topic-to-researcher-match">4. Topic-to-Researcher Match</h2>
@@ -946,8 +956,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../ai/using-skills.html" class="pagination-link" aria-label="Using CRISalid AI Skills">
-        <span class="nav-page-text">Using CRISalid AI Skills</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../ai/sorbobot.html" class="pagination-link" aria-label="SorboBot (research expertise)">
+        <span class="nav-page-text">SorboBot (research expertise)</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -247,6 +247,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Horizon Europe topics</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -365,6 +369,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../ai/sorbobot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SorboBot (research expertise)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
@@ -391,6 +401,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#crisalid-taxi" id="toc-crisalid-taxi" class="nav-link active" data-scroll-target="#crisalid-taxi">Topics classification (crisalid-taxi)</a></li>
   <li><a href="#horizon-europe-index" id="toc-horizon-europe-index" class="nav-link" data-scroll-target="#horizon-europe-index">Horizon Europe topic index</a></li>
+  <li><a href="#sorbobot" id="toc-sorbobot" class="nav-link" data-scroll-target="#sorbobot">SorboBot</a></li>
   <li><a href="#sovisuplus-assistant-content" id="toc-sovisuplus-assistant-content" class="nav-link" data-scroll-target="#sovisuplus-assistant-content">SoVisuPlus assistant configuration</a>
   <ul class="collapse">
   <li><a href="#schema" id="toc-schema" class="nav-link" data-scroll-target="#schema">Schema</a></li>
@@ -445,12 +456,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td><code>crisalid-agents-owui</code></td>
 <td><code>crisalid-agents-owui</code></td>
-<td>Graph agent served as OpenWebUI pipelines (port 9099, internal)</td>
+<td>Agents served as OpenWebUI pipelines: graph agent, Horizon topic finder, SorboBot (port 9099, internal)</td>
 </tr>
 <tr class="odd">
 <td><code>crisalid-agents-chat-api</code></td>
 <td><code>crisalid-agents-chat-api</code></td>
-<td>Graph agent served as a streaming chat API for SoVisuPlus (port 9100, internal)</td>
+<td>Agents served as a streaming chat API for SoVisuPlus: graph agent, Horizon topic finder (port 9100, internal)</td>
 </tr>
 <tr class="even">
 <td><code>openwebui</code></td>
@@ -460,7 +471,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>crisalid-taxi</code></td>
 <td><code>crisalid-taxi</code>, <code>crisalid-taxi-opensearch</code></td>
-<td>OpenAlex topics classification API used by IKG (port 8000, internal) and its vector store</td>
+<td>OpenAlex topics classification API used by IKG and by the SorboBot agent (port 8000, internal) and its vector store</td>
 </tr>
 <tr class="even">
 <td><code>crisalid-taxi-dashboards</code></td>
@@ -479,7 +490,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>Both agent services run the same CRISalid graph agent and require the <code>neo4j-mcp</code> profile (they wait for the toolbox to be healthy). Only start the wrapper(s) you actually use:</p>
+<p>Both agent services run the same image family and require the <code>neo4j-mcp</code> profile (they wait for the toolbox to be healthy). Each one serves its own list of agents: <code>CRISALID_AGENTS_AGENTS</code> for the pipelines server (graph agent, Horizon topic finder and SorboBot by default) and <code>CRISALID_AGENTS_CHAT_API_AGENTS</code> for the chat API (graph agent and Horizon topic finder by default; SoVisuPlus picks one of them with <code>SVP_CRISALID_AGENTS_AGENT</code>). Only start the wrapper(s) you actually use:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OpenWebUI chat stack</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
@@ -498,7 +509,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Configuration:</p>
 <ul>
-<li>Agent LLM and toolbox settings: <code>docker/crisalid-agents/.env</code> (shared by both agent services).</li>
+<li>Agent LLM and toolbox settings, and the agents served by each service (<code>CRISALID_AGENTS_AGENTS</code>, <code>CRISALID_AGENTS_CHAT_API_AGENTS</code>): <code>docker/crisalid-agents/.env</code> (shared by both agent services).</li>
 <li>Turning the SoVisuPlus assistant on or off: <code>SVP_CHAT_ENABLED</code> in <code>docker/sovisuplus/.env</code>, see <a href="#disabling-the-assistant">below</a>.</li>
 <li>Chat API key: the shared <code>SOVISUPLUS_CHAT_API_KEY</code> in <code>docker/.env</code>, injected into both the chat API and SoVisuPlus. See <a href="../ai/security.html">Security</a>.</li>
 <li>Assistant configuration (welcome message, prompt suggestions, agent system prompt): the <code>docker/sovisuplus/config/chat.json</code> file, see <a href="#sovisuplus-assistant-content">below</a>.</li>
@@ -506,7 +517,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <section id="crisalid-taxi" class="level2">
 <h2 class="anchored" data-anchor-id="crisalid-taxi">Topics classification (crisalid-taxi)</h2>
-<p><code>crisalid-taxi</code> classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG.</p>
+<p><code>crisalid-taxi</code> classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG and from the <a href="../ai/sorbobot.html">SorboBot</a> agent (the service joins both the <code>ikg-network</code> and the <code>agents-network</code> Docker networks).</p>
 <p>Before the first start, download the OpenAlex snapshot into the taxi data directory (see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a>):</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh crisalid-taxi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then start the profile (add <code>crisalid-taxi-dashboards</code> to get the OpenSearch Dashboards UI on port 5601):</p>
@@ -526,6 +537,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="horizon-europe-index" class="level2">
 <h2 class="anchored" data-anchor-id="horizon-europe-index">Horizon Europe topic index</h2>
 <p>The <code>horizon_europe_index</code> and <code>crisalid-agents-batch</code> profiles (OpenSearch index of the Horizon Europe work programme topics, its ingestion from the work programme PDFs, the Horizon topic finder agent and the Topic-to-Researcher Match batch) are documented on their own page: <a href="../ai/horizon-europe.html">Horizon Europe topics</a>.</p>
+</section>
+<section id="sorbobot" class="level2">
+<h2 class="anchored" data-anchor-id="sorbobot">SorboBot</h2>
+<p>The research expertise agent (experts of a theme, expertise of a researcher) served by the pipelines server on top of <code>crisalid-taxi</code> and the <code>sorbobot</code> toolset of the toolbox is documented on its own page: <a href="../ai/sorbobot.html">SorboBot</a>.</p>
 </section>
 <section id="sovisuplus-assistant-content" class="level2">
 <h2 class="anchored" data-anchor-id="sovisuplus-assistant-content">SoVisuPlus assistant configuration</h2>

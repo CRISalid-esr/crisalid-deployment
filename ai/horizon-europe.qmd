@@ -109,8 +109,9 @@ docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
   up -d
 ```
 
-Both agent services serve the graph agent and the topic finder by default (`CRISALID_AGENTS_AGENTS` in
-`docker/crisalid-agents/.env`); chat API clients select the agent they call. In OpenWebUI the topic finder appears as a
+Both agent services serve the graph agent and the topic finder by default (`CRISALID_AGENTS_AGENTS` for the
+pipelines server and `CRISALID_AGENTS_CHAT_API_AGENTS` for the chat API, in `docker/crisalid-agents/.env`); chat API
+clients select the agent they call. In OpenWebUI the topic finder appears as a
 model next to the graph agent (see [Configuring OpenWebUI](configuring-openwebui.qmd)).
 
 ## 4. Topic-to-Researcher Match

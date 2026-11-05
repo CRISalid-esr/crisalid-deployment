@@ -65,7 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../ai/configuring-openwebui.html" rel="next">
-<link href="../ai/horizon-europe.html" rel="prev">
+<link href="../ai/sorbobot.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -247,6 +247,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="dropdown-text">Horizon Europe topics</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -365,6 +369,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../ai/sorbobot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SorboBot (research expertise)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
@@ -422,12 +432,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>The <strong>Neo4j MCP Toolbox</strong> exposes curated Cypher queries as <a href="https://modelcontextprotocol.io/">MCP</a> tools, making it easy to integrate structured CRISalid knowledge graph data into LLM-based agents and workflows.</p>
-<p>Two toolsets are available:</p>
+<p>Three toolsets are available:</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Toolset</th>
@@ -437,15 +443,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td><code>crisalid-restricted</code></td>
-<td><code>get-crisalid-schema</code>, <code>list-person-publications</code></td>
+<td><code>get-crisalid-schema</code>, <code>list-person-publications</code> and the other pre-prepared Cypher queries</td>
 </tr>
 <tr class="even">
 <td><code>crisalid-unrestricted</code></td>
 <td>above + <code>execute-cypher-readonly</code></td>
 </tr>
+<tr class="odd">
+<td><code>sorbobot</code></td>
+<td>the research-expertise tools of the <a href="../ai/sorbobot.html">SorboBot</a> agent (OpenAlex concepts, experts of a concept, publications and abstracts of a person), all pre-prepared queries</td>
+</tr>
 </tbody>
 </table>
-<p>All tools in the restricted toolset require a valid JWT — clients must authenticate via a Keycloak service account.</p>
+<p>All tools in the restricted and <code>sorbobot</code> toolsets require a valid JWT — clients must authenticate via a Keycloak service account.</p>
 <hr>
 <section id="expose-the-toolbox-port-on-the-host" class="level3">
 <h3 class="anchored" data-anchor-id="expose-the-toolbox-port-on-the-host">1. Expose the Toolbox Port on the Host</h3>
@@ -995,8 +1005,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../ai/horizon-europe.html" class="pagination-link" aria-label="Horizon Europe topics">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Horizon Europe topics</span>
+      <a href="../ai/sorbobot.html" class="pagination-link" aria-label="SorboBot (research expertise)">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">SorboBot (research expertise)</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
