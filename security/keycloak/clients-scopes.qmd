@@ -10,10 +10,10 @@ Besides Keycloak's built-in clients (`account`, `account-console`, `admin-cli`, 
 
 | Client | Used by | Capabilities | Default scopes (added to the built-in ones) | Access token lifespan | Secret |
 |---|---|---|---|---|---|
-| `sovisuplus` | SoVisuPlus: user login (NextAuth) | *Client authentication*, *Standard flow* | `crisalid-agents-audience` | 15 min | `SOVISUPLUS_KEYCLOAK_CLIENT_SECRET` |
-| `open-webui` | OpenWebUI: user login (OIDC) | *Client authentication*, *Standard flow* | `crisalid-agents-audience` | 15 min | `OPENWEBUI_KEYCLOAK_CLIENT_SECRET` |
-| `crisalid-agents` | CRISalid agents chat API (token exchange) and batch entry points (service account) | *Client authentication*, *Service accounts roles*, *Standard token exchange* | `crisalid-graph-mcp-audience` | realm default | `CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET` |
-| `crisalid-graph-mcp` | MCP toolbox (`neo4j-mcp`), as a resource server | *Client authentication*, no flow at all | none | not applicable | unused |
+| `sovisuplus` | SoVisuPlus: user login (NextAuth) | *Client authentication*, *Standard flow* | `crisalid-agents-audience` | 15 min | `SOVISUPLUS_KEYCLOAK_CLIENT_SECRET` (`docker/sovisuplus/.env`) |
+| `open-webui` | OpenWebUI: user login (OIDC) | *Client authentication*, *Standard flow* | `crisalid-agents-audience` | 15 min | `OPENWEBUI_KEYCLOAK_CLIENT_SECRET` (`docker/openwebui/.env`) |
+| `crisalid-agents` | CRISalid agents chat API (token exchange) and batch entry points (service account) | *Client authentication*, *Service accounts roles*, *Standard token exchange* | `crisalid-graph-mcp-audience` | realm default | `CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET` (`docker/crisalid-agents/.env`) |
+| `crisalid-graph-mcp` | MCP toolbox (`neo4j-mcp`), as a resource server | none: *Client authentication* off, no flow | none | not applicable | none |
 
 Other settings of the clients:
 
@@ -26,16 +26,16 @@ Other settings of the clients:
 | `crisalid-agents-audience` | *Audience*, *Included Client Audience* = `crisalid-agents`, access token only | `sovisuplus`, `open-webui` |
 | `crisalid-graph-mcp-audience` | *Audience*, *Included Client Audience* = `crisalid-graph-mcp`, access token only | `crisalid-agents` |
 
-The two audience scopes make a token valid for exactly one service. A token issued to `sovisuplus` or `open-webui` carries `aud: crisalid-agents`: the chat API accepts it, the toolbox rejects it. A token obtained by `crisalid-agents` (exchanged from a user token, or its service account) carries `aud: crisalid-graph-mcp`: the toolbox accepts it, the chat API rejects it. The `crisalid-graph-mcp` client exists only to be named as an audience; it never authenticates and no token is issued *to* it. How the services use these tokens is described in [Crisalid AI → Security](../../ai/security.qmd).
+The two audience scopes make a token valid for exactly one service. A token issued to `sovisuplus` or `open-webui` carries `aud: crisalid-agents`: the chat API accepts it, the toolbox rejects it. A token obtained by `crisalid-agents` (exchanged from a user token, or its service account) carries `aud: crisalid-graph-mcp`: the toolbox accepts it, the chat API rejects it. The `crisalid-graph-mcp` client exists only to be named as an audience; it has no credentials, never authenticates and no token is issued *to* it. How the services use these tokens is described in [Crisalid AI → Security](../../ai/security.qmd).
 
 ## Manual configuration
 
 Admin console, realm `crisalid-inst`. Create the clients first: the audience mappers select a client from a list.
 
-1. **Clients → Create client** `sovisuplus` (usually present already): *Client type* OpenID Connect; *Client authentication* on; *Standard flow* on; *Direct access grants* and *Service accounts roles* off. *Valid redirect URIs* `${SOVISUPLUS_URL}/*`. **Credentials** → copy the secret into `SOVISUPLUS_KEYCLOAK_CLIENT_SECRET` (`docker/.env`).
-2. **Clients → Create client** `open-webui`: *Client authentication* on; *Standard flow* on; *Direct access grants* off. *Valid redirect URIs* `${OPENWEBUI_URL}/oauth/oidc/callback` (and `http://localhost:8080/oauth/oidc/callback` for a local instance), *Valid post logout redirect URIs* `${OPENWEBUI_URL}/*`, *Web origins* `${OPENWEBUI_URL}`. **Credentials** → copy the secret into `OPENWEBUI_KEYCLOAK_CLIENT_SECRET`.
-3. **Clients → Create client** `crisalid-graph-mcp`: *Client authentication* on; every flow and *Service accounts roles* off. No URL.
-4. **Clients → Create client** `crisalid-agents`: *Client authentication* on; *Service accounts roles* and *Standard token exchange* on; *Standard flow* and *Direct access grants* off. No URL. **Credentials** → copy the secret into `CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET`.
+1. **Clients → Create client** `sovisuplus` (usually present already): *Client type* OpenID Connect; *Client authentication* on; *Standard flow* on; *Direct access grants* and *Service accounts roles* off. *Valid redirect URIs* `${SOVISUPLUS_URL}/*`. **Credentials** → copy the secret into `SOVISUPLUS_KEYCLOAK_CLIENT_SECRET` (`docker/sovisuplus/.env`).
+2. **Clients → Create client** `open-webui`: *Client authentication* on; *Standard flow* on; *Direct access grants* off. *Valid redirect URIs* `${OPENWEBUI_URL}/oauth/oidc/callback` (and `http://localhost:8080/oauth/oidc/callback` for a local instance), *Valid post logout redirect URIs* `${OPENWEBUI_URL}/*`, *Web origins* `${OPENWEBUI_URL}`. **Credentials** → copy the secret into `OPENWEBUI_KEYCLOAK_CLIENT_SECRET` (`docker/openwebui/.env`).
+3. **Clients → Create client** `crisalid-graph-mcp`: *Client authentication* off; every flow and *Service accounts roles* off. No URL, no secret: the client exists only to be named as an audience.
+4. **Clients → Create client** `crisalid-agents`: *Client authentication* on; *Service accounts roles* and *Standard token exchange* on; *Standard flow* and *Direct access grants* off. No URL. **Credentials** → copy the secret into `CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET` (`docker/crisalid-agents/.env`).
 5. **Client scopes → Create client scope** `crisalid-agents-audience`: *Type* Default, *Protocol* OpenID Connect, *Display on consent screen* off, *Include in token scope* off. Then **Mappers → Configure a new mapper → Audience**: *Included Client Audience* `crisalid-agents` (pick the client; leave *Included Custom Audience* empty), *Add to access token* on, *Add to ID token* off, *Add to token introspection* on.
 6. **Client scopes → Create client scope** `crisalid-graph-mcp-audience`, same settings, with an *Audience* mapper whose *Included Client Audience* is `crisalid-graph-mcp`.
 7. **Clients → `sovisuplus` → Client scopes → Add client scope** `crisalid-agents-audience`, assigned type *Default*. Same for `open-webui`.

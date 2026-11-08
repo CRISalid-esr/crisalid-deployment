@@ -380,13 +380,16 @@ authentication realm. To set up Keycloak in this environment, follow these steps
 1. **Global `.env` Configuration**
 
 In the global `.env` file, you will find the shared Keycloak configuration variables, such as the realm name (
-`KEYCLOAK_REALM`) and the client secrets (`SOVISUPLUS_KEYCLOAK_CLIENT_SECRET`). The `KEYCLOAK_REALM` can be customized (
-e.g., `crisalid-my-university`) for readability.
+`KEYCLOAK_REALM`) and the public URLs of the applications (`SOVISUPLUS_URL`). The `KEYCLOAK_REALM` can be customized (
+e.g., `crisalid-my-university`) for readability. The secret of each Keycloak client lives in the env file of its
+service: `SOVISUPLUS_KEYCLOAK_CLIENT_SECRET` in `sovisuplus/.env` (see [Security → Keycloak](../security/keycloak/index.qmd)).
 
 Example:
 
 ```env
+# .env
 KEYCLOAK_REALM=crisalid-inst
+# sovisuplus/.env
 SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=MY-SECRET-VALUE
 ```
 

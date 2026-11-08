@@ -40,7 +40,7 @@ docker compose \
 Configuration:
 
 - Agent LLM and toolbox settings, the agents loaded (`CRISALID_AGENTS_AGENTS`) and the agents allowed to each client (`AGENT_ALLOW_LIST`): `docker/crisalid-agents/.env`.
-- Keycloak clients of the chain (`CRISALID_AGENTS_KEYCLOAK_CLIENT_ID` / `_SECRET`, `OPENWEBUI_URL`, `OPENWEBUI_KEYCLOAK_CLIENT_SECRET`): the shared `docker/.env`, rendered into the realm by `configure_keycloak.sh`. See [Security](security.qmd).
+- Keycloak clients of the chain: the public URLs (`SOVISUPLUS_URL`, `OPENWEBUI_URL`) in the shared `docker/.env`, the secret of each client in the env file of its service (`CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET` in `docker/crisalid-agents/.env`, `OPENWEBUI_KEYCLOAK_CLIENT_SECRET` in `docker/openwebui/.env`), all rendered into the realm by `configure_keycloak.sh`. See [Security](security.qmd).
 - Turning the SoVisuPlus assistant on or off: `SVP_CHAT_ENABLED` in `docker/sovisuplus/.env`, see [below](#disabling-the-assistant).
 - Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
 - OpenWebUI → agents connection (*System OAuth*): configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).

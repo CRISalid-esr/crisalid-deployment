@@ -518,7 +518,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Configuration:</p>
 <ul>
 <li>Agent LLM and toolbox settings, the agents loaded (<code>CRISALID_AGENTS_AGENTS</code>) and the agents allowed to each client (<code>AGENT_ALLOW_LIST</code>): <code>docker/crisalid-agents/.env</code>.</li>
-<li>Keycloak clients of the chain (<code>CRISALID_AGENTS_KEYCLOAK_CLIENT_ID</code> / <code>_SECRET</code>, <code>OPENWEBUI_URL</code>, <code>OPENWEBUI_KEYCLOAK_CLIENT_SECRET</code>): the shared <code>docker/.env</code>, rendered into the realm by <code>configure_keycloak.sh</code>. See <a href="../ai/security.html">Security</a>.</li>
+<li>Keycloak clients of the chain: the public URLs (<code>SOVISUPLUS_URL</code>, <code>OPENWEBUI_URL</code>) in the shared <code>docker/.env</code>, the secret of each client in the env file of its service (<code>CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET</code> in <code>docker/crisalid-agents/.env</code>, <code>OPENWEBUI_KEYCLOAK_CLIENT_SECRET</code> in <code>docker/openwebui/.env</code>), all rendered into the realm by <code>configure_keycloak.sh</code>. See <a href="../ai/security.html">Security</a>.</li>
 <li>Turning the SoVisuPlus assistant on or off: <code>SVP_CHAT_ENABLED</code> in <code>docker/sovisuplus/.env</code>, see <a href="#disabling-the-assistant">below</a>.</li>
 <li>Assistant configuration (welcome message, prompt suggestions, agent system prompt): the <code>docker/sovisuplus/config/chat.json</code> file, see <a href="#sovisuplus-assistant-content">below</a>.</li>
 <li>OpenWebUI → agents connection (<em>System OAuth</em>): configured by hand in the admin panel, see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
