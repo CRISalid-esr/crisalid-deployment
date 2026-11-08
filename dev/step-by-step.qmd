@@ -512,7 +512,11 @@ KEYCLOAK_REALM=crisalid-inst
 SOVISUPLUS_SCHEME=https
 SOVISUPLUS_HOST=your-sovisuplus-hostname.example.org
 SOVISUPLUS_PORT=443
+```
 
+In `sovisuplus/.env`, the secret of the `sovisuplus` Keycloak client (rendered into the realm by `configure_keycloak.sh`):
+
+```env
 SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=<your-client-secret>
 ```
 

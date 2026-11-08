@@ -46,7 +46,7 @@ SorboBot only works when the graph holds topics assigned by taxi. Before serving
 3. **A toolbox shipping the `sorbobot` toolset**: the `crisalidesr/crisalid-neo4j-mcp-toolbox:dev` image, or a
    release published after it. Every tool of the toolset requires a JWT with the `crisalid-graph-mcp` audience, obtained
    by the chat API through token exchange from the person's token: the `crisalid-agents` Keycloak client must be
-   configured (`CRISALID_AGENTS_KEYCLOAK_CLIENT_ID` / `_SECRET` in `docker/.env`, see [Security](security.qmd)).
+   configured (`CRISALID_AGENTS_KEYCLOAK_CLIENT_ID` / `_SECRET` in `docker/crisalid-agents/.env`, see [Security](security.qmd)).
 4. **The usual agent settings**: LLM endpoint and model, embedding endpoint (used by taxi), see
    [Docker Compose](docker-compose.qmd).
 
