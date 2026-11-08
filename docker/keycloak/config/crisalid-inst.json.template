@@ -732,8 +732,7 @@
     "surrogateAuthRequired" : false,
     "enabled" : true,
     "alwaysDisplayInConsole" : false,
-    "clientAuthenticatorType" : "client-secret",
-        "redirectUris" : [  ],
+            "redirectUris" : [  ],
     "webOrigins" : [  ],
     "notBefore" : 0,
     "bearerOnly" : false,
@@ -742,7 +741,7 @@
     "implicitFlowEnabled" : false,
     "directAccessGrantsEnabled" : false,
     "serviceAccountsEnabled" : false,
-    "publicClient" : false,
+    "publicClient" : true,
     "frontchannelLogout" : true,
     "protocol" : "openid-connect",
     "attributes" : {
