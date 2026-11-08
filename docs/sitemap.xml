@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/index.html</loc>
-    <lastmod>2026-11-08T07:41:34.798Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.842Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/clients-scopes.html</loc>
-    <lastmod>2026-11-08T07:49:38.368Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.841Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/requirements/index.html</loc>
@@ -42,7 +42,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2026-11-08T07:41:34.806Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.828Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>
@@ -50,7 +50,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/sorbobot.html</loc>
-    <lastmod>2026-11-08T07:41:34.798Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.827Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/local-workstation.html</loc>
@@ -62,11 +62,11 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
-    <lastmod>2026-11-08T07:41:34.797Z</lastmod>
+    <lastmod>2026-11-08T08:18:31.185Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/configuring-openwebui.html</loc>
-    <lastmod>2026-11-08T07:41:34.797Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.826Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/embeddings.html</loc>
@@ -78,7 +78,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/security.html</loc>
-    <lastmod>2026-11-08T07:41:34.798Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.827Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/using-skills.html</loc>
@@ -98,7 +98,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/step-by-step.html</loc>
-    <lastmod>2026-11-08T07:41:34.807Z</lastmod>
+    <lastmod>2026-11-08T08:18:13.828Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/directories/structures.html</loc>
