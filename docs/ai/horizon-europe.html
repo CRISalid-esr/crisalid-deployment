@@ -273,6 +273,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -509,12 +519,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="serve-the-horizon-topic-finder" class="level2">
 <h2 class="anchored" data-anchor-id="serve-the-horizon-topic-finder">3. Serve the Horizon topic finder</h2>
-<p>Once the index is built, start (or restart) the agent services together with the index profile, so that they reach the OpenSearch service:</p>
+<p>Once the index is built, start (or restart) the agents service together with the index profile, so that it reaches the OpenSearch service:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> horizon_europe_index <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-owui <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Both agent services serve the graph agent and the topic finder by default (<code>CRISALID_AGENTS_AGENTS</code> for the pipelines server and <code>CRISALID_AGENTS_CHAT_API_AGENTS</code> for the chat API, in <code>docker/crisalid-agents/.env</code>); chat API clients select the agent they call. In OpenWebUI the topic finder appears as a model next to the graph agent (see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>).</p>
+<p>The chat API loads the graph agent and the topic finder by default (<code>CRISALID_AGENTS_AGENTS</code> in <code>docker/crisalid-agents/.env</code>) and allows both to the <code>sovisuplus</code> and <code>open-webui</code> clients (<code>AGENT_ALLOW_LIST</code>); SoVisuPlus selects the agent it calls with <code>SVP_CRISALID_AGENTS_AGENT</code>. In OpenWebUI the topic finder appears as a model next to the graph agent (see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>).</p>
 </section>
 <section id="topic-to-researcher-match" class="level2">
 <h2 class="anchored" data-anchor-id="topic-to-researcher-match">4. Topic-to-Researcher Match</h2>

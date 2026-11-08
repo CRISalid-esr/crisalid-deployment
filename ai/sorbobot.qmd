@@ -15,8 +15,8 @@ knowledge graph:
 - a **profile** of a researcher for a given question, with a numbered list of references;
 - the meaning of the **OpenAlex research domains** returned, and the domains covered by a theme.
 
-It is served by the OpenWebUI pipelines server (`crisalid-agents-owui`) only, where it appears as the **Sorbobot**
-model. It is not served by the chat API, so the SoVisuPlus assistant does not use it.
+It is served by the chat API (`crisalid-agents-chat-api`) and, by default, allowed to the OpenWebUI client only
+(`AGENT_ALLOW_LIST`), where it appears as the **Sorbobot** model. The SoVisuPlus assistant does not use it.
 
 ## How it works
 
@@ -44,9 +44,9 @@ SorboBot only works when the graph holds topics assigned by taxi. Before serving
    these links into account (`SORBOBOT_TOPIC_SOURCES=crisalid`); documents written before taxi was enabled must be
    harvested again to get their topics.
 3. **A toolbox shipping the `sorbobot` toolset**: the `crisalidesr/crisalid-neo4j-mcp-toolbox:dev` image, or a
-   release published after it. Every tool of the toolset requires a JWT, so the Keycloak service account of the
-   agents must be configured (`CRISALID_AGENTS_KEYCLOAK_CLIENT_ID` / `_SECRET`, see
-   [Using CRISalid AI Skills](using-skills.qmd)).
+   release published after it. Every tool of the toolset requires a JWT with the `crisalid-graph-mcp` audience, obtained
+   by the chat API through token exchange from the person's token: the `crisalid-agents` Keycloak client must be
+   configured (`CRISALID_AGENTS_KEYCLOAK_CLIENT_ID` / `_SECRET` in `docker/.env`, see [Security](security.qmd)).
 4. **The usual agent settings**: LLM endpoint and model, embedding endpoint (used by taxi), see
    [Docker Compose](docker-compose.qmd).
 
@@ -56,7 +56,8 @@ Everything lives in `docker/crisalid-agents/.env` (copy of `.env.sample`):
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `CRISALID_AGENTS_AGENTS` | `generic_agent,project_topic_matching,sorbobot` | Agents served by the pipelines server; keep `sorbobot` in the list |
+| `CRISALID_AGENTS_AGENTS` | `generic_agent,project_topic_matching,sorbobot` | Agents loaded by the chat API; keep `sorbobot` in the list |
+| `AGENT_ALLOW_LIST` | `sovisuplus:…;open-webui:generic_agent,project_topic_matching,sorbobot` | Agents each Keycloak client may call; keep `sorbobot` in the `open-webui` set |
 | `CRISALID_TAXI_URL` | `http://crisalid-taxi:8000` | Internal URL of the taxi service |
 | `SORBOBOT_TAXI_TIMEOUT_SECONDS`, `SORBOBOT_TOOLBOX_TIMEOUT_SECONDS`, `SORBOBOT_JUDGE_TIMEOUT_SECONDS` | 15, 30, 30 | Timeouts of the taxi, toolbox and LLM judge calls |
 | `SORBOBOT_TAXI_MAX_TOPICS`, `SORBOBOT_TAXI_MIN_QUERY_CHARS`, `SORBOBOT_SEMANTIC_THRESHOLD` | 100, 25, 0.56 | Taxi request: topics asked, minimum text length, minimum text-to-topic similarity |
@@ -69,7 +70,7 @@ Everything lives in `docker/crisalid-agents/.env` (copy of `.env.sample`):
 | `SORBOBOT_MAX_MESSAGE_CHARS` | 1000 | Maximum length of a user message |
 | `SORBOBOT_SUPPORTED_LANGUAGES`, `SORBOBOT_DEFAULT_LANGUAGE` | `en,fr`, `en` | Answer languages and fallback language |
 
-The `SORBOBOT_*` variables are all optional: `crisalid-agents.yaml` passes them to the pipelines server, and an empty
+The `SORBOBOT_*` variables are all optional: `crisalid-agents.yaml` passes them to the chat API, and an empty
 value keeps the agent's built-in default. The toolbox URL and toolset are taken from `CRISALID_MCP_TOOLBOX_URL` and
 fixed to `sorbobot`, whatever `CRISALID_MCP_TOOLBOX_TOOLSET` says for the graph agent.
 
@@ -81,12 +82,13 @@ The thresholds of the taxi request (`SORBOBOT_SEMANTIC_THRESHOLD`, `SORBOBOT_TAX
 
 ## Serving SorboBot
 
-Start the taxi, the toolbox, the pipelines server and OpenWebUI together:
+Start the taxi, the toolbox, the chat API and OpenWebUI together (Keycloak being up, see
+[Docker Compose](docker-compose.qmd)):
 
 ```bash
 docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
   --profile crisalid-taxi --profile neo4j-mcp \
-  --profile crisalid-agents-owui --profile openwebui \
+  --profile crisalid-agents-chat-api --profile openwebui \
   up -d
 ```
 
@@ -94,4 +96,4 @@ The taxi service only serves once it has embedded the whole OpenAlex taxonomy, w
 first start. Until then SorboBot answers that the topics service is unavailable.
 
 In OpenWebUI, the agent appears as the **Sorbobot** model next to the graph agent and the Horizon topic finder; apply
-the [pipeline model settings](configuring-openwebui.qmd#pipeline-model-configuration) to it like to the other agents.
+the [agent model settings](configuring-openwebui.qmd#agent-model-configuration) to it like to the other agents.

@@ -104,6 +104,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
+<script src="../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 <link rel="stylesheet" href="../index.css">
@@ -273,6 +276,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -401,11 +414,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#the-graph-layer-neo4j" id="toc-the-graph-layer-neo4j" class="nav-link active" data-scroll-target="#the-graph-layer-neo4j">🕸️ The graph layer — Neo4j</a></li>
   <li><a href="#the-tools-layer-neo4j-mcp" id="toc-the-tools-layer-neo4j-mcp" class="nav-link" data-scroll-target="#the-tools-layer-neo4j-mcp">🛠️ The tools layer — Neo4j MCP</a></li>
-  <li><a href="#the-agent-layer-crisalid-agents-openwebui-pipelines" id="toc-the-agent-layer-crisalid-agents-openwebui-pipelines" class="nav-link" data-scroll-target="#the-agent-layer-crisalid-agents-openwebui-pipelines">🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)</a>
+  <li><a href="#the-agent-layer-crisalid-agents-chat-api" id="toc-the-agent-layer-crisalid-agents-chat-api" class="nav-link" data-scroll-target="#the-agent-layer-crisalid-agents-chat-api">🤖 The agent layer — Crisalid Agents (chat API)</a>
   <ul class="collapse">
-  <li><a href="#the-chat-api-crisalid-agents-chat-api" id="toc-the-chat-api-crisalid-agents-chat-api" class="nav-link" data-scroll-target="#the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</a></li>
+  <li><a href="#inbound-the-users-token" id="toc-inbound-the-users-token" class="nav-link" data-scroll-target="#inbound-the-users-token">Inbound: the user’s token</a></li>
+  <li><a href="#which-client-may-call-which-agent" id="toc-which-client-may-call-which-agent" class="nav-link" data-scroll-target="#which-client-may-call-which-agent">Which client may call which agent</a></li>
+  <li><a href="#outbound-token-exchange" id="toc-outbound-token-exchange" class="nav-link" data-scroll-target="#outbound-token-exchange">Outbound: token exchange</a></li>
   </ul></li>
-  <li><a href="#the-interface-layer-openwebui" id="toc-the-interface-layer-openwebui" class="nav-link" data-scroll-target="#the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</a></li>
+  <li><a href="#the-interface-layer-sovisuplus-and-openwebui" id="toc-the-interface-layer-sovisuplus-and-openwebui" class="nav-link" data-scroll-target="#the-interface-layer-sovisuplus-and-openwebui">🖥️ The interface layer — SoVisuPlus and OpenWebUI</a></li>
   <li><a href="#supporting-services-crisalid-taxi" id="toc-supporting-services-crisalid-taxi" class="nav-link" data-scroll-target="#supporting-services-crisalid-taxi">🚖 Supporting services — CRISalid Taxi</a></li>
   </ul>
 </nav>
@@ -454,6 +469,25 @@ Exposure risk
 </div>
 </div>
 <p>Crisalid AI’s <a href="../ai/index.html#architecture">four-layer architecture</a> means that security must be configured at each layer independently. The sections below cover each layer from the graph up.</p>
+<p>The chat path is secured by a single chain of trust rooted in Keycloak: the person signs in to SoVisuPlus or OpenWebUI, the client forwards the person’s access token to the agents, the agents exchange it for a token meant for the tools, and the tools read the identity from that token. No shared API key is involved; every service verifies a token issued for <em>it</em>.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    B["Browser&lt;br/&gt;(session)"]
+    SVP["SoVisuPlus / OpenWebUI&lt;br/&gt;Keycloak login"]
+    API["crisalid-agents-chat-api&lt;br/&gt;validates aud=crisalid-agents&lt;br/&gt;token exchange"]
+    MCP["neo4j-mcp&lt;br/&gt;validates aud=crisalid-graph-mcp&lt;br/&gt;authenticated parameters"]
+    G["Neo4j"]
+    B --&gt; SVP -- "Bearer AT (user)" --&gt; API -- "AT' (aud crisalid-graph-mcp)" --&gt; MCP --&gt; G
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
 <hr>
 <section id="the-graph-layer-neo4j" class="level2">
 <h2 class="anchored" data-anchor-id="the-graph-layer-neo4j">🕸️ The graph layer — Neo4j</h2>
@@ -477,8 +511,39 @@ No RBAC in Neo4j Community Edition
 </section>
 <section id="the-tools-layer-neo4j-mcp" class="level2">
 <h2 class="anchored" data-anchor-id="the-tools-layer-neo4j-mcp">🛠️ The tools layer — Neo4j MCP</h2>
-<p>The <a href="https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/">Neo4j MCP Toolbox</a> does <strong>not</strong> support passwords or API keys. Authentication relies exclusively on <strong>JWT tokens</strong> issued by an OIDC provider — in the Crisalid stack, this is <strong>Keycloak</strong>.</p>
-<p>Each client application (such as <code>crisalid-agents-owui</code> or <code>crisalid-agents-chat-api</code>) must be provisioned with a <strong>Keycloak service account</strong> to obtain tokens. This setup requires the Keycloak component of the Crisalid stack to be deployed and running.</p>
+<p>The <a href="https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/">Neo4j MCP Toolbox</a> does <strong>not</strong> support passwords or API keys. Authentication relies exclusively on <strong>JWT tokens</strong> issued by an OIDC provider — in the Crisalid stack, this is <strong>Keycloak</strong>. This requires the Keycloak component of the stack to be deployed and running.</p>
+<p>Every tool of the served toolsets (<code>crisalid-restricted</code>, <code>sorbobot</code>, …) is marked <code>authRequired</code>. The toolbox validates the token sent in the <code>crisalid-keycloak_token</code> header against the realm (<code>KEYCLOAK_ISSUER</code>, the public Keycloak URL) and requires the audience <code>crisalid-graph-mcp</code> (<code>MCP_AUDIENCE</code> in <code>docker/neo4j-mcp/neo4j-mcp.yaml</code>), which is the Keycloak client representing the toolbox. That client is a pure resource server: every flow is disabled, it never authenticates and no token is issued <em>to</em> it. Two kinds of tokens carry this audience:</p>
+<ul>
+<li>the token <strong>exchanged</strong> by the chat API from a user token (interactive use): it carries the person’s <code>sub</code>, <code>preferred_username</code> and <code>email</code>;</li>
+<li>the <strong>service account</strong> token of the <code>crisalid-agents</code> client (<code>client_credentials</code> grant), used by the batch entry points only (<code>crisalid-agents-batch</code>, e.g.&nbsp;the Topic-to-Researcher Match), where there is no person.</li>
+</ul>
+<p>The identity is used through <strong>authenticated parameters</strong>: a tool such as <code>get-current-person</code> has no LLM-visible parameter; the toolbox binds its <code>username</code> parameter to the <code>preferred_username</code> claim of the token and hides it from the tool manifest. The LLM cannot supply or alter it, and the conversation cannot either — “my publications” is resolved server-side from the token, never from text. Tools about a person keep their explicit <code>person_uid</code> parameter; the agents call <code>get-current-person</code> first for “me”/“my” questions.</p>
+<p>The toolbox is reachable with a token obtained through the chat API only: the client applications’ own tokens (audience <code>crisalid-agents</code>) are rejected, and the toolbox is not opened to arbitrary MCP clients. Port 5000 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network. See the <a href="../ai/local-workstation.html">local workstation</a> page if you need to access it from outside the stack, and <a href="../ai/using-skills.html">Using CRISalid AI Skills</a> for clients of your own (each one needs a Keycloak client whose tokens carry the <code>crisalid-graph-mcp</code> audience).</p>
+<hr>
+</section>
+<section id="the-agent-layer-crisalid-agents-chat-api" class="level2">
+<h2 class="anchored" data-anchor-id="the-agent-layer-crisalid-agents-chat-api">🤖 The agent layer — Crisalid Agents (chat API)</h2>
+<p>A single service, <code>crisalid-agents-chat-api</code> (port 9100), serves the agents to both chat clients: the streaming chat API of SoVisuPlus (<code>POST /agents/{name}/chat</code>) and the OpenAI-compatible endpoint of OpenWebUI (<code>GET /v1/models</code>, <code>POST /v1/chat/completions</code>). Both routes require a <strong>Keycloak access token of the signed-in person</strong> in the <code>Authorization: Bearer</code> header; no shared API key is involved.</p>
+<section id="inbound-the-users-token" class="level3">
+<h3 class="anchored" data-anchor-id="inbound-the-users-token">Inbound: the user’s token</h3>
+<p>Each client application authenticates its users with Keycloak (authorization code flow) and forwards the <strong>access token</strong> obtained at login — SoVisuPlus from its NextAuth session, OpenWebUI through a <em>System OAuth</em> connection (see <a href="../ai/configuring-openwebui.html#crisalid-agents-connection">Configuring OpenWebUI</a>). The chat API checks:</p>
+<ul>
+<li>the signature against the realm JWKS, and <code>iss</code> against <code>KEYCLOAK_ISSUER</code> (the public Keycloak URL, the only issuer of the stack);</li>
+<li>the audience: <code>aud</code> must contain <code>crisalid-agents</code> (<code>CHAT_API_AUDIENCE</code>). The <code>crisalid-agents-audience</code> client scope of the realm adds it to the tokens of the <code>sovisuplus</code> and <code>open-webui</code> clients, and to no other;</li>
+<li>the remaining lifetime: a token with less than <code>MIN_TOKEN_TTL_SECONDS</code> (default 120) left is refused with <code>401 token_expiring</code>, because the toolbox token obtained from it expires at the same time and an agent turn may last a couple of minutes. The clients refresh their tokens ahead of time (the access token lifespan of both clients is 15 minutes).</li>
+</ul>
+<p>Errors are <code>401</code> with an <code>error</code> of <code>invalid_token</code>, <code>wrong_audience</code> or <code>token_expiring</code>. When the Keycloak session of the person has ended (idle timeout, logout, revocation in the admin console), the client cannot refresh any more: SoVisuPlus keeps its own session and only the assistant asks the person to sign in again; OpenWebUI handles the case itself.</p>
+</section>
+<section id="which-client-may-call-which-agent" class="level3">
+<h3 class="anchored" data-anchor-id="which-client-may-call-which-agent">Which client may call which agent</h3>
+<p>The <code>azp</code> claim names the Keycloak client the token was issued to. <code>AGENT_ALLOW_LIST</code> (<code>docker/crisalid-agents/.env</code>) maps each client to the agents it may call:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">AGENT_ALLOW_LIST</span><span class="op">=</span>sovisuplus:generic_agent,project_topic_matching<span class="kw">;</span><span class="ex">open-webui:generic_agent,project_topic_matching,sorbobot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A chat request outside the client’s set is answered <code>403 agent_not_allowed</code>; a client absent from the list may call no agent; <code>GET /agents</code> and <code>GET /v1/models</code> only list the allowed agents when a token is present. <code>AGENTS</code> keeps restricting what the process loads, the allow list restricts what each client sees. An empty allow list disables the check — acceptable on a local workstation only, and logged at startup.</p>
+</section>
+<section id="outbound-token-exchange" class="level3">
+<h3 class="anchored" data-anchor-id="outbound-token-exchange">Outbound: token exchange</h3>
+<p>Before running a turn, the chat API exchanges the user’s token for a token with the audience <code>crisalid-graph-mcp</code> (<a href="https://www.rfc-editor.org/rfc/rfc8693">RFC 8693</a>, Keycloak <em>standard token exchange</em>), authenticating as the confidential <code>crisalid-agents</code> client (<code>CRISALID_AGENTS_KEYCLOAK_CLIENT_ID</code> / <code>_SECRET</code> in <code>docker/.env</code>). Only this client can obtain toolbox tokens for a person: <em>Standard token exchange</em> is enabled on it alone, and the <code>crisalid-graph-mcp-audience</code> scope is a default scope of it alone. The clients and scopes involved, and how to verify them, are described in <a href="../security/keycloak/clients-scopes.html">Security → Keycloak → Clients &amp; scopes</a>. The exchanged token keeps the person’s claims, expires with the original token and is sent to the toolbox with every tool call of the turn. The same client’s <strong>service account</strong> is what the batch entry points use.</p>
+<p>Port 9100 is <strong>not exposed on the host</strong> — the chat API is only reachable inside the Docker network (<code>crisalid-front</code> for SoVisuPlus, <code>agents-network</code> for OpenWebUI), server-to-server. The chat API logs the subject, the client and the agent of every turn, never the tokens.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -489,38 +554,18 @@ Local workstation
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The Keycloak requirement makes MCP toolbox authentication impractical on a local workstation. For local development, leave <code>KEYCLOAK_CLIENT_ID</code> and <code>KEYCLOAK_CLIENT_SECRET</code> empty in <code>docker/crisalid-agents/.env</code> — the toolbox client will then connect without authentication (suitable for a trusted local environment only).</p>
+<p>Keycloak is required by the chat path: without it, no client can obtain a user token and the chat API answers <code>401</code>. On a local workstation, run the <code>keycloak</code> (or <code>keycloak-tls</code>) profile of the stack and the realm template; the public hostname (<code>keycloak.local</code>) resolves to the container through a network alias, and with the TLS profile the agents and toolbox images must trust the mkcert certificate authority — see <a href="../dev/local-tls.html">Local TLS</a>. <code>AGENT_ALLOW_LIST</code> may be left empty locally.</p>
 </div>
 </div>
-<p>Port 5000 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network. See the <a href="../ai/local-workstation.html">local workstation</a> page if you need to access it from outside the stack.</p>
-<p>For the full Keycloak service account setup procedure, see <a href="../ai/using-skills.html">Using CRISalid AI Skills</a>.</p>
-<hr>
-</section>
-<section id="the-agent-layer-crisalid-agents-openwebui-pipelines" class="level2">
-<h2 class="anchored" data-anchor-id="the-agent-layer-crisalid-agents-openwebui-pipelines">🤖 The agent layer — Crisalid Agents (OpenWebUI Pipelines)</h2>
-<p><a href="https://github.com/open-webui/pipelines">OpenWebUI Pipelines</a> exposes a FastAPI server on port 9099. This endpoint is secured by a <strong>shared API key</strong> (<code>PIPELINES_API_KEY</code>).</p>
-<p>The key is set once and must be provided by any client connecting to the pipelines server — in the Crisalid stack, this client is OpenWebUI itself.</p>
-<p><strong>In the Docker deployment</strong>, the key is configured in the shared <code>docker/.env</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">CRISALID_AGENTS_PIPELINES_API_KEY</span><span class="op">=&lt;</span>your-secret-key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>It is injected into <code>crisalid-agents-owui</code> as <code>PIPELINES_API_KEY</code> — the server uses it to authenticate incoming requests.</p>
-<p>When adding the pipelines connection in OpenWebUI (<strong>Admin panel → Settings → Connections</strong>, URL <code>http://crisalid-agents-owui:9099</code>), enter this key by hand in the API key field.</p>
-<p>Port 9099 is <strong>not exposed on the host</strong> — it is only reachable inside the Docker network (<code>agents-network</code>).</p>
-<section id="the-chat-api-crisalid-agents-chat-api" class="level3">
-<h3 class="anchored" data-anchor-id="the-chat-api-crisalid-agents-chat-api">The chat API (<code>crisalid-agents-chat-api</code>)</h3>
-<p>A second agent service exposes the same graph agent as a streaming chat API for SoVisuPlus (port 9100). It is secured by a <strong>shared API key</strong>, following the same scheme as the Apollo GraphQL endpoint: the key is configured once in the shared <code>docker/.env</code> and injected on both sides —</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">SOVISUPLUS_CHAT_API_KEY</span><span class="op">=&lt;</span>your-secret-key<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The chat API checks the <code>x-api-key</code> request header against it; SoVisuPlus sends it with every request. The check is always on.</p>
-<p>Port 9100 is <strong>not exposed on the host</strong> — the chat API is only reachable inside the Docker network (<code>crisalid-front</code>), server-to-server.</p>
 <hr>
 </section>
 </section>
-<section id="the-interface-layer-openwebui" class="level2">
-<h2 class="anchored" data-anchor-id="the-interface-layer-openwebui">🖥️ The interface layer — OpenWebUI</h2>
-<p>OpenWebUI is the only layer directly exposed to end users.</p>
+<section id="the-interface-layer-sovisuplus-and-openwebui" class="level2">
+<h2 class="anchored" data-anchor-id="the-interface-layer-sovisuplus-and-openwebui">🖥️ The interface layer — SoVisuPlus and OpenWebUI</h2>
+<p>The chat clients are the only layer directly exposed to end users. Each one establishes its own session from a Keycloak login and keeps the refresh token server-side; the browser never holds the tokens forwarded to the agents.</p>
 <ul>
-<li><strong>User registration is disabled</strong> by default (<code>ENABLE_SIGNUP=false</code>) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO.</li>
-<li>An <strong>admin account is seeded</strong> on first run via <code>OPENWEBUI_ADMIN_EMAIL</code> and <code>OPENWEBUI_ADMIN_PASSWORD</code> in <code>docker/openwebui/.env</code>.</li>
-<li><strong>Keycloak SSO</strong> can be enabled via OAuth2/OIDC — see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
+<li><strong>SoVisuPlus</strong>: the <code>/api/chat</code> proxy route reads the access token from the encrypted NextAuth session, refreshes it when it is about to expire, and forwards it to the chat API. The assistant’s system prompt is still prepended server-side (see <a href="../ai/docker-compose.html#sovisuplus-assistant-content">SoVisuPlus assistant configuration</a>); the person’s identity is no longer injected into the conversation, the agents resolve “me” from the token.</li>
+<li><strong>OpenWebUI</strong>: <strong>user registration is disabled</strong> by default (<code>ENABLE_SIGNUP=false</code>) — accounts must be created manually by an administrator, or provisioned through Keycloak SSO; an <strong>admin account is seeded</strong> on first run via <code>OPENWEBUI_ADMIN_EMAIL</code> and <code>OPENWEBUI_ADMIN_PASSWORD</code> in <code>docker/openwebui/.env</code>; <strong>Keycloak SSO</strong> and the <em>System OAuth</em> connection to the agents are described in <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>. The OAuth tokens of the sessions are encrypted at rest with <code>OAUTH_SESSION_TOKEN_ENCRYPTION_KEY</code>.</li>
 </ul>
 <hr>
 </section>

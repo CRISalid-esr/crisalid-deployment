@@ -40,13 +40,16 @@ fi
 # 4. Check if required variables are present in global .env
 : "${SOVISUPLUS_URL:?Missing SOVISUPLUS_URL in global .env}"
 : "${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET:?Missing SOVISUPLUS_KEYCLOAK_CLIENT_SECRET in global .env}"
+: "${OPENWEBUI_URL:?Missing OPENWEBUI_URL in global .env}"
+: "${OPENWEBUI_KEYCLOAK_CLIENT_SECRET:?Missing OPENWEBUI_KEYCLOAK_CLIENT_SECRET in global .env}"
+: "${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET:?Missing CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET in global .env}"
 
 # 5. Substitute and update the definitions.json for the Keycloak client
 if [ -f "$KEYCLOAK_CONFIG_TEMPLATE_FILE" ]; then
   echo "Updating Keycloak client definitions..."
 
   # Substitute environment variables and create the Keycloak configuration
-  envsubst '$KEYCLOAK_REALM $SOVISUPLUS_URL $SOVISUPLUS_KEYCLOAK_CLIENT_SECRET $ORCID_CLIENT_ID $ORCID_CLIENT_SECRET' < "$KEYCLOAK_CONFIG_TEMPLATE_FILE" > "$KEYCLOAK_CONFIG_FILE"
+  envsubst '$KEYCLOAK_REALM $SOVISUPLUS_URL $SOVISUPLUS_KEYCLOAK_CLIENT_SECRET $OPENWEBUI_URL $OPENWEBUI_KEYCLOAK_CLIENT_SECRET $CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET $ORCID_CLIENT_ID $ORCID_CLIENT_SECRET' < "$KEYCLOAK_CONFIG_TEMPLATE_FILE" > "$KEYCLOAK_CONFIG_FILE"
 
   echo "Updated definitions file saved as crisalid-inst-updated.json"
 else

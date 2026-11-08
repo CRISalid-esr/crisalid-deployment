@@ -7,30 +7,31 @@ The AI layer is composed of the following profiles, to be started together with 
 | Profile | Service | Purpose |
 |---|---|---|
 | `neo4j-mcp` | `neo4j-mcp` | MCP toolbox exposing knowledge graph tools (port 5000, internal) |
-| `crisalid-agents-owui` | `crisalid-agents-owui` | Agents served as OpenWebUI pipelines: graph agent, Horizon topic finder, SorboBot (port 9099, internal) |
-| `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | Agents served as a streaming chat API for SoVisuPlus: graph agent, Horizon topic finder (port 9100, internal) |
+| `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | The agents (graph agent, Horizon topic finder, SorboBot), served as a streaming chat API to SoVisuPlus and as an OpenAI-compatible endpoint to OpenWebUI (port 9100, internal) |
 | `openwebui` | `openwebui` | User-facing chat UI |
 | `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG and by the SorboBot agent (port 8000, internal) and its vector store |
 | `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601) |
 | `horizon_europe_index` | `opensearch` | OpenSearch index of Horizon Europe work programme topics, see [Horizon Europe topics](horizon-europe.qmd) (port 9200, internal) |
 | `crisalid-agents-batch` | `crisalid-agents-batch` | Batch entry points of crisalid-agents (topic index ingestion, topic-to-researcher match), run on demand with `docker compose run`, see [Horizon Europe topics](horizon-europe.qmd) |
 
-Both agent services run the same image family and require the `neo4j-mcp` profile (they wait for the toolbox to be healthy). Each one serves its own list of agents: `CRISALID_AGENTS_AGENTS` for the pipelines server (graph agent, Horizon topic finder and SorboBot by default) and `CRISALID_AGENTS_CHAT_API_AGENTS` for the chat API (graph agent and Horizon topic finder by default; SoVisuPlus picks one of them with `SVP_CRISALID_AGENTS_AGENT`). Only start the wrapper(s) you actually use:
+One agents service serves both clients. It requires the `neo4j-mcp` profile (it waits for the toolbox to be healthy) and a running Keycloak (`keycloak` or `keycloak-tls` profile): every chat request carries the signed-in person's Keycloak access token, see [Security](security.qmd). `CRISALID_AGENTS_AGENTS` lists the agents the service loads (graph agent, Horizon topic finder and SorboBot by default) and `AGENT_ALLOW_LIST` which of them each client may call (SoVisuPlus picks its agent with `SVP_CRISALID_AGENTS_AGENT`; OpenWebUI lists the allowed agents as models). Add the client(s) you actually use:
 
 ```bash
 # OpenWebUI chat stack
 docker compose \
   -f docker-compose.yaml \
   -f docker-compose.dev.yaml \
+  --profile keycloak --profile keycloak-db \
   --profile neo4j-mcp \
-  --profile crisalid-agents-owui \
+  --profile crisalid-agents-chat-api \
   --profile openwebui \
   up -d
 
-# SoVisuPlus chat API
+# SoVisuPlus assistant (SoVisuPlus itself is part of the core stack)
 docker compose \
   -f docker-compose.yaml \
   -f docker-compose.dev.yaml \
+  --profile keycloak --profile keycloak-db \
   --profile neo4j-mcp \
   --profile crisalid-agents-chat-api \
   up -d
@@ -38,11 +39,17 @@ docker compose \
 
 Configuration:
 
-- Agent LLM and toolbox settings, and the agents served by each service (`CRISALID_AGENTS_AGENTS`, `CRISALID_AGENTS_CHAT_API_AGENTS`): `docker/crisalid-agents/.env` (shared by both agent services).
+- Agent LLM and toolbox settings, the agents loaded (`CRISALID_AGENTS_AGENTS`) and the agents allowed to each client (`AGENT_ALLOW_LIST`): `docker/crisalid-agents/.env`.
+- Keycloak clients of the chain (`CRISALID_AGENTS_KEYCLOAK_CLIENT_ID` / `_SECRET`, `OPENWEBUI_URL`, `OPENWEBUI_KEYCLOAK_CLIENT_SECRET`): the shared `docker/.env`, rendered into the realm by `configure_keycloak.sh`. See [Security](security.qmd).
 - Turning the SoVisuPlus assistant on or off: `SVP_CHAT_ENABLED` in `docker/sovisuplus/.env`, see [below](#disabling-the-assistant).
-- Chat API key: the shared `SOVISUPLUS_CHAT_API_KEY` in `docker/.env`, injected into both the chat API and SoVisuPlus. See [Security](security.qmd).
 - Assistant configuration (welcome message, prompt suggestions, agent system prompt): the `docker/sovisuplus/config/chat.json` file, see [below](#sovisuplus-assistant-content).
-- OpenWebUI → pipelines connection: configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
+- OpenWebUI → agents connection (*System OAuth*): configured by hand in the admin panel, see [Configuring OpenWebUI](configuring-openwebui.qmd).
+
+## Keycloak issuer inside the stack {#keycloak-issuer}
+
+Keycloak has a single issuer: the public URL `${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}` (`docker/.env`). The browsers, the chat clients, the chat API and the toolbox all use it — there is no internal `http://keycloak:8080` URL any more, so the `iss` claim of a token is the same whoever requested it, which the token validation and the token exchange rely on.
+
+For the containers to reach that URL, the Keycloak service (`keycloak` and `keycloak-tls` profiles) carries a network alias equal to `KEYCLOAK_HOST` on the `crisalid-front` and `keycloak-network` networks: the public hostname resolves to the Keycloak container from the agents, the toolbox, SoVisuPlus and OpenWebUI. This is right whenever Keycloak itself answers on `KEYCLOAK_PORT` (plain HTTP locally, or the TLS profile with a mkcert certificate — see [Local TLS](../dev/local-tls.qmd)). When TLS ends at a reverse proxy in front of Keycloak (staging, production), the containers must reach the proxy instead: set `KEYCLOAK_NETWORK_ALIAS` in `docker/.env` to a harmless value and let `KEYCLOAK_HOST` resolve through public DNS (or `extra_hosts`).
 
 ## Topics classification (crisalid-taxi) {#crisalid-taxi}
 
@@ -80,7 +87,7 @@ batch) are documented on their own page: [Horizon Europe topics](horizon-europe.
 
 ## SorboBot {#sorbobot}
 
-The research expertise agent (experts of a theme, expertise of a researcher) served by the pipelines server on top of
+The research expertise agent (experts of a theme, expertise of a researcher) served to OpenWebUI on top of
 `crisalid-taxi` and the `sorbobot` toolset of the toolbox is documented on its own page: [SorboBot](sorbobot.qmd).
 
 ## SoVisuPlus assistant configuration {#sovisuplus-assistant-content}
@@ -156,7 +163,7 @@ If you forgot to create it, or if it is malformed, SoVisuPlus falls back to `/ap
 ## The system prompt is server-only, the rest is public
 `systemPrompt` is read by the server and injected into the upstream request. It is **never** sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in [Security](security.qmd), and the `welcome`/`suggestions` strings *are* shipped to the browser.
 
-Note that the proxy also injects the signed-in user's identity as a second system message, from the trusted session, so the agent can resolve "me"/"my" and scope graph queries to that person.
+The proxy does not describe the signed-in person to the agent: it forwards the person's Keycloak access token, and the agent resolves "me"/"my" from the token through the toolbox (see [Security](security.qmd)).
 :::
 
 ::: {.callout-tip}

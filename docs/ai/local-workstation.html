@@ -239,6 +239,16 @@ ul.task-list li input[type="checkbox"] {
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -361,7 +371,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#keycloak-is-required-by-the-chat-path" id="toc-keycloak-is-required-by-the-chat-path" class="nav-link active" data-scroll-target="#keycloak-is-required-by-the-chat-path">Keycloak is required by the chat path</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -402,8 +418,14 @@ Work in Progress
 <p>This page is coming soon.</p>
 </div>
 </div>
+<section id="keycloak-is-required-by-the-chat-path" class="level2">
+<h2 class="anchored" data-anchor-id="keycloak-is-required-by-the-chat-path">Keycloak is required by the chat path</h2>
+<p>The agents cannot be reached without Keycloak: SoVisuPlus and OpenWebUI forward the signed-in person’s Keycloak access token to the chat API, which validates it and exchanges it for a toolbox token (see <a href="../ai/security.html">Security</a>). On a local workstation, run the <code>keycloak</code> and <code>keycloak-db</code> profiles (or <code>keycloak-tls</code>, see <a href="../dev/local-tls.html">Local TLS</a>) with the realm rendered by <code>configure_keycloak.sh</code>, which declares the <code>sovisuplus</code>, <code>open-webui</code>, <code>crisalid-agents</code> and <code>crisalid-graph-mcp</code> clients and their audience scopes.</p>
+<p>The public hostname <code>keycloak.local</code> must resolve both on the host (<code>/etc/hosts</code>) and inside the Docker network (network alias of the Keycloak service, see <a href="../ai/docker-compose.html#keycloak-issuer">Docker Compose</a>). A chat API started on the host (<code>uv run uvicorn chat_api.main:app --port 9100</code>) uses the same public issuer, <code>http://keycloak.local:8080/realms/crisalid-inst</code> (or <code>https://keycloak.local:8443/…</code> with the TLS profile).</p>
+<p><code>AGENT_ALLOW_LIST</code> may be left empty on a workstation: the per-client restriction is then disabled and every loaded agent is reachable with any valid token of the realm.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

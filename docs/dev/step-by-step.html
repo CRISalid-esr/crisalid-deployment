@@ -273,6 +273,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -1040,7 +1050,7 @@ Keycloak service accounts required for authenticated access
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The toolbox validates incoming JWTs against Keycloak. Each client application that needs access must have a dedicated Keycloak service account. Service account setup is documented in <a href="../ai/using-skills.html">Using CRISalid AI Skills</a>.</p>
+<p>The toolbox validates incoming JWTs against Keycloak (public issuer, audience <code>crisalid-graph-mcp</code>). The CRISalid agents reach it with tokens exchanged from the signed-in person’s token, or with the service account of the <code>crisalid-agents</code> client for batches; both clients are part of the realm template. A client application of your own needs a dedicated Keycloak service account, documented in <a href="../ai/using-skills.html">Using CRISalid AI Skills</a>.</p>
 </div>
 </div>
 <section id="start-6" class="level3">

@@ -61,16 +61,19 @@ services:
       - GRAPHQL_API_KEY=${SOVISUPLUS_GRAPHQL_API_KEY}
       # Kill switch for the AI chat assistant: set SVP_CHAT_ENABLED=false to hide it (default: enabled)
       - CHAT_ENABLED=${SVP_CHAT_ENABLED:-true}
-      # CRISalid agents chat API (server-to-server over crisalid-front)
+      # CRISalid agents chat API (server-to-server over crisalid-front). Authenticated with the signed-in user's
+      # Keycloak access token (audience crisalid-agents), no shared key.
       - CRISALID_AGENTS_API_URL=${SVP_CRISALID_CHAT_API_URL:-http://crisalid-agents-chat-api:9100}
-      - CRISALID_AGENTS_API_KEY=${SOVISUPLUS_CHAT_API_KEY}
-      # Agent to talk to; must be one of the agents served by the chat API (CRISALID_AGENTS_CHAT_API_AGENTS)
+      # Agent to talk to; must be served by the chat API (CRISALID_AGENTS_AGENTS) and allowed to the sovisuplus
+      # client (AGENT_ALLOW_LIST in docker/crisalid-agents/.env)
       - CRISALID_AGENTS_AGENT=${SVP_CRISALID_AGENTS_AGENT:-generic_agent}
       - CHAT_CONFIG_FILE=/config/chat.json
       - KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}
+      # Single Keycloak issuer: server-side calls use the public URL too (resolved to the Keycloak container by
+      # its network alias, see docker/keycloak/keycloak.yaml)
       - KEYCLOAK_PUBLIC_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
-      - KEYCLOAK_INTERNAL_ADDR=http://${KEYCLOAK_INTERNAL_HOST}:8080
+      - KEYCLOAK_INTERNAL_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - ORCID_URL=${ORCID_URL}
       - ORCID_SCOPES=${ORCID_SCOPES}

@@ -569,7 +569,7 @@ The Neo4j MCP Toolbox exposes curated Cypher queries as MCP tools, allowing AI a
 ::: {.callout-note}
 ## Keycloak service accounts required for authenticated access
 
-The toolbox validates incoming JWTs against Keycloak. Each client application that needs access must have a dedicated Keycloak service account. Service account setup is documented in [Using CRISalid AI Skills](../ai/using-skills.qmd).
+The toolbox validates incoming JWTs against Keycloak (public issuer, audience `crisalid-graph-mcp`). The CRISalid agents reach it with tokens exchanged from the signed-in person's token, or with the service account of the `crisalid-agents` client for batches; both clients are part of the realm template. A client application of your own needs a dedicated Keycloak service account, documented in [Using CRISalid AI Skills](../ai/using-skills.qmd).
 :::
 
 ### Start

@@ -43,7 +43,6 @@ services:
       KC_HOSTNAME: ${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}
       KC_HOSTNAME_PORT: ${KEYCLOAK_PORT}
       KC_HOSTNAME_STRICT: "true"
-      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_HOSTNAME_DEBUG: "true"
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
@@ -52,8 +51,13 @@ services:
       - ./config:/opt/keycloak/data/import
       - ./themes:/opt/keycloak/themes
     networks:
-      - keycloak-network
-      - crisalid-front
+      # The public hostname resolves to this container from the other services (single issuer, see docker/.env)
+      keycloak-network:
+        aliases:
+          - ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
+      crisalid-front:
+        aliases:
+          - ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
     profiles:
       - keycloak
   keycloak-tls:
@@ -80,7 +84,6 @@ services:
       KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/sovisuplus.local+4-key.pem
 
       KC_HOSTNAME_STRICT: "true"
-      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
       KC_HOSTNAME_DEBUG: "true"
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
@@ -90,8 +93,13 @@ services:
       - ~/local-certs:/etc/x509/https
       - ./themes:/opt/keycloak/themes
     networks:
-      - keycloak-network
-      - crisalid-front
+      # The public hostname resolves to this container from the other services (single issuer, see docker/.env)
+      keycloak-network:
+        aliases:
+          - ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
+      crisalid-front:
+        aliases:
+          - ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
     profiles:
       - keycloak-tls
 
