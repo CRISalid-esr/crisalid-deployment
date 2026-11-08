@@ -12,7 +12,7 @@ services:
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}
       # Public Keycloak issuer (OIDC discovery and JWKS): the only issuer of the stack, resolvable from the
       # containers through the network alias of the Keycloak service (see docker/keycloak/keycloak.yaml)
-      - KEYCLOAK_ISSUER=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}}
       # Audience the toolbox requires in the tokens it receives (Keycloak client crisalid-graph-mcp)
       - MCP_AUDIENCE=${MCP_AUDIENCE:-crisalid-graph-mcp}
     depends_on:
