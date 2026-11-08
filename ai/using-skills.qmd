@@ -16,7 +16,7 @@ Three toolsets are available:
 | `crisalid-unrestricted` | above + `execute-cypher-readonly` |
 | `sorbobot` | the research-expertise tools of the [SorboBot](sorbobot.qmd) agent (OpenAlex concepts, experts of a concept, publications and abstracts of a person), all pre-prepared queries |
 
-All tools in the restricted and `sorbobot` toolsets require a valid JWT — clients must authenticate via a Keycloak service account.
+All tools in the restricted and `sorbobot` toolsets require a valid JWT carrying the `crisalid-graph-mcp` audience (`MCP_AUDIENCE` of the toolbox). In the stack, the CRISalid agents chat API obtains it by exchanging the signed-in person's token (see [Security](security.qmd)); a client of your own authenticates via a Keycloak service account, as described below. Tools with authenticated parameters (such as `get-current-person`, bound to the `preferred_username` claim) resolve the identity from the token.
 
 ---
 
@@ -70,14 +70,14 @@ On the next screen (**Capability config**):
 
 #### Step 3 — Add an Audience mapper
 
-The toolbox validates the JWT `aud` claim against the fixed value `crisalid-graph-mcp`. By default Keycloak does not include this in the token — you must add a mapper.
+The toolbox validates the JWT `aud` claim against `crisalid-graph-mcp` (`MCP_AUDIENCE`). By default Keycloak does not include this in the token. Either attach the `crisalid-graph-mcp-audience` client scope of the realm as a *Default* scope of your client (see [Security → Keycloak → Clients & scopes](../security/keycloak/clients-scopes.qmd)), or add a mapper to the client's dedicated scope as shown below.
 
 Navigate to: **Clients** → your client → **Client scopes** → click the dedicated scope (`<client-id>-dedicated`) → **Add mapper** → **Configure a new mapper** → **Audience**.
 
 Fill in the mapper as shown:
 
 - **Name**: `mcp-example-client-audience`
-- **Included Custom Audience**: `crisalid-graph-mcp`
+- **Included Client Audience**: `crisalid-graph-mcp`
 - **Add to access token**: On
 
 ![](images/configureaudience.png){fig-alt="Keycloak Add mapper – Audience"}

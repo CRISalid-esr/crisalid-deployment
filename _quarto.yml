@@ -94,6 +94,11 @@ website:
 
       contents:
         - security/index.qmd
+        - section: "Keycloak"
+          href: security/keycloak/index.qmd
+          contents:
+            - security/keycloak/clients-scopes.qmd
+            - security/keycloak/idp.qmd
 
 format:
   html:

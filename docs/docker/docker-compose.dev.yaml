@@ -82,10 +82,7 @@ services:
   # neo4j-mcp (MCP toolbox for the knowledge graph)
   neo4j-mcp:
     image: crisalidesr/crisalid-neo4j-mcp-toolbox:dev
-  # crisalid-agents (OpenWebUI pipelines / graph agent)
-  crisalid-agents-owui:
-    image: crisalidesr/crisalid-agents-owui:dev
-  # crisalid-agents (chat API for sovisuplus)
+  # crisalid-agents (chat API for sovisuplus and OpenAI-compatible endpoint for openwebui)
   crisalid-agents-chat-api:
     image: crisalidesr/crisalid-agents-chat-api:dev
   # crisalid-agents (batch entry points: Horizon topic index ingestion, topic-to-researcher match)
@@ -93,7 +90,7 @@ services:
     image: crisalidesr/crisalid-agents-chat-api:dev
   # openwebui (user-facing chat UI)
   openwebui:
-    image: ghcr.io/open-webui/open-webui:0.9.5-slim
+    image: ghcr.io/open-webui/open-webui:0.13.0-slim
   # crisalid-taxi (OpenAlex topics classification API)
   crisalid-taxi:
     image: crisalidesr/crisalid-taxi:dev

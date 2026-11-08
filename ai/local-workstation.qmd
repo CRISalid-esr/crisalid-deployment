@@ -6,3 +6,11 @@ title: "Local Workstation"
 ## Work in Progress
 This page is coming soon.
 :::
+
+## Keycloak is required by the chat path
+
+The agents cannot be reached without Keycloak: SoVisuPlus and OpenWebUI forward the signed-in person's Keycloak access token to the chat API, which validates it and exchanges it for a toolbox token (see [Security](security.qmd)). On a local workstation, run the `keycloak` and `keycloak-db` profiles (or `keycloak-tls`, see [Local TLS](../dev/local-tls.qmd)) with the realm rendered by `configure_keycloak.sh`, which declares the `sovisuplus`, `open-webui`, `crisalid-agents` and `crisalid-graph-mcp` clients and their audience scopes.
+
+The public hostname `keycloak.local` must resolve both on the host (`/etc/hosts`) and inside the Docker network (network alias of the Keycloak service, see [Docker Compose](docker-compose.qmd#keycloak-issuer)). A chat API started on the host (`uv run uvicorn chat_api.main:app --port 9100`) uses the same public issuer, `http://keycloak.local:8080/realms/crisalid-inst` (or `https://keycloak.local:8443/…` with the TLS profile).
+
+`AGENT_ALLOW_LIST` may be left empty on a workstation: the per-client restriction is then disabled and every loaded agent is reachable with any valid token of the realm.

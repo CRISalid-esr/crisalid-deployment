@@ -54,7 +54,7 @@ Crisalid AI consists of four layers, from the user interface down to the knowled
 ```{mermaid}
 flowchart LR
     UI["🖥️ User Interface<br/>OpenWebUI · email · …"]
-    AGENTS["🤖 Crisalid Agents<br/>OpenWebUI Pipelines<br/>LangChain · LangGraph"]
+    AGENTS["🤖 Crisalid Agents<br/>chat API<br/>LangChain · LangGraph"]
     SKILLS["🛠️ Crisalid AI Skills<br/>MCP Tools"]
     GRAPH["🕸️ Neo4j Graph<br/>(IKG)"]
     TAXI["🚖 Crisalid Taxi<br/>OpenAlex topics"]
@@ -111,13 +111,13 @@ Two specialised agents complete them:
 - the **Horizon topic finder**, which matches a project idea with the topics of the Horizon Europe work programme (see [Horizon Europe topics](horizon-europe.qmd));
 - **SorboBot**, which finds the experts of a research theme and describes the expertise of a researcher from the OpenAlex topics of their publications (see [SorboBot](sorbobot.qmd)).
 
-Crisalid Agents also includes **OpenWebUI Pipelines**, enabling LangGraph agents to be deployed directly from OpenWebUI.
+Crisalid Agents exposes them through one **chat API**: a streaming endpoint for SoVisuPlus and an OpenAI-compatible endpoint (`/v1/models`, `/v1/chat/completions`) for OpenWebUI. Both are called with the signed-in person's Keycloak access token, which the agents carry down to the tools (see [Security](security.qmd)).
 
 ### 🖥️ The interface layer
 
-For the time being, this consists solely of **OpenWebUI** — a self-hosted chat interface accessible via a web browser.
+Two interfaces call the agents: the assistant widget of **SoVisuPlus** and **OpenWebUI** — a self-hosted chat interface accessible via a web browser.
 
-The LangChain/LangGraph agents in Crisalid Agents are presented to the user as **pipelines** — in the place where the user would normally select LLMs in a basic use of OpenWebUI.
+In OpenWebUI, the LangChain/LangGraph agents in Crisalid Agents are presented to the user as **models** — in the place where the user would normally select LLMs in a basic use of OpenWebUI.
 
 ::: {.callout-note}
 Although the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.

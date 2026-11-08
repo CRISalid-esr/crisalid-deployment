@@ -273,6 +273,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -399,7 +409,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of Contents</h2>
    
   <ul>
-  <li><a href="#crisalid-taxi" id="toc-crisalid-taxi" class="nav-link active" data-scroll-target="#crisalid-taxi">Topics classification (crisalid-taxi)</a></li>
+  <li><a href="#keycloak-issuer" id="toc-keycloak-issuer" class="nav-link active" data-scroll-target="#keycloak-issuer">Keycloak issuer inside the stack</a></li>
+  <li><a href="#crisalid-taxi" id="toc-crisalid-taxi" class="nav-link" data-scroll-target="#crisalid-taxi">Topics classification (crisalid-taxi)</a></li>
   <li><a href="#horizon-europe-index" id="toc-horizon-europe-index" class="nav-link" data-scroll-target="#horizon-europe-index">Horizon Europe topic index</a></li>
   <li><a href="#sorbobot" id="toc-sorbobot" class="nav-link" data-scroll-target="#sorbobot">SorboBot</a></li>
   <li><a href="#sovisuplus-assistant-content" id="toc-sovisuplus-assistant-content" class="nav-link" data-scroll-target="#sovisuplus-assistant-content">SoVisuPlus assistant configuration</a>
@@ -454,67 +465,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>MCP toolbox exposing knowledge graph tools (port 5000, internal)</td>
 </tr>
 <tr class="even">
-<td><code>crisalid-agents-owui</code></td>
-<td><code>crisalid-agents-owui</code></td>
-<td>Agents served as OpenWebUI pipelines: graph agent, Horizon topic finder, SorboBot (port 9099, internal)</td>
+<td><code>crisalid-agents-chat-api</code></td>
+<td><code>crisalid-agents-chat-api</code></td>
+<td>The agents (graph agent, Horizon topic finder, SorboBot), served as a streaming chat API to SoVisuPlus and as an OpenAI-compatible endpoint to OpenWebUI (port 9100, internal)</td>
 </tr>
 <tr class="odd">
-<td><code>crisalid-agents-chat-api</code></td>
-<td><code>crisalid-agents-chat-api</code></td>
-<td>Agents served as a streaming chat API for SoVisuPlus: graph agent, Horizon topic finder (port 9100, internal)</td>
-</tr>
-<tr class="even">
 <td><code>openwebui</code></td>
 <td><code>openwebui</code></td>
 <td>User-facing chat UI</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>crisalid-taxi</code></td>
 <td><code>crisalid-taxi</code>, <code>crisalid-taxi-opensearch</code></td>
 <td>OpenAlex topics classification API used by IKG and by the SorboBot agent (port 8000, internal) and its vector store</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>crisalid-taxi-dashboards</code></td>
 <td><code>crisalid-taxi-dashboards</code></td>
 <td>Optional OpenSearch Dashboards UI for the taxi index (port 5601)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>horizon_europe_index</code></td>
 <td><code>opensearch</code></td>
 <td>OpenSearch index of Horizon Europe work programme topics, see <a href="../ai/horizon-europe.html">Horizon Europe topics</a> (port 9200, internal)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>crisalid-agents-batch</code></td>
 <td><code>crisalid-agents-batch</code></td>
 <td>Batch entry points of crisalid-agents (topic index ingestion, topic-to-researcher match), run on demand with <code>docker compose run</code>, see <a href="../ai/horizon-europe.html">Horizon Europe topics</a></td>
 </tr>
 </tbody>
 </table>
-<p>Both agent services run the same image family and require the <code>neo4j-mcp</code> profile (they wait for the toolbox to be healthy). Each one serves its own list of agents: <code>CRISALID_AGENTS_AGENTS</code> for the pipelines server (graph agent, Horizon topic finder and SorboBot by default) and <code>CRISALID_AGENTS_CHAT_API_AGENTS</code> for the chat API (graph agent and Horizon topic finder by default; SoVisuPlus picks one of them with <code>SVP_CRISALID_AGENTS_AGENT</code>). Only start the wrapper(s) you actually use:</p>
+<p>One agents service serves both clients. It requires the <code>neo4j-mcp</code> profile (it waits for the toolbox to be healthy) and a running Keycloak (<code>keycloak</code> or <code>keycloak-tls</code> profile): every chat request carries the signed-in person’s Keycloak access token, see <a href="../ai/security.html">Security</a>. <code>CRISALID_AGENTS_AGENTS</code> lists the agents the service loads (graph agent, Horizon topic finder and SorboBot by default) and <code>AGENT_ALLOW_LIST</code> which of them each client may call (SoVisuPlus picks its agent with <code>SVP_CRISALID_AGENTS_AGENT</code>; OpenWebUI lists the allowed agents as models). Add the client(s) you actually use:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OpenWebUI chat stack</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-owui <span class="dt">\</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> openwebui <span class="dt">\</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># SoVisuPlus chat API</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> keycloak-db <span class="dt">\</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> openwebui <span class="dt">\</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># SoVisuPlus assistant (SoVisuPlus itself is part of the core stack)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> keycloak <span class="at">--profile</span> keycloak-db <span class="dt">\</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-chat-api <span class="dt">\</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Configuration:</p>
 <ul>
-<li>Agent LLM and toolbox settings, and the agents served by each service (<code>CRISALID_AGENTS_AGENTS</code>, <code>CRISALID_AGENTS_CHAT_API_AGENTS</code>): <code>docker/crisalid-agents/.env</code> (shared by both agent services).</li>
+<li>Agent LLM and toolbox settings, the agents loaded (<code>CRISALID_AGENTS_AGENTS</code>) and the agents allowed to each client (<code>AGENT_ALLOW_LIST</code>): <code>docker/crisalid-agents/.env</code>.</li>
+<li>Keycloak clients of the chain (<code>CRISALID_AGENTS_KEYCLOAK_CLIENT_ID</code> / <code>_SECRET</code>, <code>OPENWEBUI_URL</code>, <code>OPENWEBUI_KEYCLOAK_CLIENT_SECRET</code>): the shared <code>docker/.env</code>, rendered into the realm by <code>configure_keycloak.sh</code>. See <a href="../ai/security.html">Security</a>.</li>
 <li>Turning the SoVisuPlus assistant on or off: <code>SVP_CHAT_ENABLED</code> in <code>docker/sovisuplus/.env</code>, see <a href="#disabling-the-assistant">below</a>.</li>
-<li>Chat API key: the shared <code>SOVISUPLUS_CHAT_API_KEY</code> in <code>docker/.env</code>, injected into both the chat API and SoVisuPlus. See <a href="../ai/security.html">Security</a>.</li>
 <li>Assistant configuration (welcome message, prompt suggestions, agent system prompt): the <code>docker/sovisuplus/config/chat.json</code> file, see <a href="#sovisuplus-assistant-content">below</a>.</li>
-<li>OpenWebUI → pipelines connection: configured by hand in the admin panel, see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
+<li>OpenWebUI → agents connection (<em>System OAuth</em>): configured by hand in the admin panel, see <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</li>
 </ul>
+<section id="keycloak-issuer" class="level2">
+<h2 class="anchored" data-anchor-id="keycloak-issuer">Keycloak issuer inside the stack</h2>
+<p>Keycloak has a single issuer: the public URL <code>${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}</code> (<code>docker/.env</code>). The browsers, the chat clients, the chat API and the toolbox all use it — there is no internal <code>http://keycloak:8080</code> URL any more, so the <code>iss</code> claim of a token is the same whoever requested it, which the token validation and the token exchange rely on.</p>
+<p>For the containers to reach that URL, the Keycloak service (<code>keycloak</code> and <code>keycloak-tls</code> profiles) carries a network alias equal to <code>KEYCLOAK_HOST</code> on the <code>crisalid-front</code> and <code>keycloak-network</code> networks: the public hostname resolves to the Keycloak container from the agents, the toolbox, SoVisuPlus and OpenWebUI. This is right whenever Keycloak itself answers on <code>KEYCLOAK_PORT</code> (plain HTTP locally, or the TLS profile with a mkcert certificate — see <a href="../dev/local-tls.html">Local TLS</a>). When TLS ends at a reverse proxy in front of Keycloak (staging, production), the containers must reach the proxy instead: set <code>KEYCLOAK_NETWORK_ALIAS</code> in <code>docker/.env</code> to a harmless value and let <code>KEYCLOAK_HOST</code> resolve through public DNS (or <code>extra_hosts</code>).</p>
+</section>
 <section id="crisalid-taxi" class="level2">
 <h2 class="anchored" data-anchor-id="crisalid-taxi">Topics classification (crisalid-taxi)</h2>
 <p><code>crisalid-taxi</code> classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG and from the <a href="../ai/sorbobot.html">SorboBot</a> agent (the service joins both the <code>ikg-network</code> and the <code>agents-network</code> Docker networks).</p>
@@ -540,7 +553,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="sorbobot" class="level2">
 <h2 class="anchored" data-anchor-id="sorbobot">SorboBot</h2>
-<p>The research expertise agent (experts of a theme, expertise of a researcher) served by the pipelines server on top of <code>crisalid-taxi</code> and the <code>sorbobot</code> toolset of the toolbox is documented on its own page: <a href="../ai/sorbobot.html">SorboBot</a>.</p>
+<p>The research expertise agent (experts of a theme, expertise of a researcher) served to OpenWebUI on top of <code>crisalid-taxi</code> and the <code>sorbobot</code> toolset of the toolbox is documented on its own page: <a href="../ai/sorbobot.html">SorboBot</a>.</p>
 </section>
 <section id="sovisuplus-assistant-content" class="level2">
 <h2 class="anchored" data-anchor-id="sovisuplus-assistant-content">SoVisuPlus assistant configuration</h2>
@@ -656,7 +669,7 @@ The system prompt is server-only, the rest is public
 </div>
 <div class="callout-body-container callout-body">
 <p><code>systemPrompt</code> is read by the server and injected into the upstream request. It is <strong>never</strong> sent to the browser, so it is a reasonable place for instructions you would not want users to read or tamper with — but it is not a security boundary: it shapes agent behaviour and nothing more. Access control lives in <a href="../ai/security.html">Security</a>, and the <code>welcome</code>/<code>suggestions</code> strings <em>are</em> shipped to the browser.</p>
-<p>Note that the proxy also injects the signed-in user’s identity as a second system message, from the trusted session, so the agent can resolve “me”/“my” and scope graph queries to that person.</p>
+<p>The proxy does not describe the signed-in person to the agent: it forwards the person’s Keycloak access token, and the agent resolves “me”/“my” from the token through the toolbox (see <a href="../ai/security.html">Security</a>).</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">

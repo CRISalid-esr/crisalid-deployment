@@ -273,6 +273,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -455,7 +465,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>All tools in the restricted and <code>sorbobot</code> toolsets require a valid JWT — clients must authenticate via a Keycloak service account.</p>
+<p>All tools in the restricted and <code>sorbobot</code> toolsets require a valid JWT carrying the <code>crisalid-graph-mcp</code> audience (<code>MCP_AUDIENCE</code> of the toolbox). In the stack, the CRISalid agents chat API obtains it by exchanging the signed-in person’s token (see <a href="../ai/security.html">Security</a>); a client of your own authenticates via a Keycloak service account, as described below. Tools with authenticated parameters (such as <code>get-current-person</code>, bound to the <code>preferred_username</code> claim) resolve the identity from the token.</p>
 <hr>
 <section id="expose-the-toolbox-port-on-the-host" class="level3">
 <h3 class="anchored" data-anchor-id="expose-the-toolbox-port-on-the-host">1. Expose the Toolbox Port on the Host</h3>
@@ -504,12 +514,12 @@ Important
 </section>
 <section id="step-3-add-an-audience-mapper" class="level4">
 <h4 class="anchored" data-anchor-id="step-3-add-an-audience-mapper">Step 3 — Add an Audience mapper</h4>
-<p>The toolbox validates the JWT <code>aud</code> claim against the fixed value <code>crisalid-graph-mcp</code>. By default Keycloak does not include this in the token — you must add a mapper.</p>
+<p>The toolbox validates the JWT <code>aud</code> claim against <code>crisalid-graph-mcp</code> (<code>MCP_AUDIENCE</code>). By default Keycloak does not include this in the token. Either attach the <code>crisalid-graph-mcp-audience</code> client scope of the realm as a <em>Default</em> scope of your client (see <a href="../security/keycloak/clients-scopes.html">Security → Keycloak → Clients &amp; scopes</a>), or add a mapper to the client’s dedicated scope as shown below.</p>
 <p>Navigate to: <strong>Clients</strong> → your client → <strong>Client scopes</strong> → click the dedicated scope (<code>&lt;client-id&gt;-dedicated</code>) → <strong>Add mapper</strong> → <strong>Configure a new mapper</strong> → <strong>Audience</strong>.</p>
 <p>Fill in the mapper as shown:</p>
 <ul>
 <li><strong>Name</strong>: <code>mcp-example-client-audience</code></li>
-<li><strong>Included Custom Audience</strong>: <code>crisalid-graph-mcp</code></li>
+<li><strong>Included Client Audience</strong>: <code>crisalid-graph-mcp</code></li>
 <li><strong>Add to access token</strong>: On</li>
 </ul>
 <p><img src="images/configureaudience.png" class="img-fluid" alt="Keycloak Add mapper – Audience"></p>

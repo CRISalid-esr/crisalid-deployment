@@ -273,6 +273,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
   </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -439,7 +449,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>a <strong>profile</strong> of a researcher for a given question, with a numbered list of references;</li>
 <li>the meaning of the <strong>OpenAlex research domains</strong> returned, and the domains covered by a theme.</li>
 </ul>
-<p>It is served by the OpenWebUI pipelines server (<code>crisalid-agents-owui</code>) only, where it appears as the <strong>Sorbobot</strong> model. It is not served by the chat API, so the SoVisuPlus assistant does not use it.</p>
+<p>It is served by the chat API (<code>crisalid-agents-chat-api</code>) and, by default, allowed to the OpenWebUI client only (<code>AGENT_ALLOW_LIST</code>), where it appears as the <strong>Sorbobot</strong> model. The SoVisuPlus assistant does not use it.</p>
 <section id="how-it-works" class="level2">
 <h2 class="anchored" data-anchor-id="how-it-works">How it works</h2>
 <p>The LLM never writes Cypher and never calls the MCP tools itself. It only sees four business tools; each one runs a deterministic search in Python over two services:</p>
@@ -455,7 +465,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol type="1">
 <li><strong>Deploy CRISalid Taxi</strong>: the <code>crisalid-taxi</code> profile, with the OpenAlex snapshot downloaded first (see <a href="../ai/docker-compose.html#crisalid-taxi">Topics classification</a>). The taxi service joins the <code>agents-network</code> Docker network so that the agent reaches it at <code>http://crisalid-taxi:8000</code>.</li>
 <li><strong>Classify the documents</strong>: set <code>TAXI_ENABLED=true</code> in <code>docker/ikg/.env</code> so that IKG links every document it writes to its OpenAlex topics (<code>HAS_TOPIC</code> relationships with <code>source=crisalid</code>). By default SorboBot only takes these links into account (<code>SORBOBOT_TOPIC_SOURCES=crisalid</code>); documents written before taxi was enabled must be harvested again to get their topics.</li>
-<li><strong>A toolbox shipping the <code>sorbobot</code> toolset</strong>: the <code>crisalidesr/crisalid-neo4j-mcp-toolbox:dev</code> image, or a release published after it. Every tool of the toolset requires a JWT, so the Keycloak service account of the agents must be configured (<code>CRISALID_AGENTS_KEYCLOAK_CLIENT_ID</code> / <code>_SECRET</code>, see <a href="../ai/using-skills.html">Using CRISalid AI Skills</a>).</li>
+<li><strong>A toolbox shipping the <code>sorbobot</code> toolset</strong>: the <code>crisalidesr/crisalid-neo4j-mcp-toolbox:dev</code> image, or a release published after it. Every tool of the toolset requires a JWT with the <code>crisalid-graph-mcp</code> audience, obtained by the chat API through token exchange from the person’s token: the <code>crisalid-agents</code> Keycloak client must be configured (<code>CRISALID_AGENTS_KEYCLOAK_CLIENT_ID</code> / <code>_SECRET</code> in <code>docker/.env</code>, see <a href="../ai/security.html">Security</a>).</li>
 <li><strong>The usual agent settings</strong>: LLM endpoint and model, embedding endpoint (used by taxi), see <a href="../ai/docker-compose.html">Docker Compose</a>.</li>
 </ol>
 </section>
@@ -479,66 +489,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>CRISALID_AGENTS_AGENTS</code></td>
 <td><code>generic_agent,project_topic_matching,sorbobot</code></td>
-<td>Agents served by the pipelines server; keep <code>sorbobot</code> in the list</td>
+<td>Agents loaded by the chat API; keep <code>sorbobot</code> in the list</td>
 </tr>
 <tr class="even">
+<td><code>AGENT_ALLOW_LIST</code></td>
+<td><code>sovisuplus:…;open-webui:generic_agent,project_topic_matching,sorbobot</code></td>
+<td>Agents each Keycloak client may call; keep <code>sorbobot</code> in the <code>open-webui</code> set</td>
+</tr>
+<tr class="odd">
 <td><code>CRISALID_TAXI_URL</code></td>
 <td><code>http://crisalid-taxi:8000</code></td>
 <td>Internal URL of the taxi service</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SORBOBOT_TAXI_TIMEOUT_SECONDS</code>, <code>SORBOBOT_TOOLBOX_TIMEOUT_SECONDS</code>, <code>SORBOBOT_JUDGE_TIMEOUT_SECONDS</code></td>
 <td>15, 30, 30</td>
 <td>Timeouts of the taxi, toolbox and LLM judge calls</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>SORBOBOT_TAXI_MAX_TOPICS</code>, <code>SORBOBOT_TAXI_MIN_QUERY_CHARS</code>, <code>SORBOBOT_SEMANTIC_THRESHOLD</code></td>
 <td>100, 25, 0.56</td>
 <td>Taxi request: topics asked, minimum text length, minimum text-to-topic similarity</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SORBOBOT_MAX_SEARCH_TOPICS</code>, <code>SORBOBOT_TOPIC_LINK_THRESHOLD</code></td>
 <td>20, 0.57</td>
 <td>Topics kept from taxi, minimum publication-to-topic similarity</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>SORBOBOT_TOPIC_SOURCES</code></td>
 <td><code>crisalid</code></td>
 <td><code>HAS_TOPIC</code> link sources taken into account (comma-separated; empty keeps every source)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SORBOBOT_JUDGE_THRESHOLD</code></td>
 <td>0.6</td>
 <td>Minimum LLM judge score; <code>0</code> disables both judges</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>SORBOBOT_MIN_AUTHORS</code>, <code>SORBOBOT_MAX_JUDGED_SIBLINGS</code></td>
 <td>2, 100</td>
 <td>Widening to sibling topics when too few researchers are found</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SORBOBOT_RANKING_METHOD</code></td>
 <td><code>weighted_relevance</code></td>
 <td>Ranking of the researchers (<code>weighted_relevance</code> or <code>count</code>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>SORBOBOT_SHOW_MAX_AUTHORS</code>, <code>SORBOBOT_SHOW_MAX_DOMAINS</code>, <code>SORBOBOT_SHOW_MAX_PERSON_PUBLICATIONS</code>, <code>SORBOBOT_PROFILE_MAX_PUBLICATIONS</code>, <code>SORBOBOT_EXPLORE_MAX_DOMAINS</code></td>
 <td>10, 5, 20, 20, 10</td>
 <td>Result sizes</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>SORBOBOT_MAX_MESSAGE_CHARS</code></td>
 <td>1000</td>
 <td>Maximum length of a user message</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>SORBOBOT_SUPPORTED_LANGUAGES</code>, <code>SORBOBOT_DEFAULT_LANGUAGE</code></td>
 <td><code>en,fr</code>, <code>en</code></td>
 <td>Answer languages and fallback language</td>
 </tr>
 </tbody>
 </table>
-<p>The <code>SORBOBOT_*</code> variables are all optional: <code>crisalid-agents.yaml</code> passes them to the pipelines server, and an empty value keeps the agent’s built-in default. The toolbox URL and toolset are taken from <code>CRISALID_MCP_TOOLBOX_URL</code> and fixed to <code>sorbobot</code>, whatever <code>CRISALID_MCP_TOOLBOX_TOOLSET</code> says for the graph agent.</p>
+<p>The <code>SORBOBOT_*</code> variables are all optional: <code>crisalid-agents.yaml</code> passes them to the chat API, and an empty value keeps the agent’s built-in default. The toolbox URL and toolset are taken from <code>CRISALID_MCP_TOOLBOX_URL</code> and fixed to <code>sorbobot</code>, whatever <code>CRISALID_MCP_TOOLBOX_TOOLSET</code> says for the graph agent.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -555,13 +570,13 @@ Note
 </section>
 <section id="serving-sorbobot" class="level2">
 <h2 class="anchored" data-anchor-id="serving-sorbobot">Serving SorboBot</h2>
-<p>Start the taxi, the toolbox, the pipelines server and OpenWebUI together:</p>
+<p>Start the taxi, the toolbox, the chat API and OpenWebUI together (Keycloak being up, see <a href="../ai/docker-compose.html">Docker Compose</a>):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-taxi <span class="at">--profile</span> neo4j-mcp <span class="dt">\</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-owui <span class="at">--profile</span> openwebui <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> crisalid-agents-chat-api <span class="at">--profile</span> openwebui <span class="dt">\</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  up <span class="at">-d</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The taxi service only serves once it has embedded the whole OpenAlex taxonomy, which can take several minutes on the first start. Until then SorboBot answers that the topics service is unavailable.</p>
-<p>In OpenWebUI, the agent appears as the <strong>Sorbobot</strong> model next to the graph agent and the Horizon topic finder; apply the <a href="../ai/configuring-openwebui.html#pipeline-model-configuration">pipeline model settings</a> to it like to the other agents.</p>
+<p>In OpenWebUI, the agent appears as the <strong>Sorbobot</strong> model next to the graph agent and the Horizon topic finder; apply the <a href="../ai/configuring-openwebui.html#agent-model-configuration">agent model settings</a> to it like to the other agents.</p>
 
 
 </section>

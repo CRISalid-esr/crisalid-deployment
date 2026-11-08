@@ -99,19 +99,19 @@ complete run the topics of files that are no longer in the directory are removed
 
 ## 3. Serve the Horizon topic finder
 
-Once the index is built, start (or restart) the agent services together with the index profile, so that they reach
+Once the index is built, start (or restart) the agents service together with the index profile, so that it reaches
 the OpenSearch service:
 
 ```bash
 docker compose -f docker-compose.yaml -f docker-compose.dev.yaml \
   --profile horizon_europe_index --profile neo4j-mcp \
-  --profile crisalid-agents-owui --profile crisalid-agents-chat-api \
+  --profile crisalid-agents-chat-api \
   up -d
 ```
 
-Both agent services serve the graph agent and the topic finder by default (`CRISALID_AGENTS_AGENTS` for the
-pipelines server and `CRISALID_AGENTS_CHAT_API_AGENTS` for the chat API, in `docker/crisalid-agents/.env`); chat API
-clients select the agent they call. In OpenWebUI the topic finder appears as a
+The chat API loads the graph agent and the topic finder by default (`CRISALID_AGENTS_AGENTS` in
+`docker/crisalid-agents/.env`) and allows both to the `sovisuplus` and `open-webui` clients (`AGENT_ALLOW_LIST`);
+SoVisuPlus selects the agent it calls with `SVP_CRISALID_AGENTS_AGENT`. In OpenWebUI the topic finder appears as a
 model next to the graph agent (see [Configuring OpenWebUI](configuring-openwebui.qmd)).
 
 ## 4. Topic-to-Researcher Match
