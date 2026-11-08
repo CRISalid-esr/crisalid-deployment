@@ -993,6 +993,8 @@ KEYCLOAK_PROXY_HEADERS=xforwarded</code></pre>
 KEYCLOAK_PORT=443
 KEYCLOAK_HOST=your-keycloak-hostname.example.org
 KEYCLOAK_REALM=crisalid-inst
+# Keycloak omits the port 443 in the tokens: give the issuer without it
+KEYCLOAK_ISSUER=https://your-keycloak-hostname.example.org/realms/crisalid-inst
 
 SOVISUPLUS_SCHEME=https
 SOVISUPLUS_HOST=your-sovisuplus-hostname.example.org

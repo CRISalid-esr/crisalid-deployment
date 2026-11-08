@@ -22,7 +22,7 @@ services:
       # public issuer. A token with less than MIN_TOKEN_TTL_SECONDS left is refused (the exchanged token expires
       # with it). AGENT_ALLOW_LIST maps each Keycloak client to the agents it may call (see .env.sample); empty
       # disables the check (local development only).
-      - KEYCLOAK_ISSUER=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}}
       - CHAT_API_AUDIENCE=${CHAT_API_AUDIENCE:-crisalid-agents}
       - MIN_TOKEN_TTL_SECONDS=${MIN_TOKEN_TTL_SECONDS:-120}
       - AGENT_ALLOW_LIST=${AGENT_ALLOW_LIST}
@@ -99,7 +99,7 @@ services:
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
       # Service account of the crisalid-agents Keycloak client (client credentials grant, no user context), public issuer
-      - KEYCLOAK_ISSUER=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}}
       - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
