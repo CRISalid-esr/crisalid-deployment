@@ -46,7 +46,7 @@ services:
       KC_HOSTNAME_DEBUG: "true"
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
-    hostname: ${KEYCLOAK_HOST}
+    hostname: ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
     volumes:
       - ./config:/opt/keycloak/data/import
       - ./themes:/opt/keycloak/themes
@@ -87,7 +87,7 @@ services:
       KC_HOSTNAME_DEBUG: "true"
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
-    hostname: ${KEYCLOAK_HOST}
+    hostname: ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
     volumes:
       - ./config:/opt/keycloak/data/import
       - ~/local-certs:/etc/x509/https
