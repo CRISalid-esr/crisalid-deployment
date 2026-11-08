@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/index.html</loc>
-    <lastmod>2026-11-07T06:03:14.159Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.798Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/clients-scopes.html</loc>
-    <lastmod>2026-11-08T05:47:23.783Z</lastmod>
+    <lastmod>2026-11-08T07:49:38.368Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/requirements/index.html</loc>
@@ -42,7 +42,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2026-10-22T05:51:44.531Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.806Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>
@@ -50,23 +50,23 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/sorbobot.html</loc>
-    <lastmod>2026-11-06T09:37:00.182Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.798Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/local-workstation.html</loc>
-    <lastmod>2026-11-06T09:37:00.190Z</lastmod>
+    <lastmod>2026-11-08T07:14:26.042Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/horizon-europe.html</loc>
-    <lastmod>2026-11-06T08:28:49.448Z</lastmod>
+    <lastmod>2026-11-08T07:14:26.042Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
-    <lastmod>2026-11-06T08:28:49.448Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.797Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/configuring-openwebui.html</loc>
-    <lastmod>2026-11-07T06:03:03.954Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.797Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/embeddings.html</loc>
@@ -74,15 +74,15 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/index.html</loc>
-    <lastmod>2026-11-06T08:28:49.448Z</lastmod>
+    <lastmod>2026-11-08T07:14:26.042Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/security.html</loc>
-    <lastmod>2026-11-07T06:06:24.274Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.798Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/using-skills.html</loc>
-    <lastmod>2026-11-07T06:03:03.954Z</lastmod>
+    <lastmod>2026-11-08T07:14:26.043Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/dev-backend.html</loc>
@@ -94,11 +94,11 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
-    <lastmod>2026-11-06T08:28:49.449Z</lastmod>
+    <lastmod>2026-11-08T07:14:26.043Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/step-by-step.html</loc>
-    <lastmod>2026-11-06T09:37:00.188Z</lastmod>
+    <lastmod>2026-11-08T07:41:34.807Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/directories/structures.html</loc>
@@ -126,6 +126,6 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/idp.html</loc>
-    <lastmod>2026-11-07T06:03:03.950Z</lastmod>
+    <lastmod>2026-11-08T07:14:26.057Z</lastmod>
   </url>
 </urlset>

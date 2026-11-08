@@ -473,7 +473,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="keycloak-client-setup">Keycloak client setup</h3>
 <p>The realm template of the stack (<code>docker/keycloak/config/crisalid-inst.json.template</code>, rendered by <code>docker/configure_keycloak.sh</code>) already declares what OpenWebUI needs:</p>
 <ul>
-<li>a confidential client <strong><code>open-webui</code></strong> (standard flow only) with the redirect URIs <code>${OPENWEBUI_URL}/oauth/oidc/callback</code> and <code>http://localhost:8080/oauth/oidc/callback</code>, and <code>${OPENWEBUI_URL}</code> as web origin; its secret is <code>OPENWEBUI_KEYCLOAK_CLIENT_SECRET</code> in <code>docker/.env</code>;</li>
+<li>a confidential client <strong><code>open-webui</code></strong> (standard flow only) with the redirect URIs <code>${OPENWEBUI_URL}/oauth/oidc/callback</code> and <code>http://localhost:8080/oauth/oidc/callback</code>, and <code>${OPENWEBUI_URL}</code> as web origin; its secret is <code>OPENWEBUI_KEYCLOAK_CLIENT_SECRET</code> in <code>docker/openwebui/.env</code>;</li>
 <li>the client scope <strong><code>crisalid-agents-audience</code></strong> (an <em>Audience</em> mapper adding <code>crisalid-agents</code> to the access token), attached as a <strong>default</strong> scope of <code>open-webui</code>: the chat API only accepts tokens carrying this audience;</li>
 <li>an <strong>access token lifespan of 15 minutes</strong> on the client (<code>access.token.lifespan</code> = 900), longer than the realm default, so that OpenWebUI’s refresh-ahead window (5 minutes) does not trigger a refresh on every request.</li>
 </ul>
@@ -494,11 +494,12 @@ Note
 </section>
 <section id="environment-variables" class="level3">
 <h3 class="anchored" data-anchor-id="environment-variables">Environment variables</h3>
-<p>The shared <code>docker/.env</code> holds the public URL of the instance and the client secret, both also used to render the realm:</p>
-<pre class="env"><code>OPENWEBUI_URL=https://&lt;openwebui-public-host&gt;
-OPENWEBUI_KEYCLOAK_CLIENT_SECRET=&lt;client-secret&gt;</code></pre>
+<p>The shared <code>docker/.env</code> holds the public URL of the instance, used to render the realm (redirect URI, web origin):</p>
+<pre class="env"><code>OPENWEBUI_URL=https://&lt;openwebui-public-host&gt;</code></pre>
 <p>Then set the following variables in <code>docker/openwebui/.env</code>:</p>
-<pre class="env"><code># Allow new users to be created on first SSO login
+<pre class="env"><code># Secret of the open-webui Keycloak client (also rendered into the realm by configure_keycloak.sh)
+OPENWEBUI_KEYCLOAK_CLIENT_SECRET=&lt;client-secret&gt;
+# Allow new users to be created on first SSO login
 OPENWEBUI_ENABLE_OAUTH_SIGNUP=true
 
 # Label shown on the SSO login button
