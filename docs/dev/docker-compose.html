@@ -955,6 +955,9 @@ KEYCLOAK_DB_PASSWORD=keycloak</code></pre>
 <blockquote class="blockquote">
 <p>The help button is configured in <code>sovisuplus/.env</code> with <code>SVP_HELP_LINK_TYPE</code>: <code>url</code> opens the page at <code>SVP_HELP_URL</code>, <code>mail</code> opens the mail client addressed to <code>SVP_MAINTENANCE_MAIL_ADDRESS</code>, and leaving it empty hides the button.</p>
 </blockquote>
+<blockquote class="blockquote">
+<p>To let users sign in without going through the splash screen (e.g.&nbsp;from an intranet portal), set <code>SVP_KEYCLOAK_IDP_HINT</code> in <code>sovisuplus/.env</code> to the alias of a Keycloak identity provider and link to <code>&lt;SoVisu+ URL&gt;/transient-sso</code>: the user is sent straight to that identity provider. When the variable is empty, the route answers 403.</p>
+</blockquote>
 </section>
 <section id="sovisu-rbac-roles-file" class="level3">
 <h3 class="anchored" data-anchor-id="sovisu-rbac-roles-file">8. SoVisu+ RBAC Roles File</h3>

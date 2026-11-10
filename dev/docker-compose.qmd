@@ -443,6 +443,11 @@ cp -r sovisuplus/theme-sample sovisuplus/theme
 > The help button is configured in `sovisuplus/.env` with `SVP_HELP_LINK_TYPE`: `url` opens the page at `SVP_HELP_URL`,
 > `mail` opens the mail client addressed to `SVP_MAINTENANCE_MAIL_ADDRESS`, and leaving it empty hides the button.
 
+> To let users sign in without going through the splash screen (e.g. from an intranet portal), set
+> `SVP_KEYCLOAK_IDP_HINT` in `sovisuplus/.env` to the alias of a Keycloak identity provider and link to
+> `<SoVisu+ URL>/transient-sso`: the user is sent straight to that identity provider. When the variable is empty,
+> the route answers 403.
+
 ### 8. SoVisu+ RBAC Roles File
 
 SoVisu+ comes with a sample RBAC configuration you can customize. Start by copying the sample file and editing it:
