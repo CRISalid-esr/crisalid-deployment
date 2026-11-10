@@ -75,6 +75,9 @@ services:
       - KEYCLOAK_PUBLIC_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
       - KEYCLOAK_INTERNAL_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      # Direct sign-in route /transient-sso (no splash screen): alias of the Keycloak identity provider passed
+      # as kc_idp_hint. Empty = route disabled (403).
+      - KEYCLOAK_IDP_HINT=${SVP_KEYCLOAK_IDP_HINT:-}
       - ORCID_URL=${ORCID_URL}
       - ORCID_SCOPES=${ORCID_SCOPES}
       - ORCID_CLIENT_ID=${ORCID_CLIENT_ID}
