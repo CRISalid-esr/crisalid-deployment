@@ -118,6 +118,8 @@ services:
       # Topic-to-Researcher Match: dedicated model (defaults to the chat model) and report directory
       - TRM_MODEL=${TRM_MODEL:-${CRISALID_AGENTS_MODEL}}
       - TRM_OUTPUT_DIR=/app/reports
+      # Contribution roles (LoC relator codes) that credit a researcher with a publication; set but empty = every role
+      - TRM_CONTRIBUTOR_ROLES=${TRM_CONTRIBUTOR_ROLES-aut,ctb}
     volumes:
       - ../horizon-europe-index/wp:/data/horizon:ro
       - ../horizon-europe-index/reports:/app/reports
