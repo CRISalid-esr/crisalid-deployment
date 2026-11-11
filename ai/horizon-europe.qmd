@@ -118,7 +118,10 @@ model next to the graph agent (see [Configuring OpenWebUI](configuring-openwebui
 
 The TRM batch runs in the same `crisalid-agents-batch` service, by hand, and needs the `neo4j-mcp` profile to be up
 (it reads the publications through the MCP toolbox). Set `TRM_MODEL` in `docker/crisalid-agents/.env` to use a
-dedicated model. The JSON, Markdown and PDF reports are written to `docker/horizon-europe-index/reports/` on the host.
+dedicated model. `TRM_CONTRIBUTOR_ROLES` (default `aut,ctb`) lists the contribution roles, as Library of Congress
+relator codes, that credit a researcher with a publication: authors and people whose role the source does not
+specify. Thesis advisors (`ths`), jury members and editors (`edt`) are left out unless their code is added; an empty
+value keeps every role. The JSON, Markdown and PDF reports are written to `docker/horizon-europe-index/reports/` on the host.
 
 ```bash
 docker compose -f docker-compose.yaml -f docker-compose.dev.yaml --profile neo4j-mcp up -d
