@@ -158,16 +158,33 @@ Ensure all the environment variables are set correctly before running the script
 ./configure_keycloak.sh
 ```
 
-3.  **Update `KEYCLOAK_INTERNAL_HOST` in `docker/.env`:**
+3.  **Public issuer inside the containers:**
 
-Services that call Keycloak internally (neo4j-mcp, crisalid-agents, sovisuplus) resolve it by its container name. When switching to the TLS profile, update this variable so they target the correct container:
+Keycloak has a single issuer, the public URL built from `docker/.env` — here `https://keycloak.local:8443/realms/crisalid-inst`. The services that call Keycloak (neo4j-mcp, crisalid-agents-chat-api, crisalid-agents-batch, sovisuplus, openwebui) use this URL too; there is no internal `http://keycloak-tls:8080` address to switch to. For `keycloak.local` to resolve from inside the Docker network, the `keycloak-tls` service carries a **network alias** equal to `KEYCLOAK_HOST` on the `crisalid-front` and `keycloak-network` networks (`docker/keycloak/keycloak.yaml`): the containers connect to the Keycloak container on port 8443, the certificate issued by mkcert matches the hostname, and the traffic stays in the Docker network. Leave `KEYCLOAK_NETWORK_ALIAS` unset in `docker/.env` (it defaults to `KEYCLOAK_HOST`).
 
-```bash
-# docker/.env
-KEYCLOAK_INTERNAL_HOST=keycloak-tls
+The certificate is signed by the mkcert CA, which the images of the chat API and of the toolbox do not know. Either make them trust it, or skip verification locally:
+
+- **Trust the CA** (preferred): mount the mkcert root certificate into the containers and point the TLS libraries to it. In a `docker-compose.override.yaml` (or directly in the fragments, for a local checkout):
+
+```yaml
+services:
+  crisalid-agents-chat-api:
+    volumes:
+      - ~/.local/share/mkcert/rootCA.pem:/etc/ssl/certs/mkcert-rootCA.pem:ro
+    environment:
+      - REQUESTS_CA_BUNDLE=/etc/ssl/certs/mkcert-rootCA.pem
+      - SSL_CERT_FILE=/etc/ssl/certs/mkcert-rootCA.pem
+  neo4j-mcp:
+    volumes:
+      - ~/.local/share/mkcert/rootCA.pem:/etc/ssl/certs/mkcert-rootCA.pem:ro
+    environment:
+      - SSL_CERT_FILE=/etc/ssl/certs/mkcert-rootCA.pem
 ```
 
-The default value is `keycloak` (plain HTTP profile). Forgetting this change will cause internal token requests to fail with a connection error.
+  `mkcert -CAROOT` prints the directory of `rootCA.pem`. The same volume and variables apply to `crisalid-agents-batch`. A chat API run on the host with `uv run uvicorn` reads `REQUESTS_CA_BUNDLE` / `SSL_CERT_FILE` from its own environment.
+- **Skip verification** (local use only): `CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY=false` in `docker/crisalid-agents/.env` disables the certificate check of the chat API and the batch towards Keycloak. Never use this outside a workstation.
+
+OpenWebUI (`openwebui` profile, or a local `uvx` instance) validates the certificate of the OIDC provider too: give it the same CA, for instance by mounting `rootCA.pem` and setting `SSL_CERT_FILE` on the service, or `~/.open-webui/ca-bundle.pem` for a local instance.
 
 4.  **Launch Docker Compose with the TLS Profile:**
 
@@ -183,5 +200,6 @@ docker compose \
 
 ### Verification
 
-* **Keycloak:** Should be accessible securely at `https://keycloak.local:844`.
+* **Keycloak:** Should be accessible securely at `https://keycloak.local:8443`.
+* **From a container:** `docker compose exec crisalid-agents-chat-api python -c "import urllib.request; print(urllib.request.urlopen('https://keycloak.local:8443/realms/crisalid-inst/.well-known/openid-configuration').status)"` prints `200` once the alias and the CA are in place.
 * **SoVisu+:** Should be accessible securely at `https://sovisuplus.local:3000`.

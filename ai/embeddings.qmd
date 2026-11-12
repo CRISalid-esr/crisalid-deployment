@@ -6,12 +6,13 @@ format:
     toc-location: left
 ---
 
-Embedding vectors are used by two services in the CRISalid AI stack:
+Embedding vectors are used by three services in the CRISalid AI stack:
 
 - **IKG** stores embedding vectors directly on graph nodes, enabling vector similarity search in Neo4j. Vectors are computed offline, in batch, after each write that produces embeddable nodes (document titles, abstracts, etc.).
 - **CRISalid Agents** computes embeddings on demand at query time to power semantic tools such as `publications-by-theme`, which searches the graph by semantic similarity rather than exact keyword matching.
+- **CRISalid Taxi** embeds the OpenAlex taxonomy once at startup and the documents it is asked to classify, to assign topics by semantic similarity (see [Topics classification](docker-compose.qmd#crisalid-taxi)).
 
-Both services use the same embedding endpoint and model — configured once in the shared `.env`.
+All three services use the same embedding endpoint and model — configured once in the shared `.env`.
 
 ::: {.callout-note}
 For IKG, embedding computation is **opt-in**. Eligible nodes are labelled in the graph regardless of whether computation is enabled, so you can populate the graph first and add embeddings later — no rebuild required.
@@ -19,7 +20,7 @@ For IKG, embedding computation is **opt-in**. Eligible nodes are labelled in the
 
 ## Shared configuration
 
-The following variables are shared by IKG and CRISalid Agents. Set them in the **common `.env`** file:
+The following variables are shared by IKG, CRISalid Agents and CRISalid Taxi. Set them in the **common `.env`** file:
 
 ```env
 EMBEDDING_API_URL=https://your-embedding-server/
@@ -59,6 +60,17 @@ EMBEDDING_DIMENSIONS=1024
 # Number of texts sent per request. Must not exceed the server's max-client-batch-size.
 EMBEDDING_BATCH_SIZE=32
 ```
+
+## CRISalid Taxi-specific configuration
+
+Set in `docker/crisalid-taxi/.env`:
+
+```env
+# Number of texts sent per request. Must not exceed the server's max-client-batch-size.
+TAXI_EMBEDDING_BATCH_SIZE=32
+```
+
+The default similarity threshold (`TAXI_SIMILARITY_THRESHOLD`) is calibrated for `bge-m3`; recalibrate it when changing the embedding model.
 
 ## Computing embeddings (IKG)
 

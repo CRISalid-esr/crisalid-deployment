@@ -59,11 +59,25 @@ services:
       - GRAPHQL_ENDPOINT_URL=http://${APOLLO_HOST:-apollo}:${APOLLO_API_PORT}/graphql
       - GRAPHQL_API_KEY_ENABLED=${APOLLO_ENABLE_API_KEYS}
       - GRAPHQL_API_KEY=${SOVISUPLUS_GRAPHQL_API_KEY}
+      # Kill switch for the AI chat assistant: set SVP_CHAT_ENABLED=false to hide it (default: enabled)
+      - CHAT_ENABLED=${SVP_CHAT_ENABLED:-true}
+      # CRISalid agents chat API (server-to-server over crisalid-front). Authenticated with the signed-in user's
+      # Keycloak access token (audience crisalid-agents), no shared key.
+      - CRISALID_AGENTS_API_URL=${SVP_CRISALID_CHAT_API_URL:-http://crisalid-agents-chat-api:9100}
+      # Agent to talk to; must be served by the chat API (CRISALID_AGENTS_AGENTS) and allowed to the sovisuplus
+      # client (AGENT_ALLOW_LIST in docker/crisalid-agents/.env)
+      - CRISALID_AGENTS_AGENT=${SVP_CRISALID_AGENTS_AGENT:-generic_agent}
+      - CHAT_CONFIG_FILE=/config/chat.json
       - KEYCLOAK_CLIENT_ID=${SOVISUPLUS_KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${SOVISUPLUS_KEYCLOAK_CLIENT_SECRET}
+      # Single Keycloak issuer: server-side calls use the public URL too (resolved to the Keycloak container by
+      # its network alias, see docker/keycloak/keycloak.yaml)
       - KEYCLOAK_PUBLIC_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
-      - KEYCLOAK_INTERNAL_ADDR=http://${KEYCLOAK_INTERNAL_HOST}:8080
+      - KEYCLOAK_INTERNAL_ADDR=${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      # Direct sign-in route /transient-sso (no splash screen): alias of the Keycloak identity provider passed
+      # as kc_idp_hint. Empty = route disabled (403).
+      - KEYCLOAK_IDP_HINT=${SVP_KEYCLOAK_IDP_HINT:-}
       - ORCID_URL=${ORCID_URL}
       - ORCID_SCOPES=${ORCID_SCOPES}
       - ORCID_CLIENT_ID=${ORCID_CLIENT_ID}
@@ -82,6 +96,8 @@ services:
       - NEXT_PUBLIC_TERMS_PAGE_URL=${SVP_TERMS_PAGE_URL}
       - NEXT_PUBLIC_COMMUNITY_PAGE_URL=${SVP_COMMUNITY_PAGE_URL}
       - NEXT_PUBLIC_HELP_URL=${SVP_HELP_URL}
+      # Help button: 'url' -> SVP_HELP_URL, 'mail' -> SVP_MAINTENANCE_MAIL_ADDRESS, unset -> hidden
+      - NEXT_PUBLIC_HELP_LINK_TYPE=${SVP_HELP_LINK_TYPE}
       # HAL deposit (server-side). Files are written under HAL_UPLOADS_ROOT, mounted below.
       - HAL_ENDPOINT=${SVP_HAL_ENDPOINT:-https://api-preprod.archives-ouvertes.fr}
       - HAL_SERVICE_ACCOUNT_LOGIN=${SVP_HAL_SERVICE_ACCOUNT_LOGIN}

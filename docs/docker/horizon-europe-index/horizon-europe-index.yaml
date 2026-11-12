@@ -1,0 +1,38 @@
+services:
+  # OpenSearch index of Horizon Europe work programme topics (crisalid-agents: Horizon topic finder agent served by
+  # OpenWebUI, and the topic-to-researcher batch). Only reachable on the internal agents network, without
+  # authentication: the security plugin is disabled. Fed from the work programme PDFs dropped in
+  # ./horizon-europe-index/wp by the crisalid-agents-batch service (see crisalid-agents/crisalid-agents.yaml):
+  #   docker compose run --rm crisalid-agents-batch python scripts/index_horizon_topics.py
+  opensearch:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml)
+    restart: unless-stopped
+    expose:
+      - "9200"
+    environment:
+      - discovery.type=single-node
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      - OPENSEARCH_JAVA_OPTS=-Xms${OPENSEARCH_HEAP:-1g} -Xmx${OPENSEARCH_HEAP:-1g}
+    volumes:
+      # Named volume: a bind mount created by Docker is owned by root and OpenSearch (uid 1000) cannot write in it
+      - horizon_opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - agents-network
+    profiles:
+      - horizon_europe_index
+      # also enabled by `docker compose run --rm crisalid-agents-batch …`, which depends on this service
+      - crisalid-agents-batch
+
+networks:
+  agents-network:
+    driver: bridge
+
+volumes:
+  horizon_opensearch_data:

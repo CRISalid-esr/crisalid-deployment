@@ -41,7 +41,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-8209bba92526d312cd2ae504c2dbed29.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-5ee27db05bd2414c0f08240d6e3b5eef.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -243,6 +243,14 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Docker Compose</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../ai/horizon-europe.html">
+ <span class="dropdown-text">Horizon Europe topics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../ai/using-skills.html">
  <span class="dropdown-text">Using CRISalid AI Skills</span></a>
   </li>  
@@ -264,6 +272,16 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="../security/index.html">
  <span class="dropdown-text">Security Considerations</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
   </li>  
     </ul>
   </li>
@@ -355,6 +373,18 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../ai/horizon-europe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Horizon Europe topics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ai/sorbobot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SorboBot (research expertise)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../ai/using-skills.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Using CRISalid AI Skills</span></a>
   </div>
@@ -375,7 +405,13 @@ ul.task-list li input[type="checkbox"] {
   </li>
     </ul>
     </div>
-    
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#keycloak-is-required-by-the-chat-path" id="toc-keycloak-is-required-by-the-chat-path" class="nav-link active" data-scroll-target="#keycloak-is-required-by-the-chat-path">Keycloak is required by the chat path</a></li>
+  </ul>
+</nav>
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
@@ -416,8 +452,14 @@ Work in Progress
 <p>This page is coming soon.</p>
 </div>
 </div>
+<section id="keycloak-is-required-by-the-chat-path" class="level2">
+<h2 class="anchored" data-anchor-id="keycloak-is-required-by-the-chat-path">Keycloak is required by the chat path</h2>
+<p>The agents cannot be reached without Keycloak: SoVisuPlus and OpenWebUI forward the signed-in person’s Keycloak access token to the chat API, which validates it and exchanges it for a toolbox token (see <a href="../ai/security.html">Security</a>). On a local workstation, run the <code>keycloak</code> and <code>keycloak-db</code> profiles (or <code>keycloak-tls</code>, see <a href="../dev/local-tls.html">Local TLS</a>) with the realm rendered by <code>configure_keycloak.sh</code>, which declares the <code>sovisuplus</code>, <code>open-webui</code>, <code>crisalid-agents</code> and <code>crisalid-graph-mcp</code> clients and their audience scopes.</p>
+<p>The public hostname <code>keycloak.local</code> must resolve both on the host (<code>/etc/hosts</code>) and inside the Docker network (network alias of the Keycloak service, see <a href="../ai/docker-compose.html#keycloak-issuer">Docker Compose</a>). A chat API started on the host (<code>uv run uvicorn chat_api.main:app --port 9100</code>) uses the same public issuer, <code>http://keycloak.local:8080/realms/crisalid-inst</code> (or <code>https://keycloak.local:8443/…</code> with the TLS profile).</p>
+<p><code>AGENT_ALLOW_LIST</code> may be left empty on a workstation: the per-client restriction is then disabled and every loaded agent is reachable with any valid token of the realm.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

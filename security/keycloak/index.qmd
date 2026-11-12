@@ -1,0 +1,16 @@
+---
+title: "Keycloak"
+---
+
+Security of a CRISalid deployment rests on **Keycloak**: every application of the stack authenticates its users against the realm, and the services verify the tokens Keycloak issues. This section documents the Keycloak configuration the stack relies on: the [clients and scopes](clients-scopes.qmd) of the realm, and the [identity providers](idp.qmd) it brokers. The security of the AI layers (graph, tools, agents, chat interfaces) is covered in [Crisalid AI → Security](../../ai/security.qmd).
+
+The stack configures Keycloak automatically. The manual descriptions below are there to **verify** a realm, or to **complete** one that existed before a component was added.
+
+**Automatic configuration.** `docker/configure_keycloak.sh` renders the realm template `docker/keycloak/config/crisalid-inst.json.template` into `docker/keycloak/config/crisalid-inst.json`, substituting the realm name and the public URLs taken from `docker/.env` (`KEYCLOAK_REALM`, `SOVISUPLUS_URL`, `OPENWEBUI_URL`, `ORCID_CLIENT_ID`, `ORCID_CLIENT_SECRET`) and the secret of each client taken from the env file of its service (`SOVISUPLUS_KEYCLOAK_CLIENT_SECRET` in `docker/sovisuplus/.env`, `OPENWEBUI_KEYCLOAK_CLIENT_SECRET` in `docker/openwebui/.env`, `CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET` in `docker/crisalid-agents/.env`). On a deployment split across several hosts, those three files only need to exist on the Keycloak host for the time of the rendering, each holding its secret. The `keycloak` and `keycloak-tls` services start with `--import-realm` and load that file from `/opt/keycloak/data/import`. On an empty database, the realm comes up complete: every client, scope, mapper and identity provider of this section exists and nothing has to be created by hand. See [Docker Compose - Step by Step](../../dev/step-by-step.qmd#start-keycloak-and-sovisu) for the sequence.
+
+::: {.callout-important}
+## The import never updates an existing realm
+`--import-realm` creates a realm that is missing and **skips** one that is already in the database. A Keycloak deployed before a component was added, or whose realm was edited in the console, keeps its current state. On such a realm, add the missing objects yourself in the admin console, or re-import after deleting the realm (a destructive operation: users, sessions and identity-provider links included). Either way, use the verification steps to confirm the result. [Export the realm](../../dev/export-kc-realm.qmd) before any manual change.
+:::
+
+Realm-level settings of the template worth knowing: the default access token lifespan is 5 minutes (two clients override it, see below), the SSO session idle timeout 30 minutes, the SSO session maximum 10 hours, and refresh tokens are not revoked on use (a client may refresh with an earlier refresh token).

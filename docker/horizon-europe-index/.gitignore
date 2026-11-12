@@ -1,0 +1,3 @@
+wp/*.pdf
+reports/*
+!reports/.gitkeep

@@ -11,3 +11,5 @@ keycloak/config/crisalid-inst.json
 
 ikg/data/openalex
 openwebui/data
+chat.json
+rbac.roles.yaml
