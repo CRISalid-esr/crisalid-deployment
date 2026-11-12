@@ -4,10 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
-  echo "Usage: $0 [dev|prod] [--reset]"
+  echo "Usage: $0 [dev|prod] [--reset | --dags-only]"
   echo ""
-  echo "  dev|prod   Select docker-compose.{dev|prod}.yaml"
-  echo "  --reset    Wipe Airflow metadata DB and other volumes (DANGEROUS)"
+  echo "  dev|prod     Select docker-compose.{dev|prod}.yaml"
+  echo "  --reset      Wipe Airflow metadata DB and other volumes (DANGEROUS)"
+  echo "  --dags-only  Only refresh the DAGs code in cdb/dags, in place:"
+  echo "               no .env regeneration, no container stop, no airflow-init"
 }
 
 # ------------------------------------------------------------------------------
@@ -16,6 +18,7 @@ usage() {
 
 ENVIRONMENT=""
 RESET=false
+DAGS_ONLY=false
 
 for arg in "$@"; do
   case "$arg" in
@@ -24,6 +27,9 @@ for arg in "$@"; do
       ;;
     --reset)
       RESET=true
+      ;;
+    --dags-only)
+      DAGS_ONLY=true
       ;;
     -h|--help)
       usage
@@ -39,6 +45,12 @@ done
 
 if [[ -z "${ENVIRONMENT}" ]]; then
   echo "Missing environment."
+  usage
+  exit 1
+fi
+
+if [[ "$RESET" == "true" && "$DAGS_ONLY" == "true" ]]; then
+  echo "--reset and --dags-only are mutually exclusive."
   usage
   exit 1
 fi
@@ -87,6 +99,47 @@ echo "Using DAGs repo ref: $REPO_REF"
 TEMPLATE_ENV="$DAGS_DIR/.env.template"
 FINAL_ENV="$DAGS_DIR/.env"
 
+# Shallow-clone the DAGs repo into the given (non-existing) directory
+# and strip what is not needed at runtime
+clone_dags() {
+  local target="$1"
+  git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$target"
+  echo "DAGs commit: $(git -C "$target" log -1 --format='%h %s')"
+  rm -rf "$target/.github" "$target/.git" "$target/.gitignore" "$target/tests" "$target/test_utils"
+}
+
+# ------------------------------------------------------------------------------
+# DAGs-only update: sync the code in place and leave everything else untouched
+# ------------------------------------------------------------------------------
+
+if [[ "$DAGS_ONLY" == "true" ]]; then
+  if [[ ! -d "$DAGS_DIR" || ! -f "$FINAL_ENV" ]]; then
+    echo "$DAGS_DIR is not configured yet: run '$0 $ENVIRONMENT' once first."
+    exit 1
+  fi
+
+  TMP_DIR="$(mktemp -d)"
+  trap 'rm -rf "$TMP_DIR"' EXIT
+  clone_dags "$TMP_DIR/dags"
+
+  if ! cmp -s "$TMP_DIR/dags/.env.template" "$TEMPLATE_ENV"; then
+    echo ""
+    echo "⚠️  .env.template changed in the DAGs repo:"
+    diff -u "$TEMPLATE_ENV" "$TMP_DIR/dags/.env.template" || true
+    echo ""
+    echo "    $FINAL_ENV is NOT regenerated in --dags-only mode."
+    echo "    Edit it by hand or run '$0 $ENVIRONMENT' (full reconfiguration)."
+    echo ""
+  fi
+
+  # Sync in place (no rm -rf of the directory): the running containers bind-mount
+  # cdb/dags and cdb/dags/.env, replacing them would detach the mounts.
+  rsync -a --delete --exclude='/.env' --exclude='__pycache__/' "$TMP_DIR/dags/" "$DAGS_DIR/"
+
+  echo "DAGs updated in $DAGS_DIR (containers untouched, Airflow will re-parse the DAG files)."
+  exit 0
+fi
+
 # ------------------------------------------------------------------------------
 # 1. Load variables from docker/.env
 # ------------------------------------------------------------------------------
@@ -107,8 +160,7 @@ fi
 echo "Preparing Airflow directories"
 mkdir -p "$CDB_DIR/logs" "$CDB_DIR/plugins" "$CDB_DIR/config" "$CDB_DIR/data"
 rm -rf "$DAGS_DIR"
-git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$DAGS_DIR"
-rm -rf "$DAGS_DIR/.github" "$DAGS_DIR/.git" "$DAGS_DIR/.gitignore" "$DAGS_DIR/tests" "$DAGS_DIR/test_utils"
+clone_dags "$DAGS_DIR"
 
 # ------------------------------------------------------------------------------
 # 3. Generate .env from .env.sample with envsubst

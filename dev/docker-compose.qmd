@@ -233,6 +233,21 @@ fresh install.
 > To upgrade the DAGs, change `CDB_DAGS_REF`, re-run `./docker/configure_cdb.sh prod` and restart the `cdb` profile.
 > Do not edit the DAGs in place: your changes would be lost on the next run.
 
+#### 🔄 Updating only the DAGs code (`--dags-only`)
+
+When only the DAGs code changed upstream, there is no need to go through the whole configuration again:
+
+```bash
+./docker/configure_cdb.sh dev --dags-only
+```
+
+In this mode the script clones the requested ref and syncs it in place into `docker/cdb/dags`. It does **not**
+regenerate `docker/cdb/.env` or `docker/cdb/dags/.env`, does not stop the containers and does not run `airflow-init`:
+a running Airflow simply re-parses the updated DAG files.
+
+If `.env.template` changed in the DAGs repository, the script prints the diff as a warning: report the change in
+`docker/cdb/dags/.env` by hand, or run the full configuration.
+
 ---
 
 ### 4. 🔐 Configure Basic Authentication for SVP Harvester
