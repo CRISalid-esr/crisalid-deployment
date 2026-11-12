@@ -1,0 +1,26 @@
+---
+title: "Hal harvester"
+---
+
+🧭 Back to [Harvesters Overview](overview.qmd)
+
+## Data source
+
+The HAL harvester fetches data from the [HAL API](https://api.archives-ouvertes.fr/docs/search).
+
+## Supported identifiers
+
+- idhali
+- idhals
+- orcid
+
+> ℹ️ HAL identifiers take priority over orcid. When both idhali and idhals are provided, idhali is used. The
+> harvester does **not** check consistency between idhali and idhals — the client system is expected to provide
+> consistent data.
+
+## Data conversion
+
+HAL document types are mapped to RDF classes, and HAL author qualities are mapped to LoC roles, following the tables
+provided in the
+[CRISalid data model documentation](https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=1352335371#GECMod%C3%A9lisation-MappingHAL-SoVisu+)
+(document types) and the same page's "Typologie des rôles" section (author roles).

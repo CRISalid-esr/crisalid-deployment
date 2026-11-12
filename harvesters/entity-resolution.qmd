@@ -1,0 +1,218 @@
+---
+title: "Entity Resolution & Identifier Alignment"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+🧭 Back to [Harvesters Overview](overview.qmd)
+
+This page describes how **SVP Harvester** keeps track of the entities (currently: persons) it harvests on behalf of,
+and how it aligns their identifiers across successive requests.
+
+---
+
+## Entities and alignment in SVP Harvester
+
+In SVP Harvester, harvesting activities are always conducted on behalf of an **entity** equipped with unique
+**identifiers**. An entity can be an individual, a project, a research structure, or an institution — essentially,
+any unit to which publications can be attributed. Currently, the system primarily supports entities of the
+**person** type.
+
+**Identifier alignment** is the process whereby an entity is associated with multiple identifiers. These identifiers
+are presumed to represent the same entity, ensuring that harvesting activities are conducted consistently across the
+various sources.
+
+> ℹ️ SVP Harvester does **not** perform identifier alignment by itself. It is up to the client system (e.g.
+> crisalid-ikg) to provide correct identifiers for each submitted entity. Nevertheless, SVP Harvester **memorizes**
+> the submitted entities and their identifiers (unless instructed otherwise, see
+> [Identifiers safe mode](#identifiers-safe-mode)) and reuses the same alignment for subsequent harvestings of the
+> same entity.
+
+When the client system submits an entity with changed identifiers, SVP Harvester does its best to update the entity
+alignment with respect to the newly provided identifiers.
+
+> ⚠️ Sending entities with shifting and contradictory alignments to SVP Harvester can put the system into an
+> inconsistent state and make the harvesting history illegible, as past harvestings are **not** retroactively
+> corrected when the alignment is updated.
+
+---
+
+## Identifiers safe mode
+
+This whole behavior can be disabled by setting the `identifiers_safe_mode` parameter to `true` in the request body.
+In this case, SVP Harvester will not register submitted identifiers nor update existing entities.
+
+This mode is activated by default in the harvester's graphical user interface, to prevent accidental perturbation of
+the entity alignments by manually submitted test requests.
+
+---
+
+## Recommendations
+
+- Always submit the same entity with the same identifiers — this ensures the legibility of the harvesting history
+  and the coherency of the results.
+- Adding new identifiers to an existing entity is expected client behavior. SVP Harvester handles this seamlessly
+  and updates its alignment accordingly.
+- Correcting alignment errors is also a common operation SVP Harvester expects to occur occasionally: this includes
+  merging entities that were previously considered distinct, or removing an identifier from an entity to attach it
+  to another one.
+
+---
+
+## Identifier conflicts
+
+An identifier conflict occurs when the alignment of a newly submitted entity is logically incompatible with
+previously submitted ones.
+
+For example, Researcher 1 is submitted with orcid identifier A and idref identifier B:
+
+```text
+Researcher 1
+|
++-- orcid identifier: A
+|
++-- idref identifier: B
+
+Researcher 2
+|
++-- orcid identifier: A  <- Shared orcid identifier with Researcher 1
+|
++-- idref identifier: C
+```
+
+orcid A cannot belong to both entities identified respectively by idref B and idref C. This is an **identifier
+conflict**. SVP Harvester resolves it according to identifier priority rules configured in `identifiers.yml`
+(see the per-harvester identifier lists in [Harvesters Overview](overview.qmd#-available-harvesters) — for
+instance, [HAL](hal.qmd) gives idhal identifiers priority over orcid).
+
+---
+
+## Examples
+
+The following examples use the harvester's retrieval endpoint:
+
+```text
+POST /api/v1/references/retrieval
+```
+
+### Example 1: submitting a new entity
+
+```bash
+curl -X 'POST' \
+  'http://my-harvester-url/api/v1/references/retrieval' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "person": {
+    "identifiers": [
+      { "type": "idref", "value": "111111111" },
+      { "type": "orcid", "value": "0000-0001-1111-1112" }
+    ],
+    "name": "Smith, P"
+  },
+  "identifiers_safe_mode": false,
+  "harvesters": ["hal", "idref", "scanr", "openalex"],
+  "events": ["created", "updated", "deleted", "unchanged"]
+}'
+```
+
+During the execution of this request, SVP Harvester will:
+
+- register a new entity with the name "Smith, P" and the identifiers `111111111` (idref) and `0000-0001-1111-1112`
+  (orcid)
+- submit the entity to the harvesters `hal`, `idref`, `scanr` and `openalex`
+- return a URL where the status and results of the harvesting can be fetched asynchronously
+
+When a later request is submitted using **either** the idref identifier `111111111` **or** the orcid identifier
+`0000-0001-1111-1112`, SVP Harvester recognizes and aligns with the previously established entity without creating
+a new one — after an entity has been initially aligned with specific identifiers, subsequent retrievals require
+**only one of the identifiers**, not all, to trigger a retrieval with all associated identifiers.
+
+### Example 2: change in identifiers alignment
+
+Following the previous example, the client system now wants to update the orcid identifier of the entity identified
+by `111111111`:
+
+```bash
+curl -X 'POST' \
+  'http://my-harvester-url/api/v1/references/retrieval' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "person": {
+    "identifiers": [
+      { "type": "idref", "value": "111111111" },
+      { "type": "orcid", "value": "0000-0001-1111-1113" }
+    ],
+    "name": "Smith, P"
+  },
+  "identifiers_safe_mode": false,
+  "harvesters": ["hal", "idref", "scanr", "openalex"],
+  "events": ["created", "updated", "deleted", "unchanged"]
+}'
+```
+
+SVP Harvester will update the entity identified by `111111111` with the new orcid identifier
+`0000-0001-1111-1113`, then submit it to the requested harvesters as before.
+
+### Example 3: identifiers safe mode
+
+Following example 1, imagine the client system wants to submit the same idref identifier with a *different* orcid
+identifier, but this time with `identifiers_safe_mode` set to `true`:
+
+```bash
+curl -X 'POST' \
+  'http://my-harvester-url/api/v1/references/retrieval' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "person": {
+    "identifiers": [
+      { "type": "idref", "value": "111111111" },
+      { "type": "orcid", "value": "0000-0001-1111-1114" }
+    ],
+    "name": "Smith, P"
+  },
+  "identifiers_safe_mode": true,
+  "harvesters": ["hal", "idref", "scanr", "openalex"],
+  "events": ["created", "updated", "deleted", "unchanged"]
+}'
+```
+
+SVP Harvester retrieves the previously registered entity identified by `111111111` (a superior priority is given to
+the idref identifier). Because `identifiers_safe_mode` is `true`, the entity is **not** updated: the newly submitted
+orcid is ignored, and the entity is submitted to the harvesters with the same identifiers as in Example 1
+(orcid `0000-0001-1111-1112`).
+
+### Example 4: identifier conflict
+
+This time the new request contains an identifier conflict: a new entity is submitted with the same orcid identifier
+as an existing entity, but a different idref identifier.
+
+```bash
+curl -X 'POST' \
+  'http://my-harvester-url/api/v1/references/retrieval' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "person": {
+    "identifiers": [
+      { "type": "idref", "value": "222222222" },
+      { "type": "orcid", "value": "0000-0001-1111-1112" }
+    ],
+    "name": "Dupont, G"
+  },
+  "identifiers_safe_mode": false,
+  "harvesters": ["hal", "idref", "scanr", "openalex"],
+  "events": ["created", "updated", "deleted", "unchanged"]
+}'
+```
+
+Since `identifiers_safe_mode` is `false`, SVP Harvester will:
+
+- register a new entity "Dupont, G" with identifiers `222222222` (idref) and `0000-0001-1111-1112` (orcid)
+- **remove** the orcid identifier `0000-0001-1111-1112` from the entity previously identified by `111111111`,
+  leaving it with only its idref identifier
+- submit the new entity to the requested harvesters

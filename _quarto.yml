@@ -44,6 +44,16 @@ website:
             - map/components.qmd
             - map/harvesting.qmd
             - map/message_catalog.qmd
+        - section: "Harvesters"
+          contents:
+            - harvesters/overview.qmd
+            - harvesters/entity-resolution.qmd
+            - harvesters/data-model.qmd
+            - harvesters/hal.qmd
+            - harvesters/idref.qmd
+            - harvesters/scanr.qmd
+            - harvesters/openalex.qmd
+            - harvesters/scopus.qmd
         - section: "Institutional Directories"
           contents:
             - directories/structures.qmd

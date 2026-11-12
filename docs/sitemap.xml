@@ -2,11 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/index.html</loc>
-    <lastmod>2026-11-08T08:18:13.842Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.242Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/clients-scopes.html</loc>
-    <lastmod>2026-11-08T08:18:13.841Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.242Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/requirements/index.html</loc>
@@ -22,11 +22,27 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/harvesting.html</loc>
-    <lastmod>2026-02-14T07:47:32.411Z</lastmod>
+    <lastmod>2026-11-12T05:41:03.382Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/index.html</loc>
-    <lastmod>2026-10-22T05:51:44.538Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/scanr.html</loc>
+    <lastmod>2026-11-12T05:41:03.381Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/openalex.html</loc>
+    <lastmod>2026-11-12T05:41:03.381Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/hal.html</loc>
+    <lastmod>2026-11-12T05:41:03.380Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/data-model.html</loc>
+    <lastmod>2026-11-12T05:41:03.380Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/directories/people.html</loc>
@@ -42,7 +58,7 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/docker-compose.html</loc>
-    <lastmod>2026-11-11T05:40:22.821Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.224Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/backup-restore-with-dc.html</loc>
@@ -50,43 +66,43 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/sorbobot.html</loc>
-    <lastmod>2026-11-08T08:18:13.827Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.223Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/local-workstation.html</loc>
-    <lastmod>2026-11-08T07:14:26.042Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.222Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/horizon-europe.html</loc>
-    <lastmod>2026-11-11T07:34:39.805Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.222Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/docker-compose.html</loc>
-    <lastmod>2026-11-09T06:23:43.544Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.221Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/configuring-openwebui.html</loc>
-    <lastmod>2026-11-08T08:18:13.826Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.221Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/embeddings.html</loc>
-    <lastmod>2026-10-22T05:51:44.530Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.222Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/index.html</loc>
-    <lastmod>2026-11-08T07:14:26.042Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.222Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/security.html</loc>
-    <lastmod>2026-11-08T08:18:13.827Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.223Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/ai/using-skills.html</loc>
-    <lastmod>2026-11-08T07:14:26.043Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.223Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/dev-backend.html</loc>
-    <lastmod>2026-10-22T05:51:44.531Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.224Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/export-kc-realm.html</loc>
@@ -94,15 +110,31 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/local-tls.html</loc>
-    <lastmod>2026-11-08T07:14:26.043Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.225Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/dev/step-by-step.html</loc>
-    <lastmod>2026-11-09T06:23:43.544Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.225Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/directories/structures.html</loc>
     <lastmod>2026-09-15T07:36:01.532Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/entity-resolution.html</loc>
+    <lastmod>2026-11-12T05:41:03.380Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/idref.html</loc>
+    <lastmod>2026-11-12T05:41:03.381Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/overview.html</loc>
+    <lastmod>2026-11-12T05:41:03.381Z</lastmod>
+  </url>
+  <url>
+    <loc>https://docs.crisalid.org/harvesters/scopus.html</loc>
+    <lastmod>2026-11-12T05:41:03.381Z</lastmod>
   </url>
   <url>
     <loc>https://docs.crisalid.org/map/components.html</loc>
@@ -126,6 +158,6 @@
   </url>
   <url>
     <loc>https://docs.crisalid.org/security/keycloak/idp.html</loc>
-    <lastmod>2026-11-08T07:14:26.057Z</lastmod>
+    <lastmod>2026-11-12T06:19:35.242Z</lastmod>
   </url>
 </urlset>
