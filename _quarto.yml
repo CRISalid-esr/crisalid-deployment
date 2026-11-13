@@ -65,6 +65,8 @@ website:
               text: "Docker Compose - Overview"
             - href: dev/step-by-step.qmd
               text: "Docker Compose - Step by Step"
+            - href: dev/upgrading.qmd
+              text: "Upgrading between releases"
             - dev/dev-backend.qmd
             - dev/local-tls.qmd
             - dev/export-kc-realm.qmd

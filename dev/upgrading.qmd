@@ -1,0 +1,249 @@
+---
+title: "Upgrading between releases"
+format:
+  html:
+    toc: true
+    toc-location: left
+---
+
+> What to change on an existing Docker Compose deployment when moving from one release of `crisalid-deployment` to
+> the next. One section per release, newest first. A fresh installation does not need this page: follow
+> [Docker Compose - Step by Step](step-by-step.qmd).
+
+# 1.6 → 1.7
+
+## Component versions
+
+| Component | 1.6 | 1.7 |
+|---|---|---|
+| `crisalid-ikg` | 1.6 | 1.7 |
+| `crisalid-apollo` | 1.6 | 1.7 |
+| `sovisuplus` | 1.6 | 1.7 |
+| `crisalid-agents-chat-api` | 1.6 | 1.7 |
+| `crisalid-agents-batch` (chat API image) | not deployed | 1.7 |
+| `crisalid-agents-owui` (OpenWebUI pipelines) | 1.6 | **removed** |
+| `crisalid-neo4j-mcp-toolbox` | 1.0 | 1.1 |
+| OpenWebUI | 0.9.5 | 0.13.0 |
+| OpenSearch for the Horizon Europe topic index | not deployed | 2.19.3 |
+| CDB DAGs (`CDB_DAGS_REF`) | v1.1.0 | v1.2.0 |
+| `svp-harvester`, `crisalid-vocab-search` | 1.6 | unchanged |
+| `crisalid-org-registry`, `crisalid-taxi`, `svp-jel-proxy`, `crisalid-maintenance` | 1.0 | unchanged |
+
+## What changes
+
+**End-to-end authentication of the AI stack.** This is the breaking change of the release.
+
+- The chat clients (the SoVisu+ assistant and OpenWebUI) no longer call the agents with a shared API key: they forward
+  the Keycloak access token of the signed-in user.
+- The chat API no longer queries the MCP toolbox with a service account. It validates the user's token (issuer,
+  audience `crisalid-agents`, expiry), exchanges it for a token of audience `crisalid-graph-mcp` and queries the
+  toolbox under the identity of the person, which the toolbox injects into the Cypher queries.
+- There is no "internal" Keycloak host any more: every container uses the public Keycloak URL, which is the single
+  issuer (`iss`) of the stack.
+- The OpenWebUI pipelines server (`crisalid-agents-owui`, port 9099) is gone. A single service,
+  `crisalid-agents-chat-api` (port 9100), serves every client: the NDJSON API used by SoVisu+ and an OpenAI-compatible
+  API (chat completions) for OpenWebUI, which now sees the agents as models behind an OAuth connection instead of a
+  pipeline behind an API key.
+
+See [Crisalid AI → Security](../ai/security.qmd) and
+[Keycloak → Clients & scopes](../security/keycloak/clients-scopes.qmd).
+
+**New optional features**, each behind its own profile:
+
+- [Horizon Europe topics](../ai/horizon-europe.qmd): the topic index (`horizon_europe_index` profile), the Horizon
+  topic finder agent and the Topic-to-Researcher Match batch (`crisalid-agents-batch` service);
+- [SorboBot](../ai/sorbobot.qmd), the research expertise agent, which relies on `crisalid-taxi`;
+- a direct sign-in route for SoVisu+ (`SVP_KEYCLOAK_IDP_HINT`) and a switch for its assistant (`SVP_CHAT_ENABLED`).
+
+## 1. Check out the release
+
+```bash
+git fetch --tags origin
+git switch -c prod/1.7 v1.7.0
+```
+
+Do the next two steps (environment files, Keycloak) before restarting the stack.
+
+## 2. Environment files
+
+### `docker/.env` (shared)
+
+Remove:
+
+```env
+KEYCLOAK_INTERNAL_HOST=…                 # no internal Keycloak host any more
+SOVISUPLUS_KEYCLOAK_CLIENT_ID=…          # moved to sovisuplus/.env
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=…      # moved to sovisuplus/.env
+CRISALID_AGENTS_PIPELINES_API_KEY=…      # no API key any more
+SOVISUPLUS_CHAT_API_KEY=…                # no API key any more
+```
+
+Add:
+
+```env
+# OpenWebUI public URL (OAuth callback ${OPENWEBUI_URL}/oauth/oidc/callback, web origin)
+OPENWEBUI_URL=https://<openwebui public host>
+
+# Only when TLS ends at a reverse proxy in front of Keycloak: lets the containers reach the proxy
+KEYCLOAK_NETWORK_ALIAS=keycloak.internal
+
+# Only when KEYCLOAK_PORT is 443 or 80: Keycloak omits the default port in the iss claim
+KEYCLOAK_ISSUER=https://<keycloak public host>/realms/<realm>
+```
+
+Change:
+
+```env
+CDB_DAGS_REF=v1.2.0
+```
+
+`KEYCLOAK_SCHEME`, `KEYCLOAK_HOST`, `KEYCLOAK_PORT` and `KEYCLOAK_REALM` stay and must describe the **public** URL of
+Keycloak. Leave `KEYCLOAK_NETWORK_ALIAS` unset when Keycloak itself answers on `KEYCLOAK_PORT` (local HTTP, or local
+TLS with mkcert). The reasons behind both settings are explained in
+[Keycloak issuer inside the stack](../ai/docker-compose.qmd#keycloak-issuer).
+
+### `docker/sovisuplus/.env`
+
+Add, with the values taken from the former `docker/.env`:
+
+```env
+SOVISUPLUS_KEYCLOAK_CLIENT_ID=sovisuplus
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=<secret of the sovisuplus client>
+
+# Help button: 'url' opens SVP_HELP_URL, 'mail' mails SVP_MAINTENANCE_MAIL_ADDRESS. Unset = button hidden.
+SVP_HELP_LINK_TYPE=url
+```
+
+`FIELD_ENC_PRIMARY_KID` and `FIELD_ENC_KEYS_JSON` already existed; they are now also used to encrypt the Keycloak
+tokens of the sessions in the database, so make sure they hold real keys (`openssl rand -base64 32`).
+
+Optional: `SVP_KEYCLOAK_IDP_HINT` (direct sign-in route `/transient-sso`) and `SVP_CHAT_ENABLED=false` (hides the
+assistant; the `neo4j-mcp` and `crisalid-agents-chat-api` profiles can then be left out).
+
+### `docker/openwebui/.env`
+
+Remove:
+
+```env
+OPENWEBUI_OAUTH_CLIENT_SECRET=…      # replaced by OPENWEBUI_KEYCLOAK_CLIENT_SECRET
+OPENWEBUI_OAUTH_CLIENT_ID=…          # now optional, defaults to open-webui (the client to create in Keycloak)
+OPENWEBUI_OPENID_PROVIDER_URL=…      # now optional, defaults to the public Keycloak issuer of docker/.env
+OPENWEBUI_OPENID_REDIRECT_URI=…      # now optional, defaults to ${OPENWEBUI_URL}/oauth/oidc/callback
+```
+
+Add:
+
+```env
+OPENWEBUI_KEYCLOAK_CLIENT_SECRET=<secret of the open-webui client>
+# OpenWebUI >= 0.13: key encrypting the OAuth tokens kept in the server-side sessions
+OPENWEBUI_OAUTH_SESSION_TOKEN_ENCRYPTION_KEY=<openssl rand -hex 32>
+OPENWEBUI_ENABLE_OAUTH_SIGNUP=true   # if accounts are created at the first SSO login
+```
+
+### `docker/crisalid-agents/.env`
+
+Add or update:
+
+```env
+# Agents loaded by the single chat API service
+CRISALID_AGENTS_AGENTS=generic_agent,project_topic_matching,sorbobot
+
+# New, mandatory outside local development: agents each Keycloak client (azp claim) may call
+AGENT_ALLOW_LIST=sovisuplus:generic_agent,project_topic_matching;open-webui:generic_agent,project_topic_matching,sorbobot
+
+CRISALID_AGENTS_KEYCLOAK_CLIENT_ID=crisalid-agents
+CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET=<secret of the crisalid-agents client>
+CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY=true
+```
+
+A client absent from `AGENT_ALLOW_LIST` may call no agent: OpenWebUI then shows an empty model list and SoVisu+
+receives `403 agent_not_allowed`. Only list in `CRISALID_AGENTS_AGENTS` the agents whose prerequisites are deployed:
+`project_topic_matching` needs the Horizon Europe topic index, `sorbobot` needs `crisalid-taxi`.
+
+Optional, leave them commented out unless needed: `CHAT_API_AUDIENCE` (`crisalid-agents`), `MIN_TOKEN_TTL_SECONDS`
+(`120`) and `MCP_AUDIENCE` (`crisalid-graph-mcp`, must be identical on the `neo4j-mcp` side). The other new variables
+(`HORIZON_*`, `TRM_*`, `SORBOBOT_*`, `CRISALID_TAXI_URL`) have working defaults; see `.env.sample`.
+
+### `docker/horizon-europe-index/.env` (new)
+
+The file must exist even if the profile is never started, because the main compose file includes it:
+
+```bash
+cp docker/horizon-europe-index/.env.sample docker/horizon-europe-index/.env
+```
+
+### `docker/neo4j-mcp/.env`
+
+Nothing to add. The toolbox reads `KEYCLOAK_*` from the shared `.env`, requires the audience `crisalid-graph-mcp` and
+validates the tokens against the JWKS of the public issuer.
+
+## 3. Keycloak
+
+`configure_keycloak.sh` renders the realm template from `docker/.env` and the three service `.env` files, and Keycloak
+imports it at startup. **On an existing realm the import changes nothing**: the configuration below has to be done by
+hand in the admin console. The step-by-step procedure is on
+[Clients & scopes → Manual configuration](../security/keycloak/clients-scopes.qmd#manual-configuration); in short:
+
+- **`sovisuplus` client** (exists already): turn *Direct access grants* and *Service accounts roles* **off** (the 1.6
+  realm template enabled them by mistake).
+- **New clients**: `open-webui` (user login of OpenWebUI), `crisalid-graph-mcp` (no credentials, exists only to be
+  named as an audience) and `crisalid-agents` (*Service accounts roles* and *Standard token exchange* on).
+- **New client scopes**: `crisalid-agents-audience`, attached as *Default* to `sovisuplus` and `open-webui`, and
+  `crisalid-graph-mcp-audience`, attached as *Default* to `crisalid-agents`.
+- **Access token lifespan**: 15 minutes on `sovisuplus` and `open-webui`.
+
+Copy the secret of each client into the `.env` file of its service (step 2), then run the checks of
+[Clients & scopes → Verification](../security/keycloak/clients-scopes.qmd#verification).
+
+## 4. Redeploy
+
+From `docker/`, with your usual `-f` files and `--profile` options. The `crisalid-agents-owui` profile no longer
+exists: remove it from your commands.
+
+```bash
+# DAGs of the directory bridge, at the new CDB_DAGS_REF
+./configure_cdb.sh prod
+
+docker compose -f docker-compose.yaml -f docker-compose.prod.yaml \
+  --profile … pull --include-deps
+
+# --remove-orphans deletes the former crisalid-agents-owui container
+docker compose -f docker-compose.yaml -f docker-compose.prod.yaml \
+  --profile … up -d --remove-orphans
+```
+
+`keycloak`, `neo4j-mcp`, `crisalid-agents-chat-api`, `sovisuplus` and `openwebui` are recreated because their image or
+configuration changed. Check that Keycloak was: the network alias only takes effect on a new container.
+
+From the SoVisu+ container (or any other), the public Keycloak hostname must resolve to the reverse proxy, not to a
+Docker address, and the public OIDC endpoint must answer:
+
+```bash
+docker compose exec sovisuplus sh -c '
+  getent hosts <keycloak public host>
+  wget -qO- https://<keycloak public host>/realms/<realm>/.well-known/openid-configuration | head -c 200'
+```
+
+## 5. After the restart
+
+### OpenWebUI: connection to the agents
+
+In **Admin panel → Settings → Connections**, delete the former "pipelines" connection (`…:9099`, API key) and create
+an OpenAI-compatible connection:
+
+- **URL**: `http://crisalid-agents-chat-api:9100/v1`
+- **Auth type**: **System OAuth** (no API key, *Forward cookies* off)
+
+The models listed are the agents allowed to the `open-webui` client in `AGENT_ALLOW_LIST`. A user with a local account
+that is not linked to the SSO gets no token: the model list is empty for them. Existing users have to sign in again so
+that a server-side OAuth session exists. Details: [Configuring OpenWebUI](../ai/configuring-openwebui.qmd).
+
+### SoVisu+
+
+The existing sessions do not carry the Keycloak session identifier: users have to sign in again, otherwise the chat
+widget answers `401 reauthentication_required` (the rest of the application keeps working).
+
+### Optional: Horizon Europe topics
+
+To use the Horizon topic finder or the Topic-to-Researcher Match, upload the work programme PDFs and build the index
+as described in [Horizon Europe topics](../ai/horizon-europe.qmd).
