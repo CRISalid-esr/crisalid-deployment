@@ -223,7 +223,7 @@ In `prod`, set `CDB_DAGS_REF` in the root `docker/.env` to the CDB release tag t
 you are running (see the [CDB releases](https://github.com/CRISalid-esr/crisalid-directory-bridge/releases)):
 
 ```env
-CDB_DAGS_REF=v1.1.0
+CDB_DAGS_REF=v1.2.0
 ```
 
 `docker/.env.sample` ships with the recommended tag for the current deployment release, so copying it is enough for a

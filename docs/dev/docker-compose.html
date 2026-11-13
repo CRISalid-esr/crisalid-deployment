@@ -907,7 +907,7 @@ LDAP_BIND_PASSWORD=</code></pre>
 </tbody>
 </table>
 <p>In <code>prod</code>, set <code>CDB_DAGS_REF</code> in the root <code>docker/.env</code> to the CDB release tag that matches the deployment release you are running (see the <a href="https://github.com/CRISalid-esr/crisalid-directory-bridge/releases">CDB releases</a>):</p>
-<pre class="env"><code>CDB_DAGS_REF=v1.1.0</code></pre>
+<pre class="env"><code>CDB_DAGS_REF=v1.2.0</code></pre>
 <p><code>docker/.env.sample</code> ships with the recommended tag for the current deployment release, so copying it is enough for a fresh install.</p>
 <blockquote class="blockquote">
 <p>ℹ️ The script does a shallow clone of the requested ref and wipes any previous content of <code>docker/cdb/dags</code>. To upgrade the DAGs, change <code>CDB_DAGS_REF</code>, re-run <code>./docker/configure_cdb.sh prod</code> and restart the <code>cdb</code> profile. Do not edit the DAGs in place: your changes would be lost on the next run.</p>
