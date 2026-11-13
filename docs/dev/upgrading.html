@@ -778,7 +778,21 @@ KEYCLOAK_NETWORK_ALIAS=keycloak.internal
 # Only when KEYCLOAK_PORT is 443 or 80: Keycloak omits the default port in the iss claim
 KEYCLOAK_ISSUER=https://&lt;keycloak public host&gt;/realms/&lt;realm&gt;</code></pre>
 <p>Change:</p>
-<pre class="env"><code>CDB_DAGS_REF=v1.2.0</code></pre>
+<pre class="env"><code># Which ref (tag/branch) to deploy for DAGs repo in prod
+CDB_DAGS_REF=v1.2.0</code></pre>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Do not skip <code>CDB_DAGS_REF</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>.env</code> of an existing deployment still holds the previous tag, and checking out the new release does not change it. If it is left as is, <code>configure_cdb.sh prod</code> clones the old tag again and Airflow keeps running the previous version of the DAGs code.</p>
+</div>
+</div>
 <p><code>KEYCLOAK_SCHEME</code>, <code>KEYCLOAK_HOST</code>, <code>KEYCLOAK_PORT</code> and <code>KEYCLOAK_REALM</code> stay and must describe the <strong>public</strong> URL of Keycloak. Leave <code>KEYCLOAK_NETWORK_ALIAS</code> unset when Keycloak itself answers on <code>KEYCLOAK_PORT</code> (local HTTP, or local TLS with mkcert). The reasons behind both settings are explained in <a href="../ai/docker-compose.html#keycloak-issuer">Keycloak issuer inside the stack</a>.</p>
 </section>
 <section id="dockersovisuplus.env" class="level3">
@@ -844,7 +858,7 @@ CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY=true</code></pre>
 <section id="redeploy" class="level2">
 <h2 class="anchored" data-anchor-id="redeploy">4. Redeploy</h2>
 <p>From <code>docker/</code>, with your usual <code>-f</code> files and <code>--profile</code> options. The <code>crisalid-agents-owui</code> profile no longer exists: remove it from your commands.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DAGs of the directory bridge, at the new CDB_DAGS_REF</span></span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DAGs of the directory bridge: check that it prints "Using DAGs repo ref: v1.2.0"</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_cdb.sh</span> prod</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>

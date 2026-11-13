@@ -94,8 +94,16 @@ KEYCLOAK_ISSUER=https://<keycloak public host>/realms/<realm>
 Change:
 
 ```env
+# Which ref (tag/branch) to deploy for DAGs repo in prod
 CDB_DAGS_REF=v1.2.0
 ```
+
+::: {.callout-warning}
+## Do not skip `CDB_DAGS_REF`
+The `.env` of an existing deployment still holds the previous tag, and checking out the new release does not change
+it. If it is left as is, `configure_cdb.sh prod` clones the old tag again and Airflow keeps running the previous
+version of the DAGs code.
+:::
 
 `KEYCLOAK_SCHEME`, `KEYCLOAK_HOST`, `KEYCLOAK_PORT` and `KEYCLOAK_REALM` stay and must describe the **public** URL of
 Keycloak. Leave `KEYCLOAK_NETWORK_ALIAS` unset when Keycloak itself answers on `KEYCLOAK_PORT` (local HTTP, or local
@@ -201,7 +209,7 @@ From `docker/`, with your usual `-f` files and `--profile` options. The `crisali
 exists: remove it from your commands.
 
 ```bash
-# DAGs of the directory bridge, at the new CDB_DAGS_REF
+# DAGs of the directory bridge: check that it prints "Using DAGs repo ref: v1.2.0"
 ./configure_cdb.sh prod
 
 docker compose -f docker-compose.yaml -f docker-compose.prod.yaml \
