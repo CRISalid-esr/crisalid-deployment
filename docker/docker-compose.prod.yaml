@@ -4,6 +4,9 @@ services:
   # neo4j (graph database)
   neo4j:
     image: neo4j:${NEO4J_VERSION:-2026.06.0}-${NEO4J_EDITION:-community}
+  # opensearch (Horizon Europe topic index, profile horizon_europe_index)
+  opensearch:
+    image: opensearchproject/opensearch:2.19.3
   # IKG (knowledge graph management)
   crisalid-org-registry:
     image: crisalidesr/crisalid-org-registry:1.0
@@ -82,6 +85,9 @@ services:
     image: crisalidesr/crisalid-neo4j-mcp-toolbox:1.1
   # crisalid-agents (chat API for sovisuplus and OpenAI-compatible endpoint for openwebui)
   crisalid-agents-chat-api:
+    image: crisalidesr/crisalid-agents-chat-api:1.7
+  # crisalid-agents (batch entry points: Horizon topic index ingestion, topic-to-researcher match)
+  crisalid-agents-batch:
     image: crisalidesr/crisalid-agents-chat-api:1.7
   # openwebui (user-facing chat UI)
   openwebui:

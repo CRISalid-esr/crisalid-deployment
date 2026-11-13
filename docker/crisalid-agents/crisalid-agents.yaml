@@ -89,7 +89,7 @@ services:
   #   docker compose run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2
   # The TRM needs the neo4j-mcp profile to be up. Reports (JSON / Markdown / PDF) land in ./horizon-europe-index/reports.
   crisalid-agents-batch:
-    # image: overridden by environment-specific YAML (docker-compose.dev.yaml)
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: "no"
     command: [ "python", "scripts/topic_researcher_match.py", "--list-clusters" ]
     environment:
