@@ -344,7 +344,7 @@ by `CDB_DAGS_REF`. Keep the tag shipped in `.env.sample` for the deployment rele
 one from the [CDB releases](https://github.com/CRISalid-esr/crisalid-directory-bridge/releases):
 
 ```env
-CDB_DAGS_REF=v1.1.0
+CDB_DAGS_REF=v1.2.0
 ```
 
 ### Add data files

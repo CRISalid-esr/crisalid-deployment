@@ -64,7 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../dev/dev-backend.html" rel="next">
+<link href="../dev/upgrading.html" rel="next">
 <link href="../dev/docker-compose.html" rel="prev">
 <link href="../assets/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -209,6 +209,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="../dev/step-by-step.html">
  <span class="dropdown-text">Docker Compose - Step by Step</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/upgrading.html">
+ <span class="dropdown-text">Upgrading between releases</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../dev/dev-backend.html">
@@ -503,6 +507,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="../dev/step-by-step.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Docker Compose - Step by Step</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/upgrading.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Upgrading between releases</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -958,7 +968,7 @@ Keep Neo4j, IKG, Apollo and Ofelia on the same server
 <p>Edit the root <code>.env</code> to set LDAP parameters (if applicable), Airflow admin credentials and the version of the DAGs to deploy:</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> .env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The CDB DAGs are cloned from the <a href="https://github.com/CRISalid-esr/crisalid-directory-bridge">crisalid-directory-bridge</a> repository at the git ref given by <code>CDB_DAGS_REF</code>. Keep the tag shipped in <code>.env.sample</code> for the deployment release you checked out, or pick another one from the <a href="https://github.com/CRISalid-esr/crisalid-directory-bridge/releases">CDB releases</a>:</p>
-<pre class="env"><code>CDB_DAGS_REF=v1.1.0</code></pre>
+<pre class="env"><code>CDB_DAGS_REF=v1.2.0</code></pre>
 </section>
 <section id="add-data-files" class="level3">
 <h3 class="anchored" data-anchor-id="add-data-files">Add data files</h3>
@@ -1731,8 +1741,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../dev/dev-backend.html" class="pagination-link" aria-label="Using Docker Compose as Backend for Local Development">
-        <span class="nav-page-text">Using Docker Compose as Backend for Local Development</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../dev/upgrading.html" class="pagination-link" aria-label="Upgrading between releases">
+        <span class="nav-page-text">Upgrading between releases</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
