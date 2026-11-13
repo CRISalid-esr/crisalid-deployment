@@ -1,45 +1,7 @@
 services:
-  crisalid-agents-owui:
-    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
-    restart: unless-stopped
-    # ports:
-    #   - "9099:9099"
-    expose:
-      - "9099"
-    environment:
-      - MODEL=${CRISALID_AGENTS_MODEL}
-      - API_KEY=${CRISALID_AGENTS_API_KEY}
-      - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
-      - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
-      - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Agents served by this image (comma-separated package names under agents/)
-      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent}
-      - PIPELINES_API_KEY=${CRISALID_AGENTS_PIPELINES_API_KEY}
-      # Use the internal Keycloak address for token requests (client credentials grant)
-      - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
-      - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
-      - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
-      - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
-      - EMBEDDING_PROVIDER=openai_compatible
-      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
-      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
-      - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
-      - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
-    depends_on:
-      neo4j-mcp:
-        condition: service_healthy
-    healthcheck:
-      test: [ "CMD", "curl", "-sf", "http://localhost:9099/" ]
-      interval: 30s
-      retries: 5
-      start_period: 30s
-      timeout: 5s
-    networks:
-      - crisalid-front
-      - agents-network
-    profiles:
-      - crisalid-agents-owui
-
+  # Single running agents service: serves the SoVisuPlus chat API (POST /agents/{name}/chat) and the OpenAI-compatible
+  # endpoint used by OpenWebUI (/v1/models, /v1/chat/completions). Both clients forward the user's Keycloak access
+  # token (audience crisalid-agents); the service exchanges it for a toolbox token (audience crisalid-graph-mcp).
   crisalid-agents-chat-api:
     # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
@@ -53,21 +15,57 @@ services:
       - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
       - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
       - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
-      # Agents served by this image (comma-separated package names under agents/)
-      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent}
-      # Inbound auth (always on): x-api-key header checked against the shared key (see docker/.env)
-      - ENABLE_API_KEYS=true
-      - API_KEYS=${SOVISUPLUS_CHAT_API_KEY}
-      # Use the internal Keycloak address for token requests (client credentials grant)
-      - KEYCLOAK_ISSUER=http://${KEYCLOAK_INTERNAL_HOST}:8080/realms/${KEYCLOAK_REALM}
+      # Agents loaded by the process (comma-separated package names under agents/): graph agent, Horizon topic
+      # finder, SorboBot. AGENT_ALLOW_LIST restricts what each client sees.
+      - AGENTS=${CRISALID_AGENTS_AGENTS:-generic_agent,project_topic_matching,sorbobot}
+      # Inbound auth: Keycloak access tokens of the chat clients (sovisuplus, open-webui), validated against the
+      # public issuer. A token with less than MIN_TOKEN_TTL_SECONDS left is refused (the exchanged token expires
+      # with it). AGENT_ALLOW_LIST maps each Keycloak client to the agents it may call (see .env.sample); empty
+      # disables the check (local development only).
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}}
+      - CHAT_API_AUDIENCE=${CHAT_API_AUDIENCE:-crisalid-agents}
+      - MIN_TOKEN_TTL_SECONDS=${MIN_TOKEN_TTL_SECONDS:-120}
+      - AGENT_ALLOW_LIST=${AGENT_ALLOW_LIST}
+      # Outbound auth: token exchange (user tokens) and service account (batch) of the crisalid-agents Keycloak
+      # client, for the MCP toolbox audience
       - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
       - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
+      - MCP_AUDIENCE=${MCP_AUDIENCE:-crisalid-graph-mcp}
       - EMBEDDING_PROVIDER=openai_compatible
       - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
       - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
       - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
       - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile, internal HTTP, no auth)
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-http://opensearch:9200}
+      - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
+      - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
+      # SorboBot (research expertise agent): crisalid-taxi (profile crisalid-taxi, reached over agents-network) and
+      # the "sorbobot" toolset of neo4j-mcp (CRISALID_MCP_TOOLBOX_URL). Every SORBOBOT_* variable keeps the agent's
+      # built-in default when empty (see docker/crisalid-agents/.env.sample).
+      - CRISALID_TAXI_URL=${CRISALID_TAXI_URL:-http://crisalid-taxi:8000}
+      - SORBOBOT_TAXI_TIMEOUT_SECONDS=${SORBOBOT_TAXI_TIMEOUT_SECONDS:-}
+      - SORBOBOT_TOOLBOX_TIMEOUT_SECONDS=${SORBOBOT_TOOLBOX_TIMEOUT_SECONDS:-}
+      - SORBOBOT_JUDGE_TIMEOUT_SECONDS=${SORBOBOT_JUDGE_TIMEOUT_SECONDS:-}
+      - SORBOBOT_TAXI_MAX_TOPICS=${SORBOBOT_TAXI_MAX_TOPICS:-}
+      - SORBOBOT_TAXI_MIN_QUERY_CHARS=${SORBOBOT_TAXI_MIN_QUERY_CHARS:-}
+      - SORBOBOT_SEMANTIC_THRESHOLD=${SORBOBOT_SEMANTIC_THRESHOLD:-}
+      - SORBOBOT_MAX_SEARCH_TOPICS=${SORBOBOT_MAX_SEARCH_TOPICS:-}
+      - SORBOBOT_TOPIC_LINK_THRESHOLD=${SORBOBOT_TOPIC_LINK_THRESHOLD:-}
+      - SORBOBOT_TOPIC_SOURCES=${SORBOBOT_TOPIC_SOURCES:-}
+      - SORBOBOT_JUDGE_THRESHOLD=${SORBOBOT_JUDGE_THRESHOLD:-}
+      - SORBOBOT_MIN_AUTHORS=${SORBOBOT_MIN_AUTHORS:-}
+      - SORBOBOT_MAX_JUDGED_SIBLINGS=${SORBOBOT_MAX_JUDGED_SIBLINGS:-}
+      - SORBOBOT_RANKING_METHOD=${SORBOBOT_RANKING_METHOD:-}
+      - SORBOBOT_SHOW_MAX_AUTHORS=${SORBOBOT_SHOW_MAX_AUTHORS:-}
+      - SORBOBOT_SHOW_MAX_DOMAINS=${SORBOBOT_SHOW_MAX_DOMAINS:-}
+      - SORBOBOT_SHOW_MAX_PERSON_PUBLICATIONS=${SORBOBOT_SHOW_MAX_PERSON_PUBLICATIONS:-}
+      - SORBOBOT_PROFILE_MAX_PUBLICATIONS=${SORBOBOT_PROFILE_MAX_PUBLICATIONS:-}
+      - SORBOBOT_EXPLORE_MAX_DOMAINS=${SORBOBOT_EXPLORE_MAX_DOMAINS:-}
+      - SORBOBOT_MAX_MESSAGE_CHARS=${SORBOBOT_MAX_MESSAGE_CHARS:-}
+      - SORBOBOT_SUPPORTED_LANGUAGES=${SORBOBOT_SUPPORTED_LANGUAGES:-}
+      - SORBOBOT_DEFAULT_LANGUAGE=${SORBOBOT_DEFAULT_LANGUAGE:-}
     depends_on:
       neo4j-mcp:
         condition: service_healthy
@@ -78,10 +76,61 @@ services:
       retries: 5
       start_period: 30s
       timeout: 5s
+    # crisalid-front: SoVisuPlus, the toolbox and the Keycloak alias; agents-network: OpenWebUI and crisalid-taxi
     networks:
       - crisalid-front
+      - agents-network
     profiles:
       - crisalid-agents-chat-api
+  # Batch entry points of crisalid-agents (same image as the chat API, which ships scripts/ and the trm package):
+  # ingestion of the Horizon Europe topic index and the Topic-to-Researcher Match. Never started by `up`: run one
+  # command at a time with `docker compose run --rm crisalid-agents-batch …`, which also starts the opensearch service.
+  #   docker compose run --rm crisalid-agents-batch python scripts/index_horizon_topics.py
+  #   docker compose run --rm crisalid-agents-batch python scripts/topic_researcher_match.py --cluster CL2
+  # The TRM needs the neo4j-mcp profile to be up. Reports (JSON / Markdown / PDF) land in ./horizon-europe-index/reports.
+  crisalid-agents-batch:
+    # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
+    restart: "no"
+    command: [ "python", "scripts/topic_researcher_match.py", "--list-clusters" ]
+    environment:
+      - MODEL=${CRISALID_AGENTS_MODEL}
+      - API_KEY=${CRISALID_AGENTS_API_KEY}
+      - LLM_API_BASE=${CRISALID_AGENTS_LLM_API_BASE}
+      - CRISALID_MCP_TOOLBOX_URL=${CRISALID_MCP_TOOLBOX_URL}
+      - CRISALID_MCP_TOOLBOX_TOOLSET=${CRISALID_MCP_TOOLBOX_TOOLSET}
+      # Service account of the crisalid-agents Keycloak client (client credentials grant, no user context), public issuer
+      - KEYCLOAK_ISSUER=${KEYCLOAK_ISSUER:-${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}}
+      - KEYCLOAK_CLIENT_ID=${CRISALID_AGENTS_KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_SSL_VERIFY=${CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY}
+      - MCP_AUDIENCE=${MCP_AUDIENCE:-crisalid-graph-mcp}
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_API_URL=${EMBEDDING_API_URL:-}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-}
+      - EMBEDDING_API_MODEL=${EMBEDDING_API_MODEL:-}
+      - EMBEDDING_TIMEOUT_SECONDS=${EMBEDDING_TIMEOUT_SECONDS:-30}
+      # Horizon Europe topic index (OpenSearch service of the horizon_europe_index profile, internal HTTP, no auth)
+      # and the work programme PDFs it is built from
+      - HORIZON_OS_URL=${HORIZON_OS_URL:-http://opensearch:9200}
+      - HORIZON_OS_INDEX=${HORIZON_OS_INDEX:-horizon-topics}
+      - HORIZON_SEARCH_PIPELINE=${HORIZON_SEARCH_PIPELINE:-horizon-hybrid-rrf}
+      - HORIZON_WP_DIR=/data/horizon
+      # Topic-to-Researcher Match: dedicated model (defaults to the chat model) and report directory
+      - TRM_MODEL=${TRM_MODEL:-${CRISALID_AGENTS_MODEL}}
+      - TRM_OUTPUT_DIR=/app/reports
+      # Contribution roles (LoC relator codes) that credit a researcher with a publication; set but empty = every role
+      - TRM_CONTRIBUTOR_ROLES=${TRM_CONTRIBUTOR_ROLES-aut,ctb}
+    volumes:
+      - ../horizon-europe-index/wp:/data/horizon:ro
+      - ../horizon-europe-index/reports:/app/reports
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    networks:
+      - crisalid-front
+      - agents-network
+    profiles:
+      - crisalid-agents-batch
 networks:
   crisalid-front:
     driver: bridge

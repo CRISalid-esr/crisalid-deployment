@@ -1,0 +1,32 @@
+---
+title: "Idref harvester"
+---
+
+🧭 Back to [Harvesters Overview](overview.qmd)
+
+## Data source
+
+The IdRef harvester fetches data from the [IdRef SPARQL endpoint](https://data.idref.fr/sparql).
+
+## Supported identifiers
+
+- idref
+- orcid
+
+## Data conversion
+
+IdRef document types are mapped to RDF classes, and author qualities are mapped to LoC roles, following the tables
+provided in the
+[CRISalid data model documentation](https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=1452441617).
+
+## Sub-harvesters
+
+When the data returned by the main IdRef harvester is not sufficient, IdRef harvester delegates to additional
+sub-harvesters to gather more data:
+
+| Sub-harvester | Source |
+|---|---|
+| OpenEdition | [OpenEdition OAI-PMH API](http://oai.openedition.org/?verb=ListRecords&metadataPrefix=oai_dc) |
+| Persée | Persée RDF endpoint |
+| SciencePlus | SciencePlus RDF endpoint |
+| SUDOC | SUDOC RDF endpoint |

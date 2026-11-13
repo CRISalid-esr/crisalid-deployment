@@ -331,10 +331,20 @@ Test the health route in the Swagger at [http://localhost:8001/docs](http://loca
 
 ### Configure
 
-Edit the root `.env` to set LDAP parameters (if applicable) and Airflow admin credentials:
+Edit the root `.env` to set LDAP parameters (if applicable), Airflow admin credentials and the version of the DAGs to
+deploy:
 
 ```bash
 vim .env
+```
+
+The CDB DAGs are cloned from the
+[crisalid-directory-bridge](https://github.com/CRISalid-esr/crisalid-directory-bridge) repository at the git ref given
+by `CDB_DAGS_REF`. Keep the tag shipped in `.env.sample` for the deployment release you checked out, or pick another
+one from the [CDB releases](https://github.com/CRISalid-esr/crisalid-directory-bridge/releases):
+
+```env
+CDB_DAGS_REF=v1.2.0
 ```
 
 ### Add data files
@@ -359,7 +369,9 @@ Data format documentation (French):
 ./configure_cdb.sh prod
 ```
 
-> This script overwrites the Airflow `.env` file. Re-run it whenever the root `.env` changes.
+> This script clones the DAGs at `CDB_DAGS_REF` into `cdb/dags` (replacing any previous content) and overwrites the
+> Airflow `.env` file. Re-run it whenever the root `.env` changes, including when you bump `CDB_DAGS_REF` to upgrade
+> the DAGs, then restart the `cdb` profile.
 
 ### Start
 
@@ -496,11 +508,17 @@ KEYCLOAK_SCHEME=https
 KEYCLOAK_PORT=443
 KEYCLOAK_HOST=your-keycloak-hostname.example.org
 KEYCLOAK_REALM=crisalid-inst
+# Keycloak omits the port 443 in the tokens: give the issuer without it
+KEYCLOAK_ISSUER=https://your-keycloak-hostname.example.org/realms/crisalid-inst
 
 SOVISUPLUS_SCHEME=https
 SOVISUPLUS_HOST=your-sovisuplus-hostname.example.org
 SOVISUPLUS_PORT=443
+```
 
+In `sovisuplus/.env`, the secret of the `sovisuplus` Keycloak client (rendered into the realm by `configure_keycloak.sh`):
+
+```env
 SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=<your-client-secret>
 ```
 
@@ -557,7 +575,7 @@ The Neo4j MCP Toolbox exposes curated Cypher queries as MCP tools, allowing AI a
 ::: {.callout-note}
 ## Keycloak service accounts required for authenticated access
 
-The toolbox validates incoming JWTs against Keycloak. Each client application that needs access must have a dedicated Keycloak service account. Service account setup is documented in [Using CRISalid AI Skills](../ai/using-skills.qmd).
+The toolbox validates incoming JWTs against Keycloak (public issuer, audience `crisalid-graph-mcp`). The CRISalid agents reach it with tokens exchanged from the signed-in person's token, or with the service account of the `crisalid-agents` client for batches; both clients are part of the realm template. A client application of your own needs a dedicated Keycloak service account, documented in [Using CRISalid AI Skills](../ai/using-skills.qmd).
 :::
 
 ### Start

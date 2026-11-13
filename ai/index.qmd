@@ -54,7 +54,7 @@ Crisalid AI consists of four layers, from the user interface down to the knowled
 ```{mermaid}
 flowchart LR
     UI["🖥️ User Interface<br/>OpenWebUI · email · …"]
-    AGENTS["🤖 Crisalid Agents<br/>OpenWebUI Pipelines<br/>LangChain · LangGraph"]
+    AGENTS["🤖 Crisalid Agents<br/>chat API<br/>LangChain · LangGraph"]
     SKILLS["🛠️ Crisalid AI Skills<br/>MCP Tools"]
     GRAPH["🕸️ Neo4j Graph<br/>(IKG)"]
     TAXI["🚖 Crisalid Taxi<br/>OpenAlex topics"]
@@ -85,12 +85,13 @@ The [crisalid-ai-skills](https://github.com/CRISalid-esr/crisalid-ai-skills) rep
 
 The current implementation uses the [Neo4j MCP Toolbox](https://neo4j.com/labs/genai-ecosystem/mcp-toolbox/) ([documentation](https://mcp-toolbox.dev/documentation/introduction/)).
 
-Two toolsets are available:
+Three toolsets are available:
 
 | Toolset | Description |
 |---|---|
 | `crisalid-restricted` | A small set of tools with pre-prepared Cypher queries |
 | `crisalid-unrestricted` | All of the above, plus the ability to execute any read-only Cypher query |
+| `sorbobot` | The curated research-expertise tools (OpenAlex topics, experts, publications) used by the SorboBot agent |
 
 ::: {.callout-important}
 With **Neo4j Community Edition**, role-based access control (RBAC) is not available. The `crisalid-unrestricted` toolset is therefore a sensitive option that should be reserved for agents requiring elevated authorisation.
@@ -105,15 +106,18 @@ Currently, two general-purpose agents have been developed:
 - **Active** — a [LangGraph](https://langchain-ai.github.io/langgraph/)-based agent using Crisalid AI Skills tools.
 - **Disabled** — an agent based on direct [LangChain Neo4j integration](https://neo4j.com/labs/genai-ecosystem/langchain/), currently inactive due to disappointing performance.
 
-More specialised agents may be developed in the future.
+Two specialised agents complete them:
 
-Crisalid Agents also includes **OpenWebUI Pipelines**, enabling LangGraph agents to be deployed directly from OpenWebUI.
+- the **Horizon topic finder**, which matches a project idea with the topics of the Horizon Europe work programme (see [Horizon Europe topics](horizon-europe.qmd));
+- **SorboBot**, which finds the experts of a research theme and describes the expertise of a researcher from the OpenAlex topics of their publications (see [SorboBot](sorbobot.qmd)).
+
+Crisalid Agents exposes them through one **chat API**: a streaming endpoint for SoVisuPlus and an OpenAI-compatible endpoint (`/v1/models`, `/v1/chat/completions`) for OpenWebUI. Both are called with the signed-in person's Keycloak access token, which the agents carry down to the tools (see [Security](security.qmd)).
 
 ### 🖥️ The interface layer
 
-For the time being, this consists solely of **OpenWebUI** — a self-hosted chat interface accessible via a web browser.
+Two interfaces call the agents: the assistant widget of **SoVisuPlus** and **OpenWebUI** — a self-hosted chat interface accessible via a web browser.
 
-The LangChain/LangGraph agents in Crisalid Agents are presented to the user as **pipelines** — in the place where the user would normally select LLMs in a basic use of OpenWebUI.
+In OpenWebUI, the LangChain/LangGraph agents in Crisalid Agents are presented to the user as **models** — in the place where the user would normally select LLMs in a basic use of OpenWebUI.
 
 ::: {.callout-note}
 Although the user no longer interacts directly with the LLMs, OpenWebUI still needs direct access to the models for convenience features such as generating titles, follow-up questions, etc.
@@ -121,4 +125,6 @@ Although the user no longer interacts directly with the LLMs, OpenWebUI still ne
 
 ### 🚖 Supporting services
 
-Outside the four chat layers, **[CRISalid Taxi](https://github.com/CRISalid-esr/crisalid-taxi)** enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above. Taxi is optional — see [Topics classification](docker-compose.qmd#crisalid-taxi).
+Outside the four chat layers, **[CRISalid Taxi](https://github.com/CRISalid-esr/crisalid-taxi)** enriches the graph itself: IKG sends document titles and abstracts to Taxi, which returns the closest OpenAlex topics by semantic similarity, using the same embedding endpoint as the rest of the AI stack. These topics are then available to the tools and agents above, and the SorboBot agent also queries Taxi live to turn a question into topics. Taxi is optional — see [Topics classification](docker-compose.qmd#crisalid-taxi).
+
+Also optional, the **Horizon Europe topic index** adds a second data source next to the graph: an OpenSearch index of the topics of the current work programme, used by the Horizon topic finder agent (which topics fit a project idea?) and by the Topic-to-Researcher Match batch (which researchers fit each topic?). See [Horizon Europe topics](horizon-europe.qmd).

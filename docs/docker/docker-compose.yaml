@@ -40,6 +40,9 @@ include:
   - path: ./crisalid-agents/crisalid-agents.yaml
     env_file: ./crisalid-agents/.env
     project_directory: ./crisalid-agents
+  - path: ./horizon-europe-index/horizon-europe-index.yaml
+    env_file: ./horizon-europe-index/.env
+    project_directory: ./horizon-europe-index
   - path: ./openwebui/openwebui.yaml
     env_file: ./openwebui/.env
     project_directory: ./openwebui

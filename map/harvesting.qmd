@@ -9,6 +9,11 @@ format:
 This page describes how harvesting is triggered and configured in CRISalid, and how responsibilities are split between
 the **IKG** and the **Harvester** microservices.
 
+> 📚 This page covers *when* and *which* harvesters run. For *what each harvester does* once triggered — data
+> source, supported identifiers, sub-harvesters — see [Harvesters Overview](../harvesters/overview.qmd). For how
+> identifiers are aligned to entities across successive requests, see
+> [Entity Resolution & Identifier Alignment](../harvesters/entity-resolution.qmd).
+
 ---
 
 ## 🌐 Overview

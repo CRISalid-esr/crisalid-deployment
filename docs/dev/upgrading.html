@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.41">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Upgrading between releases – CRISalid Deployment Documentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../dev/dev-backend.html" rel="next">
+<link href="../dev/step-by-step.html" rel="prev">
+<link href="../assets/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-48ffa3e5b9d089919c6712c39e5b00f2.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-5ee27db05bd2414c0f08240d6e3b5eef.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../index.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">CRISalid Deployment Documentation</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">🏠 Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-crisalid-core" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">💠 Crisalid Core</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-crisalid-core">    
+        <li class="dropdown-header">Overview</li>
+        <li>
+    <a class="dropdown-item" href="../map/index.html">
+ <span class="dropdown-text">System Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../map/components.html">
+ <span class="dropdown-text">Identify Relevant Components</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../map/harvesting.html">
+ <span class="dropdown-text">Harvesting Configuration</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../map/message_catalog.html">
+ <span class="dropdown-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Harvesters</li>
+        <li>
+    <a class="dropdown-item" href="../harvesters/overview.html">
+ <span class="dropdown-text">Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/entity-resolution.html">
+ <span class="dropdown-text">Entity Resolution &amp; Identifier Alignment</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/data-model.html">
+ <span class="dropdown-text">Data reference model</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/hal.html">
+ <span class="dropdown-text">Hal harvester</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/idref.html">
+ <span class="dropdown-text">Idref harvester</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/scanr.html">
+ <span class="dropdown-text">Scanr harvester</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/openalex.html">
+ <span class="dropdown-text">Openalex harvester</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../harvesters/scopus.html">
+ <span class="dropdown-text">Scopus harvester</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Institutional Directories</li>
+        <li>
+    <a class="dropdown-item" href="../directories/structures.html">
+ <span class="dropdown-text">Structures Data</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../directories/people.html">
+ <span class="dropdown-text">People Data</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Docker Compose</li>
+        <li>
+    <a class="dropdown-item" href="../dev/index.html">
+ <span class="dropdown-text">Docker Compose – Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/docker-compose.html">
+ <span class="dropdown-text">Docker Compose - Overview</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/step-by-step.html">
+ <span class="dropdown-text">Docker Compose - Step by Step</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/upgrading.html">
+ <span class="dropdown-text">Upgrading between releases</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/dev-backend.html">
+ <span class="dropdown-text">Using Docker Compose as Backend for Local Development</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/local-tls.html">
+ <span class="dropdown-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/export-kc-realm.html">
+ <span class="dropdown-text">Export Keycloak Realm</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/backup-restore-with-dc.html">
+ <span class="dropdown-text">Data backup and restoration with Docker Compose</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../dev/manual_installation.html">
+ <span class="dropdown-text">Manual Installation</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Kubernetes</li>
+        <li>
+    <a class="dropdown-item" href="../prod/index.html">
+ <span class="dropdown-text">Kubernetes – Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../prod/helm_charts.html">
+ <span class="dropdown-text">Kubernetes Deployment</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../prod/manual_installation.html">
+ <span class="dropdown-text">Manual Installation</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Requirements</li>
+        <li>
+    <a class="dropdown-item" href="../requirements/index.html">
+ <span class="dropdown-text">Required Infrastructure and Dependencies</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-crisalid-ai" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">🤖 Crisalid AI</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-crisalid-ai">    
+        <li class="dropdown-header">Overview</li>
+        <li>
+    <a class="dropdown-item" href="../ai/index.html">
+ <span class="dropdown-text">Introduction</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/security.html">
+ <span class="dropdown-text">Security</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Installation</li>
+        <li>
+    <a class="dropdown-item" href="../ai/local-workstation.html">
+ <span class="dropdown-text">Local Workstation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/docker-compose.html">
+ <span class="dropdown-text">Docker Compose</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/horizon-europe.html">
+ <span class="dropdown-text">Horizon Europe topics</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/sorbobot.html">
+ <span class="dropdown-text">SorboBot (research expertise)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/using-skills.html">
+ <span class="dropdown-text">Using CRISalid AI Skills</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/configuring-openwebui.html">
+ <span class="dropdown-text">Configuring OpenWebUI</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../ai/embeddings.html">
+ <span class="dropdown-text">Semantic Embeddings</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-security" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">🔒 Security</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-security">    
+        <li>
+    <a class="dropdown-item" href="../security/index.html">
+ <span class="dropdown-text">Security Considerations</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li class="dropdown-header">Keycloak</li>
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/clients-scopes.html">
+ <span class="dropdown-text">Clients &amp; scopes</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../security/keycloak/idp.html">
+ <span class="dropdown-text">IdP</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://crisalid.org/"> 
+<span class="menu-text">🌐 Website</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.esup-portail.org/wiki/spaces/ESUPCRISalid/overview"> 
+<span class="menu-text">🧭 Wiki</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://hub.docker.com/repositories/crisalidesr"> 
+<span class="menu-text">🐳 DockerHub</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/orgs/CRISalid-esr/repositories"> <i class="bi bi-file-code" role="img">
+</i> 
+<span class="menu-text">GitHub</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/upgrading.html">Upgrading between releases</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Overview</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">System Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/components.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Identify Relevant Components</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/harvesting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Harvesting Configuration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../map/message_catalog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CRISalid Bus – Exchange Map &amp; Message Catalog</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Harvesters</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/overview.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/entity-resolution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Entity Resolution &amp; Identifier Alignment</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/data-model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data reference model</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/hal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Hal harvester</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/idref.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Idref harvester</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/scanr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scanr harvester</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/openalex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Openalex harvester</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../harvesters/scopus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scopus harvester</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Institutional Directories</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../directories/structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Structures Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../directories/people.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">People Data</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Docker Compose</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose – Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/docker-compose.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose - Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/step-by-step.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Docker Compose - Step by Step</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/upgrading.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Upgrading between releases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/dev-backend.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using Docker Compose as Backend for Local Development</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/local-tls.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Migrate Your Local Dev Instance to TLS/HTTPS</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/export-kc-realm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Export Keycloak Realm</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/backup-restore-with-dc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data backup and restoration with Docker Compose</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../dev/manual_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manual Installation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Kubernetes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prod/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kubernetes – Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prod/helm_charts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kubernetes Deployment</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../prod/manual_installation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Manual Installation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Requirements</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../requirements/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Required Infrastructure and Dependencies</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="99">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section">1.6 → 1.7</a>
+  <ul class="collapse">
+  <li><a href="#component-versions" id="toc-component-versions" class="nav-link" data-scroll-target="#component-versions">Component versions</a></li>
+  <li><a href="#what-changes" id="toc-what-changes" class="nav-link" data-scroll-target="#what-changes">What changes</a></li>
+  <li><a href="#check-out-the-release" id="toc-check-out-the-release" class="nav-link" data-scroll-target="#check-out-the-release">1. Check out the release</a></li>
+  <li><a href="#environment-files" id="toc-environment-files" class="nav-link" data-scroll-target="#environment-files">2. Environment files</a>
+  <ul class="collapse">
+  <li><a href="#docker.env-shared" id="toc-docker.env-shared" class="nav-link" data-scroll-target="#docker.env-shared"><code>docker/.env</code> (shared)</a></li>
+  <li><a href="#dockersovisuplus.env" id="toc-dockersovisuplus.env" class="nav-link" data-scroll-target="#dockersovisuplus.env"><code>docker/sovisuplus/.env</code></a></li>
+  <li><a href="#dockeropenwebui.env" id="toc-dockeropenwebui.env" class="nav-link" data-scroll-target="#dockeropenwebui.env"><code>docker/openwebui/.env</code></a></li>
+  <li><a href="#dockercrisalid-agents.env" id="toc-dockercrisalid-agents.env" class="nav-link" data-scroll-target="#dockercrisalid-agents.env"><code>docker/crisalid-agents/.env</code></a></li>
+  <li><a href="#dockerhorizon-europe-index.env-new" id="toc-dockerhorizon-europe-index.env-new" class="nav-link" data-scroll-target="#dockerhorizon-europe-index.env-new"><code>docker/horizon-europe-index/.env</code> (new)</a></li>
+  <li><a href="#dockerneo4j-mcp.env" id="toc-dockerneo4j-mcp.env" class="nav-link" data-scroll-target="#dockerneo4j-mcp.env"><code>docker/neo4j-mcp/.env</code></a></li>
+  </ul></li>
+  <li><a href="#keycloak" id="toc-keycloak" class="nav-link" data-scroll-target="#keycloak">3. Keycloak</a></li>
+  <li><a href="#redeploy" id="toc-redeploy" class="nav-link" data-scroll-target="#redeploy">4. Redeploy</a></li>
+  <li><a href="#after-the-restart" id="toc-after-the-restart" class="nav-link" data-scroll-target="#after-the-restart">5. After the restart</a>
+  <ul class="collapse">
+  <li><a href="#openwebui-connection-to-the-agents" id="toc-openwebui-connection-to-the-agents" class="nav-link" data-scroll-target="#openwebui-connection-to-the-agents">OpenWebUI: connection to the agents</a></li>
+  <li><a href="#sovisu" id="toc-sovisu" class="nav-link" data-scroll-target="#sovisu">SoVisu+</a></li>
+  <li><a href="#optional-horizon-europe-topics" id="toc-optional-horizon-europe-topics" class="nav-link" data-scroll-target="#optional-horizon-europe-topics">Optional: Horizon Europe topics</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../dev/index.html">Docker Compose</a></li><li class="breadcrumb-item"><a href="../dev/upgrading.html">Upgrading between releases</a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Upgrading between releases</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>What to change on an existing Docker Compose deployment when moving from one release of <code>crisalid-deployment</code> to the next. One section per release, newest first. A fresh installation does not need this page: follow <a href="../dev/step-by-step.html">Docker Compose - Step by Step</a>.</p>
+</blockquote>
+<section id="section" class="level1">
+<h1>1.6 → 1.7</h1>
+<section id="component-versions" class="level2">
+<h2 class="anchored" data-anchor-id="component-versions">Component versions</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>1.6</th>
+<th>1.7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>crisalid-ikg</code></td>
+<td>1.6</td>
+<td>1.7</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-apollo</code></td>
+<td>1.6</td>
+<td>1.7</td>
+</tr>
+<tr class="odd">
+<td><code>sovisuplus</code></td>
+<td>1.6</td>
+<td>1.7</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-agents-chat-api</code></td>
+<td>1.6</td>
+<td>1.7</td>
+</tr>
+<tr class="odd">
+<td><code>crisalid-agents-batch</code> (chat API image)</td>
+<td>not deployed</td>
+<td>1.7</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-agents-owui</code> (OpenWebUI pipelines)</td>
+<td>1.6</td>
+<td><strong>removed</strong></td>
+</tr>
+<tr class="odd">
+<td><code>crisalid-neo4j-mcp-toolbox</code></td>
+<td>1.0</td>
+<td>1.1</td>
+</tr>
+<tr class="even">
+<td>OpenWebUI</td>
+<td>0.9.5</td>
+<td>0.13.0</td>
+</tr>
+<tr class="odd">
+<td>OpenSearch for the Horizon Europe topic index</td>
+<td>not deployed</td>
+<td>2.19.3</td>
+</tr>
+<tr class="even">
+<td>CDB DAGs (<code>CDB_DAGS_REF</code>)</td>
+<td>v1.1.0</td>
+<td>v1.2.0</td>
+</tr>
+<tr class="odd">
+<td><code>svp-harvester</code>, <code>crisalid-vocab-search</code></td>
+<td>1.6</td>
+<td>unchanged</td>
+</tr>
+<tr class="even">
+<td><code>crisalid-org-registry</code>, <code>crisalid-taxi</code>, <code>svp-jel-proxy</code>, <code>crisalid-maintenance</code></td>
+<td>1.0</td>
+<td>unchanged</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="what-changes" class="level2">
+<h2 class="anchored" data-anchor-id="what-changes">What changes</h2>
+<p><strong>End-to-end authentication of the AI stack.</strong> This is the breaking change of the release.</p>
+<ul>
+<li>The chat clients (the SoVisu+ assistant and OpenWebUI) no longer call the agents with a shared API key: they forward the Keycloak access token of the signed-in user.</li>
+<li>The chat API no longer queries the MCP toolbox with a service account. It validates the user’s token (issuer, audience <code>crisalid-agents</code>, expiry), exchanges it for a token of audience <code>crisalid-graph-mcp</code> and queries the toolbox under the identity of the person, which the toolbox injects into the Cypher queries.</li>
+<li>There is no “internal” Keycloak host any more: every container uses the public Keycloak URL, which is the single issuer (<code>iss</code>) of the stack.</li>
+<li>The OpenWebUI pipelines server (<code>crisalid-agents-owui</code>, port 9099) is gone. A single service, <code>crisalid-agents-chat-api</code> (port 9100), serves every client: the NDJSON API used by SoVisu+ and an OpenAI-compatible API (chat completions) for OpenWebUI, which now sees the agents as models behind an OAuth connection instead of a pipeline behind an API key.</li>
+</ul>
+<p>See <a href="../ai/security.html">Crisalid AI → Security</a> and <a href="../security/keycloak/clients-scopes.html">Keycloak → Clients &amp; scopes</a>.</p>
+<p><strong>New optional features</strong>, each behind its own profile:</p>
+<ul>
+<li><a href="../ai/horizon-europe.html">Horizon Europe topics</a>: the topic index (<code>horizon_europe_index</code> profile), the Horizon topic finder agent and the Topic-to-Researcher Match batch (<code>crisalid-agents-batch</code> service);</li>
+<li><a href="../ai/sorbobot.html">SorboBot</a>, the research expertise agent, which relies on <code>crisalid-taxi</code>;</li>
+<li>a direct sign-in route for SoVisu+ (<code>SVP_KEYCLOAK_IDP_HINT</code>) and a switch for its assistant (<code>SVP_CHAT_ENABLED</code>).</li>
+</ul>
+</section>
+<section id="check-out-the-release" class="level2">
+<h2 class="anchored" data-anchor-id="check-out-the-release">1. Check out the release</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch <span class="at">--tags</span> origin</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> switch <span class="at">-c</span> prod/1.7 v1.7.0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Do the next two steps (environment files, Keycloak) before restarting the stack.</p>
+</section>
+<section id="environment-files" class="level2">
+<h2 class="anchored" data-anchor-id="environment-files">2. Environment files</h2>
+<section id="docker.env-shared" class="level3">
+<h3 class="anchored" data-anchor-id="docker.env-shared"><code>docker/.env</code> (shared)</h3>
+<p>Remove:</p>
+<pre class="env"><code>KEYCLOAK_INTERNAL_HOST=…                 # no internal Keycloak host any more
+SOVISUPLUS_KEYCLOAK_CLIENT_ID=…          # moved to sovisuplus/.env
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=…      # moved to sovisuplus/.env
+CRISALID_AGENTS_PIPELINES_API_KEY=…      # no API key any more
+SOVISUPLUS_CHAT_API_KEY=…                # no API key any more</code></pre>
+<p>Add:</p>
+<pre class="env"><code># OpenWebUI public URL (OAuth callback ${OPENWEBUI_URL}/oauth/oidc/callback, web origin)
+OPENWEBUI_URL=https://&lt;openwebui public host&gt;
+
+# Only when TLS ends at a reverse proxy in front of Keycloak: lets the containers reach the proxy
+KEYCLOAK_NETWORK_ALIAS=keycloak.internal
+
+# Only when KEYCLOAK_PORT is 443 or 80: Keycloak omits the default port in the iss claim
+KEYCLOAK_ISSUER=https://&lt;keycloak public host&gt;/realms/&lt;realm&gt;</code></pre>
+<p>Change:</p>
+<pre class="env"><code># Which ref (tag/branch) to deploy for DAGs repo in prod
+CDB_DAGS_REF=v1.2.0</code></pre>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Do not skip <code>CDB_DAGS_REF</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>.env</code> of an existing deployment still holds the previous tag, and checking out the new release does not change it. If it is left as is, <code>configure_cdb.sh prod</code> clones the old tag again and Airflow keeps running the previous version of the DAGs code.</p>
+</div>
+</div>
+<p><code>KEYCLOAK_SCHEME</code>, <code>KEYCLOAK_HOST</code>, <code>KEYCLOAK_PORT</code> and <code>KEYCLOAK_REALM</code> stay and must describe the <strong>public</strong> URL of Keycloak. Leave <code>KEYCLOAK_NETWORK_ALIAS</code> unset when Keycloak itself answers on <code>KEYCLOAK_PORT</code> (local HTTP, or local TLS with mkcert). The reasons behind both settings are explained in <a href="../ai/docker-compose.html#keycloak-issuer">Keycloak issuer inside the stack</a>.</p>
+</section>
+<section id="dockersovisuplus.env" class="level3">
+<h3 class="anchored" data-anchor-id="dockersovisuplus.env"><code>docker/sovisuplus/.env</code></h3>
+<p>Add, with the values taken from the former <code>docker/.env</code>:</p>
+<pre class="env"><code>SOVISUPLUS_KEYCLOAK_CLIENT_ID=sovisuplus
+SOVISUPLUS_KEYCLOAK_CLIENT_SECRET=&lt;secret of the sovisuplus client&gt;
+
+# Help button: 'url' opens SVP_HELP_URL, 'mail' mails SVP_MAINTENANCE_MAIL_ADDRESS. Unset = button hidden.
+SVP_HELP_LINK_TYPE=url</code></pre>
+<p><code>FIELD_ENC_PRIMARY_KID</code> and <code>FIELD_ENC_KEYS_JSON</code> already existed; they are now also used to encrypt the Keycloak tokens of the sessions in the database, so make sure they hold real keys (<code>openssl rand -base64 32</code>).</p>
+<p>Optional: <code>SVP_KEYCLOAK_IDP_HINT</code> (direct sign-in route <code>/transient-sso</code>) and <code>SVP_CHAT_ENABLED=false</code> (hides the assistant; the <code>neo4j-mcp</code> and <code>crisalid-agents-chat-api</code> profiles can then be left out).</p>
+</section>
+<section id="dockeropenwebui.env" class="level3">
+<h3 class="anchored" data-anchor-id="dockeropenwebui.env"><code>docker/openwebui/.env</code></h3>
+<p>Remove:</p>
+<pre class="env"><code>OPENWEBUI_OAUTH_CLIENT_SECRET=…      # replaced by OPENWEBUI_KEYCLOAK_CLIENT_SECRET
+OPENWEBUI_OAUTH_CLIENT_ID=…          # now optional, defaults to open-webui (the client to create in Keycloak)
+OPENWEBUI_OPENID_PROVIDER_URL=…      # now optional, defaults to the public Keycloak issuer of docker/.env
+OPENWEBUI_OPENID_REDIRECT_URI=…      # now optional, defaults to ${OPENWEBUI_URL}/oauth/oidc/callback</code></pre>
+<p>Add:</p>
+<pre class="env"><code>OPENWEBUI_KEYCLOAK_CLIENT_SECRET=&lt;secret of the open-webui client&gt;
+# OpenWebUI &gt;= 0.13: key encrypting the OAuth tokens kept in the server-side sessions
+OPENWEBUI_OAUTH_SESSION_TOKEN_ENCRYPTION_KEY=&lt;openssl rand -hex 32&gt;
+OPENWEBUI_ENABLE_OAUTH_SIGNUP=true   # if accounts are created at the first SSO login</code></pre>
+</section>
+<section id="dockercrisalid-agents.env" class="level3">
+<h3 class="anchored" data-anchor-id="dockercrisalid-agents.env"><code>docker/crisalid-agents/.env</code></h3>
+<p>Add or update:</p>
+<pre class="env"><code># Agents loaded by the single chat API service
+CRISALID_AGENTS_AGENTS=generic_agent,project_topic_matching,sorbobot
+
+# New, mandatory outside local development: agents each Keycloak client (azp claim) may call
+AGENT_ALLOW_LIST=sovisuplus:generic_agent,project_topic_matching;open-webui:generic_agent,project_topic_matching,sorbobot
+
+CRISALID_AGENTS_KEYCLOAK_CLIENT_ID=crisalid-agents
+CRISALID_AGENTS_KEYCLOAK_CLIENT_SECRET=&lt;secret of the crisalid-agents client&gt;
+CRISALID_AGENTS_KEYCLOAK_SSL_VERIFY=true</code></pre>
+<p>A client absent from <code>AGENT_ALLOW_LIST</code> may call no agent: OpenWebUI then shows an empty model list and SoVisu+ receives <code>403 agent_not_allowed</code>. Only list in <code>CRISALID_AGENTS_AGENTS</code> the agents whose prerequisites are deployed: <code>project_topic_matching</code> needs the Horizon Europe topic index, <code>sorbobot</code> needs <code>crisalid-taxi</code>.</p>
+<p>Optional, leave them commented out unless needed: <code>CHAT_API_AUDIENCE</code> (<code>crisalid-agents</code>), <code>MIN_TOKEN_TTL_SECONDS</code> (<code>120</code>) and <code>MCP_AUDIENCE</code> (<code>crisalid-graph-mcp</code>, must be identical on the <code>neo4j-mcp</code> side). The other new variables (<code>HORIZON_*</code>, <code>TRM_*</code>, <code>SORBOBOT_*</code>, <code>CRISALID_TAXI_URL</code>) have working defaults; see <code>.env.sample</code>.</p>
+</section>
+<section id="dockerhorizon-europe-index.env-new" class="level3">
+<h3 class="anchored" data-anchor-id="dockerhorizon-europe-index.env-new"><code>docker/horizon-europe-index/.env</code> (new)</h3>
+<p>The file must exist even if the profile is never started, because the main compose file includes it:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> docker/horizon-europe-index/.env.sample docker/horizon-europe-index/.env</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="dockerneo4j-mcp.env" class="level3">
+<h3 class="anchored" data-anchor-id="dockerneo4j-mcp.env"><code>docker/neo4j-mcp/.env</code></h3>
+<p>Nothing to add. The toolbox reads <code>KEYCLOAK_*</code> from the shared <code>.env</code>, requires the audience <code>crisalid-graph-mcp</code> and validates the tokens against the JWKS of the public issuer.</p>
+</section>
+</section>
+<section id="keycloak" class="level2">
+<h2 class="anchored" data-anchor-id="keycloak">3. Keycloak</h2>
+<p><code>configure_keycloak.sh</code> renders the realm template from <code>docker/.env</code> and the three service <code>.env</code> files, and Keycloak imports it at startup. <strong>On an existing realm the import changes nothing</strong>: the configuration below has to be done by hand in the admin console. The step-by-step procedure is on <a href="../security/keycloak/clients-scopes.html#manual-configuration">Clients &amp; scopes → Manual configuration</a>; in short:</p>
+<ul>
+<li><strong><code>sovisuplus</code> client</strong> (exists already): turn <em>Direct access grants</em> and <em>Service accounts roles</em> <strong>off</strong> (the 1.6 realm template enabled them by mistake).</li>
+<li><strong>New clients</strong>: <code>open-webui</code> (user login of OpenWebUI), <code>crisalid-graph-mcp</code> (no credentials, exists only to be named as an audience) and <code>crisalid-agents</code> (<em>Service accounts roles</em> and <em>Standard token exchange</em> on).</li>
+<li><strong>New client scopes</strong>: <code>crisalid-agents-audience</code>, attached as <em>Default</em> to <code>sovisuplus</code> and <code>open-webui</code>, and <code>crisalid-graph-mcp-audience</code>, attached as <em>Default</em> to <code>crisalid-agents</code>.</li>
+<li><strong>Access token lifespan</strong>: 15 minutes on <code>sovisuplus</code> and <code>open-webui</code>.</li>
+</ul>
+<p>Copy the secret of each client into the <code>.env</code> file of its service (step 2), then run the checks of <a href="../security/keycloak/clients-scopes.html#verification">Clients &amp; scopes → Verification</a>.</p>
+</section>
+<section id="redeploy" class="level2">
+<h2 class="anchored" data-anchor-id="redeploy">4. Redeploy</h2>
+<p>From <code>docker/</code>, with your usual <code>-f</code> files and <code>--profile</code> options. The <code>crisalid-agents-owui</code> profile no longer exists: remove it from your commands.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DAGs of the directory bridge: check that it prints "Using DAGs repo ref: v1.2.0"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure_cdb.sh</span> prod</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> … pull <span class="at">--include-deps</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># --remove-orphans deletes the former crisalid-agents-owui container</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="at">-f</span> docker-compose.yaml <span class="at">-f</span> docker-compose.prod.yaml <span class="dt">\</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--profile</span> … up <span class="at">-d</span> <span class="at">--remove-orphans</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>keycloak</code>, <code>neo4j-mcp</code>, <code>crisalid-agents-chat-api</code>, <code>sovisuplus</code> and <code>openwebui</code> are recreated because their image or configuration changed. Check that Keycloak was: the network alias only takes effect on a new container.</p>
+<p>From the SoVisu+ container (or any other), the public Keycloak hostname must resolve to the reverse proxy, not to a Docker address, and the public OIDC endpoint must answer:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec sovisuplus sh <span class="at">-c</span> <span class="st">'</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">  getent hosts &lt;keycloak public host&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="st">  wget -qO- https://&lt;keycloak public host&gt;/realms/&lt;realm&gt;/.well-known/openid-configuration | head -c 200'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="after-the-restart" class="level2">
+<h2 class="anchored" data-anchor-id="after-the-restart">5. After the restart</h2>
+<section id="openwebui-connection-to-the-agents" class="level3">
+<h3 class="anchored" data-anchor-id="openwebui-connection-to-the-agents">OpenWebUI: connection to the agents</h3>
+<p>In <strong>Admin panel → Settings → Connections</strong>, delete the former “pipelines” connection (<code>…:9099</code>, API key) and create an OpenAI-compatible connection:</p>
+<ul>
+<li><strong>URL</strong>: <code>http://crisalid-agents-chat-api:9100/v1</code></li>
+<li><strong>Auth type</strong>: <strong>System OAuth</strong> (no API key, <em>Forward cookies</em> off)</li>
+</ul>
+<p>The models listed are the agents allowed to the <code>open-webui</code> client in <code>AGENT_ALLOW_LIST</code>. A user with a local account that is not linked to the SSO gets no token: the model list is empty for them. Existing users have to sign in again so that a server-side OAuth session exists. Details: <a href="../ai/configuring-openwebui.html">Configuring OpenWebUI</a>.</p>
+</section>
+<section id="sovisu" class="level3">
+<h3 class="anchored" data-anchor-id="sovisu">SoVisu+</h3>
+<p>The existing sessions do not carry the Keycloak session identifier: users have to sign in again, otherwise the chat widget answers <code>401 reauthentication_required</code> (the rest of the application keeps working).</p>
+</section>
+<section id="optional-horizon-europe-topics" class="level3">
+<h3 class="anchored" data-anchor-id="optional-horizon-europe-topics">Optional: Horizon Europe topics</h3>
+<p>To use the Horizon topic finder or the Topic-to-Researcher Match, upload the work programme PDFs and build the index as described in <a href="../ai/horizon-europe.html">Horizon Europe topics</a>.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/docs\.crisalid\.org");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../dev/step-by-step.html" class="pagination-link" aria-label="Docker Compose - Step by Step">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Docker Compose - Step by Step</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../dev/dev-backend.html" class="pagination-link" aria-label="Using Docker Compose as Backend for Local Development">
+        <span class="nav-page-text">Using Docker Compose as Backend for Local Development</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

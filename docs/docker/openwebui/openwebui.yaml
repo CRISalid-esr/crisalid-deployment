@@ -24,15 +24,24 @@ services:
       - ENABLE_CHANNELS=false
       - ENABLE_COMMUNITY_SHARING=false
       - ENABLE_EVALUATION_ARENA_MODELS=false
-      # OAuth2/OIDC (Keycloak SSO) — leave unset to disable SSO
+      # Public URL of this instance (OAuth callbacks, links)
+      - WEBUI_URL=${OPENWEBUI_URL}
+      # OAuth2/OIDC (Keycloak SSO) — leave OPENWEBUI_ENABLE_OAUTH_SIGNUP unset to disable SSO. The client is the
+      # open-webui client of the realm (docker/keycloak/config/crisalid-inst.json.template); the provider URL is
+      # the public Keycloak issuer, the only issuer of the stack. The access token of the OAuth session is forwarded
+      # to the CRISalid agents chat API by the "System OAuth" connection (see the documentation).
       - ENABLE_OAUTH_SIGNUP=${OPENWEBUI_ENABLE_OAUTH_SIGNUP}
-      - OAUTH_CLIENT_ID=${OPENWEBUI_OAUTH_CLIENT_ID}
-      - OAUTH_CLIENT_SECRET=${OPENWEBUI_OAUTH_CLIENT_SECRET}
-      - OPENID_PROVIDER_URL=${OPENWEBUI_OPENID_PROVIDER_URL}
+      - OAUTH_CLIENT_ID=${OPENWEBUI_OAUTH_CLIENT_ID:-open-webui}
+      - OAUTH_CLIENT_SECRET=${OPENWEBUI_KEYCLOAK_CLIENT_SECRET}
+      - OPENID_PROVIDER_URL=${OPENWEBUI_OPENID_PROVIDER_URL:-${KEYCLOAK_ISSUER:-${KEYCLOAK_SCHEME}://${KEYCLOAK_HOST}:${KEYCLOAK_PORT}/realms/${KEYCLOAK_REALM}}/.well-known/openid-configuration}
       - OAUTH_PROVIDER_NAME=${OPENWEBUI_OAUTH_PROVIDER_NAME}
-      - OPENID_REDIRECT_URI=${OPENWEBUI_OPENID_REDIRECT_URI}
+      - OPENID_REDIRECT_URI=${OPENWEBUI_OPENID_REDIRECT_URI:-${OPENWEBUI_URL}/oauth/oidc/callback}
+      # OpenWebUI >= 0.13: the OAuth tokens live in the server-side session (encrypted with the key below) instead
+      # of an ID token cookie
+      - ENABLE_OAUTH_ID_TOKEN_COOKIE=false
+      - OAUTH_SESSION_TOKEN_ENCRYPTION_KEY=${OPENWEBUI_OAUTH_SESSION_TOKEN_ENCRYPTION_KEY}
     depends_on:
-      crisalid-agents-owui:
+      crisalid-agents-chat-api:
         condition: service_healthy
     networks:
       - agents-network
