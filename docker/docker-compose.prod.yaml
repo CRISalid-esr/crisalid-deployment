@@ -82,7 +82,7 @@ services:
     image: crisalidesr/crisalid-neo4j-mcp-toolbox:1.1
   # crisalid-agents (chat API for sovisuplus and OpenAI-compatible endpoint for openwebui)
   crisalid-agents-chat-api:
-    image: crisalidesr/crisalid-agents-chat-api:1.6
+    image: crisalidesr/crisalid-agents-chat-api:1.7
   # openwebui (user-facing chat UI)
   openwebui:
     image: ghcr.io/open-webui/open-webui:0.13.0-slim
