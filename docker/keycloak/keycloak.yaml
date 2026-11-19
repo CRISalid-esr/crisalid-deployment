@@ -46,6 +46,8 @@ services:
       KC_HOSTNAME_DEBUG: "true"
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
+      # Mitigation for CVE-2026-114938 (Java4Shell): keep until the image ships a patched OpenJDK
+      JAVA_OPTS_APPEND: "-XX:-UseBASE64Intrinsics"
     hostname: ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
     volumes:
       - ./config:/opt/keycloak/data/import
@@ -87,6 +89,8 @@ services:
       KC_HOSTNAME_DEBUG: "true"
       KC_HTTP_ENABLED: ${KEYCLOAK_HTTP_ENABLED}
       KC_HOSTNAME_STRICT_HTTPS: ${KEYCLOAK_HOSTNAME_STRICT_HTTPS}
+      # Mitigation for CVE-2026-114938 (Java4Shell): keep until the image ships a patched OpenJDK
+      JAVA_OPTS_APPEND: "-XX:-UseBASE64Intrinsics"
     hostname: ${KEYCLOAK_NETWORK_ALIAS:-${KEYCLOAK_HOST}}
     volumes:
       - ./config:/opt/keycloak/data/import
