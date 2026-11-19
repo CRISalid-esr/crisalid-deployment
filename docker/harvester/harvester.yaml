@@ -3,8 +3,11 @@ services:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/svp-jel-proxy:latest
     restart: unless-stopped
-    ports:
-      - ${SVP_JEL_PROXY_PORT:-3030}:3030
+    # Only reached by the harvester over svph-network: not published on the host
+    # ports:
+    #   - "3030:3030" # To query the SPARQL endpoint from the host machine
+    expose:
+      - 3030
     healthcheck:
       test: [ "CMD", "nc", "-zv", "localhost", "3030" ]
       interval: 30s
@@ -72,7 +75,7 @@ services:
       - SCANR_ES_HOST=${SCANR_ES_HOST}
       - SCANR_ES_USER=${SCANR_ES_USER}
       - SCANR_ES_PASSWORD=${SCANR_ES_PASSWORD}
-      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:${SVP_JEL_PROXY_PORT:-3030}/jel/sparql
+      - SVP_JEL_PROXY_URL=http://svp-jel-proxy:3030/jel/sparql
       - WIKIDATA_USER_AGENT=${WIKIDATA_USER_AGENT}
       - ROR_API_CLIENT_ID=${ROR_API_CLIENT_ID}
       - ENABLE_BASIC_AUTH=${HARVESTER_ENABLE_BASIC_AUTH:-true}
