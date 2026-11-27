@@ -22,7 +22,7 @@ services:
     # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
     # image: crisalidesr/crisalid-vocab-search:api-1.0
     restart: unless-stopped
-    ports: [ "${BIND_ADDR:-127.0.0.1}:${CVS_API_PORT:-8000}:8000" ]
+    ports: [ "${ADMIN_BIND_ADDR:-127.0.0.1}:${CVS_API_PORT:-8000}:8000" ]
     environment:
       API_VERSION: ${API_VERSION:-v1}
     depends_on: [ cvs-os ]

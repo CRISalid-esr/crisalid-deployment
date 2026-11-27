@@ -15,10 +15,10 @@ or **insecure access** to internal institutional directories (especially if LDAP
 Published ports listen on `127.0.0.1` by default, so they are reachable only from the host itself (reverse proxy
 on the same host, SSH tunnel). Two variables of `docker/.env` change this:
 
-* `BIND_ADDR`: application ports (SoVisu+, Keycloak, Apollo, harvester UI, cvs-api, OpenWebUI). Set it to `0.0.0.0`
-  only when the reverse proxy runs on another machine.
-* `ADMIN_BIND_ADDR`: databases and admin consoles (SoVisu+ PostgreSQL, Neo4j, RabbitMQ, Airflow, Flower,
-  OpenSearch Dashboards). Keep it on loopback and use an SSH tunnel.
+* `BIND_ADDR`: ports served through the reverse proxy (SoVisu+, Keycloak, harvester UI, OpenWebUI). Set it to
+  `0.0.0.0` only when the reverse proxy runs on another machine.
+* `ADMIN_BIND_ADDR`: databases, admin consoles and internal APIs (SoVisu+ PostgreSQL, Neo4j, RabbitMQ, Airflow,
+  Flower, OpenSearch Dashboards, Apollo, cvs-api). Keep it on loopback and use an SSH tunnel.
 
 A host firewall such as ufw does **not** protect ports published by Docker: Docker inserts its own iptables rules
 ahead of the firewall's. Filter these ports upstream, or keep them on loopback.
