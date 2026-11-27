@@ -58,7 +58,7 @@ services:
     # image: crisalidesr/svp-harvester:latest
     restart: unless-stopped
     ports:
-      - ${HARVESTER_API_PORT:-8000}:8000
+      - "${BIND_ADDR:-127.0.0.1}:${HARVESTER_API_PORT:-8000}:8000"
     environment:
       # Overriden by environment specific YAML configurations (e.g. docker-compose.dev.yaml)
       # - APP_ENV=DEV

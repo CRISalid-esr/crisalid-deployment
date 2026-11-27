@@ -29,7 +29,7 @@ services:
     expose:
       - 8080
     ports:
-      - "8080:8080"
+      - "${BIND_ADDR:-127.0.0.1}:8080:8080"
     environment:
       KC_PROXY_HEADERS: ${KEYCLOAK_PROXY_HEADERS:-xforwarded}
       KC_DB: postgres
@@ -69,8 +69,8 @@ services:
       - 8080
       - 8443
     ports:
-      - "8080:8080"
-      - "8443:8443"
+      - "${BIND_ADDR:-127.0.0.1}:8080:8080"
+      - "${BIND_ADDR:-127.0.0.1}:8443:8443"
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: ${KEYCLOAK_DB_HOST:-keycloak-db}

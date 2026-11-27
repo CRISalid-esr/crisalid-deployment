@@ -672,6 +672,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="security-note" class="level2">
 <h2 class="anchored" data-anchor-id="security-note">⚠️ Security note</h2>
 <p>This stack can be deployed in production <strong>only if the host is properly secured</strong> (firewall enabled, restricted exposed ports, strong credentials, TLS/reverse proxy when needed). Running it on an open host can lead to <strong>data leaks</strong> or <strong>insecure access</strong> to internal institutional directories (especially if LDAP is enabled).</p>
+<p>Published ports listen on <code>127.0.0.1</code> by default, so they are reachable only from the host itself (reverse proxy on the same host, SSH tunnel). Two variables of <code>docker/.env</code> change this:</p>
+<ul>
+<li><code>BIND_ADDR</code>: application ports (SoVisu+, Keycloak, Apollo, harvester UI, cvs-api, OpenWebUI). Set it to <code>0.0.0.0</code> only when the reverse proxy runs on another machine.</li>
+<li><code>ADMIN_BIND_ADDR</code>: databases and admin consoles (SoVisu+ PostgreSQL, Neo4j, RabbitMQ, Airflow, Flower, OpenSearch Dashboards). Keep it on loopback and use an SSH tunnel.</li>
+</ul>
+<p>A host firewall such as ufw does <strong>not</strong> protect ports published by Docker: Docker inserts its own iptables rules ahead of the firewall’s. Filter these ports upstream, or keep them on loopback.</p>
 </section>
 <section id="environment-specific-compose-files-dev-prod" class="level2">
 <h2 class="anchored" data-anchor-id="environment-specific-compose-files-dev-prod">🌍 Environment-specific Compose files (DEV / PROD)</h2>
