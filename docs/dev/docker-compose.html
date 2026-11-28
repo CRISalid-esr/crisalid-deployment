@@ -672,11 +672,98 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="security-note" class="level2">
 <h2 class="anchored" data-anchor-id="security-note">⚠️ Security note</h2>
 <p>This stack can be deployed in production <strong>only if the host is properly secured</strong> (firewall enabled, restricted exposed ports, strong credentials, TLS/reverse proxy when needed). Running it on an open host can lead to <strong>data leaks</strong> or <strong>insecure access</strong> to internal institutional directories (especially if LDAP is enabled).</p>
-<p>Published ports listen on <code>127.0.0.1</code> by default, so they are reachable only from the host itself (reverse proxy on the same host, SSH tunnel). Two variables of <code>docker/.env</code> change this:</p>
+<p>Published ports listen on <code>127.0.0.1</code> by default, so they are reachable only from the host itself (reverse proxy on the same host, SSH tunnel). Two defaults in <code>docker/.env</code> change this for the whole stack:</p>
 <ul>
-<li><code>BIND_ADDR</code>: ports served through the reverse proxy (SoVisu+, Keycloak, harvester UI, OpenWebUI). Set it to <code>0.0.0.0</code> only when the reverse proxy runs on another machine.</li>
-<li><code>ADMIN_BIND_ADDR</code>: databases, admin consoles and internal APIs (SoVisu+ PostgreSQL, Neo4j, RabbitMQ, Airflow, Flower, OpenSearch Dashboards, Apollo, cvs-api). Keep it on loopback and use an SSH tunnel.</li>
+<li><code>DEFAULT_BIND_ADDR</code>: ports served through a reverse proxy (SoVisu+, Keycloak, harvester UI, OpenWebUI).</li>
+<li><code>DEFAULT_ADMIN_BIND_ADDR</code>: databases, admin consoles and internal APIs (SoVisu+ PostgreSQL, Neo4j, RabbitMQ, Airflow, Flower, OpenSearch Dashboards, Apollo, cvs-api). Keep it on loopback and use an SSH tunnel.</li>
 </ul>
+<p>Each project can override its default in its own <code>.env</code> file:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Project <code>.env</code></th>
+<th>Ports</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>KC_BIND_ADDR</code></td>
+<td><code>keycloak/.env</code></td>
+<td>8080, 8443 (<code>keycloak-tls</code>)</td>
+<td><code>DEFAULT_BIND_ADDR</code></td>
+</tr>
+<tr class="even">
+<td><code>SVP_BIND_ADDR</code></td>
+<td><code>sovisuplus/.env</code></td>
+<td>3000, 3001, maintenance page</td>
+<td><code>DEFAULT_BIND_ADDR</code></td>
+</tr>
+<tr class="odd">
+<td><code>HARVESTER_BIND_ADDR</code></td>
+<td><code>harvester/.env</code></td>
+<td>harvester UI</td>
+<td><code>DEFAULT_BIND_ADDR</code></td>
+</tr>
+<tr class="even">
+<td><code>OWUI_BIND_ADDR</code></td>
+<td><code>openwebui/.env</code></td>
+<td>OpenWebUI</td>
+<td><code>DEFAULT_BIND_ADDR</code></td>
+</tr>
+<tr class="odd">
+<td><code>SVP_DB_BIND_ADDR</code></td>
+<td><code>sovisuplus/.env</code></td>
+<td>5432</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+<tr class="even">
+<td><code>NEO4J_BIND_ADDR</code></td>
+<td><code>neo4j/.env</code></td>
+<td>7474, 7687</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+<tr class="odd">
+<td><code>CRISALID_BUS_BIND_ADDR</code></td>
+<td><code>crisalid-bus/.env</code></td>
+<td>15672</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+<tr class="even">
+<td><code>AIRFLOW_BIND_ADDR</code></td>
+<td><code>cdb/.env</code></td>
+<td>Airflow API, Flower 5555</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+<tr class="odd">
+<td><code>APOLLO_BIND_ADDR</code></td>
+<td><code>apollo/.env</code></td>
+<td>Apollo API</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+<tr class="even">
+<td><code>CVS_BIND_ADDR</code></td>
+<td><code>cvs/.env</code></td>
+<td>cvs-api</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+<tr class="odd">
+<td><code>TAXI_BIND_ADDR</code></td>
+<td><code>crisalid-taxi/.env</code></td>
+<td>OpenSearch Dashboards 5601</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
+</tbody>
+</table>
+<p>For example, when the institutional reverse proxy reaches Keycloak directly on port 8080 while a local nginx serves SoVisu+ through <code>127.0.0.1</code>, set <code>KC_BIND_ADDR=0.0.0.0</code> in <code>keycloak/.env</code> and leave the defaults alone.</p>
+<p>Set these project variables in the project’s <code>.env</code> only: a value in <code>docker/.env</code> always takes precedence over the project’s <code>.env</code>.</p>
 <p>A host firewall such as ufw does <strong>not</strong> protect ports published by Docker: Docker inserts its own iptables rules ahead of the firewall’s. Filter these ports upstream, or keep them on loopback.</p>
 </section>
 <section id="environment-specific-compose-files-dev-prod" class="level2">
