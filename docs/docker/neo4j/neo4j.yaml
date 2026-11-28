@@ -7,7 +7,9 @@ services:
     # comment the "ports" section if you don't want users to access neo4j UI
     ports:
       - "${NEO4J_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}:${NEO4J_HTTP_PORT}:7474" # HTTP port
-      - "${NEO4J_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}:${NEO4J_BOLT_PORT}:7687" # BOLT port
+      # Bolt is reached by services on another host when the deployment is split across VMs:
+      # set NEO4J_BOLT_BIND_ADDR to the private IP (not 0.0.0.0), the HTTP console stays on NEO4J_BIND_ADDR
+      - "${NEO4J_BOLT_BIND_ADDR:-${NEO4J_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}}:${NEO4J_BOLT_PORT}:7687" # BOLT port
     expose:
       - "${NEO4J_BOLT_PORT}"
       - "${NEO4J_HTTP_PORT}"
