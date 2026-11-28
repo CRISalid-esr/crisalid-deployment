@@ -3,7 +3,7 @@ services:
     image: crisalid-esr/crisalid-maintenance:1.0
     restart: unless-stopped
     ports:
-      - "${BIND_ADDR:-127.0.0.1}:${SVP_PORT:-3000}:8080"
+      - "${SVP_BIND_ADDR:-${DEFAULT_BIND_ADDR:-127.0.0.1}}:${SVP_PORT:-3000}:8080"
     environment:
       TITLE: "${SVP_MAINTENANCE_TITLE:-Site Maintenance}"
       HEADLINE: "${SVP_MAINTENANCE_HEADLINE:-We'll be back soon!}"

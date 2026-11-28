@@ -87,7 +87,7 @@ services:
     # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
     ports:
-      - "${ADMIN_BIND_ADDR:-127.0.0.1}:${TAXI_DASHBOARDS_PORT:-5601}:5601"
+      - "${TAXI_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}:${TAXI_DASHBOARDS_PORT:-5601}:5601"
     environment:
       - OPENSEARCH_HOSTS=["http://crisalid-taxi-opensearch:9200"]
       - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true

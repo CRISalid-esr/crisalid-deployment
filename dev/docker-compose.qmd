@@ -13,12 +13,33 @@ exposed ports, strong credentials, TLS/reverse proxy when needed). Running it on
 or **insecure access** to internal institutional directories (especially if LDAP is enabled).
 
 Published ports listen on `127.0.0.1` by default, so they are reachable only from the host itself (reverse proxy
-on the same host, SSH tunnel). Two variables of `docker/.env` change this:
+on the same host, SSH tunnel). Two defaults in `docker/.env` change this for the whole stack:
 
-* `BIND_ADDR`: ports served through the reverse proxy (SoVisu+, Keycloak, harvester UI, OpenWebUI). Set it to
-  `0.0.0.0` only when the reverse proxy runs on another machine.
-* `ADMIN_BIND_ADDR`: databases, admin consoles and internal APIs (SoVisu+ PostgreSQL, Neo4j, RabbitMQ, Airflow,
-  Flower, OpenSearch Dashboards, Apollo, cvs-api). Keep it on loopback and use an SSH tunnel.
+* `DEFAULT_BIND_ADDR`: ports served through a reverse proxy (SoVisu+, Keycloak, harvester UI, OpenWebUI).
+* `DEFAULT_ADMIN_BIND_ADDR`: databases, admin consoles and internal APIs (SoVisu+ PostgreSQL, Neo4j, RabbitMQ,
+  Airflow, Flower, OpenSearch Dashboards, Apollo, cvs-api). Keep it on loopback and use an SSH tunnel.
+
+Each project can override its default in its own `.env` file:
+
+| Variable | Project `.env` | Ports | Default |
+| --- | --- | --- | --- |
+| `KC_BIND_ADDR` | `keycloak/.env` | 8080, 8443 (`keycloak-tls`) | `DEFAULT_BIND_ADDR` |
+| `SVP_BIND_ADDR` | `sovisuplus/.env` | 3000, 3001, maintenance page | `DEFAULT_BIND_ADDR` |
+| `HARVESTER_BIND_ADDR` | `harvester/.env` | harvester UI | `DEFAULT_BIND_ADDR` |
+| `OWUI_BIND_ADDR` | `openwebui/.env` | OpenWebUI | `DEFAULT_BIND_ADDR` |
+| `SVP_DB_BIND_ADDR` | `sovisuplus/.env` | 5432 | `DEFAULT_ADMIN_BIND_ADDR` |
+| `NEO4J_BIND_ADDR` | `neo4j/.env` | 7474, 7687 | `DEFAULT_ADMIN_BIND_ADDR` |
+| `CRISALID_BUS_BIND_ADDR` | `crisalid-bus/.env` | 15672 | `DEFAULT_ADMIN_BIND_ADDR` |
+| `AIRFLOW_BIND_ADDR` | `cdb/.env` | Airflow API, Flower 5555 | `DEFAULT_ADMIN_BIND_ADDR` |
+| `APOLLO_BIND_ADDR` | `apollo/.env` | Apollo API | `DEFAULT_ADMIN_BIND_ADDR` |
+| `CVS_BIND_ADDR` | `cvs/.env` | cvs-api | `DEFAULT_ADMIN_BIND_ADDR` |
+| `TAXI_BIND_ADDR` | `crisalid-taxi/.env` | OpenSearch Dashboards 5601 | `DEFAULT_ADMIN_BIND_ADDR` |
+
+For example, when the institutional reverse proxy reaches Keycloak directly on port 8080 while a local nginx
+serves SoVisu+ through `127.0.0.1`, set `KC_BIND_ADDR=0.0.0.0` in `keycloak/.env` and leave the defaults alone.
+
+Set these project variables in the project's `.env` only: a value in `docker/.env` always takes precedence over the
+project's `.env`.
 
 A host firewall such as ufw does **not** protect ports published by Docker: Docker inserts its own iptables rules
 ahead of the firewall's. Filter these ports upstream, or keep them on loopback.
