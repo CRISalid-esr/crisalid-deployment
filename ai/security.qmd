@@ -112,4 +112,4 @@ CRISalid Taxi has **no authentication** of its own. It is designed to be reached
 
 - **Do not expose it on the web.** Each request triggers embedding calls to the shared endpoint, so an exposed instance is an easy way to exhaust your embedding quota.
 - On a multi-server deployment, if you publish its port for IKG, restrict access to the IKG host with a firewall rule (see [Multi-Server Deployment](../dev/step-by-step.qmd#multi-server-deployment-optional)).
-- The optional OpenSearch Dashboards profile publishes port `5601` without authentication: keep it for local inspection only.
+- The optional OpenSearch Dashboards profile has no authentication: its port line is commented out; if you uncomment it, keep it on loopback for local inspection only.

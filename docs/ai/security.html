@@ -613,7 +613,7 @@ Local workstation
 <ul>
 <li><strong>Do not expose it on the web.</strong> Each request triggers embedding calls to the shared endpoint, so an exposed instance is an easy way to exhaust your embedding quota.</li>
 <li>On a multi-server deployment, if you publish its port for IKG, restrict access to the IKG host with a firewall rule (see <a href="../dev/step-by-step.html#multi-server-deployment-optional">Multi-Server Deployment</a>).</li>
-<li>The optional OpenSearch Dashboards profile publishes port <code>5601</code> without authentication: keep it for local inspection only.</li>
+<li>The optional OpenSearch Dashboards profile has no authentication: its port line is commented out; if you uncomment it, keep it on loopback for local inspection only.</li>
 </ul>
 
 
