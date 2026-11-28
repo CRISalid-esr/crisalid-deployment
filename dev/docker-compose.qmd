@@ -43,11 +43,7 @@ serves SoVisu+ through `127.0.0.1`, set `KC_BIND_ADDR=0.0.0.0` in `keycloak/.env
 When the deployment is split across several VMs, services on one VM reach RabbitMQ (AMQP 5672) or Neo4j (Bolt
 7687) on the other. Publish only these ports on the private IP, not on `0.0.0.0`: uncomment the AMQP line in
 `crisalid-bus.yaml` and set `CRISALID_BUS_AMQP_BIND_ADDR`, set `NEO4J_BOLT_BIND_ADDR`, and leave the consoles on
-loopback. Since ufw does not apply, allow only the other VM with a `DOCKER-USER` rule, e.g.:
-
-```bash
-sudo iptables -I DOCKER-USER -p tcp -m conntrack --ctorigdstport 5672 ! -s <IP of the other VM> -j DROP
-```
+loopback.
 
 Set these project variables in the project's `.env` only: a value in `docker/.env` always takes precedence over the
 project's `.env`.
