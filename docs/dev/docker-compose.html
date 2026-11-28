@@ -772,10 +772,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>taxi API (line commented out by default)</td>
 <td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
 </tr>
+<tr class="even">
+<td><code>NEO4J_MCP_BIND_ADDR</code></td>
+<td><code>neo4j-mcp/.env</code></td>
+<td>MCP toolbox 5000 (line commented out by default)</td>
+<td><code>DEFAULT_ADMIN_BIND_ADDR</code></td>
+</tr>
 </tbody>
 </table>
 <p>For example, when the institutional reverse proxy reaches Keycloak directly on port 8080 while a local nginx serves SoVisu+ through <code>127.0.0.1</code>, set <code>KC_BIND_ADDR=0.0.0.0</code> in <code>keycloak/.env</code> and leave the defaults alone.</p>
-<p>When the deployment is split across several VMs, services on one VM reach RabbitMQ (AMQP 5672) or Neo4j (Bolt 7687) on the other, or call the taxi API. Publish only these ports on the private IP, not on <code>0.0.0.0</code>: uncomment the AMQP line in <code>crisalid-bus.yaml</code> and set <code>CRISALID_BUS_AMQP_BIND_ADDR</code>, set <code>NEO4J_BOLT_BIND_ADDR</code>, uncomment the API line in <code>crisalid-taxi.yaml</code> and set <code>TAXI_BIND_ADDR</code>, and leave the consoles on loopback.</p>
+<p>When the deployment is split across several VMs, services on one VM reach RabbitMQ (AMQP 5672) or Neo4j (Bolt 7687) on the other, or call the taxi API or the MCP toolbox. Publish only these ports on the private IP, not on <code>0.0.0.0</code>: uncomment the AMQP line in <code>crisalid-bus.yaml</code> and set <code>CRISALID_BUS_AMQP_BIND_ADDR</code>, set <code>NEO4J_BOLT_BIND_ADDR</code>, uncomment the port lines in <code>crisalid-taxi.yaml</code> and <code>neo4j-mcp.yaml</code> and set <code>TAXI_BIND_ADDR</code> and <code>NEO4J_MCP_BIND_ADDR</code>, and leave the consoles on loopback.</p>
 <p>Set these project variables in the project’s <code>.env</code> only: a value in <code>docker/.env</code> always takes precedence over the project’s <code>.env</code>.</p>
 <p>A host firewall such as ufw does <strong>not</strong> protect ports published by Docker: Docker inserts its own iptables rules ahead of the firewall’s. Filter these ports upstream, or keep them on loopback.</p>
 </section>

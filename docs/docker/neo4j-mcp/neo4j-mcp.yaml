@@ -2,8 +2,10 @@ services:
   neo4j-mcp:
     # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
+    # When services on another host call the toolbox (deployment split across VMs, e.g. crisalid-agents):
+    # uncomment and set NEO4J_MCP_BIND_ADDR to the private IP (not 0.0.0.0)
     # ports:
-    #   - "5000:5000"
+    #   - "${NEO4J_MCP_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}:${NEO4J_MCP_PORT:-5000}:5000"
     expose:
       - "5000"
     environment:
