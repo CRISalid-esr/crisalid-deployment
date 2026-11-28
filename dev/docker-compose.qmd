@@ -36,14 +36,16 @@ Each project can override its default in its own `.env` file:
 | `APOLLO_BIND_ADDR` | `apollo/.env` | Apollo API | `DEFAULT_ADMIN_BIND_ADDR` |
 | `CVS_BIND_ADDR` | `cvs/.env` | cvs-api | `DEFAULT_ADMIN_BIND_ADDR` |
 | `TAXI_BIND_ADDR` | `crisalid-taxi/.env` | taxi API (line commented out by default) | `DEFAULT_ADMIN_BIND_ADDR` |
+| `NEO4J_MCP_BIND_ADDR` | `neo4j-mcp/.env` | MCP toolbox 5000 (line commented out by default) | `DEFAULT_ADMIN_BIND_ADDR` |
 
 For example, when the institutional reverse proxy reaches Keycloak directly on port 8080 while a local nginx
 serves SoVisu+ through `127.0.0.1`, set `KC_BIND_ADDR=0.0.0.0` in `keycloak/.env` and leave the defaults alone.
 
 When the deployment is split across several VMs, services on one VM reach RabbitMQ (AMQP 5672) or Neo4j (Bolt
-7687) on the other, or call the taxi API. Publish only these ports on the private IP, not on `0.0.0.0`: uncomment
-the AMQP line in `crisalid-bus.yaml` and set `CRISALID_BUS_AMQP_BIND_ADDR`, set `NEO4J_BOLT_BIND_ADDR`, uncomment
-the API line in `crisalid-taxi.yaml` and set `TAXI_BIND_ADDR`, and leave the consoles on loopback.
+7687) on the other, or call the taxi API or the MCP toolbox. Publish only these ports on the private IP, not on
+`0.0.0.0`: uncomment the AMQP line in `crisalid-bus.yaml` and set `CRISALID_BUS_AMQP_BIND_ADDR`, set
+`NEO4J_BOLT_BIND_ADDR`, uncomment the port lines in `crisalid-taxi.yaml` and `neo4j-mcp.yaml` and set
+`TAXI_BIND_ADDR` and `NEO4J_MCP_BIND_ADDR`, and leave the consoles on loopback.
 
 Set these project variables in the project's `.env` only: a value in `docker/.env` always takes precedence over the
 project's `.env`.
