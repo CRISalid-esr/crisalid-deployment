@@ -2,8 +2,10 @@ services:
   crisalid-taxi:
     # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
+    # When services on another host call the API (deployment split across VMs, e.g. ikg or crisalid-agents):
+    # uncomment and set TAXI_BIND_ADDR to the private IP (not 0.0.0.0)
     # ports:
-    #   - "8000:8000"
+    #   - "${TAXI_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}:${TAXI_API_PORT:-8010}:8000"
     expose:
       - "8000"
     environment:
@@ -86,8 +88,9 @@ services:
     # Optional admin UI for the taxi OpenSearch index (separate profile)
     # image: overridden by environment-specific YAML (docker-compose.dev.yaml / docker-compose.prod.yaml)
     restart: unless-stopped
-    ports:
-      - "${TAXI_BIND_ADDR:-${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}}:${TAXI_DASHBOARDS_PORT:-5601}:5601"
+    # Not published by default: uncomment for local inspection (no authentication, keep it on loopback)
+    # ports:
+    #   - "${DEFAULT_ADMIN_BIND_ADDR:-127.0.0.1}:${TAXI_DASHBOARDS_PORT:-5601}:5601"
     environment:
       - OPENSEARCH_HOSTS=["http://crisalid-taxi-opensearch:9200"]
       - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true

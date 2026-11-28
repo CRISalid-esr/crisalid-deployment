@@ -611,7 +611,8 @@ It consists of two containers behind the `crisalid-taxi` profile:
 * **`crisalid-taxi`**: the FastAPI classification service, reachable by IKG at `http://crisalid-taxi:8000` (not published to the host).
 * **`crisalid-taxi-opensearch`**: a dedicated OpenSearch instance holding the taxonomy embeddings.
 
-An optional `crisalid-taxi-dashboards` profile adds OpenSearch Dashboards on port `5601` to inspect the index.
+An optional `crisalid-taxi-dashboards` profile adds OpenSearch Dashboards to inspect the index; uncomment its port line in `crisalid-taxi.yaml` to reach it on
+`127.0.0.1:5601`.
 
 ### Configure
 

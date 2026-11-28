@@ -520,7 +520,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>crisalid-taxi-dashboards</code></td>
 <td><code>crisalid-taxi-dashboards</code></td>
-<td>Optional OpenSearch Dashboards UI for the taxi index (port 5601)</td>
+<td>Optional OpenSearch Dashboards UI for the taxi index (port 5601, port line commented out)</td>
 </tr>
 <tr class="even">
 <td><code>horizon_europe_index</code></td>
@@ -571,7 +571,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><code>crisalid-taxi</code> classifies document titles and abstracts against the OpenAlex taxonomy (domains, fields, subfields, topics) by semantic similarity. It embeds the whole taxonomy into its own OpenSearch instance at startup, then answers matching requests from IKG and from the <a href="../ai/sorbobot.html">SorboBot</a> agent (the service joins both the <code>ikg-network</code> and the <code>agents-network</code> Docker networks).</p>
 <p>Before the first start, download the OpenAlex snapshot into the taxi data directory (see <a href="../dev/docker-compose.html#openalex-tree-download">Download the OpenAlex Classification Tree</a>):</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> docker/scripts/download_openalex_tree.sh crisalid-taxi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Then start the profile (add <code>crisalid-taxi-dashboards</code> to get the OpenSearch Dashboards UI on port 5601):</p>
+<p>Then start the profile (add <code>crisalid-taxi-dashboards</code> to get the OpenSearch Dashboards UI, and uncomment its port line in <code>crisalid-taxi.yaml</code> to reach it on <code>127.0.0.1:5601</code>):</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose <span class="dt">\</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.yaml <span class="dt">\</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-f</span> docker-compose.dev.yaml <span class="dt">\</span></span>

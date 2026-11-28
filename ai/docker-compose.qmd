@@ -10,7 +10,7 @@ The AI layer is composed of the following profiles, to be started together with 
 | `crisalid-agents-chat-api` | `crisalid-agents-chat-api` | The agents (graph agent, Horizon topic finder, SorboBot), served as a streaming chat API to SoVisuPlus and as an OpenAI-compatible endpoint to OpenWebUI (port 9100, internal) |
 | `openwebui` | `openwebui` | User-facing chat UI |
 | `crisalid-taxi` | `crisalid-taxi`, `crisalid-taxi-opensearch` | OpenAlex topics classification API used by IKG and by the SorboBot agent (port 8000, internal) and its vector store |
-| `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601) |
+| `crisalid-taxi-dashboards` | `crisalid-taxi-dashboards` | Optional OpenSearch Dashboards UI for the taxi index (port 5601, port line commented out) |
 | `horizon_europe_index` | `opensearch` | OpenSearch index of Horizon Europe work programme topics, see [Horizon Europe topics](horizon-europe.qmd) (port 9200, internal) |
 | `crisalid-agents-batch` | `crisalid-agents-batch` | Batch entry points of crisalid-agents (topic index ingestion, topic-to-researcher match), run on demand with `docker compose run`, see [Horizon Europe topics](horizon-europe.qmd) |
 
@@ -61,7 +61,8 @@ Before the first start, download the OpenAlex snapshot into the taxi data direct
 bash docker/scripts/download_openalex_tree.sh crisalid-taxi
 ```
 
-Then start the profile (add `crisalid-taxi-dashboards` to get the OpenSearch Dashboards UI on port 5601):
+Then start the profile (add `crisalid-taxi-dashboards` to get the OpenSearch Dashboards UI, and uncomment its port line in
+`crisalid-taxi.yaml` to reach it on `127.0.0.1:5601`):
 
 ```bash
 docker compose \

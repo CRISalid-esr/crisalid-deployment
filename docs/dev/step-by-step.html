@@ -1186,7 +1186,7 @@ Keycloak service accounts required for authenticated access
 <li><strong><code>crisalid-taxi</code></strong>: the FastAPI classification service, reachable by IKG at <code>http://crisalid-taxi:8000</code> (not published to the host).</li>
 <li><strong><code>crisalid-taxi-opensearch</code></strong>: a dedicated OpenSearch instance holding the taxonomy embeddings.</li>
 </ul>
-<p>An optional <code>crisalid-taxi-dashboards</code> profile adds OpenSearch Dashboards on port <code>5601</code> to inspect the index.</p>
+<p>An optional <code>crisalid-taxi-dashboards</code> profile adds OpenSearch Dashboards to inspect the index; uncomment its port line in <code>crisalid-taxi.yaml</code> to reach it on <code>127.0.0.1:5601</code>.</p>
 <section id="configure-4" class="level3">
 <h3 class="anchored" data-anchor-id="configure-4">Configure</h3>
 <p>Taxi uses the shared embedding endpoint configured by the <code>EMBEDDING_*</code> variables in <code>docker/.env</code> (see <a href="../ai/embeddings.html">Semantic Embeddings</a>). Service-specific settings (matching thresholds, retries, OpenSearch heap) live in <code>crisalid-taxi/.env</code>; the sample values are fine to start with.</p>
